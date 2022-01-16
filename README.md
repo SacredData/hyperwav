@@ -1,7 +1,10 @@
 # @storyboard-fm/wavecore
-Converts a mono PCM WAV file into a Hypercore (v10).
+A data structure for real-time reading, editing, seeking, and encoding of mono
+WAV audio files via hypercore v10. Version control, branches, and peering come
+for free thanks to the `hypercore@next` branch.
 ## Background
-> TBD
+This library's intent is to enable real-time peer-to-peer recording, editing, and
+remixing of audio content without sacrificing fidelity, privacy, nor speed.
 ## Getting Started
 > TBD
 ### Installation
@@ -27,3 +30,6 @@ s.open(() => {
 ## Goals
 - [ ] index `0` contains RIFF headers
 - [ ] index *1...n* are mono audio frames in linear order
+### Future
+- [ ] Configure append style (per-frame, per-vocal onset, per-silence,
+  per-user speaking, etc.)
