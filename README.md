@@ -14,3 +14,7 @@ Tell us about your shizz here!
 ```sh
 $ npm install command goes here
 ```
+
+## Goals
+- [ ] index `0` contains RIFF headers
+- [ ] index *1...n* are mono audio frames in linear order
