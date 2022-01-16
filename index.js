@@ -34,14 +34,32 @@ class Wavecore {
 
     // Grab useful metadata from the wavfile object to append
     const { chunkSize, cue, fmt, smpl, tags } = wavfile
+
+    // Before we append to index 0 we'll probe the source for more data
+    const probe = await this._probeSource()
+
     this.core.append(JSON.stringify(
-      Object.assign({ chunkSize, cue, fmt, smpl, tags }, {}))
+      Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
     )
 
     rs.pipe(pt)
   }
-  async _audioBuffer() {
-    return fs.readFileSync(this.source.pathname)
+  _audioBuffer() {
+    return new Promise((resolve, reject) => {
+      if (!this.source) reject(new Error('Add a source first'))
+      this.source.open((err) => {
+        if (err) reject(err)
+        resolve(fs.readFileSync(this.source.pathname))
+      })
+    })
+  }
+  _probeSource() {
+    return new Promise((resolve, reject) => {
+      this.source.probe((err, results) => {
+        if (err) reject(err)
+        resolve(results)
+      })
+    })
   }
 }
 
