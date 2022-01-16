@@ -1,0 +1,27 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "plugins": ["prettier"],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "arrow-body-style": ["warn", "as-needed"],
+    "no-param-reassign": "error",
+    "prefer-const": "error",
+    "no-undef": "error",
+    "no-irregular-whitespace": "error",
+    "no-console": "warn",
+    "no-const-assign": "error",
+    "semi": ["error", "never"],
+    "no-extra-semi": "error",
+    "strict": "off",
+    "use-isnan": "error",
+    "valid-typeof": "error"
+  }
+}

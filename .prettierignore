@@ -1,0 +1,11 @@
+# Ignore artifacts:
+build
+coverage
+test
+docs
+.nyc_output
+.github
+
+# Ignore all HTML files:
+*.html
+*.md
