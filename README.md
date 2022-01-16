@@ -1,14 +1,10 @@
-# browserify-template
-A template for developing browserify modules at Storyboard.
-
-> Put a description of your JavaScript bundle repository's purpose here.
+# @storyboard-fm/wavecore
+Converts a mono PCM WAV file into a Hypercore (v10).
 
 ## Background
-
-Tell us about your shizz here!
-
+> TBD
 ## Getting Started
-
+> TBD
 ### Installation
 
 ```sh
