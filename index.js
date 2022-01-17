@@ -6,6 +6,9 @@ const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
 class Wavecore {
+  static coreOpts() {
+    return {valueEncoding:'binary',overwrite:false,creatIfMissing:true}
+  }
   constructor(source, opts={core:null,storage:ram}) {
     this.core = null
     this.source = null
@@ -14,9 +17,9 @@ class Wavecore {
     // Assign to a hypercore provided via constructor arguments
     if (opts.core instanceof Hypercore) this.core = core
     // Declaring a specific storage supercedes defining a specific hypercore
-    if (opts.storage) this.core = new Hypercore(opts.storage)
+    if (opts.storage) this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
     // If there is still no hypercore lets just make a sane default one
-    if (!this.core) this.core = new Hypercore(ram)
+    if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
     this.core.on('ready', () => console.log('core is ready!', this.core.keyPair))
   }
   async _toHypercore() {
