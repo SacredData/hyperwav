@@ -65,6 +65,11 @@ class Wavecore {
       throw err
     }
   }
+  async truncate(length) {
+    if (!length || !length instanceof Number) return
+    if (length > this.core.length) throw new Error('Must be a shorter length')
+    return await this.core.truncate(length)
+  }
   _audioBuffer() {
     return new Promise((resolve, reject) => {
       if (!this.source) reject(new Error('Add a source first'))
