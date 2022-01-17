@@ -65,6 +65,10 @@ class Wavecore {
       throw err
     }
   }
+  async seek(byteOffset) {
+    const [index, relativeOffset] = await this.core.seek(byteOffset)
+    return [index, relativeOffset]
+  }
   async truncate(length) {
     if (!length || !length instanceof Number) return
     if (length > this.core.length) throw new Error('Must be a shorter length')
