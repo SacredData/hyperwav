@@ -8,3 +8,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Wavecore class and associated little-media-box dependencies
 - git hooks for linting before commit
+- Seek the wave file via hypercore
