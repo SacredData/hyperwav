@@ -7,7 +7,7 @@ source.open(() => {
   async function main() {
     const w = new Wavecore({ source })
     console.log('creating new hypercore...')
-    await w._toHypercore({loadSamples:true})
+    await w.toHypercore({loadSamples:true})
     console.log('wave file metadata:', JSON.parse(`${await w.core.get(0)}`))
   }
   main()

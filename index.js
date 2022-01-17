@@ -26,7 +26,37 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
-  async _toHypercore(opts = { loadSamples: false, source: null }) {
+  _audioBuffer() {
+    return new Promise((resolve, reject) => {
+      if (!this.source) reject(new Error('Add a source first'))
+      this.source.open((err) => {
+        if (err) reject(err)
+        resolve(fs.readFileSync(this.source.pathname))
+      })
+    })
+  }
+  _probeSource() {
+    return new Promise((resolve, reject) => {
+      this.source.probe((err, results) => {
+        if (err) reject(err)
+        resolve(results)
+      })
+    })
+  }
+  async formatData() {
+    try {
+      const { format } = json.parse(`${await this.core.get(0)}`)
+      this.format = format
+      return this.format
+    } catch (err) {
+      throw err
+    }
+  }
+  async seek(byteOffset) {
+    const [index, relativeOffset] = await this.core.seek(byteOffset)
+    return [index, relativeOffset]
+  }
+  async toHypercore(opts = { loadSamples: false, source: null }) {
     const { loadSamples, source } = opts
     if (source instanceof Source) this.source = source
     try {
@@ -67,40 +97,10 @@ class Wavecore {
       throw err
     }
   }
-  async seek(byteOffset) {
-    const [index, relativeOffset] = await this.core.seek(byteOffset)
-    return [index, relativeOffset]
-  }
   async truncate(length) {
     if (!length || !length instanceof Number) return
     if (length > this.core.length) throw new Error('Must be a shorter length')
     return await this.core.truncate(length)
-  }
-  _audioBuffer() {
-    return new Promise((resolve, reject) => {
-      if (!this.source) reject(new Error('Add a source first'))
-      this.source.open((err) => {
-        if (err) reject(err)
-        resolve(fs.readFileSync(this.source.pathname))
-      })
-    })
-  }
-  _probeSource() {
-    return new Promise((resolve, reject) => {
-      this.source.probe((err, results) => {
-        if (err) reject(err)
-        resolve(results)
-      })
-    })
-  }
-  async formatData() {
-    try {
-      const { format } = json.parse(`${await this.core.get(0)}`)
-      this.format = format
-      return this.format
-    } catch (err) {
-      throw err
-    }
   }
   async streamData() {
     try {
