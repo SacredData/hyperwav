@@ -9,13 +9,14 @@ class Wavecore {
   static coreOpts() {
     return { valueEncoding: 'binary', overwrite: false, createIfMissing: true }
   }
-  constructor(source, opts = { core: null, storage: ram }) {
+  constructor(opts = { core: null, source: null, storage: ram }) {
     this.core = null
     this.source = null
+    const { core, source } = opts
     // Instantiate stream for appending WAV file data to hypercore
     if (source instanceof Source) this.source = source
     // Assign to a hypercore provided via constructor arguments
-    if (opts.core instanceof Hypercore) this.core = core
+    if (core instanceof Hypercore) this.core = core
     // Declaring a specific storage supercedes defining a specific hypercore
     if (opts.storage)
       this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
@@ -25,8 +26,9 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
-  async _toHypercore(opts = { loadSamples: false }) {
-    const { loadSamples } = opts
+  async _toHypercore(opts = { loadSamples: false, source: null }) {
+    const { loadSamples, source } = opts
+    if (source instanceof Source) this.source = source
     try {
       // Before we append to index 0 we'll probe the source for more data
       const probe = await Promise.resolve(this._probeSource())
