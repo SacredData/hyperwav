@@ -7,20 +7,23 @@ const WaveFile = require('wavefile').WaveFile
 
 class Wavecore {
   static coreOpts() {
-    return {valueEncoding:'binary',overwrite:false,creatIfMissing:true}
+    return { valueEncoding: 'binary', overwrite: false, createIfMissing: true }
   }
-  constructor(source, opts={core:null,storage:ram}) {
+  constructor(source, opts = { core: null, storage: ram }) {
     this.core = null
     this.source = null
     // Instantiate stream for appending WAV file data to hypercore
-    if (source instanceof Source) source.open(() => this.source = source)
+    if (source instanceof Source) source.open(() => (this.source = source))
     // Assign to a hypercore provided via constructor arguments
     if (opts.core instanceof Hypercore) this.core = core
     // Declaring a specific storage supercedes defining a specific hypercore
-    if (opts.storage) this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
+    if (opts.storage)
+      this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
     // If there is still no hypercore lets just make a sane default one
     if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
-    this.core.on('ready', () => console.log('core is ready!', this.core.keyPair))
+    this.core.on('ready', () =>
+      console.log('core is ready!', this.core.keyPair)
+    )
   }
   async _toHypercore() {
     // Before we append to index 0 we'll probe the source for more data
@@ -36,9 +39,9 @@ class Wavecore {
     // Grab useful metadata from the wavfile object to append
     const { chunkSize, cue, fmt, smpl, tags } = wavfile
 
-    // Otherwise let's get that Hypercore ready and do our biz
     await this.core.ready()
 
+    // PassThrough will append each block received from readStream to hypercore
     const pt = new PassThrough()
     pt.on('data', async (d) => await this.core.append(d))
     pt.on('close', async () => {
@@ -49,8 +52,8 @@ class Wavecore {
     const rs = fs.createReadStream(this.source.pathname)
     rs.on('end', () => console.log(this.core))
 
-    this.core.append(JSON.stringify(
-      Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
+    this.core.append(
+      JSON.stringify(Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
     )
 
     rs.pipe(pt)
