@@ -54,7 +54,9 @@ class Wavecore {
       rs.on('end', () => console.log(this.core))
 
       await this.core.append(
-        JSON.stringify(Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
+        JSON.stringify(
+          Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe)
+        )
       )
 
       rs.pipe(pt)
