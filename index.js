@@ -25,7 +25,8 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
-  async _toHypercore() {
+  async _toHypercore(opts={loadSamples:false}) {
+    const { loadSamples } = opts
     try {
       // Before we append to index 0 we'll probe the source for more data
       const probe = await Promise.resolve(this._probeSource())
@@ -35,7 +36,7 @@ class Wavecore {
 
       // Get WAV metadata and headers for index 0 of our hypercore
       const wavfile = new WaveFile()
-      wavfile.fromBuffer(await this._audioBuffer())
+      wavfile.fromBuffer(await this._audioBuffer(), loadSamples)
 
       // Grab useful metadata from the wavfile object to append
       const { chunkSize, cue, fmt, smpl, tags } = wavfile
