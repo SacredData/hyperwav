@@ -1,11 +1,11 @@
 const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('.')
 
-const s = new Source('./test.wav')
-s.open(() => {
-  console.log('opened source WAV file', s)
+const source = new Source('./test.wav')
+source.open(() => {
+  console.log('opened source WAV file', source)
   async function main() {
-    const w = new Wavecore(s)
+    const w = new Wavecore({ source })
     console.log('creating new hypercore...')
     await w._toHypercore({loadSamples:true})
     console.log('wave file metadata:', JSON.parse(`${await w.core.get(0)}`))
