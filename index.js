@@ -25,7 +25,7 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
-  async _toHypercore(opts={loadSamples:false}) {
+  async _toHypercore(opts = { loadSamples: false }) {
     const { loadSamples } = opts
     try {
       // Before we append to index 0 we'll probe the source for more data
