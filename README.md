@@ -16,16 +16,18 @@ $ npm install command goes here
 const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('.')
 
-const s = new Source('./test.wav')
-s.open(() => {
+const source = new Source('./test.wav')
+source.open(() => {
+  console.log('opened source WAV file', source)
   async function main() {
-    const w = new Wavecore(s)
-
-    await w._toHypercore()
-    console.log(w.core)
+    const w = new Wavecore({ source })
+    console.log('creating new hypercore...')
+    await w._toHypercore({loadSamples:true})
+    console.log('wave file metadata:', JSON.parse(`${await w.core.get(0)}`))
   }
   main()
 })
+
 ```
 ## Goals
 - [ ] index `0` contains RIFF headers
