@@ -26,37 +26,41 @@ class Wavecore {
     )
   }
   async _toHypercore() {
-    // Before we append to index 0 we'll probe the source for more data
-    const probe = await Promise.resolve(this._probeSource())
+    try {
+      // Before we append to index 0 we'll probe the source for more data
+      const probe = await Promise.resolve(this._probeSource())
 
-    // If that Source ain't a WAV we gotta send it back
-    if (probe.format.format_name !== 'wav') throw new Error('Not a WAV!')
+      // If that Source ain't a WAV we gotta send it back
+      if (probe.format.format_name !== 'wav') throw new Error('Not a WAV!')
 
-    // Get WAV metadata and headers for index 0 of our hypercore
-    const wavfile = new WaveFile()
-    wavfile.fromBuffer(await this._audioBuffer())
+      // Get WAV metadata and headers for index 0 of our hypercore
+      const wavfile = new WaveFile()
+      wavfile.fromBuffer(await this._audioBuffer())
 
-    // Grab useful metadata from the wavfile object to append
-    const { chunkSize, cue, fmt, smpl, tags } = wavfile
+      // Grab useful metadata from the wavfile object to append
+      const { chunkSize, cue, fmt, smpl, tags } = wavfile
 
-    await this.core.ready()
+      await this.core.ready()
 
-    // PassThrough will append each block received from readStream to hypercore
-    const pt = new PassThrough()
-    pt.on('data', async (d) => await this.core.append(d))
-    pt.on('close', async () => {
-      await this.core.update()
-      return this.core
-    })
+      // PassThrough will append each block received from readStream to hypercore
+      const pt = new PassThrough()
+      pt.on('data', async (d) => await this.core.append(d))
+      pt.on('close', async () => {
+        await this.core.update()
+        return this.core
+      })
 
-    const rs = fs.createReadStream(this.source.pathname)
-    rs.on('end', () => console.log(this.core))
+      const rs = fs.createReadStream(this.source.pathname)
+      rs.on('end', () => console.log(this.core))
 
-    this.core.append(
-      JSON.stringify(Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
-    )
+      await this.core.append(
+        JSON.stringify(Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
+      )
 
-    rs.pipe(pt)
+      rs.pipe(pt)
+    } catch (err) {
+      throw err
+    }
   }
   _audioBuffer() {
     return new Promise((resolve, reject) => {
@@ -76,14 +80,22 @@ class Wavecore {
     })
   }
   async formatData() {
-    const { format } = JSON.parse(`${await this.core.get(0)}`)
-    this.format = format
-    return this.format
+    try {
+      const { format } = json.parse(`${await this.core.get(0)}`)
+      this.format = format
+      return this.format
+    } catch (err) {
+      throw err
+    }
   }
   async streamData() {
-    const { streams } = JSON.parse(`${await this.core.get(0)}`)
-    this.streams = streams
-    return this.streams[0]
+    try {
+      const { streams } = JSON.parse(`${await this.core.get(0)}`)
+      this.streams = streams
+      return this.streams[0]
+    } catch (err) {
+      throw err
+    }
   }
 }
 
