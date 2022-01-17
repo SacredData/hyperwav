@@ -13,7 +13,7 @@ class Wavecore {
     this.core = null
     this.source = null
     // Instantiate stream for appending WAV file data to hypercore
-    if (source instanceof Source) source.open(() => (this.source = source))
+    if (source instanceof Source) this.source = source
     // Assign to a hypercore provided via constructor arguments
     if (opts.core instanceof Hypercore) this.core = core
     // Declaring a specific storage supercedes defining a specific hypercore
@@ -27,7 +27,7 @@ class Wavecore {
   }
   async _toHypercore() {
     // Before we append to index 0 we'll probe the source for more data
-    const probe = await this._probeSource()
+    const probe = await Promise.resolve(this._probeSource())
 
     // If that Source ain't a WAV we gotta send it back
     if (probe.format.format_name !== 'wav') throw new Error('Not a WAV!')
