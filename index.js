@@ -23,13 +23,11 @@ class Wavecore {
     this.core.on('ready', () => console.log('core is ready!', this.core.keyPair))
   }
   async _toHypercore() {
-    await this.core.ready()
+    // Before we append to index 0 we'll probe the source for more data
+    const probe = await this._probeSource()
 
-    const pt = new PassThrough()
-    pt.on('data', (d) => this.core.append(d))
-
-    const rs = fs.createReadStream(this.source.pathname)
-    rs.on('end', () => console.log(this.core))
+    // If that Source ain't a WAV we gotta send it back
+    if (probe.format.format_name !== 'wav') throw new Error('Not a WAV!')
 
     // Get WAV metadata and headers for index 0 of our hypercore
     const wavfile = new WaveFile()
@@ -38,8 +36,18 @@ class Wavecore {
     // Grab useful metadata from the wavfile object to append
     const { chunkSize, cue, fmt, smpl, tags } = wavfile
 
-    // Before we append to index 0 we'll probe the source for more data
-    const probe = await this._probeSource()
+    // Otherwise let's get that Hypercore ready and do our biz
+    await this.core.ready()
+
+    const pt = new PassThrough()
+    pt.on('data', async (d) => await this.core.append(d))
+    pt.on('close', async () => {
+      console.log(`Wavecore updated? ${await this.core.update()}`)
+      return this.core
+    })
+
+    const rs = fs.createReadStream(this.source.pathname)
+    rs.on('end', () => console.log(this.core))
 
     this.core.append(JSON.stringify(
       Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe))
