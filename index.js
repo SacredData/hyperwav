@@ -75,6 +75,16 @@ class Wavecore {
       })
     })
   }
+  async formatData() {
+    const { format } = JSON.parse(`${await this.core.get(0)}`)
+    this.format = format
+    return this.format
+  }
+  async streamData() {
+    const { streams } = JSON.parse(`${await this.core.get(0)}`)
+    this.streams = streams
+    return this.streams[0]
+  }
 }
 
 module.exports = Wavecore
