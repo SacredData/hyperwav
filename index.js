@@ -45,7 +45,7 @@ class Wavecore {
     const pt = new PassThrough()
     pt.on('data', async (d) => await this.core.append(d))
     pt.on('close', async () => {
-      console.log(`Wavecore updated? ${await this.core.update()}`)
+      await this.core.update()
       return this.core
     })
 
