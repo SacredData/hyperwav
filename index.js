@@ -5,7 +5,6 @@ const ram = require('random-access-memory')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
-
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
  * audio files in a real-time, peer-to-peer context.
