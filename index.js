@@ -46,8 +46,12 @@ class Wavecore {
       })
     })
   }
-  _wav() {
-    return this.core.createReadStream({ start: 1 })
+  _wavStream(start=1, end=-1) {
+    try {
+      return this.core.createReadStream({ start, end })
+    } catch (err) {
+      throw err
+    }
   }
   async formatData() {
     try {
@@ -87,13 +91,12 @@ class Wavecore {
         // pt.on('data', async (d) => await this.core.append(d))
         pt.on('data', (d) => this.core.append(d))
         pt.on('close', async () => {
-          await this.core.update()
-          //return this.core
+          console.log(await this.core.update())
         })
 
         const rs = fs.createReadStream(this.source.pathname)
-        // rs.on('end', () => console.log(this.core))
         rs.on('end', () => resolve(this.core))
+        rs.on('error', err => reject(err))
 
         this.core
           .append(
@@ -102,6 +105,7 @@ class Wavecore {
             )
           )
           .then(() => rs.pipe(pt))
+          .catch(err => reject(err))
       })
     } catch (err) {
       throw err
