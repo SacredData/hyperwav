@@ -47,7 +47,7 @@ class Wavecore {
     })
   }
   _wav() {
-    return this.core.createReadStream({start:1})
+    return this.core.createReadStream({ start: 1 })
   }
   async formatData() {
     try {
@@ -95,11 +95,13 @@ class Wavecore {
         // rs.on('end', () => console.log(this.core))
         rs.on('end', () => resolve(this.core))
 
-        this.core.append(
-          JSON.stringify(
-            Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe)
+        this.core
+          .append(
+            JSON.stringify(
+              Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe)
+            )
           )
-        ).then(() => rs.pipe(pt))
+          .then(() => rs.pipe(pt))
       })
     } catch (err) {
       throw err
