@@ -37,11 +37,17 @@ class Wavecore {
   }
   _probeSource() {
     return new Promise((resolve, reject) => {
-      this.source.probe((err, results) => {
+      this.source.open((err) => {
         if (err) reject(err)
-        resolve(results)
+        this.source.probe((err, results) => {
+          if (err) reject(err)
+          resolve(results)
+        })
       })
     })
+  }
+  _wav() {
+    return this.core.createReadStream({start:1})
   }
   async formatData() {
     try {
@@ -75,24 +81,26 @@ class Wavecore {
 
       await this.core.ready()
 
-      // PassThrough will append each block received from readStream to hypercore
-      const pt = new PassThrough()
-      pt.on('data', async (d) => await this.core.append(d))
-      pt.on('close', async () => {
-        await this.core.update()
-        return this.core
+      return new Promise((resolve, reject) => {
+        // PassThrough will append each block received from readStream to hypercore
+        const pt = new PassThrough()
+        // pt.on('data', async (d) => await this.core.append(d))
+        pt.on('data', (d) => this.core.append(d))
+        pt.on('close', async () => {
+          await this.core.update()
+          //return this.core
+        })
+
+        const rs = fs.createReadStream(this.source.pathname)
+        // rs.on('end', () => console.log(this.core))
+        rs.on('end', () => resolve(this.core))
+
+        this.core.append(
+          JSON.stringify(
+            Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe)
+          )
+        ).then(() => rs.pipe(pt))
       })
-
-      const rs = fs.createReadStream(this.source.pathname)
-      rs.on('end', () => console.log(this.core))
-
-      await this.core.append(
-        JSON.stringify(
-          Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe)
-        )
-      )
-
-      rs.pipe(pt)
     } catch (err) {
       throw err
     }
