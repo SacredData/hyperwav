@@ -5,6 +5,12 @@ for free thanks to the `hypercore@next` branch.
 ## Background
 This library's intent is to enable real-time peer-to-peer recording, editing, and
 remixing of audio content without sacrificing fidelity, privacy, nor speed.
+
+The WAV audio can be sourced from any valid instance of
+[`random-access-storage`][ras] and can be therefore stored in memory as a
+buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
+means it is functional on local offline-first client applications, server-side
+applications, and web apps all from one codebase.
 ## Getting Started
 > TBD
 ### Installation
@@ -35,3 +41,5 @@ source.open(() => {
 ### Future
 - [ ] Configure append style (per-frame, per-vocal onset, per-silence,
   per-user speaking, etc.)
+
+[ras]: https://github.com/random-access-storage
