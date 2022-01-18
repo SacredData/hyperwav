@@ -35,11 +35,5 @@ source.open(() => {
 })
 
 ```
-## Goals
-- [ ] index `0` contains RIFF headers
-- [ ] index *1...n* are mono audio frames in linear order
-### Future
-- [ ] Configure append style (per-frame, per-vocal onset, per-silence,
-  per-user speaking, etc.)
 
 [ras]: https://github.com/random-access-storage
