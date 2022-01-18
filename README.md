@@ -12,28 +12,23 @@ buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.
 ## Getting Started
-> TBD
 ### Installation
 ```sh
 $ npm install command goes here
 ```
-## Example
+## Examples
+### Trimming Audio
+#### Trim From Beginning
+#### Trim From End
+The following truncates a Wavecore to the first 20 indeces.
 ```js
 const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('.')
-
+const Wavecore = require('@storyboard-fm/wavecore')
 const source = new Source('./test.wav')
-source.open(() => {
-  console.log('opened source WAV file', source)
-  async function main() {
-    const w = new Wavecore({ source })
-    console.log('creating new hypercore...')
-    await w.toHypercore({loadSamples:true})
-    console.log('wave file metadata:', JSON.parse(`${await w.core.get(0)}`))
-  }
-  main()
-})
+const wave = new Wavecore({ source })
 
+await Promise.resolve(wave.toHypercore())
+await wave.truncate(20)
 ```
 
 [ras]: https://github.com/random-access-storage
