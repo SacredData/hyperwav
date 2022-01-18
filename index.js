@@ -46,7 +46,7 @@ class Wavecore {
       })
     })
   }
-  _wavStream(start=1, end=-1) {
+  _wavStream(start = 1, end = -1) {
     try {
       return this.core.createReadStream({ start, end })
     } catch (err) {
@@ -96,7 +96,7 @@ class Wavecore {
 
         const rs = fs.createReadStream(this.source.pathname)
         rs.on('end', () => resolve(this.core))
-        rs.on('error', err => reject(err))
+        rs.on('error', (err) => reject(err))
 
         this.core
           .append(
@@ -105,7 +105,7 @@ class Wavecore {
             )
           )
           .then(() => rs.pipe(pt))
-          .catch(err => reject(err))
+          .catch((err) => reject(err))
       })
     } catch (err) {
       throw err
