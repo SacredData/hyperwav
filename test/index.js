@@ -32,4 +32,13 @@ describe('Wavecore', function () {
         expect(core4.core.length).to.equal(68)
     })
   })
+  describe('#truncate', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should truncate the hypercore', async function () {
+      const core5 = new Wavecore({ source })
+      await Promise.resolve(core5.toHypercore())
+      await core5.truncate(20)
+      expect(core5.core.length).to.equal(20)
+    })
+  })
 })
