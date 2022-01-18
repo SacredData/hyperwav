@@ -7,9 +7,10 @@ source.open(async () => {
   console.log('opened source WAV file', source)
   async function main() {
     const w = new Wavecore({ source })
-    console.log('creating new hypercore...')
+    console.log(w.core)
+    console.log('appending to hypercore...')
     await w.toHypercore({loadSamples:true})
-    console.log('wave file metadata:', JSON.parse(`${await w.core.get(0)}`))
+    console.log('done', w.core)
     console.log('lets cut it down to 12 sec or so')
     await w.truncate(20)
     await w.core.update()
