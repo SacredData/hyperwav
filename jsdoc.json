@@ -1,8 +1,15 @@
 {
   "tags": {
-    "allowUnknownTags": true
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc"]
   },
   "opts": {
+    "destination": "./docs/",
     "template": ""
+  },
+  "source": {
+    "include": ["index.js", "README.md"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs|demo)"
   }
 }
