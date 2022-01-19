@@ -40,7 +40,9 @@ const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
 await Promise.resolve(wave.toHypercore())
+console.log(wave.core.length) // 68
 await wave.truncate(20)
+console.log(wave.core.length) // 20
 ```
 
 [ras]: https://github.com/random-access-storage
