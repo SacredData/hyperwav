@@ -41,4 +41,14 @@ describe('Wavecore', function () {
       expect(core5.core.length).to.equal(20)
     })
   })
+  describe('#seek', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should provide index and relative offset values', async function () {
+      const core6 = new Wavecore({ source })
+      await Promise.resolve(core6.toHypercore())
+      const [index, relative] = await core6.seek(20000)
+      expect(index).to.equal(1) &&
+        expect(relative).to.equal(18431)
+    })
+  })
 })
