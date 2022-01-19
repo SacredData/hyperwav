@@ -10,3 +10,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - git hooks for linting before commit
 - Seek the wave file via hypercore
 - shift() method for trimming wavecores from the beginning
+- github actions workflows for automated testing
