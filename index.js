@@ -134,12 +134,6 @@ class Wavecore {
     const { loadSamples, source } = opts
     if (source instanceof Source) this.source = source
     try {
-      // Before we append to index 0 we'll probe the source for more data
-      const probe = await Promise.resolve(this._probeSource())
-
-      // If that Source ain't a WAV we gotta send it back
-      if (probe.format.format_name !== 'wav') throw new Error('Not a WAV!')
-
       // Get WAV metadata and headers for index 0 of our hypercore
       const wavfile = new WaveFile()
       wavfile.fromBuffer(await this._audioBuffer(), loadSamples)
@@ -165,7 +159,7 @@ class Wavecore {
         this.core
           .append(
             JSON.stringify(
-              Object.assign({ chunkSize, cue, fmt, smpl, tags }, probe)
+              Object.assign({ chunkSize, cue, fmt, smpl, tags }, {})
             )
           )
           .then(() => rs.pipe(pt))
