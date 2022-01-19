@@ -113,9 +113,10 @@ class Wavecore {
       const shiftedRs = this.core.createReadStream({ start: index })
       const newCore = new Hypercore(ram)
       const writer = newCore.createWriteStream()
-      writer.on('close', () => {
-        resolve(newCore)
-      })
+      writer
+        .on('close', () => { resolve(newCore) })
+        .on('error', err => reject(err))
+
       shiftedRs.pipe(writer)
     })
   }
