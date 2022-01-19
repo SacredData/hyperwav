@@ -2,6 +2,7 @@ const expect = require('chai').expect
 const Hypercore = require('hypercore')
 const path = require('path')
 const ram = require('random-access-memory')
+const { Readable } = require('stream')
 const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
 
@@ -49,6 +50,25 @@ describe('Wavecore', function () {
       const [index, relative] = await core6.seek(20000)
       expect(index).to.equal(1) &&
         expect(relative).to.equal(19489)
+    })
+  })
+  describe('#_audioBuffer', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should return a buffer of the full source file', async function () {
+      const core7 = new Wavecore({ source })
+      await Promise.resolve(core7.toHypercore())
+      const buffer = await core7._audioBuffer()
+      expect(buffer).to.be.instanceof(Buffer)
+    })
+  })
+  describe('#_wavStream', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should return a readStream containing the test file', async function () {
+      const core8 = new Wavecore({ source })
+      await Promise.resolve(core8.toHypercore())
+      const rs = core8._wavStream()
+      expect(rs).to.have.property('_readableState') &&
+        expect(rs.readable).to.be.true
     })
   })
 })
