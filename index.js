@@ -146,22 +146,24 @@ class Wavecore {
       return new Promise((resolve, reject) => {
         // PassThrough will append each block received from readStream to hypercore
         const pt = new PassThrough()
-        // pt.on('data', async (d) => await this.core.append(d))
+        pt.on('error', (err) => reject(err))
         pt.on('data', (d) => this.core.append(d))
         pt.on('close', async () => {
-          console.log(await this.core.update())
+          await this.core.update()
+          resolve(this.core)
         })
 
         const rs = fs.createReadStream(this.source.pathname)
-        rs.on('end', () => resolve(this.core))
         rs.on('error', (err) => reject(err))
 
         this.core
+          // First, create index 0 with all necessary WAV metadata
           .append(
             JSON.stringify(
               Object.assign({ chunkSize, cue, fmt, smpl, tags }, {})
             )
           )
+          // Second, read WAV into Hypercore, beginning at index 1
           .then(() => rs.pipe(pt))
           .catch((err) => reject(err))
       })
