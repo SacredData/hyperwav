@@ -44,5 +44,15 @@ console.log(wave.core.length) // 68
 await wave.truncate(20)
 console.log(wave.core.length) // 20
 ```
+## Tests
+
+| Statements                  | Branches                | Functions                 | Lines             |
+| --------------------------- | ----------------------- | ------------------------- | ----------------- |
+| ![Statements](https://img.shields.io/badge/statements-74.64%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-76%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-66.66%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-81.66%25-yellow.svg?style=flat) |
+
+We use `mocha`, with `nyc` for test coverage reporting.
+```sh
+$ npm run test
+```
 
 [ras]: https://github.com/random-access-storage
