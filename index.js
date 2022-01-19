@@ -108,6 +108,17 @@ class Wavecore {
     const [index, relativeOffset] = await this.core.seek(byteOffset)
     return [index, relativeOffset]
   }
+  async shift(index = 1) {
+    return new Promise((resolve, reject) => {
+      const shiftedRs = this.core.createReadStream({ start: index })
+      const newCore = new Hypercore(ram)
+      const writer = newCore.createWriteStream()
+      writer.on('close', () => {
+        resolve(newCore)
+      })
+      shiftedRs.pipe(writer)
+    })
+  }
   /**
    * Reads the source WAV into the class instance's Hypercore v10
    * @async
