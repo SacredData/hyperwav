@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@storyboard-fm/little-media-box": "^0.2.0",
+    "@storyboard-fm/little-media-box": "github:Storyboard-fm/little-media-box",
     "hypercore": "^10.0.0-alpha.24",
     "pino": "^7.6.3",
     "random-access-memory": "^4.0.0",
