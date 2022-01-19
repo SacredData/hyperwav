@@ -19,6 +19,18 @@ $ npm install command goes here
 ## Examples
 ### Trimming Audio
 #### Trim From Beginning
+The following trims a Wavecore to start on the 20th index.
+```js
+const { Source } = require('@storyboard-fm/little-media-box')
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test.wav')
+const wave = new Wavecore({ source })
+
+await Promise.resolve(wave.toHypercore())
+console.log(wave.core.length) // 68
+const shiftedCore = await Promise.resolve(wave.shift(20))
+console.log(shiftedCore.length) // 48
+```
 #### Trim From End
 The following truncates a Wavecore to the first 20 indeces.
 ```js
