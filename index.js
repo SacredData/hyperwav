@@ -54,6 +54,22 @@ class Wavecore {
       })
     })
   }
+  _discoveryKey() {
+    return this.core.discoveryKey
+  }
+  _encryptionKey() {
+    return this.core.encryptionKey
+  }
+  _fork() {
+    return this.core.fork
+  }
+  /**
+   * Returns an `Object` with the public and secret keys for the Wavecore.
+   * @returns {Object} keyPair
+   */
+  _keyPair() {
+    return this.core.keyPair
+  }
   /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
