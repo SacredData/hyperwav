@@ -55,22 +55,6 @@ class Wavecore {
     })
   }
   /**
-   * Returns a `Promise` containing an `Object` of probe results for the source
-   * audio file
-   * @returns {Promise} probeResults
-  _probeSource() {
-    return new Promise((resolve, reject) => {
-      this.source.open((err) => {
-        if (err) reject(err)
-        this.source.probe((err, results) => {
-          if (err) reject(err)
-          resolve(results)
-        })
-      })
-    })
-  }
-   */
-  /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
    * as a readable stream.
@@ -85,20 +69,6 @@ class Wavecore {
       throw err
     }
   }
-  /**
-   * Returns format data from running ffprobe on the source file.
-   * @async
-   * @returns {Object} formatData
-  async formatData() {
-    try {
-      const { format } = JSON.parse(`${await this.core.get(0)}`)
-      this.format = format
-      return this.format
-    } catch (err) {
-      throw err
-    }
-  }
-   */
   /**
    * Returns index and byte position of a byte offset.
    * @async
@@ -185,20 +155,6 @@ class Wavecore {
     await this.core.truncate(length)
     return
   }
-  /**
-   * Returns stream data from running ffprobe on the source file.
-   * @async
-   * @returns {Object} streamData
-  async streamData() {
-    try {
-      const { streams } = JSON.parse(`${await this.core.get(0)}`)
-      this.streams = streams
-      return this.streams[0]
-    } catch (err) {
-      throw err
-    }
-  }
-   */
 }
 
 module.exports = Wavecore
