@@ -30,7 +30,7 @@ describe('Wavecore', function () {
       const returnedCore = await Promise.resolve(core4.toHypercore())
       expect(returnedCore).to.be.instanceof(Hypercore) &&
         expect(core4.core).to.be.instanceof(Hypercore) &&
-        expect(core4.core.length).to.equal(68)
+        expect(core4.core.length).to.equal(58)
     })
   })
   describe('#truncate', function () {
