@@ -14,6 +14,9 @@ class Wavecore {
   static coreOpts() {
     return { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
   }
+  static fromCore(core, parent) {
+    return new this({ core, parent })
+  }
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
@@ -22,17 +25,27 @@ class Wavecore {
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {Wavecore}
    */
-  constructor(opts = { core: null, source: null, storage: ram }) {
+  constructor(opts = { core: null, parent: null, source: null, storage: ram }) {
     this.core = null
     this.source = null
-    const { core, source } = opts
-    // Instantiate stream for appending WAV file data to hypercore
-    if (source instanceof Source) this.source = source
-    // Assign to a hypercore provided via constructor arguments
-    if (core instanceof Hypercore) this.core = core
     // Declaring a specific storage supercedes defining a specific hypercore
-    if (opts.storage)
+    if (opts.storage) {
       this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
+    } else {
+
+    }
+    const { core, parent, source } = opts
+    if (parent) {
+      this.parent = parent
+      this.source = parent.source
+      if (core instanceof Hypercore) this.core = core
+    } else {
+      // if (parent !== null) this.parent = parent
+      // Instantiate stream for appending WAV file data to hypercore
+      if (source instanceof Source) this.source = source
+      // Assign to a hypercore provided via constructor arguments
+      if (core instanceof Hypercore) this.core = core
+    }
     // If there is still no hypercore lets just make a sane default one
     if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
     this.core.on('ready', () =>
@@ -114,6 +127,11 @@ class Wavecore {
       shiftedRs.pipe(writer)
     })
   }
+  /**
+   * Splits the Wavecore at the provided index number, returning an array of two
+   * new `Hypercore` instances.
+   * @returns {Array} cores - Array of the new head and tail hypercores
+   */
   async split(index) {
     try {
       return new Promise((resolve, reject) => {
@@ -131,7 +149,10 @@ class Wavecore {
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             console.log('done writing head core', headCore)
-            resolve([headCore, tailCore])
+            const wavecores = [headCore, tailCore].map(c=>Wavecore.fromCore(c, this))
+            console.log('wavecores', wavecores)
+            resolve(wavecores)
+            // resolve([headCore, tailCore])
           })
           headStream.pipe(ptHead)
         })
