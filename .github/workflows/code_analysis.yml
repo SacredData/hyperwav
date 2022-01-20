@@ -1,0 +1,23 @@
+name: Code Analysis
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  pull_request:
+    branches: [master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+jobs:
+  code-risk-analyzer:
+    name: runner / code risk analyzer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Fizz-Q/code-risk-analyzer@v1.23
+        with:
+          repository: ${{ github.repository }}
+          user: ${{ github.repository_owner }}
+          github_token: ${{ secrets.NPM_AUTH_TOKEN }}
