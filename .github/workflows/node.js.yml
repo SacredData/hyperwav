@@ -31,4 +31,5 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+    - run: npm run make-badges
     - run: npm run docs
