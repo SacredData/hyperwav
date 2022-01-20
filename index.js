@@ -114,6 +114,31 @@ class Wavecore {
       shiftedRs.pipe(writer)
     })
   }
+  async split(index) {
+    try {
+      return new Promise((resolve, reject) => {
+        const headCore = new Hypercore(ram)
+        const tailCore = new Hypercore(ram)
+        const ptTail = new PassThrough()
+        ptTail.on('data', d => tailCore.append(d))
+        ptTail.on('close', async () => {
+          const headStream = this.core.createReadStream({start: 1, end: index})
+          console.log('done writing end core', tailCore)
+          const ptHead = new PassThrough()
+          ptHead.on('data', d => headCore.append(d))
+          ptHead.on('close', () => {
+            console.log('done writing head core', headCore)
+            resolve([headCore, tailCore])
+          })
+          headStream.pipe(ptHead)
+        })
+        const splitStream = this.core.createReadStream({start: index})
+        splitStream.pipe(ptTail)
+      })
+    } catch (err) {
+      throw err
+    }
+  }
   /**
    * Reads the source WAV into the class instance's Hypercore v10
    * @async
