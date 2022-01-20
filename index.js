@@ -12,7 +12,7 @@ const WaveFile = require('wavefile').WaveFile
  */
 class Wavecore {
   static coreOpts() {
-    return { valueEncoding: 'binary', overwrite: false, createIfMissing: true }
+    return { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
   }
   /**
    * The `Wavecore` class constructor.
