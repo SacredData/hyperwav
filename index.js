@@ -32,7 +32,6 @@ class Wavecore {
     if (opts.storage) {
       this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
     } else {
-
     }
     const { core, parent, source } = opts
     if (parent) {
@@ -149,7 +148,9 @@ class Wavecore {
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             console.log('done writing head core', headCore)
-            const wavecores = [headCore, tailCore].map(c=>Wavecore.fromCore(c, this))
+            const wavecores = [headCore, tailCore].map((c) =>
+              Wavecore.fromCore(c, this)
+            )
             console.log('wavecores', wavecores)
             resolve(wavecores)
             // resolve([headCore, tailCore])
