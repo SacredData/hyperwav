@@ -72,11 +72,17 @@ class Wavecore {
   /**
    * Returns index and byte position of a byte offset.
    * @async
+   * @arg {Number} byteOffset - Number of bytes to seek from beginning of file
    * @returns {Array} seekData - `[index, relativeOffset]`
    */
   async seek(byteOffset) {
-    const [index, relativeOffset] = await this.core.seek(byteOffset)
-    return [index, relativeOffset]
+    try {
+      const [index, relativeOffset] = await this.core.seek(byteOffset)
+      return [index, relativeOffset]
+    } catch (err) {
+      console.error(err)
+      return
+    }
   }
   async shift(index = 1) {
     return new Promise((resolve, reject) => {
