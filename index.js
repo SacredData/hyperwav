@@ -120,19 +120,22 @@ class Wavecore {
         const headCore = new Hypercore(ram)
         const tailCore = new Hypercore(ram)
         const ptTail = new PassThrough()
-        ptTail.on('data', d => tailCore.append(d))
+        ptTail.on('data', (d) => tailCore.append(d))
         ptTail.on('close', async () => {
-          const headStream = this.core.createReadStream({start: 1, end: index})
+          const headStream = this.core.createReadStream({
+            start: 1,
+            end: index,
+          })
           console.log('done writing end core', tailCore)
           const ptHead = new PassThrough()
-          ptHead.on('data', d => headCore.append(d))
+          ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             console.log('done writing head core', headCore)
             resolve([headCore, tailCore])
           })
           headStream.pipe(ptHead)
         })
-        const splitStream = this.core.createReadStream({start: index})
+        const splitStream = this.core.createReadStream({ start: index })
         splitStream.pipe(ptTail)
       })
     } catch (err) {
