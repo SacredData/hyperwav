@@ -1,11 +1,25 @@
 {
+  "plugins": [
+      "plugins/markdown"
+  ],
   "tags": {
     "allowUnknownTags": true,
     "dictionaries": ["jsdoc"]
   },
   "opts": {
     "destination": "./docs/",
-    "template": ""
+    "encoding": "utf8",
+    "private": true,
+    "recurse": true,
+    "template": "./node_modules/jsdoc-template"
+  },
+  "templates": {
+      "referenceTitle": "Wavecore",
+      "disableSort": false,
+      "collapse": true,
+      "resources": {
+          "google": "https://www.google.com/"
+      }
   },
   "source": {
     "include": ["index.js", "README.md"],
