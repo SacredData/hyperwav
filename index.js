@@ -154,7 +154,9 @@ class Wavecore {
         })
 
         // const rs = fs.createReadStream(this.source.pathname, {highWaterMark: 8 * 1024})
-        const rs = fs.createReadStream(this.source.pathname, {highWaterMark: 76800})
+        const rs = fs.createReadStream(this.source.pathname, {
+          highWaterMark: 76800,
+        })
         rs.on('error', (err) => reject(err))
 
         this.core
