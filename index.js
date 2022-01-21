@@ -11,9 +11,20 @@ const WaveFile = require('wavefile').WaveFile
  * @class
  */
 class Wavecore {
+  /**
+   * Get the default hypercore instantiation options
+   * @returns {Object} coreOpts
+   */
   static coreOpts() {
     return { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
   }
+  /**
+   * Get new Wavecore from a previously-instantiated hypercore and its parent
+   * Wavecore.
+   * @arg {Wavecore} core - The Hypercore to copy from
+   * @arg {Wavecore} parent - The Wavecore from which the core derives
+   * @returns {Wavecore} newCore - The new Wavecore
+   */
   static fromCore(core, parent) {
     return new this({ core, parent })
   }
