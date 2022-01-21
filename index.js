@@ -2,6 +2,7 @@ const fs = require('fs')
 const Hypercore = require('hypercore')
 const { PassThrough } = require('stream')
 const ram = require('random-access-memory')
+const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
@@ -61,6 +62,7 @@ class Wavecore {
     this.core.on('ready', () =>
       console.log('core is ready!', this.core.keyPair)
     )
+    this.replicator = new Replicator()
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -242,6 +244,10 @@ class Wavecore {
     } catch (err) {
       throw err
     }
+  }
+  async replicate() {
+    await this.replicator.add(this.core)
+    return this.replicator
   }
   /**
    * Truncate the Hypercore to a shorter length.
