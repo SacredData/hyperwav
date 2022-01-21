@@ -51,6 +51,10 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
+  /**
+   * Get the Wavecore's discovery key so the hypercore can be found by others.
+   * @returns {Buffer} discoveryKey
+   */
   _discoveryKey() {
     return this.core.discoveryKey
   }
@@ -72,6 +76,10 @@ class Wavecore {
       })
     })
   }
+  /**
+   * Return the fork ID of the Wavecore.
+   * @returns {Number} forkId
+   */
   _fork() {
     return this.core.fork
   }
@@ -112,6 +120,11 @@ class Wavecore {
       return
     }
   }
+  /**
+   * Returns a new Wavecore that begins at the provided index number. Use this
+   * to trim the Wavecore from the beginning of the file.
+   * @returns {Wavecore} newCore
+   */
   async shift(index = 1) {
     return new Promise((resolve, reject) => {
       const shiftedRs = this.core.createReadStream({ start: index })
@@ -119,7 +132,7 @@ class Wavecore {
       const writer = newCore.createWriteStream()
       writer
         .on('close', () => {
-          resolve(newCore)
+          resolve(Wavecore.fromCore(newCore, this))
         })
         .on('error', (err) => reject(err))
 
