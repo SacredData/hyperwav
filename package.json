@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hyperswarm/replicator": "^2.0.2",
     "@storyboard-fm/little-media-box": "github:Storyboard-fm/little-media-box",
     "hypercore": "github:hypercore-protocol/hypercore-next",
     "pino": "^7.6.3",
