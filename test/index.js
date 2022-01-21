@@ -71,4 +71,24 @@ describe('Wavecore', function () {
         expect(rs.readable).to.be.true
     })
   })
+  describe('#_discoveryKey', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should return a Buffer containing the hypercore discovery key', async function() {
+      const core9 = new Wavecore({ source })
+      await Promise.resolve(core9.toHypercore())
+      const dk = core9._discoveryKey()
+      console.log(dk)
+      expect(dk).to.be.instanceof(Buffer)
+    })
+  })
+  describe('#_fork', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should return the hypercore fork number', async function () {
+      const core10 = new Wavecore({ source })
+      await Promise.resolve(core10.toHypercore())
+      const forkId = core10._fork()
+      expect(typeof(forkId)).to.equal('number') &&
+        expect(forkId).to.equal(0)
+    })
+  })
 })
