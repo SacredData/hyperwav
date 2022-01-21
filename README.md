@@ -19,9 +19,9 @@ applications, and web apps all from one codebase.
 - [x] Create new Wavecore from other Wavecore
 - [x] Create new Wavecore with [`random-access-storage`][ras] input
 #### Editing Operations
-- [x] Trim: shift
-- [x] Trim: truncate
-- [x] Split
+- [x] Trim: [shift][shift]
+- [x] Trim: [truncate][trunc]
+- [x] [Split][split]
 - [ ] Join
 - [ ] Overwrite
 ## Getting Started
@@ -91,3 +91,6 @@ $ npm run test
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [ras]: https://github.com/random-access-storage
+[shift]: https://storyboard-fm.github.io/wavecore/Wavecore.html#shift
+[split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
+[trunc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate
