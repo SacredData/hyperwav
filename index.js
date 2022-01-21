@@ -131,38 +131,34 @@ class Wavecore {
    * new `Hypercore` instances.
    * @returns {Array} cores - Array of the new head and tail hypercores
    */
-  async split(index) {
-    try {
-      return new Promise((resolve, reject) => {
-        const headCore = new Hypercore(ram)
-        const tailCore = new Hypercore(ram)
-        const ptTail = new PassThrough()
-        ptTail.on('data', (d) => tailCore.append(d))
-        ptTail.on('close', async () => {
+  split(index) {
+    return new Promise((resolve, reject) => {
+      const [headCore, tailCore] = [new Hypercore(ram), new Hypercore(ram)]
+      //const tailCore = new Hypercore(ram)
+      const ptTail = new PassThrough()
+      ptTail.on('data', (d) => tailCore.append(d))
+      ptTail.on('close', async () => {
+        try {
           const headStream = this.core.createReadStream({
             start: 1,
             end: index,
           })
-          console.log('done writing end core', tailCore)
           const ptHead = new PassThrough()
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
-            console.log('done writing head core', headCore)
             const wavecores = [headCore, tailCore].map((c) =>
               Wavecore.fromCore(c, this)
             )
-            console.log('wavecores', wavecores)
             resolve(wavecores)
-            // resolve([headCore, tailCore])
           })
           headStream.pipe(ptHead)
-        })
-        const splitStream = this.core.createReadStream({ start: index })
-        splitStream.pipe(ptTail)
+        } catch (err) {
+          reject(err)
+        }
       })
-    } catch (err) {
-      throw err
-    }
+      const splitStream = this.core.createReadStream({ start: index })
+      splitStream.pipe(ptTail)
+    })
   }
   /**
    * Reads the source WAV into the class instance's Hypercore v10
