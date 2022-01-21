@@ -91,4 +91,19 @@ describe('Wavecore', function () {
         expect(forkId).to.equal(0)
     })
   })
+  describe('#_length', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core11 = new Wavecore({ source })
+    it('should return a length of 0 before the WAV is read into the core', function () {
+      const length = core11._length()
+      expect(length).to.not.equal(null) &&
+        expect(length).to.equal(0)
+    })
+    it('should return a length of 58 after the WAV is read into the core', async function () {
+      await Promise.resolve(core11.toHypercore())
+      const newLength = core11._length()
+      expect(newLength).to.not.equal(null) &&
+        expect(newLength).to.equal(58)
+    })
+  })
 })
