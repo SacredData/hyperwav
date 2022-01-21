@@ -51,13 +51,19 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
+  _discoveryKey() {
+    return this.core.discoveryKey
+  }
+  _encryptionKey() {
+    return this.core.encryptionKey
+  }
   /**
-   * Returns a `Promise` containing a `ReadStream` of the source audio file.
+   * Returns a `Promise` containing a `Buffer` of the source audio file.
    * Used internally to read the source WAV asset into a Hypercore v10 data
    * structure.
-   * @returns {Promise} readStream
+   * @returns {Promise} buffer
    */
-  _audioBuffer() {
+  _fileBuffer() {
     return new Promise((resolve, reject) => {
       if (!this.source) reject(new Error('Add a source first'))
       this.source.open((err) => {
@@ -65,12 +71,6 @@ class Wavecore {
         resolve(fs.readFileSync(this.source.pathname))
       })
     })
-  }
-  _discoveryKey() {
-    return this.core.discoveryKey
-  }
-  _encryptionKey() {
-    return this.core.encryptionKey
   }
   _fork() {
     return this.core.fork
@@ -174,7 +174,7 @@ class Wavecore {
     try {
       // Get WAV metadata and headers for index 0 of our hypercore
       const wavfile = new WaveFile()
-      wavfile.fromBuffer(await this._audioBuffer(), loadSamples)
+      wavfile.fromBuffer(await this._fileBuffer(), loadSamples)
 
       // Grab useful metadata from the wavfile object to append
       const { chunkSize, cue, fmt, smpl, tags } = wavfile

@@ -52,12 +52,12 @@ describe('Wavecore', function () {
         expect(relative).to.equal(19489)
     })
   })
-  describe('#_audioBuffer', function () {
+  describe('#_fileBuffer', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a buffer of the full source file', async function () {
       const core7 = new Wavecore({ source })
       await Promise.resolve(core7.toHypercore())
-      const buffer = await core7._audioBuffer()
+      const buffer = await core7._fileBuffer()
       expect(buffer).to.be.instanceof(Buffer)
     })
   })
