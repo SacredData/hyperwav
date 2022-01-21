@@ -26,6 +26,8 @@ applications, and web apps all from one codebase.
 - [ ] Overwrite: single block
 - [ ] Overwrite: range
 - [ ] Overwrite: discrete range of blocks
+#### P2P
+- [ ] Replication between Wavecores
 ## Getting Started
 ### Installation
 ```sh

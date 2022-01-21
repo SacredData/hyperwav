@@ -245,6 +245,11 @@ class Wavecore {
       throw err
     }
   }
+  /**
+   * Add the Wavecore's hypercore to its Wavecore.replicator, seeding it to the
+   * swarm via the Storyboard Sessions bootstrap servers.
+   * @returns {Replicator} replicator - The replicator instance with added core
+   */
   async replicate() {
     await this.replicator.add(this.core)
     return this.replicator
