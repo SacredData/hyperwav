@@ -181,7 +181,8 @@ class Wavecore {
     })
   }
   /**
-   * Reads the source WAV into the class instance's Hypercore v10
+   * Reads the source WAV into the class instance's Hypercore v10. Returns a
+   * Promise, which resolves the Wavecore's hypercore instance.
    * @async
    * @arg {Object} [opts={}] - Options object.
    * @arg {Boolean} [opts.loadSamples=false] - Whether to load WAV samples into memory
