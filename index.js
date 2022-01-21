@@ -128,13 +128,13 @@ class Wavecore {
   }
   /**
    * Splits the Wavecore at the provided index number, returning an array of two
-   * new `Hypercore` instances.
-   * @returns {Array} cores - Array of the new head and tail hypercores
+   * new `Wavecore` instances.
+   * @arg {Number} index - Index number from which to split the Wavecore audio.
+   * @returns {Wavecore[]} cores - Array of the new head and tail hypercores
    */
   split(index) {
     return new Promise((resolve, reject) => {
       const [headCore, tailCore] = [new Hypercore(ram), new Hypercore(ram)]
-      //const tailCore = new Hypercore(ram)
       const ptTail = new PassThrough()
       ptTail.on('data', (d) => tailCore.append(d))
       ptTail.on('close', async () => {
