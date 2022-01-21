@@ -88,7 +88,7 @@
       
     
 
-    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-fromCore-nav"><a href="Wavecore.html#.fromCore">fromCore</a></li><li data-type="method" id="Wavecore-_discoveryKey-nav"><a href="Wavecore.html#_discoveryKey">_discoveryKey</a></li><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_fork-nav"><a href="Wavecore.html#_fork">_fork</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_length-nav"><a href="Wavecore.html#_length">_length</a></li><li data-type="method" id="Wavecore-_wavStream-nav"><a href="Wavecore.html#_wavStream">_wavStream</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
+    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-fromCore-nav"><a href="Wavecore.html#.fromCore">fromCore</a></li><li data-type="method" id="Wavecore-_discoveryKey-nav"><a href="Wavecore.html#_discoveryKey">_discoveryKey</a></li><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_fork-nav"><a href="Wavecore.html#_fork">_fork</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_length-nav"><a href="Wavecore.html#_length">_length</a></li><li data-type="method" id="Wavecore-_wavStream-nav"><a href="Wavecore.html#_wavStream">_wavStream</a></li><li data-type="method" id="Wavecore-replicate-nav"><a href="Wavecore.html#replicate">replicate</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
   </nav>
 
   <div id="main">
@@ -107,6 +107,7 @@
 const Hypercore = require('hypercore')
 const { PassThrough } = require('stream')
 const ram = require('random-access-memory')
+const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
@@ -131,7 +132,8 @@ class Wavecore {
    * @returns {Wavecore} newCore - The new Wavecore
    */
   static fromCore(core, parent) {
-    return new this({ core, parent })
+    if (core instanceof Hypercore &amp;&amp; parent instanceof this)
+      return new this({ core, parent })
   }
   /**
    * The `Wavecore` class constructor.
@@ -155,7 +157,6 @@ class Wavecore {
       this.source = parent.source
       if (core instanceof Hypercore) this.core = core
     } else {
-      // if (parent !== null) this.parent = parent
       // Instantiate stream for appending WAV file data to hypercore
       if (source instanceof Source) this.source = source
       // Assign to a hypercore provided via constructor arguments
@@ -166,6 +167,7 @@ class Wavecore {
     this.core.on('ready', () =>
       console.log('core is ready!', this.core.keyPair)
     )
+    this.replicator = new Replicator()
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -328,7 +330,6 @@ class Wavecore {
           resolve(this.core)
         })
 
-        // const rs = fs.createReadStream(this.source.pathname, {highWaterMark: 8 * 1024})
         const rs = fs.createReadStream(this.source.pathname, {
           highWaterMark: 76800,
         })
@@ -348,6 +349,15 @@ class Wavecore {
     } catch (err) {
       throw err
     }
+  }
+  /**
+   * Add the Wavecore's hypercore to its Wavecore.replicator, seeding it to the
+   * swarm via the Storyboard Sessions bootstrap servers.
+   * @returns {Replicator} replicator - The replicator instance with added core
+   */
+  async replicate() {
+    await this.replicator.add(this.core)
+    return this.replicator
   }
   /**
    * Truncate the Hypercore to a shorter length.
