@@ -91,6 +91,13 @@ class Wavecore {
     return this.core.keyPair
   }
   /**
+   * Returns the current length of the Wavecore's hypercore.
+   * @returns {Number} length
+   */
+  _length() {
+    return this.core.length
+  }
+  /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
    * as a readable stream.
