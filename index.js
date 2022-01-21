@@ -26,7 +26,8 @@ class Wavecore {
    * @returns {Wavecore} newCore - The new Wavecore
    */
   static fromCore(core, parent) {
-    return new this({ core, parent })
+    if (core instanceof Hypercore && parent instanceof this)
+      return new this({ core, parent })
   }
   /**
    * The `Wavecore` class constructor.
