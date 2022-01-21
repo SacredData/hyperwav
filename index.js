@@ -72,9 +72,6 @@ class Wavecore {
   _discoveryKey() {
     return this.core.discoveryKey
   }
-  _encryptionKey() {
-    return this.core.encryptionKey
-  }
   /**
    * Returns a `Promise` containing a `Buffer` of the source audio file.
    * Used internally to read the source WAV asset into a Hypercore v10 data
@@ -120,11 +117,7 @@ class Wavecore {
    * @returns {Readable} readStream
    */
   _wavStream(start = 1, end = -1) {
-    try {
-      return this.core.createReadStream({ start, end })
-    } catch (err) {
-      throw err
-    }
+    return this.core.createReadStream({ start, end })
   }
   /**
    * Returns index and byte position of a byte offset.
