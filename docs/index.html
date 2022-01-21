@@ -107,7 +107,7 @@
       <h1>@storyboard-fm/wavecore</h1>
 <p>A data structure for real-time reading, editing, seeking, and encoding of mono
 WAV audio files via hypercore v10. Version control, branches, and peering come
-for free thanks to the <code>hypercore@next</code> branch.</p>
+for free thanks to the <a href="https://github.com/hypercore-protocol/hypercore-next"><code>hypercore@next</code></a> branch.</p>
 <h2>Background</h2>
 <p>This library's intent is to enable real-time peer-to-peer recording, editing, and
 remixing of audio content without sacrificing fidelity, privacy, nor speed.</p>
@@ -116,6 +116,23 @@ remixing of audio content without sacrificing fidelity, privacy, nor speed.</p>
 buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.</p>
+<h3>Functionality</h3>
+<h4>Create Operations</h4>
+<ul>
+<li>[x] Create new Wavecore with no inputs</li>
+<li>[x] Create new Wavecore with <a href="https://storyboard-fm.github.io/little-media-box/Source.html"><code>Source</code></a> input</li>
+<li>[x] Create new Wavecore with <a href="https://github.com/hypercore-protocol/hypercore-next">hypercore</a> input</li>
+<li>[x] Create new Wavecore from other Wavecore</li>
+<li>[x] Create new Wavecore with <a href="https://github.com/random-access-storage"><code>random-access-storage</code></a> input</li>
+</ul>
+<h4>Editing Operations</h4>
+<ul>
+<li>[x] Trim: shift</li>
+<li>[x] Trim: truncate</li>
+<li>[x] Split</li>
+<li>[ ] Join</li>
+<li>[ ] Overwrite</li>
+</ul>
 <h2>Getting Started</h2>
 <h3>Installation</h3>
 <pre class="prettyprint source lang-sh"><code>$ npm install command goes here
