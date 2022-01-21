@@ -132,7 +132,7 @@ class Wavecore {
    * index number. Use this to trim the Wavecore from the beginning of the file.
    * @returns {Wavecore} newCore
    */
-  async shift(index = 1) {
+  shift(index = 1) {
     return new Promise((resolve, reject) => {
       const shiftedRs = this.core.createReadStream({ start: index })
       const newCore = new Hypercore(ram)
