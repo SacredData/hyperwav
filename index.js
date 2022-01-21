@@ -51,7 +51,6 @@ class Wavecore {
       this.source = parent.source
       if (core instanceof Hypercore) this.core = core
     } else {
-      // if (parent !== null) this.parent = parent
       // Instantiate stream for appending WAV file data to hypercore
       if (source instanceof Source) this.source = source
       // Assign to a hypercore provided via constructor arguments
@@ -224,7 +223,6 @@ class Wavecore {
           resolve(this.core)
         })
 
-        // const rs = fs.createReadStream(this.source.pathname, {highWaterMark: 8 * 1024})
         const rs = fs.createReadStream(this.source.pathname, {
           highWaterMark: 76800,
         })
