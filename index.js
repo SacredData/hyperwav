@@ -161,6 +161,8 @@ class Wavecore {
    */
   split(index) {
     return new Promise((resolve, reject) => {
+      if (Number(index) > this.core.length)
+        reject(new Error('Index greater than core size!'))
       const [headCore, tailCore] = [new Hypercore(ram), new Hypercore(ram)]
       const ptTail = new PassThrough()
       ptTail.on('data', (d) => tailCore.append(d))
