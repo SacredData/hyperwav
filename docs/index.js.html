@@ -149,7 +149,6 @@ class Wavecore {
     // Declaring a specific storage supercedes defining a specific hypercore
     if (opts.storage) {
       this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
-    } else {
     }
     const { core, parent, source } = opts
     if (parent) {
@@ -167,7 +166,9 @@ class Wavecore {
     this.core.on('ready', () =>
       console.log('core is ready!', this.core.keyPair)
     )
-    this.replicator = new Replicator()
+    process.nextTick(() => {
+      this.replicator = new Replicator()
+    })
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -175,9 +176,6 @@ class Wavecore {
    */
   _discoveryKey() {
     return this.core.discoveryKey
-  }
-  _encryptionKey() {
-    return this.core.encryptionKey
   }
   /**
    * Returns a `Promise` containing a `Buffer` of the source audio file.
@@ -224,11 +222,7 @@ class Wavecore {
    * @returns {Readable} readStream
    */
   _wavStream(start = 1, end = -1) {
-    try {
-      return this.core.createReadStream({ start, end })
-    } catch (err) {
-      throw err
-    }
+    return this.core.createReadStream({ start, end })
   }
   /**
    * Returns index and byte position of a byte offset.
@@ -307,7 +301,7 @@ class Wavecore {
    * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
    * @returns {Hypercore} - The Hypercore v10 data structure
    */
-  async toHypercore(opts = { loadSamples: false, source: null }) {
+  async toHypercore(opts = { loadSamples: true, source: null }) {
     const { loadSamples, source } = opts
     if (source instanceof Source) this.source = source
     try {
