@@ -44,7 +44,6 @@ class Wavecore {
     // Declaring a specific storage supercedes defining a specific hypercore
     if (opts.storage) {
       this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
-    } else {
     }
     const { core, parent, source } = opts
     if (parent) {
@@ -62,7 +61,9 @@ class Wavecore {
     this.core.on('ready', () =>
       console.log('core is ready!', this.core.keyPair)
     )
-    this.replicator = new Replicator()
+    process.nextTick(() => {
+      this.replicator = new Replicator()
+    })
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
