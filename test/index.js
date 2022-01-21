@@ -7,6 +7,12 @@ const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
 
 describe('Wavecore', function () {
+  describe('#from', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core0 = new Wavecore({ source })
+    const newCore = Wavecore.fromCore(new Hypercore(ram), core0)
+    expect(newCore).to.be.instanceof(Wavecore)
+  })
   describe('#constructor', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a new instance of a Wavecore', function () {
@@ -104,6 +110,27 @@ describe('Wavecore', function () {
       const newLength = core11._length()
       expect(newLength).to.not.equal(null) &&
         expect(newLength).to.equal(58)
+    })
+  })
+  describe('#_keyPair', function() {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should return public and secret keys', async function() {
+      const core12 = new Wavecore({ source })
+      const kp = core12._keyPair()
+      expect(typeof(kp)).to.equal('object')
+    })
+  })
+  describe('#split', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    it('should split at index 20 and return two new Wavecores', async function () {
+      const core13 = new Wavecore({ source })
+      await Promise.resolve(core13.toHypercore())
+      Promise.resolve(await core13.split(20)).then(newCores => {
+        console.log(newCores)
+        expect(newCores).to.be.an('array') &&
+          expect(newCores[0].length).to.equal(20) &&
+          expect(newCores[1].length).to.equal(38)
+      })
     })
   })
 })
