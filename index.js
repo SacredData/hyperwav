@@ -203,7 +203,7 @@ class Wavecore {
    * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
    * @returns {Hypercore} - The Hypercore v10 data structure
    */
-  async toHypercore(opts = { loadSamples: false, source: null }) {
+  async toHypercore(opts = { loadSamples: true, source: null }) {
     const { loadSamples, source } = opts
     if (source instanceof Source) this.source = source
     try {
