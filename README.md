@@ -1,7 +1,7 @@
 # @storyboard-fm/wavecore
 A data structure for real-time reading, editing, seeking, and encoding of mono
 WAV audio files via hypercore v10. Version control, branches, and peering come
-for free thanks to the `hypercore@next` branch.
+for free thanks to the [`hypercore@next`][h] branch.
 ## Background
 This library's intent is to enable real-time peer-to-peer recording, editing, and
 remixing of audio content without sacrificing fidelity, privacy, nor speed.
@@ -11,6 +11,19 @@ The WAV audio can be sourced from any valid instance of
 buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.
+### Functionality
+#### Create Operations
+- [x] Create new Wavecore with no inputs
+- [x] Create new Wavecore with [`Source`][lmbsrc] input
+- [x] Create new Wavecore with [hypercore][h] input
+- [x] Create new Wavecore from other Wavecore
+- [x] Create new Wavecore with [`random-access-storage`][ras] input
+#### Editing Operations
+- [x] Trim: shift
+- [x] Trim: truncate
+- [x] Split
+- [ ] Join
+- [ ] Overwrite
 ## Getting Started
 ### Installation
 ```sh
@@ -75,4 +88,6 @@ We use `mocha`, with `nyc` for test coverage reporting.
 $ npm run test
 ```
 
+[h]: https://github.com/hypercore-protocol/hypercore-next
+[lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [ras]: https://github.com/random-access-storage
