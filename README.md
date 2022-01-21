@@ -23,7 +23,9 @@ applications, and web apps all from one codebase.
 - [x] Trim: [truncate][trunc]
 - [x] [Split][split]
 - [ ] Join
-- [ ] Overwrite
+- [ ] Overwrite: single block
+- [ ] Overwrite: range
+- [ ] Overwrite: discrete range of blocks
 ## Getting Started
 ### Installation
 ```sh
