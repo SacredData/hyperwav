@@ -88,7 +88,7 @@
       
     
 
-    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-_audioBuffer-nav"><a href="Wavecore.html#_audioBuffer">_audioBuffer</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_wavStream-nav"><a href="Wavecore.html#_wavStream">_wavStream</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
+    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_wavStream-nav"><a href="Wavecore.html#_wavStream">_wavStream</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
   </nav>
 
   <div id="main">
@@ -156,13 +156,19 @@ class Wavecore {
       console.log('core is ready!', this.core.keyPair)
     )
   }
+  _discoveryKey() {
+    return this.core.discoveryKey
+  }
+  _encryptionKey() {
+    return this.core.encryptionKey
+  }
   /**
-   * Returns a `Promise` containing a `ReadStream` of the source audio file.
+   * Returns a `Promise` containing a `Buffer` of the source audio file.
    * Used internally to read the source WAV asset into a Hypercore v10 data
    * structure.
-   * @returns {Promise} readStream
+   * @returns {Promise} buffer
    */
-  _audioBuffer() {
+  _fileBuffer() {
     return new Promise((resolve, reject) => {
       if (!this.source) reject(new Error('Add a source first'))
       this.source.open((err) => {
@@ -170,12 +176,6 @@ class Wavecore {
         resolve(fs.readFileSync(this.source.pathname))
       })
     })
-  }
-  _discoveryKey() {
-    return this.core.discoveryKey
-  }
-  _encryptionKey() {
-    return this.core.encryptionKey
   }
   _fork() {
     return this.core.fork
@@ -279,7 +279,7 @@ class Wavecore {
     try {
       // Get WAV metadata and headers for index 0 of our hypercore
       const wavfile = new WaveFile()
-      wavfile.fromBuffer(await this._audioBuffer(), loadSamples)
+      wavfile.fromBuffer(await this._fileBuffer(), loadSamples)
 
       // Grab useful metadata from the wavfile object to append
       const { chunkSize, cue, fmt, smpl, tags } = wavfile
