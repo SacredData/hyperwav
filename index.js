@@ -121,8 +121,8 @@ class Wavecore {
     }
   }
   /**
-   * Returns a new Wavecore that begins at the provided index number. Use this
-   * to trim the Wavecore from the beginning of the file.
+   * Returns a Promise which resolve a Wavecore that begins at the provided
+   * index number. Use this to trim the Wavecore from the beginning of the file.
    * @returns {Wavecore} newCore
    */
   async shift(index = 1) {
