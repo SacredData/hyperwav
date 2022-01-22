@@ -59,9 +59,11 @@ class Wavecore {
     }
     // If there is still no hypercore lets just make a sane default one
     if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
-    process.nextTick(() => {
-      this.replicator = new Replicator()
-    })
+    this.core.ready().then(
+      process.nextTick(() => {
+        this.replicator = new Replicator()
+      })
+    )
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -116,6 +118,19 @@ class Wavecore {
    */
   _wavStream(start = 1, end = -1) {
     return this.core.createReadStream({ start, end })
+  }
+  /**
+   * Add a Buffer of new data to the tail of the Wavecore.
+   * @arg {Buffer} data
+   * @returns {Number} index - The index number for the first block written.
+   */
+  async append(data) {
+    try {
+      const index = await this.core.append(data)
+      return index
+    } catch (err) {
+      throw err
+    }
   }
   /**
    * Join one or more wavecores to the end of this wavecore. Creates and returns
