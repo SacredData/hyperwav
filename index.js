@@ -58,9 +58,6 @@ class Wavecore {
     }
     // If there is still no hypercore lets just make a sane default one
     if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
-    this.core.on('ready', () =>
-      console.log('core is ready!', this.core.keyPair)
-    )
     process.nextTick(() => {
       this.replicator = new Replicator()
     })

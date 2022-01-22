@@ -10,8 +10,10 @@ describe('Wavecore', function () {
   describe('#from', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core0 = new Wavecore({ source })
-    const newCore = Wavecore.fromCore(new Hypercore(ram), core0)
-    expect(newCore).to.be.instanceof(Wavecore)
+    it('should create a Wavecore from another Wavecore', function () {
+      const newCore = Wavecore.fromCore(new Hypercore(ram), core0)
+      expect(newCore).to.be.instanceof(Wavecore)
+    })
   })
   describe('#constructor', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
