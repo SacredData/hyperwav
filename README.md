@@ -22,7 +22,7 @@ applications, and web apps all from one codebase.
 - [x] Trim: [shift][shift]
 - [x] Trim: [truncate][trunc]
 - [x] [Split][split]
-- [ ] Join
+- [x] [Join][concat]
 - [ ] Overwrite: single block
 - [ ] Overwrite: range
 - [ ] Overwrite: discrete range of blocks
@@ -92,6 +92,7 @@ We use `mocha`, with `nyc` for test coverage reporting.
 $ npm run test
 ```
 
+[concat]: https://storyboard-fm.github.io/wavecore/Wavecore.html#concat
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [ras]: https://github.com/random-access-storage
