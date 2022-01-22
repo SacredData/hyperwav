@@ -83,7 +83,6 @@ describe('Wavecore', function () {
       const core9 = new Wavecore({ source })
       await Promise.resolve(core9.toHypercore())
       const dk = core9._discoveryKey()
-      console.log(dk)
       expect(dk).to.be.instanceof(Buffer)
     })
   })
@@ -126,7 +125,6 @@ describe('Wavecore', function () {
       const core13 = new Wavecore({ source })
       await Promise.resolve(core13.toHypercore())
       Promise.resolve(await core13.split(20)).then(newCores => {
-        console.log(newCores)
         expect(newCores).to.be.an('array') &&
           expect(newCores[0].length).to.equal(20) &&
           expect(newCores[1].length).to.equal(38)
