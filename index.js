@@ -151,7 +151,6 @@ class Wavecore {
         concatWriter.on('close', () => {
           resolve(Wavecore.fromCore(concatCore, this))
         })
-        concatWriter.on('data', (d) => console.log('data', d))
         coreStreams.pipe(concatWriter)
       } catch (err) {
         reject(err)
