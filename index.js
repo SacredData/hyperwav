@@ -117,6 +117,12 @@ class Wavecore {
   _wavStream(start = 1, end = -1) {
     return this.core.createReadStream({ start, end })
   }
+  /**
+   * Join one or more wavecores to the end of this wavecore. Creates and returns
+   * a new Wavecore instance with the concatenated results.
+   * @arg {Wavecore[]} wavecores
+   * @returns {Wavecore}
+   */
   async concat(wavecores) {
     const allCores = [this, ...wavecores]
     const coreStreams = new MultiStream(
