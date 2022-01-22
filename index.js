@@ -1,5 +1,6 @@
 const fs = require('fs')
 const Hypercore = require('hypercore')
+const MultiStream = require('multistream')
 const { PassThrough } = require('stream')
 const ram = require('random-access-memory')
 const Replicator = require('@hyperswarm/replicator')
@@ -115,6 +116,26 @@ class Wavecore {
    */
   _wavStream(start = 1, end = -1) {
     return this.core.createReadStream({ start, end })
+  }
+  async concat(wavecores) {
+    const allCores = [this, ...wavecores]
+    const coreStreams = new MultiStream(
+      allCores.map((c) => c.core.createReadStream())
+    )
+    const concatCore = new Hypercore(ram)
+    await concatCore.ready()
+    return new Promise((resolve, reject) => {
+      try {
+        const concatWriter = concatCore.createWriteStream()
+        concatWriter.on('close', () => {
+          resolve(Wavecore.fromCore(concatCore, this))
+        })
+        concatWriter.on('data', (d) => console.log('data', d))
+        coreStreams.pipe(concatWriter)
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
   /**
    * Returns index and byte position of a byte offset.
