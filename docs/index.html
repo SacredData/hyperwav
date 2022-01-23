@@ -86,7 +86,7 @@
       
     
 
-    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-fromCore-nav"><a href="Wavecore.html#.fromCore">fromCore</a></li><li data-type="method" id="Wavecore-_discoveryKey-nav"><a href="Wavecore.html#_discoveryKey">_discoveryKey</a></li><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_fork-nav"><a href="Wavecore.html#_fork">_fork</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_length-nav"><a href="Wavecore.html#_length">_length</a></li><li data-type="method" id="Wavecore-_wavStream-nav"><a href="Wavecore.html#_wavStream">_wavStream</a></li><li data-type="method" id="Wavecore-append-nav"><a href="Wavecore.html#append">append</a></li><li data-type="method" id="Wavecore-concat-nav"><a href="Wavecore.html#concat">concat</a></li><li data-type="method" id="Wavecore-replicate-nav"><a href="Wavecore.html#replicate">replicate</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
+    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-fromCore-nav"><a href="Wavecore.html#.fromCore">fromCore</a></li><li data-type="method" id="Wavecore-fromRaw-nav"><a href="Wavecore.html#.fromRaw">fromRaw</a></li><li data-type="method" id="Wavecore-_discoveryKey-nav"><a href="Wavecore.html#_discoveryKey">_discoveryKey</a></li><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_fork-nav"><a href="Wavecore.html#_fork">_fork</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_length-nav"><a href="Wavecore.html#_length">_length</a></li><li data-type="method" id="Wavecore-_wavStream-nav"><a href="Wavecore.html#_wavStream">_wavStream</a></li><li data-type="method" id="Wavecore-append-nav"><a href="Wavecore.html#append">append</a></li><li data-type="method" id="Wavecore-concat-nav"><a href="Wavecore.html#concat">concat</a></li><li data-type="method" id="Wavecore-replicate-nav"><a href="Wavecore.html#replicate">replicate</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
   </nav>
 
   <div id="main">
@@ -116,6 +116,15 @@ remixing of audio content without sacrificing fidelity, privacy, nor speed.</p>
 buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.</p>
+<h3>Design</h3>
+<h4>Mono WAV Only</h4>
+<p>There were several factors influencing the decision to support only mono WAV
+data. Most notably, the Web Audio API's <code>AudioBuffer.getChannelData()</code> method,
+as its name suggests, loads audio data one channel at a time. Wavecore audio
+data can therefore be easily loaded inline with that method, querying it for
+specific data ranges before having to allocate buffer resources.</p>
+<p>By forcing all Wavecores to be mono-first, we also enable different processing to
+occur on each channel of audio without worrying about data interleaving.</p>
 <h3>Functionality</h3>
 <h4>Create Operations</h4>
 <ul>
@@ -198,10 +207,10 @@ console.log(wave.core.length) // 20
 </thead>
 <tbody>
 <tr>
-<td><img src="https://img.shields.io/badge/statements-67.46%25-red.svg?style=flat" alt="Statements"></td>
+<td><img src="https://img.shields.io/badge/statements-68.54%25-red.svg?style=flat" alt="Statements"></td>
 <td><img src="https://img.shields.io/badge/branches-74.28%25-red.svg?style=flat" alt="Branches"></td>
-<td><img src="https://img.shields.io/badge/functions-65%25-red.svg?style=flat" alt="Functions"></td>
-<td><img src="https://img.shields.io/badge/lines-70.27%25-red.svg?style=flat" alt="Lines"></td>
+<td><img src="https://img.shields.io/badge/functions-66.66%25-red.svg?style=flat" alt="Functions"></td>
+<td><img src="https://img.shields.io/badge/lines-70.9%25-red.svg?style=flat" alt="Lines"></td>
 </tr>
 </tbody>
 </table>
