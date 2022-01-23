@@ -8,7 +8,7 @@ const Wavecore = require('../')
 
 describe('Wavecore', function () {
   describe('#from', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
+    const source = new Source(path.join(__dirname, 'test.wav.raw'))
     const core0 = new Wavecore({ source })
     it('should create a Wavecore from another Wavecore', function () {
       const newCore = Wavecore.fromCore(new Hypercore(ram), core0)
@@ -38,7 +38,7 @@ describe('Wavecore', function () {
       const returnedCore = await Promise.resolve(core4.toHypercore())
       expect(returnedCore).to.be.instanceof(Hypercore) &&
         expect(core4.core).to.be.instanceof(Hypercore) &&
-        expect(core4.core.length).to.equal(58)
+        expect(core4.core.length).to.equal(57)
     })
   })
   describe('#truncate', function () {
@@ -56,8 +56,8 @@ describe('Wavecore', function () {
       const core6 = new Wavecore({ source })
       await Promise.resolve(core6.toHypercore())
       const [index, relative] = await core6.seek(20000)
-      expect(index).to.equal(1) &&
-        expect(relative).to.equal(19489)
+      expect(index).to.equal(0) &&
+        expect(relative).to.equal(20000)
     })
   })
   describe('#_fileBuffer', function () {
@@ -110,7 +110,7 @@ describe('Wavecore', function () {
       await Promise.resolve(core11.toHypercore())
       const newLength = core11._length()
       expect(newLength).to.not.equal(null) &&
-        expect(newLength).to.equal(58)
+        expect(newLength).to.equal(57)
     })
   })
   describe('#_keyPair', function() {

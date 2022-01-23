@@ -1,7 +1,8 @@
 const fs = require('fs')
 const Hypercore = require('hypercore')
 const MultiStream = require('multistream')
-const { PassThrough } = require('stream')
+const nanoprocess = require('nanoprocess')
+const { PassThrough, Readable } = require('stream')
 const ram = require('random-access-memory')
 const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
@@ -30,6 +31,20 @@ class Wavecore {
   static fromCore(core, parent) {
     if (core instanceof Hypercore && parent instanceof this)
       return new this({ core, parent })
+  }
+  /**
+   * Get new Wavecore from a raw audio asset - either its URI string or its
+   * `Source` instance.
+   * @arg {String|Source} rawFile - The raw audio file to copy from
+   * @returns {Wavecore} newCore - The new Wavecore
+   */
+  static fromRaw(rawFile) {
+    let source = null
+    if (typeof(rawFile) == 'string') source = new Source(rawFile)
+    if (rawFile instanceof Source) source = rawFile
+    if (!source) return
+
+    return new this({ source })
   }
   /**
    * The `Wavecore` class constructor.
@@ -236,44 +251,31 @@ class Wavecore {
    * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
    * @returns {Hypercore} - The Hypercore v10 data structure
    */
-  async toHypercore(opts = { loadSamples: true, source: null }) {
-    const { loadSamples, source } = opts
+  async toHypercore(opts = { source: null }) {
+    const { source } = opts
     if (source instanceof Source) this.source = source
     try {
-      // Get WAV metadata and headers for index 0 of our hypercore
-      const wavfile = new WaveFile()
-      wavfile.fromBuffer(await this._fileBuffer(), loadSamples)
-
-      // Grab useful metadata from the wavfile object to append
-      const { chunkSize, cue, fmt, smpl, tags } = wavfile
-
       await this.core.ready()
 
       return new Promise((resolve, reject) => {
-        // PassThrough will append each block received from readStream to hypercore
-        const pt = new PassThrough()
-        pt.on('error', (err) => reject(err))
-        pt.on('data', (d) => this.core.append(d))
-        pt.on('close', async () => {
-          await this.core.update()
-          resolve(this.core)
-        })
+        this.source.open((err) => {
+          if (err) reject(err)
+          // PassThrough will append each block received from readStream to hypercore
+          const pt = new PassThrough()
+          pt.on('error', (err) => reject(err))
+          pt.on('data', async (d) => await this.core.append(d))
+          pt.on('close', async () => {
+            await this.core.update()
+            resolve(this.core)
+          })
 
-        const rs = fs.createReadStream(this.source.pathname, {
-          highWaterMark: 76800,
-        })
-        rs.on('error', (err) => reject(err))
+          const rs = fs.createReadStream(this.source.pathname, {
+            highWaterMark: 76800,
+          })
+          rs.on('error', (err) => reject(err))
 
-        this.core
-          // First, create index 0 with all necessary WAV metadata
-          .append(
-            JSON.stringify(
-              Object.assign({ chunkSize, cue, fmt, smpl, tags }, {})
-            )
-          )
-          // Second, read WAV into Hypercore, beginning at index 1
-          .then(() => rs.pipe(pt))
-          .catch((err) => reject(err))
+          rs.pipe(pt)
+        })
       })
     } catch (err) {
       throw err
