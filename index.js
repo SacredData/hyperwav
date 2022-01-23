@@ -256,12 +256,16 @@ class Wavecore {
     if (source instanceof Source) this.source = source
     try {
       await this.core.ready()
-      await this.core.append(Buffer.from(JSON.stringify({
-        sampleRate: 48000,
-        depth: 16,
-        encoding: 'signed',
-        channels: 1
-      })))
+      await this.core.append(
+        Buffer.from(
+          JSON.stringify({
+            sampleRate: 48000,
+            depth: 16,
+            encoding: 'signed',
+            channels: 1,
+          })
+        )
+      )
 
       return new Promise((resolve, reject) => {
         this.source.open((err) => {
