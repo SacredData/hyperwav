@@ -1,9 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('.')
+const Wavecore = require('..')
 
-const source = new Source(path.join(__dirname, 'test', 'test.wav'))
+const source = new Source(path.join(__dirname, '..', 'test', 'test.wav'))
 source.open(async () => {
   console.log('opened source WAV file', source)
   async function main() {
