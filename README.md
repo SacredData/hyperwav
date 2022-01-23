@@ -11,6 +11,16 @@ The WAV audio can be sourced from any valid instance of
 buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.
+### Design
+#### Mono WAV Only
+There were several factors influencing the decision to support only mono WAV
+data. Most notably, the Web Audio API's `AudioBuffer.getChannelData()` method,
+as its name suggests, loads audio data one channel at a time. Wavecore audio
+data can therefore be easily loaded inline with that method, querying it for
+specific data ranges before having to allocate buffer resources.
+
+By forcing all Wavecores to be mono-first, we also enable different processing to
+occur on each channel of audio without worrying about data interleaving.
 ### Functionality
 #### Create Operations
 - [x] Create new Wavecore with no inputs
