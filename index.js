@@ -8,7 +8,7 @@ const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
-const INDEX_SIZE = 48000
+const INDEX_SIZE = 76800
 
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
@@ -156,7 +156,7 @@ class Wavecore {
     try {
       let counter = n || 1
       while (counter > 0) {
-        await this.core.append(Buffer.alloc(INDEX_SIZE))
+        await this.core.append(Buffer.alloc(this.indexSize))
         counter--
       }
     } catch (err) {
