@@ -57,7 +57,15 @@ class Wavecore {
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {Wavecore}
    */
-  constructor(opts = { core: null, indexSize: null, parent: null, source: null, storage: ram }) {
+  constructor(
+    opts = {
+      core: null,
+      indexSize: null,
+      parent: null,
+      source: null,
+      storage: ram,
+    }
+  ) {
     this.core = null
     this.source = null
     // Declaring a specific storage supercedes defining a specific hypercore
@@ -301,7 +309,7 @@ class Wavecore {
           })
 
           const rs = fs.createReadStream(this.source.pathname, {
-            highWaterMark: this.indexSize
+            highWaterMark: this.indexSize,
           })
           rs.on('error', (err) => reject(err))
 
