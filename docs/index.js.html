@@ -113,7 +113,7 @@ const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
-const INDEX_SIZE = 76800
+const INDEX_SIZE = 48000
 
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
@@ -157,18 +157,27 @@ class Wavecore {
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
    * @arg {Hypercore} [opts.core=null] - Provide a previously-made hypercore.
+   * @arg {Integer} [opts.indexSize=null] - Declare alternate index size.
    * @arg {Source} [opts.source=null] - Provide `little-media-box` source.
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {Wavecore}
    */
-  constructor(opts = { core: null, parent: null, source: null, storage: ram }) {
+  constructor(
+    opts = {
+      core: null,
+      indexSize: null,
+      parent: null,
+      source: null,
+      storage: ram,
+    }
+  ) {
     this.core = null
     this.source = null
     // Declaring a specific storage supercedes defining a specific hypercore
     if (opts.storage) {
       this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
     }
-    const { core, parent, source } = opts
+    const { core, indexSize, parent, source } = opts
     if (parent) {
       this.parent = parent
       this.source = parent.source
@@ -186,6 +195,7 @@ class Wavecore {
         this.replicator = new Replicator()
       })
     )
+    this.indexSize = indexSize ? indexSize : INDEX_SIZE
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -404,7 +414,7 @@ class Wavecore {
           })
 
           const rs = fs.createReadStream(this.source.pathname, {
-            highWaterMark: INDEX_SIZE,
+            highWaterMark: this.indexSize,
           })
           rs.on('error', (err) => reject(err))
 
