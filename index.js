@@ -8,7 +8,6 @@ const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
-
 const INDEX_SIZE = 76800
 
 /**
