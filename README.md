@@ -28,14 +28,18 @@ occur on each channel of audio without worrying about data interleaving.
 - [x] Create new Wavecore with [hypercore][h] input
 - [x] Create new Wavecore from other Wavecore
 - [x] Create new Wavecore with [`random-access-storage`][ras] input
+#### Write Operations
+- [ ] Pad head (Add blank data to head to extend duration)
+- [x] Pad tail (Add blank data to tail to extend duration)
 #### Editing Operations
 - [x] Trim: [shift][shift]
 - [x] Trim: [truncate][trunc]
 - [x] [Split][split]
 - [x] [Join][concat]
-- [ ] Overwrite: single block
-- [ ] Overwrite: range
-- [ ] Overwrite: discrete range of blocks
+- [ ] Replace
+#### Tagging Operations
+- [ ] Cue points
+- [ ] Segments
 #### P2P
 - [ ] Replication between Wavecores
 ## Getting Started

@@ -134,15 +134,23 @@ occur on each channel of audio without worrying about data interleaving.</p>
 <li>[x] Create new Wavecore from other Wavecore</li>
 <li>[x] Create new Wavecore with <a href="https://github.com/random-access-storage"><code>random-access-storage</code></a> input</li>
 </ul>
+<h4>Write Operations</h4>
+<ul>
+<li>[ ] Pad head (Add blank data to head to extend duration)</li>
+<li>[x] Pad tail (Add blank data to tail to extend duration)</li>
+</ul>
 <h4>Editing Operations</h4>
 <ul>
 <li>[x] Trim: <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#shift">shift</a></li>
 <li>[x] Trim: <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate">truncate</a></li>
 <li>[x] <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#split">Split</a></li>
 <li>[x] <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#concat">Join</a></li>
-<li>[ ] Overwrite: single block</li>
-<li>[ ] Overwrite: range</li>
-<li>[ ] Overwrite: discrete range of blocks</li>
+<li>[ ] Replace</li>
+</ul>
+<h4>Tagging Operations</h4>
+<ul>
+<li>[ ] Cue points</li>
+<li>[ ] Segments</li>
 </ul>
 <h4>P2P</h4>
 <ul>
@@ -250,10 +258,10 @@ main()
 </thead>
 <tbody>
 <tr>
-<td><img src="https://img.shields.io/badge/statements-64.39%25-red.svg?style=flat" alt="Statements"></td>
-<td><img src="https://img.shields.io/badge/branches-62.79%25-red.svg?style=flat" alt="Branches"></td>
-<td><img src="https://img.shields.io/badge/functions-66.66%25-red.svg?style=flat" alt="Functions"></td>
-<td><img src="https://img.shields.io/badge/lines-68.42%25-red.svg?style=flat" alt="Lines"></td>
+<td><img src="https://img.shields.io/badge/statements-61.87%25-red.svg?style=flat" alt="Statements"></td>
+<td><img src="https://img.shields.io/badge/branches-60%25-red.svg?style=flat" alt="Branches"></td>
+<td><img src="https://img.shields.io/badge/functions-65%25-red.svg?style=flat" alt="Functions"></td>
+<td><img src="https://img.shields.io/badge/lines-65.28%25-red.svg?style=flat" alt="Lines"></td>
 </tr>
 </tbody>
 </table>
