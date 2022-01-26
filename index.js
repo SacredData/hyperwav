@@ -8,6 +8,9 @@ const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
+
+const INDEX_SIZE = 76800
+
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
  * audio files in a real-time, peer-to-peer context.
@@ -133,6 +136,23 @@ class Wavecore {
    */
   _wavStream(start = 1, end = -1) {
     return this.core.createReadStream({ start, end })
+  }
+  /**
+   * Append blank data to the tail of the wavecore. If no index count is
+   * specified the function will add one index of blank data.
+   * @async
+   * @arg {Number} [n] - Number of indeces of blank data to append.
+   */
+  async addBlank(n) {
+    try {
+      let counter = n || 1
+      while (counter > 0) {
+        await this.core.append(Buffer.alloc(INDEX_SIZE))
+        counter--
+      }
+    } catch (err) {
+      throw err
+    }
   }
   /**
    * Add a Buffer of new data to the tail of the Wavecore.
@@ -280,7 +300,7 @@ class Wavecore {
           })
 
           const rs = fs.createReadStream(this.source.pathname, {
-            highWaterMark: 76800,
+            highWaterMark: INDEX_SIZE,
           })
           rs.on('error', (err) => reject(err))
 
