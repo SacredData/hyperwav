@@ -18,8 +18,8 @@ source.open(async () => {
     console.log('done')
     console.log('the hypercore is smaller now', w.core)
     console.log('lets write the shorter file to disk...')
-    w._wavStream().pipe(
-      fs.createWriteStream('shorter-test.wav')
+    w._rawStream().pipe(
+      fs.createWriteStream('shorter-test.raw')
       .on('close', () => console.log('done writing'))
     )
     return
