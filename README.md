@@ -143,7 +143,7 @@ main()
 
 | Statements                  | Branches                | Functions                 | Lines             |
 | --------------------------- | ----------------------- | ------------------------- | ----------------- |
-| ![Statements](https://img.shields.io/badge/statements-61.87%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-60%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-65%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-65.28%25-red.svg?style=flat) |
+| ![Statements](https://img.shields.io/badge/statements-62.14%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-59.57%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-65%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-65.57%25-red.svg?style=flat) |
 
 We use `mocha`, with `nyc` for test coverage reporting.
 ```sh
