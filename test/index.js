@@ -69,12 +69,12 @@ describe('Wavecore', function () {
       expect(buffer).to.be.instanceof(Buffer)
     })
   })
-  describe('#_wavStream', function () {
+  describe('#_rawStream', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a readStream containing the test file', async function () {
       const core8 = new Wavecore({ source })
       await Promise.resolve(core8.toHypercore())
-      const rs = core8._wavStream()
+      const rs = core8._rawStream()
       expect(rs).to.have.property('_readableState') &&
         expect(rs.readable).to.be.true
     })
