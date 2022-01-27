@@ -4,9 +4,7 @@ const MultiStream = require('multistream')
 const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')
 const ram = require('random-access-memory')
-const Replicator = require('@hyperswarm/replicator')
 const { Source } = require('@storyboard-fm/little-media-box')
-const WaveFile = require('wavefile').WaveFile
 
 const INDEX_SIZE = 76800
 
@@ -75,7 +73,7 @@ class Wavecore {
     const { core, indexSize, parent, source } = opts
     if (parent) {
       this.parent = parent
-      this.source = parent.source
+      this.source = parent.source || null
       if (core instanceof Hypercore) this.core = core
     } else {
       // Instantiate stream for appending WAV file data to hypercore
@@ -87,11 +85,10 @@ class Wavecore {
     if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
     this.core.ready().then(
       process.nextTick(() => {
-        this.replicator = new Replicator()
+        this.indexSize = indexSize ? indexSize : INDEX_SIZE
+        this.tags = new Map()
       })
     )
-    this.indexSize = indexSize ? indexSize : INDEX_SIZE
-    this.tags = new Map()
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -320,15 +317,6 @@ class Wavecore {
     } catch (err) {
       throw err
     }
-  }
-  /**
-   * Add the Wavecore's hypercore to its Wavecore.replicator, seeding it to the
-   * swarm via the Storyboard Sessions bootstrap servers.
-   * @returns {Replicator} replicator - The replicator instance with added core
-   */
-  async replicate() {
-    await this.replicator.add(this.core)
-    return this.replicator
   }
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
