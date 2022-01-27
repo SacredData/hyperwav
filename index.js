@@ -91,6 +91,7 @@ class Wavecore {
       })
     )
     this.indexSize = indexSize ? indexSize : INDEX_SIZE
+    this.tags = new Map()
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
@@ -328,6 +329,20 @@ class Wavecore {
   async replicate() {
     await this.replicator.add(this.core)
     return this.replicator
+  }
+  /**
+   * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
+   * @arg {String} id - The four-character RIFF tag ID
+   * @arg {String} value - The string value to assign the RIFF tag.
+   */
+  tag(id, value) {
+    try {
+      this.tags.set(`${id}`, `${value}`)
+      return
+    } catch (err) {
+      console.error(err)
+      return err
+    }
   }
   /**
    * Truncate the Hypercore to a shorter length.
