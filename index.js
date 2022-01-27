@@ -141,8 +141,11 @@ class Wavecore {
    * @arg {Number} [end=-1] - Index where the stream should end.
    * @returns {Readable} readStream
    */
-  _wavStream(start = 1, end = -1) {
-    return this.core.createReadStream({ start, end })
+  _rawStream(start = 1, end = -1) {
+    return this.core.createReadStream(
+      { start, end },
+      { highWaterMark: this.indexSize }
+    )
   }
   /**
    * Append blank data to the tail of the wavecore. If no index count is
