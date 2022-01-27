@@ -61,14 +61,17 @@ class Wavecore {
       indexSize: null,
       parent: null,
       source: null,
-      storage: ram,
+      storage: null,
     }
   ) {
     this.core = null
     this.source = null
+    let storage = null
     // Declaring a specific storage supercedes defining a specific hypercore
     if (opts.storage) {
-      this.core = new Hypercore(opts.storage, Wavecore.coreOpts())
+      storage = opts.storage
+    } else {
+      storage = ram
     }
     const { core, indexSize, parent, source } = opts
     if (parent) {
@@ -82,7 +85,7 @@ class Wavecore {
       if (core instanceof Hypercore) this.core = core
     }
     // If there is still no hypercore lets just make a sane default one
-    if (!this.core) this.core = new Hypercore(ram, Wavecore.coreOpts())
+    if (!this.core) this.core = new Hypercore(storage, Wavecore.coreOpts())
     this.core.ready().then(
       process.nextTick(() => {
         this.indexSize = indexSize ? indexSize : INDEX_SIZE
