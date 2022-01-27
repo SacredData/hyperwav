@@ -50,12 +50,12 @@ $ npm install command goes here
 ## Examples
 ### Recording Into A Wavecore
 ```js
-const w = new Wavecore()
+const core = new Hypercore(ram)
 mediaRecorder.onstop = function() {
-  console.log(`core length: ${w.core.length}`)
+  const wave = new Wavecore({ core })
 }
 mediaRecorder.ondataavailable = function(d) {
-  w.append(d.data)
+  core.append(d.data)
 }
 ```
 ### Splitting Audio
