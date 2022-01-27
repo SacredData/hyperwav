@@ -161,6 +161,15 @@ occur on each channel of audio without worrying about data interleaving.</p>
 <pre class="prettyprint source lang-sh"><code>$ npm install command goes here
 </code></pre>
 <h2>Examples</h2>
+<h3>Recording Into A Wavecore</h3>
+<pre class="prettyprint source lang-js"><code>const w = new Wavecore()
+mediaRecorder.onstop = function() {
+  console.log(`core length: ${w.core.length}`)
+}
+mediaRecorder.ondataavailable = function(d) {
+  w.append(d.data)
+}
+</code></pre>
 <h3>Splitting Audio</h3>
 <p>Execute this script at <code>example2.js</code>.</p>
 <pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')

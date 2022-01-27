@@ -48,6 +48,16 @@ occur on each channel of audio without worrying about data interleaving.
 $ npm install command goes here
 ```
 ## Examples
+### Recording Into A Wavecore
+```js
+const w = new Wavecore()
+mediaRecorder.onstop = function() {
+  console.log(`core length: ${w.core.length}`)
+}
+mediaRecorder.ondataavailable = function(d) {
+  w.append(d.data)
+}
+```
 ### Splitting Audio
 
 Execute this script at `example2.js`.
