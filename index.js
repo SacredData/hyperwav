@@ -76,11 +76,11 @@ class Wavecore {
     const { core, indexSize, parent, source } = opts
     if (parent) {
       this.parent = parent
-      this.source = parent.source || null
+      this.source = Source.from(parent.source) || null
       if (core instanceof Hypercore) this.core = core
     } else {
       // Instantiate stream for appending WAV file data to hypercore
-      if (source instanceof Source) this.source = source
+      if (source instanceof Source) this.source = Source.from(source)
       // Assign to a hypercore provided via constructor arguments
       if (core instanceof Hypercore) this.core = core
     }
@@ -187,6 +187,7 @@ class Wavecore {
    * @returns {Wavecore}
    */
   async concat(wavecores) {
+    await Promise.all(wavecores.map(w=>w.toHypercore()))
     const allCores = [this, ...wavecores]
     const coreStreams = new MultiStream(
       allCores.map((c) => c.core.createReadStream())
@@ -286,40 +287,44 @@ class Wavecore {
    */
   async toHypercore(opts = { source: null }) {
     const { source } = opts
-    if (source instanceof Source) this.source = source
+    if (source instanceof Source) this.source = Source.from(source)
     try {
       await this.core.ready()
-      await this.core.append(
-        Buffer.from(
-          JSON.stringify({
-            sampleRate: 48000,
-            depth: 16,
-            encoding: 'signed',
-            channels: 1,
-          })
+
+      if (!this.source.opened) {
+        await this.core.append(
+          Buffer.from(
+            JSON.stringify({
+              sampleRate: 48000,
+              depth: 16,
+              encoding: 'signed',
+              channels: 1,
+            })
+          )
         )
-      )
+        return new Promise((resolve, reject) => {
+          this.source.open((err) => {
+            if (err) reject(err)
+            // PassThrough will append each block received from readStream to hypercore
+            const pt = new PassThrough()
+            pt.on('error', (err) => reject(err))
+            pt.on('data', async (d) => await this.core.append(d))
+            pt.on('close', async () => {
+              await this.core.update()
+              resolve(this.core)
+            })
 
-      return new Promise((resolve, reject) => {
-        this.source.open((err) => {
-          if (err) reject(err)
-          // PassThrough will append each block received from readStream to hypercore
-          const pt = new PassThrough()
-          pt.on('error', (err) => reject(err))
-          pt.on('data', async (d) => await this.core.append(d))
-          pt.on('close', async () => {
-            await this.core.update()
-            resolve(this.core)
+            const rs = fs.createReadStream(this.source.pathname, {
+              highWaterMark: this.indexSize,
+            })
+            rs.on('error', (err) => reject(err))
+
+            rs.pipe(pt)
           })
-
-          const rs = fs.createReadStream(this.source.pathname, {
-            highWaterMark: this.indexSize,
-          })
-          rs.on('error', (err) => reject(err))
-
-          rs.pipe(pt)
         })
-      })
+      } else {
+        return
+      }
     } catch (err) {
       throw err
     }
