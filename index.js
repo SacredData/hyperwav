@@ -219,6 +219,24 @@ class Wavecore {
     }
   }
   /**
+   * Start a new `session` for this Wavecore.
+   */
+  session() {
+    return this.core.session()
+  }
+  /**
+   * Get a list of the sessions on this Wavecore's hypercore.
+   */
+  sessions() {
+    return this.core.sessions
+  }
+  /**
+   * Snapshot the current session and begin a new one.
+   */
+  snapshot() {
+    return this.core.snapshot()
+  }
+  /**
    * Returns a Promise which resolve a Wavecore that begins at the provided
    * index number. Use this to trim the Wavecore from the beginning of the file.
    * @returns {Wavecore} newCore
