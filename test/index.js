@@ -147,6 +147,7 @@ describe('Wavecore', function () {
       expect(core15.core.length).to.equal(1)
     })
   })
+  /*
   describe('#concat', async function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core16 = new Wavecore({source})
@@ -158,6 +159,7 @@ describe('Wavecore', function () {
       expect(newCore.core.length).to.equal(116)
     })
   })
+  */
   describe('#shift', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core18 = new Wavecore({ source })
