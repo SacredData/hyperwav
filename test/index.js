@@ -133,4 +133,38 @@ describe('Wavecore', function () {
       })
     })
   })
+  describe('#addBlank', function () {
+    const core14 = new Wavecore()
+    it('should produce 3 indeces of blank data and append to the end', async function() {
+      await core14.addBlank(3)
+      expect(core14.core.length).to.equal(3)
+    })
+  })
+  describe('#append', async function () {
+    const core15 = new Wavecore()
+    it('should add the buffer to the hypercore at index 0', async function () {
+      await core15.append(Buffer.from('hello'))
+      expect(core15.core.length).to.equal(1)
+    })
+  })
+  describe('#concat', async function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core16 = new Wavecore({source})
+    const core17 = new Wavecore({source})
+    const concatCore = new Wavecore()
+    it('should concatenate the two wavecores into the concatenated core', async function () {
+      await Promise.all([core16.toHypercore(), core16.toHypercore()])
+      const newCore = await concatCore.concat([core16, core17])
+      expect(newCore.core.length).to.equal(116)
+    })
+  })
+  describe('#shift', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core18 = new Wavecore({ source })
+    it('should return a new wavecore with index 0 removed', async function () {
+      await Promise.resolve(core18.toHypercore())
+      const newCore = await Promise.resolve(core18.shift(1))
+      expect(newCore.core.length).to.equal(57)
+    })
+  })
 })
