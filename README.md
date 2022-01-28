@@ -88,9 +88,9 @@ const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
 await Promise.resolve(wave.toHypercore())
-console.log(wave.core.length) // 68
+console.log(wave.core.length) // 58
 const shiftedCore = await Promise.resolve(wave.shift(20))
-console.log(shiftedCore.length) // 48
+console.log(shiftedCore.length) // 38
 ```
 #### Trim From End
 The following truncates a Wavecore to the first 20 indeces.
@@ -101,9 +101,31 @@ const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
 await Promise.resolve(wave.toHypercore())
-console.log(wave.core.length) // 68
+console.log(wave.core.length) // 58
 await wave.truncate(20)
 console.log(wave.core.length) // 20
+```
+#### Editing Sessions & Snapshots
+Here we make a snapshot of our Wavecore so we can test out an edit to the WAV
+audio. By using our new session to test the edit we leave the original Wavecore
+audio in-tact, enabling non-destructive editing with no additional memory
+allocation necessary!
+```js
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test/test.wav.raw')
+
+const wave = new Wavecore({ source })
+await Promise.resolve(wave.toHypercore())
+
+wave.snapshot()
+wave.session()
+
+const tryEdit = Wavecore.fromCore(wave.sessions()[1], wave)
+await Promise.resolve(tryEdit.toHypercore())
+await tryEdit.truncate(10)
+
+console.log(tryEdit.core.length) // 10
+console.log(wave.core.length) // 58
 ```
 ### Production Templates
 Produce a new podcast episode by setting up a template Wavecore, which puts some
