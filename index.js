@@ -187,7 +187,6 @@ class Wavecore {
    * @returns {Wavecore}
    */
   async concat(wavecores) {
-    await Promise.all(wavecores.map(w=>w.toHypercore()))
     const allCores = [this, ...wavecores]
     const coreStreams = new MultiStream(
       allCores.map((c) => c.core.createReadStream())
@@ -290,19 +289,18 @@ class Wavecore {
     if (source instanceof Source) this.source = Source.from(source)
     try {
       await this.core.ready()
-
-      if (!this.source.opened) {
-        await this.core.append(
-          Buffer.from(
-            JSON.stringify({
-              sampleRate: 48000,
-              depth: 16,
-              encoding: 'signed',
-              channels: 1,
-            })
+      return new Promise(async (resolve, reject) => {
+        if (!this.source.opened) {
+          await this.core.append(
+            Buffer.from(
+              JSON.stringify({
+                sampleRate: 48000,
+                depth: 16,
+                encoding: 'signed',
+                channels: 1,
+              })
+            )
           )
-        )
-        return new Promise((resolve, reject) => {
           this.source.open((err) => {
             if (err) reject(err)
             // PassThrough will append each block received from readStream to hypercore
@@ -321,10 +319,10 @@ class Wavecore {
 
             rs.pipe(pt)
           })
-        })
-      } else {
-        return
-      }
+        } else {
+          resolve(this.core)
+        }
+      })
     } catch (err) {
       throw err
     }
