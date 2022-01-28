@@ -188,9 +188,7 @@ class Wavecore {
    */
   async concat(wavecores) {
     const allCores = [this, ...wavecores]
-    const coreStreams = new MultiStream(
-      allCores.map((c) => c.core.createReadStream())
-    )
+    const coreStreams = new MultiStream(allCores.map((c) => c._rawStream()))
     const concatCore = new Hypercore(ram)
     await concatCore.ready()
     return new Promise((resolve, reject) => {
