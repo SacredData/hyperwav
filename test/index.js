@@ -147,19 +147,6 @@ describe('Wavecore', function () {
       expect(core15.core.length).to.equal(1)
     })
   })
-  /*
-  describe('#concat', async function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core16 = new Wavecore({source})
-    const core17 = new Wavecore({source})
-    const concatCore = new Wavecore()
-    it('should concatenate the two wavecores into the concatenated core', async function () {
-      await Promise.all([core16.toHypercore(), core16.toHypercore()])
-      const newCore = await concatCore.concat([core16, core17])
-      expect(newCore.core.length).to.equal(116)
-    })
-  })
-  */
   describe('#shift', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core18 = new Wavecore({ source })
