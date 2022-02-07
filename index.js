@@ -25,12 +25,15 @@ class Wavecore {
    * Get new Wavecore from a previously-instantiated hypercore and its parent
    * Wavecore.
    * @arg {Wavecore} core - The Hypercore to copy from
-   * @arg {Wavecore} parent - The Wavecore from which the core derives
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Wavecore} [opts.parent=null] - The Wavecore from which the core derives
+   * @arg {Source} [opts.source=null] - The Source from which the core derives
    * @returns {Wavecore} newCore - The new Wavecore
    */
-  static fromCore(core, parent) {
-    if (core instanceof Hypercore && parent instanceof this)
-      return new this({ core, parent })
+  static fromCore(core, opts={ parent: null, source: null }) {
+    const { parent, source } = opts
+    if (core instanceof Hypercore)
+      return new this({ core, parent, source })
   }
   /**
    * Get new Wavecore from a raw audio asset - either its URI string or its
