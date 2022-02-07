@@ -11,7 +11,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav.raw'))
     const core0 = new Wavecore({ source })
     it('should create a Wavecore from another Wavecore', function () {
-      const newCore = Wavecore.fromCore(new Hypercore(ram), core0)
+      const newCore = Wavecore.fromCore(new Hypercore(ram), {parent: core0, source})
       expect(newCore).to.be.instanceof(Wavecore)
     })
   })
