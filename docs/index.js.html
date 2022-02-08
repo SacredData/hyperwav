@@ -88,7 +88,7 @@
       
     
 
-    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-fromCore-nav"><a href="Wavecore.html#.fromCore">fromCore</a></li><li data-type="method" id="Wavecore-fromRaw-nav"><a href="Wavecore.html#.fromRaw">fromRaw</a></li><li data-type="method" id="Wavecore-_discoveryKey-nav"><a href="Wavecore.html#_discoveryKey">_discoveryKey</a></li><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_fork-nav"><a href="Wavecore.html#_fork">_fork</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_length-nav"><a href="Wavecore.html#_length">_length</a></li><li data-type="method" id="Wavecore-_rawStream-nav"><a href="Wavecore.html#_rawStream">_rawStream</a></li><li data-type="method" id="Wavecore-addBlank-nav"><a href="Wavecore.html#addBlank">addBlank</a></li><li data-type="method" id="Wavecore-append-nav"><a href="Wavecore.html#append">append</a></li><li data-type="method" id="Wavecore-concat-nav"><a href="Wavecore.html#concat">concat</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-session-nav"><a href="Wavecore.html#session">session</a></li><li data-type="method" id="Wavecore-sessions-nav"><a href="Wavecore.html#sessions">sessions</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-snapshot-nav"><a href="Wavecore.html#snapshot">snapshot</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-tag-nav"><a href="Wavecore.html#tag">tag</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
+    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-fromCore-nav"><a href="Wavecore.html#.fromCore">fromCore</a></li><li data-type="method" id="Wavecore-fromRaw-nav"><a href="Wavecore.html#.fromRaw">fromRaw</a></li><li data-type="method" id="Wavecore-_discoveryKey-nav"><a href="Wavecore.html#_discoveryKey">_discoveryKey</a></li><li data-type="method" id="Wavecore-_fileBuffer-nav"><a href="Wavecore.html#_fileBuffer">_fileBuffer</a></li><li data-type="method" id="Wavecore-_fork-nav"><a href="Wavecore.html#_fork">_fork</a></li><li data-type="method" id="Wavecore-_keyPair-nav"><a href="Wavecore.html#_keyPair">_keyPair</a></li><li data-type="method" id="Wavecore-_length-nav"><a href="Wavecore.html#_length">_length</a></li><li data-type="method" id="Wavecore-_rawStream-nav"><a href="Wavecore.html#_rawStream">_rawStream</a></li><li data-type="method" id="Wavecore-addBlank-nav"><a href="Wavecore.html#addBlank">addBlank</a></li><li data-type="method" id="Wavecore-append-nav"><a href="Wavecore.html#append">append</a></li><li data-type="method" id="Wavecore-concat-nav"><a href="Wavecore.html#concat">concat</a></li><li data-type="method" id="Wavecore-play-nav"><a href="Wavecore.html#play">play</a></li><li data-type="method" id="Wavecore-seek-nav"><a href="Wavecore.html#seek">seek</a></li><li data-type="method" id="Wavecore-session-nav"><a href="Wavecore.html#session">session</a></li><li data-type="method" id="Wavecore-sessions-nav"><a href="Wavecore.html#sessions">sessions</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-snapshot-nav"><a href="Wavecore.html#snapshot">snapshot</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-tag-nav"><a href="Wavecore.html#tag">tag</a></li><li data-type="method" id="Wavecore-toHypercore-nav"><a href="Wavecore.html#toHypercore">toHypercore</a></li><li data-type="method" id="Wavecore-truncate-nav"><a href="Wavecore.html#truncate">truncate</a></li></ul></li></ul>
   </nav>
 
   <div id="main">
@@ -108,6 +108,7 @@ const Hypercore = require('hypercore')
 const MultiStream = require('multistream')
 const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')
+const process = require('process')
 const ram = require('random-access-memory')
 const { Source } = require('@storyboard-fm/little-media-box')
 
@@ -308,6 +309,32 @@ class Wavecore {
       } catch (err) {
         reject(err)
       }
+    })
+  }
+  /**
+   * Play the raw Wavecore PCM audio via a nanoprocess
+   * @arg {nanoprocess} [np=null] - Optional custom nanoprocess for playback
+   */
+  play(np) {
+    let proc = null
+
+    if (np) {
+      proc = np
+    } else {
+      proc = nanoprocess('play', [
+        '-r', '48000', '-b', '16', '-e', 'signed', '-t', 'raw', '-'
+      ])
+    }
+
+    if (!proc) throw new Error('nanoprocess didnt work wtf')
+    const rs = this._rawStream()
+
+    proc.open((err) => {
+      if (err) throw err
+      rs.on('end', () => console.log('ended'))
+      proc.stderr.pipe(process.stderr)
+      proc.stdout.pipe(process.stdout)
+      rs.pipe(proc.stdin)
     })
   }
   /**

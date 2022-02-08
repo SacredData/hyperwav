@@ -3,6 +3,7 @@ const Hypercore = require('hypercore')
 const MultiStream = require('multistream')
 const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')
+const process = require('process')
 const ram = require('random-access-memory')
 const { Source } = require('@storyboard-fm/little-media-box')
 
@@ -203,6 +204,32 @@ class Wavecore {
       } catch (err) {
         reject(err)
       }
+    })
+  }
+  /**
+   * Play the raw Wavecore PCM audio via a nanoprocess
+   * @arg {nanoprocess} [np=null] - Optional custom nanoprocess for playback
+   */
+  play(np) {
+    let proc = null
+
+    if (np) {
+      proc = np
+    } else {
+      proc = nanoprocess('play', [
+        '-r', '48000', '-b', '16', '-e', 'signed', '-t', 'raw', '-'
+      ])
+    }
+
+    if (!proc) throw new Error('nanoprocess didnt work wtf')
+    const rs = this._rawStream()
+
+    proc.open((err) => {
+      if (err) throw err
+      rs.on('end', () => console.log('ended'))
+      proc.stderr.pipe(process.stderr)
+      proc.stdout.pipe(process.stdout)
+      rs.pipe(proc.stdin)
     })
   }
   /**
