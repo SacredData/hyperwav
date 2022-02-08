@@ -22,6 +22,10 @@ async function main() {
 
   const template = await Promise.resolve(head.concat([middle, tail]))
   console.log('template', template)
+
+  console.log('about to play the template...')
+  template.play()
+  /*
   const rs = template.core.createReadStream({start:2})
   rs.pipe(fs.createWriteStream('template.raw'))
 
@@ -35,6 +39,7 @@ async function main() {
       soxConv.on('close', () => console.log('template.wav ready'))
     })
   })
+  */
 }
 
 main()
