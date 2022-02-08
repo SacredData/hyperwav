@@ -31,8 +31,8 @@ class Wavecore {
    * @arg {Source} [opts.source=null] - The Source from which the core derives
    * @returns {Wavecore} newCore - The new Wavecore
    */
-  static fromCore(core, opts = { parent: null, source: null }) {
-    const { parent, source } = opts
+  static fromCore(core, parent, opts = { source: null }) {
+    const { source } = opts
     if (core instanceof Hypercore) return new this({ core, parent, source })
   }
   /**
