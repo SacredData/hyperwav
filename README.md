@@ -37,6 +37,9 @@ occur on each channel of audio without worrying about data interleaving.
 - [x] [Split][split]
 - [x] [Join][concat]
 - [ ] Replace
+#### Timeline Operations
+- [x] Playback
+- [x] Seeking
 #### Tagging Operations
 - [ ] RIFF tags (in progress)
 - [ ] BWF tags
