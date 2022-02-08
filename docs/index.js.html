@@ -322,7 +322,15 @@ class Wavecore {
       proc = np
     } else {
       proc = nanoprocess('play', [
-        '-r', '48000', '-b', '16', '-e', 'signed', '-t', 'raw', '-'
+        '-r',
+        '48000',
+        '-b',
+        '16',
+        '-e',
+        'signed',
+        '-t',
+        'raw',
+        '-',
       ])
     }
 
