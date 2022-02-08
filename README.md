@@ -38,8 +38,9 @@ occur on each channel of audio without worrying about data interleaving.
 - [x] [Join][concat]
 - [ ] Replace
 #### Tagging Operations
+- [ ] RIFF tags (in progress)
+- [ ] BWF tags
 - [ ] Cue points
-- [ ] Segments
 #### P2P
 - [ ] Replication between Wavecores
 ## Getting Started
