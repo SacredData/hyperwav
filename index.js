@@ -26,8 +26,8 @@ class Wavecore {
    * Get new Wavecore from a previously-instantiated hypercore and its parent
    * Wavecore.
    * @arg {Wavecore} core - The Hypercore to copy from
+   * @arg {Wavecore} [parent=null] - The Wavecore from which the core derives
    * @arg {Object} [opts={}] - Optional options object
-   * @arg {Wavecore} [opts.parent=null] - The Wavecore from which the core derives
    * @arg {Source} [opts.source=null] - The Source from which the core derives
    * @returns {Wavecore} newCore - The new Wavecore
    */
