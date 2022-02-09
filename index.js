@@ -185,7 +185,7 @@ class Wavecore {
         '-',
       ])
       soxCmd.open((err) => {
-        if(err) reject(err)
+        if (err) reject(err)
 
         soxCmd.on('close', (code) => {
           const wavBuf = Buffer.concat(bufs)
