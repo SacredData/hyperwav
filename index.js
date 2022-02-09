@@ -407,6 +407,7 @@ class Wavecore {
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
    * @arg {String} id - The four-character RIFF tag ID
    * @arg {String} value - The string value to assign the RIFF tag.
+   * @see {@link https://exiftool.org/TagNames/RIFF.html|RIFF Tags}
    */
   tag(id, value) {
     try {
