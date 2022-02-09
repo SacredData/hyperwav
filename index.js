@@ -102,7 +102,7 @@ class Wavecore {
       const bufs = []
       const rs = this.core.createReadStream()
       const pt = new PassThrough()
-      pt.on('data', d => bufs.push(d))
+      pt.on('data', (d) => bufs.push(d))
       pt.on('end', () => {
         const buffer = Buffer.concat(bufs)
         resolve(abf(buffer, 'mono buffer le 48000'))
