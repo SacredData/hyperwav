@@ -140,6 +140,16 @@ class Wavecore {
     return this.core.length
   }
   /**
+   * Returns a `Readable` stream that continually reads for appended data. A
+   * good way to listen for live changes to the Wavecore.
+   * @returns {Readable} liveStream
+   */
+  _liveStream() {
+    return this.core.createReadStream(
+      { live: true, snapshot: false }
+    )
+  }
+  /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
    * as a readable stream.
