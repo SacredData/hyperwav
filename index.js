@@ -145,9 +145,7 @@ class Wavecore {
    * @returns {Readable} liveStream
    */
   _liveStream() {
-    return this.core.createReadStream(
-      { live: true, snapshot: false }
-    )
+    return this.core.createReadStream({ live: true, snapshot: false })
   }
   /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
