@@ -161,6 +161,33 @@ class Wavecore {
       { highWaterMark: this.indexSize }
     )
   }
+  _wav() {
+    const bufs = []
+    const pt = new PassThrough()
+    pt.on('data', d=> bufs.push(d))
+    pt.on('end', () => console.log('done pushing bufs', Buffer.concat(bufs)))
+    const soxCmd = nanoprocess('sox', [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+      '-t',
+      'wav',
+      '-'
+    ])
+    soxCmd.open((err) => {
+      soxCmd.stdout.pipe(pt)
+      const rs = this.core.createReadStream()
+      rs.on('end', () => console.log('done reading'))
+      rs.pipe(soxCmd.stdin)
+    })
+
+  }
   /**
    * Append blank data to the tail of the wavecore. If no index count is
    * specified the function will add one index of blank data.
