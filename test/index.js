@@ -156,4 +156,13 @@ describe('Wavecore', function () {
       expect(newCore.core.length).to.equal(57)
     })
   })
+  describe('#close', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core19 = new Wavecore({ source })
+    it('should close the hypercore', async function () {
+      await Promise.resolve(core19.toHypercore())
+      const result = await core19.close()
+      expect(result).to.equal(true)
+    })
+  })
 })

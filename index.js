@@ -192,6 +192,21 @@ class Wavecore {
     }
   }
   /**
+   * Completely close the Wavecore's underlying Hypercore, making it immutable
+   * until it is reopened again.
+   * @async
+   * @returns {Promise}
+   */
+  async close() {
+    await this.core.close()
+    return new Promise((resolve, reject) => {
+      if (!this.core.closed) {
+        reject('could not close hypercore!')
+      }
+      resolve(true)
+    })
+  }
+  /**
    * Join one or more wavecores to the end of this wavecore. Creates and returns
    * a new Wavecore instance with the concatenated results.
    * @arg {Wavecore[]} wavecores
