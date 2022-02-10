@@ -1,3 +1,4 @@
+const abf = require('audio-buffer-from')
 const fs = require('fs')
 const Hypercore = require('hypercore')
 const MultiStream = require('multistream')
@@ -95,6 +96,24 @@ class Wavecore {
         this.tags = new Map()
       })
     )
+  }
+  _audioBuffer() {
+    return new Promise((resolve, reject) => {
+      const bufs = []
+      const rs = this.core.createReadStream()
+      const pt = new PassThrough()
+      pt.on('data', (d) => bufs.push(d))
+      pt.on('end', () => {
+        const buffer = Buffer.concat(bufs)
+        resolve(abf(buffer, 'stereo buffer le 48000'))
+      })
+      rs.pipe(pt)
+    })
+    /*
+    const data = await this.core.get(1)
+    const audioBuf = abf(data, 'mono buffer 48000')
+    console.log(audioBuf)
+    */
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
