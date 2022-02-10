@@ -99,6 +99,8 @@ class Wavecore {
     if (!this.core) this.core = new Hypercore(storage, Wavecore.coreOpts())
     this.core.ready().then(
       process.nextTick(() => {
+        this.appends = new Set()
+        this.core.on('append', () => this.appends.add(Date.now()))
         this.indexSize = indexSize ? indexSize : INDEX_SIZE
         this.tags = new Map()
       })
@@ -254,8 +256,9 @@ class Wavecore {
     }
   }
   /**
-   * Completely close the Wavecore's underlying Hypercore, making it immutable
-   * until it is reopened again.
+   * Completely close the Wavecore's underlying Hypercore, making it immutable.
+   * If a Wavecore's hypercore is closed, it cannot have any further work done
+   * to it and its data cannot be accessed.
    * @async
    * @returns {Promise}
    */
