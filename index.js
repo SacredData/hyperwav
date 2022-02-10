@@ -13,7 +13,7 @@ const WAVE_FORMAT = {
   channels: 1,
   encoding: 'signed',
   rate: 48000,
-  type: 'raw'
+  type: 'raw',
 }
 const INDEX_SIZE = 76800
 
