@@ -8,6 +8,13 @@ const process = require('process')
 const ram = require('random-access-memory')
 const { Source } = require('@storyboard-fm/little-media-box')
 
+const WAVE_FORMAT = {
+  bitDepth: 16,
+  channels: 1,
+  encoding: 'signed',
+  rate: 48000,
+  type: 'raw'
+}
 const INDEX_SIZE = 76800
 
 /**
@@ -422,16 +429,8 @@ class Wavecore {
       await this.core.ready()
       return new Promise(async (resolve, reject) => {
         if (!this.source.opened) {
-          await this.core.append(
-            Buffer.from(
-              JSON.stringify({
-                sampleRate: 48000,
-                depth: 16,
-                encoding: 'signed',
-                channels: 1,
-              })
-            )
-          )
+          await this.core.append(Buffer.from(JSON.stringify(WAVE_FORMAT)))
+
           this.source.open((err) => {
             if (err) reject(err)
             // PassThrough will append each block received from readStream to hypercore
