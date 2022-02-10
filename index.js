@@ -181,7 +181,7 @@ class Wavecore {
    * @arg {Number} [end=-1] - Index where the stream should end.
    * @returns {Readable} readStream
    */
-  _rawStream(start = 1, end = -1) {
+  _rawStream(start = 0, end = -1) {
     return this.core.createReadStream(
       { start, end },
       { highWaterMark: this.indexSize }
@@ -395,7 +395,7 @@ class Wavecore {
       ptTail.on('close', async () => {
         try {
           const headStream = this.core.createReadStream({
-            start: 1,
+            start: 0,
             end: index,
           })
           const ptHead = new PassThrough()
@@ -432,7 +432,7 @@ class Wavecore {
       await this.core.ready()
       return new Promise(async (resolve, reject) => {
         if (!this.source.opened) {
-          await this.core.append(Buffer.from(JSON.stringify(WAVE_FORMAT)))
+          this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
 
           this.source.open((err) => {
             if (err) reject(err)
