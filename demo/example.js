@@ -13,16 +13,20 @@ source.open(async () => {
     await w.toHypercore({loadSamples:true})
     console.log('done', w.core)
     console.log('lets cut it down to 12 sec or so')
-    await w.truncate(20)
+    await w.truncate(15)
     await w.core.update()
     console.log('done')
     console.log('the hypercore is smaller now', w.core)
+    console.log('he is going to end on the sentence "I HATE THIS."')
+    return w.play()
+    /*
     console.log('lets write the shorter file to disk...')
     w._rawStream().pipe(
       fs.createWriteStream('shorter-test.raw')
       .on('close', () => console.log('done writing'))
     )
     return
+    */
   }
   await main()
 })
