@@ -277,11 +277,10 @@ class Wavecore {
    * @arg {Wavecore[]} wavecores
    * @returns {Wavecore}
    */
-  async concat(wavecores) {
+  concat(wavecores) {
     const allCores = [this, ...wavecores]
     const coreStreams = new MultiStream(allCores.map((c) => c._rawStream()))
     const concatCore = new Hypercore(ram)
-    await concatCore.ready()
     return new Promise((resolve, reject) => {
       try {
         const concatWriter = concatCore.createWriteStream()
