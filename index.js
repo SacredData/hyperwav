@@ -49,13 +49,15 @@ class Wavecore {
    * @arg {String|Source} rawFile - The raw audio file to copy from
    * @returns {Wavecore} newCore - The new Wavecore
    */
-  static fromRaw(rawFile) {
+  static fromRaw(rawFile, opts = { indexSize: null }) {
     let source = null
+    const { indexSize } = opts
+
     if (typeof rawFile == 'string') source = new Source(rawFile)
     if (rawFile instanceof Source) source = rawFile
     if (!source) return
 
-    return new this({ source })
+    return new this({ source, indexSize })
   }
   /**
    * The `Wavecore` class constructor.
