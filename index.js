@@ -108,6 +108,11 @@ class Wavecore {
       })
     )
   }
+  /**
+   * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
+   * Wavecore's hypercore instance.
+   * @returns {Promise} - Promise resolving with the AudioBuffer data
+   */
   _audioBuffer() {
     return new Promise((resolve, reject) => {
       const bufs = []
