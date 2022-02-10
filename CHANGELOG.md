@@ -13,3 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - github actions workflows for automated testing
 - new jsdoc template
 - addBlank() method for adding blank data to end of file
+- audiobuffer and wav file support
