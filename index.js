@@ -112,7 +112,7 @@ class Wavecore {
       const rs = this.core.createReadStream()
       const pt = new PassThrough()
       pt.on('data', (d) => bufs.push(d))
-      pt.on('error', err => reject(err))
+      pt.on('error', (err) => reject(err))
       pt.on('end', () => {
         const buffer = Buffer.concat(bufs)
         resolve(abf(buffer, 'stereo buffer le 48000'))
@@ -198,7 +198,7 @@ class Wavecore {
     return new Promise((resolve, reject) => {
       const bufs = []
       const pt = new PassThrough()
-      pt.on('error', err => reject(err))
+      pt.on('error', (err) => reject(err))
       pt.on('data', (d) => bufs.push(d))
       const soxCmd = nanoprocess('sox', [
         '-r',
@@ -393,7 +393,7 @@ class Wavecore {
         reject(new Error('Index greater than core size!'))
       const [headCore, tailCore] = [new Hypercore(ram), new Hypercore(ram)]
       const ptTail = new PassThrough()
-      ptTail.on('error', err => reject(err))
+      ptTail.on('error', (err) => reject(err))
       ptTail.on('data', (d) => tailCore.append(d))
       ptTail.on('close', async () => {
         try {
@@ -402,7 +402,7 @@ class Wavecore {
             end: index,
           })
           const ptHead = new PassThrough()
-          ptHead.on('error', err => reject(err))
+          ptHead.on('error', (err) => reject(err))
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             const wavecores = [headCore, tailCore].map((c) =>
