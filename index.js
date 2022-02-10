@@ -119,11 +119,6 @@ class Wavecore {
       })
       rs.pipe(pt)
     })
-    /*
-    const data = await this.core.get(1)
-    const audioBuf = abf(data, 'mono buffer 48000')
-    console.log(audioBuf)
-    */
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
