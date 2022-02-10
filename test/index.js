@@ -57,7 +57,7 @@ describe('Wavecore', function () {
       await Promise.resolve(core6.toHypercore())
       const [index, relative] = await core6.seek(20000)
       expect(index).to.equal(1) &&
-        expect(relative).to.equal(19936)
+        expect(relative).to.equal(19926)
     })
   })
   describe('#_fileBuffer', function () {
