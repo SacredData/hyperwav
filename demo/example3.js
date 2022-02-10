@@ -25,21 +25,6 @@ async function main() {
 
   console.log('about to play the template...')
   template.play()
-  /*
-  const rs = template.core.createReadStream({start:2})
-  rs.pipe(fs.createWriteStream('template.raw'))
-
-  rs.on('close', () => {
-    console.log('done reading')
-    const soxConv = nanoprocess('sox', [
-      '-r', '48k', '-e', 'signed', '-b', '16', '-c', '2', 'template.raw', 'template.wav'
-    ])
-    soxConv.open((err) => {
-      if (err) console.error(err)
-      soxConv.on('close', () => console.log('template.wav ready'))
-    })
-  })
-  */
 }
 
 main()
