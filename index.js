@@ -15,7 +15,8 @@ const WAVE_FORMAT = {
   rate: 48000,
   type: 'raw',
 }
-const INDEX_SIZE = 76800
+const INDEX_SIZE = 76800 // 800ms
+// const INDEX_SIZE = 57600 // 600ms
 
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
