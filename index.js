@@ -202,43 +202,6 @@ class Wavecore {
     )
   }
   /**
-   * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file.
-   * @returns {Promise} wavBuf - WAV file Buffer
-   */
-  _wav() {
-    return new Promise((resolve, reject) => {
-      const bufs = []
-      const pt = new PassThrough()
-      pt.on('error', (err) => reject(err))
-      pt.on('data', (d) => bufs.push(d))
-      const soxCmd = nanoprocess('sox', [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-        '-t',
-        'wav',
-        '-',
-      ])
-      soxCmd.open((err) => {
-        if (err) reject(err)
-
-        soxCmd.on('close', (code) => {
-          const wavBuf = Buffer.concat(bufs)
-          resolve(wavBuf)
-        })
-        soxCmd.stdout.pipe(pt)
-        const rs = this.core.createReadStream()
-        rs.pipe(soxCmd.stdin)
-      })
-    })
-  }
-  /**
    * Append blank data to the tail of the wavecore. If no index count is
    * specified the function will add one index of blank data.
    * @async
@@ -499,6 +462,43 @@ class Wavecore {
     if (length > this.core.length) throw new Error('Must be a shorter length')
     await this.core.truncate(length)
     return
+  }
+  /**
+   * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file.
+   * @returns {Promise} wavBuf - WAV file Buffer
+   */
+  wav() {
+    return new Promise((resolve, reject) => {
+      const bufs = []
+      const pt = new PassThrough()
+      pt.on('error', (err) => reject(err))
+      pt.on('data', (d) => bufs.push(d))
+      const soxCmd = nanoprocess('sox', [
+        '-r',
+        '48000',
+        '-b',
+        '16',
+        '-e',
+        'signed',
+        '-t',
+        'raw',
+        '-',
+        '-t',
+        'wav',
+        '-',
+      ])
+      soxCmd.open((err) => {
+        if (err) reject(err)
+
+        soxCmd.on('close', (code) => {
+          const wavBuf = Buffer.concat(bufs)
+          resolve(wavBuf)
+        })
+        soxCmd.stdout.pipe(pt)
+        const rs = this.core.createReadStream()
+        rs.pipe(soxCmd.stdin)
+      })
+    })
   }
 }
 
