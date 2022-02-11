@@ -165,4 +165,13 @@ describe('Wavecore', function () {
       expect(result).to.equal(true)
     })
   })
+  describe('#_lastIndexSize', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core20 = new Wavecore({ source })
+    it('should return the last index size in bytes', async function () {
+      await Promise.resolve(core20.toHypercore())
+      const result = core20._lastIndexSize()
+      expect(result).to.equal(26156)
+    })
+  })
 })

@@ -165,6 +165,14 @@ class Wavecore {
     return this.core.keyPair
   }
   /**
+   * Returns the byte length of the last index in the hypercore. This is useful
+   * when it is known that the last index does not contain a buffer that matches
+   * the declared `indexSize` of the Wavecore.
+   */
+  _lastIndexSize() {
+    return this.core.byteLength - ((this.core.length - 1) * this.indexSize)
+  }
+  /**
    * Returns the current length of the Wavecore's hypercore.
    * @returns {Number} length
    */
