@@ -20,7 +20,8 @@
       "resources": {
           "hypercore v10": "https://github.com/hypercore-protocol/hypercore-next",
           "random-access-storage": "https://github.com/random-access-storage",
-          "WaveFile": "https://github.com/rochars/wavefile"
+          "nanoprocess": "https://github.com/little-core-labs/nanoprocess",
+          "little-media-box": "https://github.com/storyboard-fm/little-media-box"
       }
   },
   "source": {
