@@ -170,7 +170,7 @@ class Wavecore {
    * the declared `indexSize` of the Wavecore.
    */
   _lastIndexSize() {
-    return this.core.byteLength - ((this.core.length - 1) * this.indexSize)
+    return this.core.byteLength - (this.core.length - 1) * this.indexSize
   }
   /**
    * Returns the current length of the Wavecore's hypercore.
