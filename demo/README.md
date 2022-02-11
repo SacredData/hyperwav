@@ -1,5 +1,11 @@
-# Demo
+# Demos
 > Demos for some of Wavecore's functionality
+
+## Demo Scripts
+- `example.js`: Truncate & play back edited audio
+- `example2.js`: Split example
+- `example3.js`: Audio production template example
+- `example4.js`: Audio silence analysis example
 
 ## Running The Demos
 
