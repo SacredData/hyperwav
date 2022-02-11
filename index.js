@@ -122,8 +122,8 @@ class Wavecore {
       pt.on('data', (d) => bufs.push(d))
       pt.on('error', (err) => reject(err))
       pt.on('end', () => {
-        const buffer = Buffer.concat(bufs)
-        resolve(abf(buffer, 'stereo buffer le 48000'))
+        const audioBuffer = abf(Buffer.concat(bufs), 'stereo buffer le 48000')
+        resolve(audioBuffer)
       })
       rs.pipe(pt)
     })
