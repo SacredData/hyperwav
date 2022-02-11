@@ -8,7 +8,6 @@ function silentOrVoice(data) {
   const samples = Array.from(data)
   const zeros = samples.filter(d=>d==0)
   const zeroPercent = zeros.length / samples.length
-  console.log('zero percentage:', zeroPercent)
 
   if (zeroPercent < 0.1) return 'voice'
   return 'silence'
@@ -19,11 +18,16 @@ async function main(num=0) {
   const wavecore = new Wavecore({ source })
 
   await Promise.resolve(wavecore.toHypercore())
-
   console.log(wavecore.core)
 
-  const i = await wavecore.core.get(num)
-  console.log(silentOrVoice(i))
+  const blocks = []
+  const rs = wavecore._rawStream()
+
+  for await (const block of rs) {
+    blocks.push(silentOrVoice(block))
+  }
+
+  console.log(blocks)
 }
 
-main(23)
+main()
