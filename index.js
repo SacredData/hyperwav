@@ -188,6 +188,22 @@ class Wavecore {
     return this.core.createReadStream({ live: true, snapshot: false })
   }
   /**
+   * Returns the index number and relative byte offset of the next zero-crossing
+   * audio sample after the specified byte length. Useful to find the correct
+   * place to make an audio edit without causing any undesirable audio
+   * artifacts.
+   * @arg {Number} byteLength - The byteLength from which to start the search
+   * @returns {Array} - Array containing the index number and relative byte
+   * offset of the next zero crossing in the audio data.
+   */
+  async _nextZero(b) {
+    const [i, rel] = await this.core.seek(b)
+    const idData = await this.core.get(i)
+    const idArr = Array.from(idData)
+    const nextZ = idArr.indexOf(0, rel)
+    return [i, nextZ]
+  }
+  /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
    * as a readable stream.
