@@ -174,4 +174,23 @@ describe('Wavecore', function () {
       expect(result).to.equal(26156)
     })
   })
+  describe('#_audioBuffer', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core21 = new Wavecore({ source })
+    it('should produce an audiobuffer from the PCM data', async function () {
+      await Promise.resolve(core21.open())
+      const ab = await Promise.resolve(core21._audioBuffer())
+      expect(ab).to.be.instanceof(Object) &&
+        expect(ab).to.have.property('length')
+    })
+  })
+  describe('#_nextZero', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core22 = new Wavecore({ source })
+    it('should find the next zero crossing after 741444 bytes', async function () {
+      await Promise.resolve(core22.open())
+      const nzArr = await Promise.resolve(core22._nextZero(741444))
+      expect(nzArr).to.be.instanceof(Array).that.includes(9).that.includes(50365)
+    })
+  })
 })
