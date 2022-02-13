@@ -15,3 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - addBlank() method for adding blank data to end of file
 - audiobuffer and wav file support
 - Tempo method for time stretching audio
+
+### Changed
+- the return of the snapshot method from a hypercore to a wavecore
