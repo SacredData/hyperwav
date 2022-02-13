@@ -45,7 +45,7 @@ applications, and web apps all from one codebase.
 - [x] Playback
 - [x] Seeking
 #### DSP Operations
-- [ ] Normalization (in progress)
+- [x] Normalization
 #### Analysis Operations
 - [x] SoX `stat`
 - [x] SoX `stats`
