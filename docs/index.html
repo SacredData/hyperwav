@@ -131,17 +131,12 @@ remixing of audio content without sacrificing fidelity, privacy, nor speed.</p>
 buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.</p>
-<h3>Design</h3>
-<h4>Mono WAV Only</h4>
-<p>There were several factors influencing the decision to support only mono WAV
-data. Most notably, the Web Audio API's <code>AudioBuffer.getChannelData()</code> method,
-as its name suggests, loads audio data one channel at a time. Wavecore audio
-data can therefore be easily loaded inline with that method, querying it for
-specific data ranges before having to allocate buffer resources.</p>
-<p>By forcing all Wavecores to be mono-first, we also enable different processing to
-occur on each channel of audio without worrying about data interleaving.</p>
 <h3>Functionality</h3>
 <h4>Create Operations</h4>
+<blockquote>
+<p>A Wavecore can be created from a number of inputs and sources; with no
+arguments provided at all, a new Wavecore with sane defaults is provided.</p>
+</blockquote>
 <ul>
 <li>[x] Create new Wavecore with no inputs</li>
 <li>[x] Create new Wavecore with <a href="https://storyboard-fm.github.io/little-media-box/Source.html"><code>Source</code></a> input</li>
@@ -151,32 +146,58 @@ occur on each channel of audio without worrying about data interleaving.</p>
 </ul>
 <h4>Write Operations</h4>
 <ul>
+<li>[x] Append</li>
 <li>[ ] Pad head (Add blank data to head to extend duration)</li>
 <li>[x] Pad tail (Add blank data to tail to extend duration)</li>
 </ul>
 <h4>Editing Operations</h4>
+<blockquote>
+<p>Wavecore audio editing tasks mimic the methods offered by <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">JavaScript
+Arrays</a></p>
+</blockquote>
 <ul>
 <li>[x] Trim: <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#shift">shift</a></li>
 <li>[x] Trim: <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate">truncate</a></li>
 <li>[x] <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#split">Split</a></li>
 <li>[x] <a href="https://storyboard-fm.github.io/wavecore/Wavecore.html#concat">Join</a></li>
-<li>[ ] Replace</li>
 </ul>
 <h4>Timeline Operations</h4>
 <ul>
 <li>[x] Playback</li>
 <li>[x] Seeking</li>
 </ul>
+<h4>DSP Operations</h4>
+<ul>
+<li>[ ] Normalization (in progress)</li>
+</ul>
+<h4>Analysis Operations</h4>
+<ul>
+<li>[x] SoX <code>stat</code></li>
+<li>[x] SoX <code>stats</code></li>
+<li>[ ] SoX <code>spectrogram</code></li>
+<li>[ ] <code>audiowaveform</code> peaks data</li>
+<li>[ ] <code>aubioonset</code> onset timing</li>
+<li>[ ] <code>fpcalc</code> fingerprint</li>
+</ul>
 <h4>Tagging Operations</h4>
 <ul>
-<li>[ ] RIFF tags (in progress)</li>
+<li>[x] RIFF tags</li>
 <li>[ ] BWF tags</li>
-<li>[ ] Cue points</li>
+<li>[ ] Cue points (in progress)</li>
 </ul>
 <h4>P2P</h4>
 <ul>
 <li>[ ] Replication between Wavecores</li>
 </ul>
+<h3>Design</h3>
+<h4>Mono WAV Only</h4>
+<p>There were several factors influencing the decision to support only mono WAV
+data. Most notably, the Web Audio API's <code>AudioBuffer.getChannelData()</code> method,
+as its name suggests, loads audio data one channel at a time. Wavecore audio
+data can therefore be easily loaded inline with that method, querying it for
+specific data ranges before having to allocate buffer resources.</p>
+<p>By forcing all Wavecores to be mono-first, we also enable different processing to
+occur on each channel of audio without worrying about data interleaving.</p>
 <h2>Examples</h2>
 <h3>Recording Into A Wavecore</h3>
 <pre class="prettyprint source lang-js"><code>const core = new Hypercore(ram)
@@ -262,10 +283,10 @@ console.log(wave.core.length) // 58
 </thead>
 <tbody>
 <tr>
-<td><img src="https://img.shields.io/badge/statements-53.95%25-red.svg?style=flat" alt="Statements"></td>
-<td><img src="https://img.shields.io/badge/branches-49.18%25-red.svg?style=flat" alt="Branches"></td>
-<td><img src="https://img.shields.io/badge/functions-53.84%25-red.svg?style=flat" alt="Functions"></td>
-<td><img src="https://img.shields.io/badge/lines-58.15%25-red.svg?style=flat" alt="Lines"></td>
+<td><img src="https://img.shields.io/badge/statements-56.17%25-red.svg?style=flat" alt="Statements"></td>
+<td><img src="https://img.shields.io/badge/branches-44.11%25-red.svg?style=flat" alt="Branches"></td>
+<td><img src="https://img.shields.io/badge/functions-57.14%25-red.svg?style=flat" alt="Functions"></td>
+<td><img src="https://img.shields.io/badge/lines-60.69%25-red.svg?style=flat" alt="Lines"></td>
 </tr>
 </tbody>
 </table>

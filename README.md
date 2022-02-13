@@ -21,6 +21,44 @@ The WAV audio can be sourced from any valid instance of
 buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.
+### Functionality
+#### Create Operations
+> A Wavecore can be created from a number of inputs and sources; with no
+> arguments provided at all, a new Wavecore with sane defaults is provided.
+- [x] Create new Wavecore with no inputs
+- [x] Create new Wavecore with [`Source`][lmbsrc] input
+- [x] Create new Wavecore with [hypercore][h] input
+- [x] Create new Wavecore from other Wavecore
+- [x] Create new Wavecore with [`random-access-storage`][ras] input
+#### Write Operations
+- [x] Append
+- [ ] Pad head (Add blank data to head to extend duration)
+- [x] Pad tail (Add blank data to tail to extend duration)
+#### Editing Operations
+> Wavecore audio editing tasks mimic the methods offered by [JavaScript
+> Arrays][mdnarray]
+- [x] Trim: [shift][shift]
+- [x] Trim: [truncate][trunc]
+- [x] [Split][split]
+- [x] [Join][concat]
+#### Timeline Operations
+- [x] Playback
+- [x] Seeking
+#### DSP Operations
+- [ ] Normalization (in progress)
+#### Analysis Operations
+- [x] SoX `stat`
+- [x] SoX `stats`
+- [ ] SoX `spectrogram`
+- [ ] `audiowaveform` peaks data
+- [ ] `aubioonset` onset timing
+- [ ] `fpcalc` fingerprint
+#### Tagging Operations
+- [x] RIFF tags
+- [ ] BWF tags
+- [ ] Cue points (in progress)
+#### P2P
+- [ ] Replication between Wavecores
 ### Design
 #### Mono WAV Only
 There were several factors influencing the decision to support only mono WAV
@@ -31,31 +69,6 @@ specific data ranges before having to allocate buffer resources.
 
 By forcing all Wavecores to be mono-first, we also enable different processing to
 occur on each channel of audio without worrying about data interleaving.
-### Functionality
-#### Create Operations
-- [x] Create new Wavecore with no inputs
-- [x] Create new Wavecore with [`Source`][lmbsrc] input
-- [x] Create new Wavecore with [hypercore][h] input
-- [x] Create new Wavecore from other Wavecore
-- [x] Create new Wavecore with [`random-access-storage`][ras] input
-#### Write Operations
-- [ ] Pad head (Add blank data to head to extend duration)
-- [x] Pad tail (Add blank data to tail to extend duration)
-#### Editing Operations
-- [x] Trim: [shift][shift]
-- [x] Trim: [truncate][trunc]
-- [x] [Split][split]
-- [x] [Join][concat]
-- [ ] Replace
-#### Timeline Operations
-- [x] Playback
-- [x] Seeking
-#### Tagging Operations
-- [ ] RIFF tags (in progress)
-- [ ] BWF tags
-- [ ] Cue points
-#### P2P
-- [ ] Replication between Wavecores
 ## Examples
 ### Recording Into A Wavecore
 ```js
@@ -150,6 +163,7 @@ $ npm run test
 [concat]: https://storyboard-fm.github.io/wavecore/Wavecore.html#concat
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
+[mdnarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 [ras]: https://github.com/random-access-storage
 [shift]: https://storyboard-fm.github.io/wavecore/Wavecore.html#shift
 [split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
