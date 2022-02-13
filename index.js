@@ -366,18 +366,16 @@ class Wavecore {
           })
           normCmd.stdout.pipe(pt)
 
-          let rs = this.core.createReadStream()
+          let rs = this._rawStream()
           rs.pipe(normCmd.stdin)
         })
       })
     })
   }
   /**
-   * Reads the source WAV into the class instance's Hypercore v10. Returns a
-   * Promise, which resolves the Wavecore's hypercore instance.
+   * Reads the source WAV into the class instance's Hypercore v10.
    * @async
    * @arg {Object} [opts={}] - Options object.
-   * @arg {Boolean} [opts.loadSamples=false] - Whether to load WAV samples into memory
    * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
    * @returns {Hypercore} - The Hypercore v10 data structure
    * @see {@link https://github.com/hypercore-protocol/hypercore|Hypercore}
@@ -389,11 +387,9 @@ class Wavecore {
       await this.core.ready()
       this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
 
-      for await (
-        const block of fs.createReadStream(this.source.pathname, {
-          highWaterMark: this.indexSize
-        })
-      ) {
+      for await (const block of fs.createReadStream(this.source.pathname, {
+        highWaterMark: this.indexSize,
+      })) {
         await this.core.append(block)
       }
 
