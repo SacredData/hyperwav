@@ -93,7 +93,7 @@ const source = new Source('./test/test.wav')
 const w = new Wavecore({ source })
 
 async function main() {
-  await Promise.resolve(w.open())
+  await w.open()
   console.log('splitting Wavecore at index 22....')
   const [head, tail] = await w.split(22)
   console.log('done!', head, tail)
@@ -110,7 +110,7 @@ const Wavecore = require('@storyboard-fm/wavecore')
 const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
-await Promise.resolve(wave.open())
+await wave.open()
 console.log(wave.core.length) // 58
 const shiftedCore = await Promise.resolve(wave.shift(20))
 console.log(shiftedCore.length) // 38
@@ -123,7 +123,7 @@ const Wavecore = require('@storyboard-fm/wavecore')
 const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
-await Promise.resolve(wave.open())
+await wave.open()
 console.log(wave.core.length) // 58
 await wave.truncate(20)
 console.log(wave.core.length) // 20
@@ -138,17 +138,13 @@ const Wavecore = require('@storyboard-fm/wavecore')
 const source = new Source('./test/test.wav.raw')
 
 const wave = new Wavecore({ source })
-await Promise.resolve(wave.open())
+await wave.open()
 
-wave.snapshot()
-wave.session()
+const snapshot = wave.snapshot()
+await wave.truncate(10)
 
-const tryEdit = Wavecore.fromCore(wave.sessions()[1], wave)
-await Promise.resolve(tryEdit.open())
-await tryEdit.truncate(10)
-
-console.log(tryEdit.core.length) // 10
-console.log(wave.core.length) // 58
+console.log(wave.core.length) // 10
+console.log(snapshot.core.length) // 58
 ```
 ## Tests
 
