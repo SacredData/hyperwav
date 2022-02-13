@@ -221,9 +221,13 @@ class Wavecore {
       { highWaterMark: this.indexSize }
     )
   }
+  /**
+   * Get the maximum volume adjustment value for the Wavecore's PCM audio data.
+   * Used by the `norm()` method to ensure the normalized audio does not clip.
+   * @returns {Number} vol - The SoX `vol -v` value.
+   */
   _volAdjust() {
     return new Promise((resolve, reject) => {
-      //const { index } = opts
       const statsCmd = nanoprocess('sox', [
         '-r',
         '48000',
