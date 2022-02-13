@@ -187,7 +187,7 @@ const source = new Source('./test/test.wav')
 const w = new Wavecore({ source })
 
 async function main() {
-  await Promise.resolve(w.toHypercore())
+  await Promise.resolve(w.open())
   console.log('splitting Wavecore at index 22....')
   const [head, tail] = await w.split(22)
   console.log('done!', head, tail)
@@ -203,7 +203,7 @@ const Wavecore = require('@storyboard-fm/wavecore')
 const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
-await Promise.resolve(wave.toHypercore())
+await Promise.resolve(wave.open())
 console.log(wave.core.length) // 58
 const shiftedCore = await Promise.resolve(wave.shift(20))
 console.log(shiftedCore.length) // 38
@@ -215,7 +215,7 @@ const Wavecore = require('@storyboard-fm/wavecore')
 const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
-await Promise.resolve(wave.toHypercore())
+await Promise.resolve(wave.open())
 console.log(wave.core.length) // 58
 await wave.truncate(20)
 console.log(wave.core.length) // 20
@@ -229,13 +229,13 @@ allocation necessary!</p>
 const source = new Source('./test/test.wav.raw')
 
 const wave = new Wavecore({ source })
-await Promise.resolve(wave.toHypercore())
+await Promise.resolve(wave.open())
 
 wave.snapshot()
 wave.session()
 
 const tryEdit = Wavecore.fromCore(wave.sessions()[1], wave)
-await Promise.resolve(tryEdit.toHypercore())
+await Promise.resolve(tryEdit.open())
 await tryEdit.truncate(10)
 
 console.log(tryEdit.core.length) // 10
