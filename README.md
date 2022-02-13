@@ -42,10 +42,10 @@ applications, and web apps all from one codebase.
 - [x] [Split][split]
 - [x] [Join][concat]
 #### Timeline Operations
-- [x] Playback
-- [x] Seeking
+- [x] [Playback][play]
+- [x] [Seeking][seek]
 #### DSP Operations
-- [x] Normalization
+- [x] [Normalization][norm]
 #### Analysis Operations
 - [x] SoX `stat`
 - [x] SoX `stats`
@@ -54,7 +54,7 @@ applications, and web apps all from one codebase.
 - [ ] `aubioonset` onset timing
 - [ ] `fpcalc` fingerprint
 #### Tagging Operations
-- [x] RIFF tags
+- [x] RIFF [tags][tag]
 - [ ] BWF tags
 - [ ] Cue points (in progress)
 #### P2P
@@ -164,7 +164,11 @@ $ npm run test
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [mdnarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+[norm]: https://storyboard-fm.github.io/wavecore/Wavecore.html#norm
+[play]:  https://storyboard-fm.github.io/wavecore/Wavecore.html#play
 [ras]: https://github.com/random-access-storage
+[seek]: https://storyboard-fm.github.io/wavecore/Wavecore.html#seek
 [shift]: https://storyboard-fm.github.io/wavecore/Wavecore.html#shift
 [split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
+[tag]: https://storyboard-fm.github.io/wavecore/Wavecore.html#tag
 [trunc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate
