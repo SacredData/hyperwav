@@ -223,6 +223,42 @@ class Wavecore {
       { highWaterMark: this.indexSize }
     )
   }
+  _volAdjust() {
+    return new Promise((resolve, reject) => {
+      //const { index } = opts
+      const statsCmd = nanoprocess('sox', [
+        '-r',
+        '48000',
+        '-b',
+        '16',
+        '-e',
+        'signed',
+        '-t',
+        'raw',
+        '-',
+        '-n',
+        'stat',
+        '-v',
+      ])
+      statsCmd.open((err) => {
+        if (err) throw err
+
+        const statsOut = []
+
+        const pt = new PassThrough()
+        pt.on('data', (d) => statsOut.push(`${d}`))
+
+        statsCmd.on('close', (code) => {
+          if (code !== 0) reject(new Error('Non-zero exit code'))
+          resolve(Number(statsOut.join('')))
+        })
+        statsCmd.stderr.pipe(pt)
+
+        let rs = this.core.createReadStream()
+        rs.pipe(statsCmd.stdin)
+      })
+    })
+  }
   /**
    * Append blank data to the tail of the wavecore. If no index count is
    * specified the function will add one index of blank data.
@@ -289,6 +325,49 @@ class Wavecore {
       } catch (err) {
         reject(err)
       }
+    })
+  }
+  /**
+   * Normalize the audio data in the Wavecore. Returns a new Wavecore instance.
+   */
+  norm() {
+    return new Promise((resolve, reject) => {
+      this._volAdjust().then((vol) => {
+        const normCmd = nanoprocess('sox', [
+          '-r',
+          '48000',
+          '-b',
+          '16',
+          '-e',
+          'signed',
+          '-t',
+          'raw',
+          '-',
+          '-t',
+          'raw',
+          '-',
+          'vol',
+          vol,
+        ])
+        normCmd.open((err) => {
+          if (err) throw err
+
+          // TODO figure out why number of indeces higher in new wavecore
+          const newCore = new Hypercore(ram)
+
+          const pt = new PassThrough()
+          pt.on('data', (d) => newCore.append(d))
+
+          normCmd.on('close', (code) => {
+            if (code !== 0) reject(new Error('Non-zero exit code'))
+            resolve(Wavecore.fromCore(newCore, this))
+          })
+          normCmd.stdout.pipe(pt)
+
+          let rs = this.core.createReadStream()
+          rs.pipe(normCmd.stdin)
+        })
+      })
     })
   }
   /**
