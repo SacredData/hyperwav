@@ -651,9 +651,13 @@ class Wavecore {
   /**
    * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file. Requires
    * `sox` in PATH.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Boolean} [opts.store=false] - Whether to store the wav as a buffer in
+   * the Wavecore class instance.
    * @returns {Promise} wavBuf - WAV file Buffer
    */
-  wav() {
+  wav(opts={store:false}) {
+    const { store } = opts
     return new Promise((resolve, reject) => {
       const bufs = []
       const pt = new PassThrough()
@@ -678,6 +682,7 @@ class Wavecore {
 
         soxCmd.on('close', (code) => {
           const wavBuf = Buffer.concat(bufs)
+          if (store) this.wavBuffer = wavBuf
           resolve(wavBuf)
         })
         soxCmd.stdout.pipe(pt)

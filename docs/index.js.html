@@ -473,18 +473,16 @@ class Wavecore {
           })
           normCmd.stdout.pipe(pt)
 
-          let rs = this.core.createReadStream()
+          let rs = this._rawStream()
           rs.pipe(normCmd.stdin)
         })
       })
     })
   }
   /**
-   * Reads the source WAV into the class instance's Hypercore v10. Returns a
-   * Promise, which resolves the Wavecore's hypercore instance.
+   * Reads the source WAV into the class instance's Hypercore v10.
    * @async
    * @arg {Object} [opts={}] - Options object.
-   * @arg {Boolean} [opts.loadSamples=false] - Whether to load WAV samples into memory
    * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
    * @returns {Hypercore} - The Hypercore v10 data structure
    * @see {@link https://github.com/hypercore-protocol/hypercore|Hypercore}
@@ -494,32 +492,16 @@ class Wavecore {
     if (source instanceof Source) this.source = Source.from(source)
     try {
       await this.core.ready()
-      return new Promise(async (resolve, reject) => {
-        if (!this.source.opened) {
-          this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
+      this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
 
-          this.source.open((err) => {
-            if (err) reject(err)
-            // PassThrough will append each block received from readStream to hypercore
-            const pt = new PassThrough()
-            pt.on('error', (err) => reject(err))
-            pt.on('data', async (d) => await this.core.append(d))
-            pt.on('close', async () => {
-              await this.core.update()
-              resolve(this.core)
-            })
+      for await (const block of fs.createReadStream(this.source.pathname, {
+        highWaterMark: this.indexSize,
+      })) {
+        await this.core.append(block)
+      }
 
-            const rs = fs.createReadStream(this.source.pathname, {
-              highWaterMark: this.indexSize,
-            })
-            rs.on('error', (err) => reject(err))
-
-            rs.pipe(pt)
-          })
-        } else {
-          resolve(this.core)
-        }
-      })
+      await this.core.update()
+      return this.core
     } catch (err) {
       throw err
     }
@@ -776,9 +758,13 @@ class Wavecore {
   /**
    * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file. Requires
    * `sox` in PATH.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Boolean} [opts.store=false] - Whether to store the wav as a buffer in
+   * the Wavecore class instance.
    * @returns {Promise} wavBuf - WAV file Buffer
    */
-  wav() {
+  wav(opts={store:false}) {
+    const { store } = opts
     return new Promise((resolve, reject) => {
       const bufs = []
       const pt = new PassThrough()
@@ -803,6 +789,7 @@ class Wavecore {
 
         soxCmd.on('close', (code) => {
           const wavBuf = Buffer.concat(bufs)
+          if (store) this.wavBuffer = wavBuf
           resolve(wavBuf)
         })
         soxCmd.stdout.pipe(pt)
