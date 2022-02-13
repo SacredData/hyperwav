@@ -5,7 +5,7 @@ for free thanks to the [`hypercore@next`][h] branch.
 ## Getting Started
 ### Installation
 ```sh
-$ npm install command goes here
+$ npm install git+ssh://git@github.com:storyboard-fm/wavecore.git
 ```
 ### Status
 > WIP, expect breaking changes
