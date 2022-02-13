@@ -462,6 +462,56 @@ class Wavecore {
     })
   }
   /**
+   * Runs `sox -n stats` on the raw audio in the Wavecore, via a nanoprocess.
+   * @arg {Object} [opts={}] - Optional opts object for declaring index
+   * @arg {Number} [opts.index=null] - Declare index to get stats on
+   * @returns {Promise} statsOut - The string of stats information returned by
+   * SoX
+   */
+  stats(opts={index:null}) {
+    return new Promise((resolve, reject) => {
+      const { index } = opts
+      const statsCmd = nanoprocess('sox', [
+        '-r',
+        '48000',
+        '-b',
+        '16',
+        '-e',
+        'signed',
+        '-t',
+        'raw',
+        '-',
+        '-n',
+        'stats',
+        'stat'
+      ])
+      statsCmd.open((err) => {
+        if (err) throw err
+
+        const statsOut = []
+
+        const pt = new PassThrough()
+        pt.on('data', d => statsOut.push(`${d}`))
+
+        statsCmd.on('close', (code) => {
+          if (code !== 0) reject(new Error('Non-zero exit code'))
+          resolve(statsOut.join(''))
+        })
+        statsCmd.stderr.pipe(pt)
+
+        let rs = null
+
+        if (index !== null) {
+          rs = this._rawStream(index, index+1)
+        } else {
+          rs = this.core.createReadStream()
+        }
+
+        rs.pipe(statsCmd.stdin)
+      })
+    })
+  }
+  /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
    * @arg {String} id - The four-character RIFF tag ID
    * @arg {String} value - The string value to assign the RIFF tag.
