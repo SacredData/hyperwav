@@ -31,11 +31,11 @@ describe('Wavecore', function () {
       expect(core3).to.be.instanceof(Wavecore)
     })
   })
-  describe('#toHypercore', function() {
+  describe('#open', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should read the WAV into a new Hypercore', async function () {
       const core4 = new Wavecore({ source })
-      const returnedCore = await Promise.resolve(core4.toHypercore())
+      const returnedCore = await Promise.resolve(core4.open())
       expect(returnedCore).to.be.instanceof(Hypercore) &&
         expect(core4.core).to.be.instanceof(Hypercore) &&
         expect(core4.core.length).to.equal(57)
@@ -45,7 +45,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should truncate the hypercore', async function () {
       const core5 = new Wavecore({ source })
-      await Promise.resolve(core5.toHypercore())
+      await Promise.resolve(core5.open())
       await core5.truncate(20)
       expect(core5.core.length).to.equal(20)
     })
@@ -54,7 +54,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should provide index and relative offset values', async function () {
       const core6 = new Wavecore({ source })
-      await Promise.resolve(core6.toHypercore())
+      await Promise.resolve(core6.open())
       const [index, relative] = await core6.seek(20000)
       expect(index).to.equal(0) &&
         expect(relative).to.equal(20000)
@@ -64,7 +64,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a buffer of the full source file', async function () {
       const core7 = new Wavecore({ source })
-      await Promise.resolve(core7.toHypercore())
+      await Promise.resolve(core7.open())
       const buffer = await core7._fileBuffer()
       expect(buffer).to.be.instanceof(Buffer)
     })
@@ -73,7 +73,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a readStream containing the test file', async function () {
       const core8 = new Wavecore({ source })
-      await Promise.resolve(core8.toHypercore())
+      await Promise.resolve(core8.open())
       const rs = core8._rawStream()
       expect(rs).to.have.property('_readableState') &&
         expect(rs.readable).to.be.true
@@ -83,7 +83,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a Buffer containing the hypercore discovery key', async function() {
       const core9 = new Wavecore({ source })
-      await Promise.resolve(core9.toHypercore())
+      await Promise.resolve(core9.open())
       const dk = core9._discoveryKey()
       expect(dk).to.be.instanceof(Buffer)
     })
@@ -92,7 +92,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return the hypercore fork number', async function () {
       const core10 = new Wavecore({ source })
-      await Promise.resolve(core10.toHypercore())
+      await Promise.resolve(core10.open())
       const forkId = core10._fork()
       expect(typeof(forkId)).to.equal('number') &&
         expect(forkId).to.equal(0)
@@ -107,7 +107,7 @@ describe('Wavecore', function () {
         expect(length).to.equal(0)
     })
     it('should return a length of 58 after the WAV is read into the core', async function () {
-      await Promise.resolve(core11.toHypercore())
+      await Promise.resolve(core11.open())
       const newLength = core11._length()
       expect(newLength).to.not.equal(null) &&
         expect(newLength).to.equal(57)
@@ -125,7 +125,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should split at index 20 and return two new Wavecores', async function () {
       const core13 = new Wavecore({ source })
-      await Promise.resolve(core13.toHypercore())
+      await Promise.resolve(core13.open())
       Promise.resolve(await core13.split(20)).then(newCores => {
         expect(newCores).to.be.an('array') &&
           expect(newCores[0].length).to.equal(20) &&
@@ -151,7 +151,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core18 = new Wavecore({ source })
     it('should return a new wavecore with index 0 removed', async function () {
-      await Promise.resolve(core18.toHypercore())
+      await Promise.resolve(core18.open())
       const newCore = await Promise.resolve(core18.shift(1))
       expect(newCore.core.length).to.equal(56)
     })
@@ -160,7 +160,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core19 = new Wavecore({ source })
     it('should close the hypercore', async function () {
-      await Promise.resolve(core19.toHypercore())
+      await Promise.resolve(core19.open())
       const result = await core19.close()
       expect(result).to.equal(true)
     })
@@ -169,7 +169,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core20 = new Wavecore({ source })
     it('should return the last index size in bytes', async function () {
-      await Promise.resolve(core20.toHypercore())
+      await Promise.resolve(core20.open())
       const result = core20._lastIndexSize()
       expect(result).to.equal(26156)
     })

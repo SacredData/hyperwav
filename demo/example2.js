@@ -7,7 +7,7 @@ const source = new Source(path.join(__dirname, '..', './test/test.wav'))
 const w = new Wavecore({ source })
 
 async function main() {
-  await Promise.resolve(w.toHypercore())
+  await Promise.resolve(w.open())
   console.log('splitting Wavecore at index 22....')
   const [head, tail] = await Promise.resolve(w.split(22))
   console.log('done!', head, tail)

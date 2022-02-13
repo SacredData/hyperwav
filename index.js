@@ -286,6 +286,50 @@ class Wavecore {
     })
   }
   /**
+   * Reads the source WAV into the class instance's Hypercore v10. Returns a
+   * Promise, which resolves the Wavecore's hypercore instance.
+   * @async
+   * @arg {Object} [opts={}] - Options object.
+   * @arg {Boolean} [opts.loadSamples=false] - Whether to load WAV samples into memory
+   * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
+   * @returns {Hypercore} - The Hypercore v10 data structure
+   */
+  async open(opts = { source: null }) {
+    const { source } = opts
+    if (source instanceof Source) this.source = Source.from(source)
+    try {
+      await this.core.ready()
+      return new Promise(async (resolve, reject) => {
+        if (!this.source.opened) {
+          this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
+
+          this.source.open((err) => {
+            if (err) reject(err)
+            // PassThrough will append each block received from readStream to hypercore
+            const pt = new PassThrough()
+            pt.on('error', (err) => reject(err))
+            pt.on('data', async (d) => await this.core.append(d))
+            pt.on('close', async () => {
+              await this.core.update()
+              resolve(this.core)
+            })
+
+            const rs = fs.createReadStream(this.source.pathname, {
+              highWaterMark: this.indexSize,
+            })
+            rs.on('error', (err) => reject(err))
+
+            rs.pipe(pt)
+          })
+        } else {
+          resolve(this.core)
+        }
+      })
+    } catch (err) {
+      throw err
+    }
+  }
+  /**
    * Play the raw Wavecore PCM audio via a nanoprocess
    * @arg {nanoprocess} [np=null] - Optional custom nanoprocess for playback
    */
@@ -408,50 +452,6 @@ class Wavecore {
       const splitStream = this.core.createReadStream({ start: index })
       splitStream.pipe(ptTail)
     })
-  }
-  /**
-   * Reads the source WAV into the class instance's Hypercore v10. Returns a
-   * Promise, which resolves the Wavecore's hypercore instance.
-   * @async
-   * @arg {Object} [opts={}] - Options object.
-   * @arg {Boolean} [opts.loadSamples=false] - Whether to load WAV samples into memory
-   * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
-   * @returns {Hypercore} - The Hypercore v10 data structure
-   */
-  async toHypercore(opts = { source: null }) {
-    const { source } = opts
-    if (source instanceof Source) this.source = Source.from(source)
-    try {
-      await this.core.ready()
-      return new Promise(async (resolve, reject) => {
-        if (!this.source.opened) {
-          this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
-
-          this.source.open((err) => {
-            if (err) reject(err)
-            // PassThrough will append each block received from readStream to hypercore
-            const pt = new PassThrough()
-            pt.on('error', (err) => reject(err))
-            pt.on('data', async (d) => await this.core.append(d))
-            pt.on('close', async () => {
-              await this.core.update()
-              resolve(this.core)
-            })
-
-            const rs = fs.createReadStream(this.source.pathname, {
-              highWaterMark: this.indexSize,
-            })
-            rs.on('error', (err) => reject(err))
-
-            rs.pipe(pt)
-          })
-        } else {
-          resolve(this.core)
-        }
-      })
-    } catch (err) {
-      throw err
-    }
   }
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.

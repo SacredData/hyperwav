@@ -10,7 +10,7 @@ source.open(async () => {
     const w = new Wavecore({ source })
     console.log(w.core)
     console.log('appending to hypercore...')
-    await w.toHypercore({loadSamples:true})
+    await w.open({loadSamples:true})
     console.log('done', w.core)
     console.log('lets cut it down to 12 sec or so')
     await w.truncate(15)
