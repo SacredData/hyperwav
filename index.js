@@ -238,7 +238,7 @@ class Wavecore {
         '-',
         '-n',
         'stat',
-        '-v'
+        '-v',
       ])
       statsCmd.open((err) => {
         if (err) throw err
@@ -329,7 +329,7 @@ class Wavecore {
   }
   norm() {
     return new Promise((resolve, reject) => {
-      this._volAdjust().then(vol => {
+      this._volAdjust().then((vol) => {
         const normCmd = nanoprocess('sox', [
           '-r',
           '48000',
@@ -344,7 +344,7 @@ class Wavecore {
           'raw',
           '-',
           'vol',
-          vol
+          vol,
         ])
         normCmd.open((err) => {
           if (err) throw err
