@@ -1,18 +1,17 @@
 {
-  "name": "@storyboard-fm/browserify-template",
+  "name": "@storyboard-fm/wavecore",
   "version": "0.0.1",
-  "description": "",
+  "description": " Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
     "build": "node_modules/.bin/browserify index.js -o demo/bundle.js",
-    "demo": "echo \"Error: no demo specified\" && exit 1",
     "docs": "node_modules/.bin/jsdoc --configure jsdoc.json --verbose",
     "lint": "node_modules/.bin/prettier -w index.js",
     "make-badges": "istanbul-badges-readme",
     "test": "nyc --reporter=json-summary --reporter=html --reporter=text mocha --timeout=30000"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "agrathwohl",
+  "license": "MIT",
   "dependencies": {
     "@storyboard-fm/little-media-box": "github:Storyboard-fm/little-media-box",
     "audio-buffer-from": "^1.1.1",
