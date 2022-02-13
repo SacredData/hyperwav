@@ -570,9 +570,10 @@ class Wavecore {
   }
   /**
    * Snapshot the current session and begin a new one.
+   * @returns {Wavecore} - A new Wavecore to continue working from
    */
   snapshot() {
-    return this.core.snapshot()
+    return Wavecore.fromCore(this.core.snapshot(), this)
   }
   /**
    * Returns a Promise which resolve a Wavecore that begins at the provided
@@ -763,7 +764,7 @@ class Wavecore {
    * the Wavecore class instance.
    * @returns {Promise} wavBuf - WAV file Buffer
    */
-  wav(opts={store:false}) {
+  wav(opts = { store: false }) {
     const { store } = opts
     return new Promise((resolve, reject) => {
       const bufs = []

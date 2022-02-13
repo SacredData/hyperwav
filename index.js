@@ -463,9 +463,10 @@ class Wavecore {
   }
   /**
    * Snapshot the current session and begin a new one.
+   * @returns {Wavecore} - A new Wavecore to continue working from
    */
   snapshot() {
-    return this.core.snapshot()
+    return Wavecore.fromCore(this.core.snapshot(), this)
   }
   /**
    * Returns a Promise which resolve a Wavecore that begins at the provided
