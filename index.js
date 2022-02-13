@@ -510,7 +510,8 @@ class Wavecore {
    * @arg {Number} index - Index number from which to split the Wavecore audio.
    * @returns {Wavecore[]} cores - Array of the new head and tail hypercores
    */
-  split(index) {
+  split(index, opts={zeroCross: false}) {
+    const zeroCross = {opts}
     return new Promise((resolve, reject) => {
       if (Number(index) > this.core.length)
         reject(new Error('Index greater than core size!'))
@@ -606,6 +607,53 @@ class Wavecore {
       console.error(err)
       return err
     }
+  }
+  /**
+   * Increase or decrease playback speed of audio samples, without changing the
+   * pitch of the audio itself. Returns a new Wavecore containing the
+   * time-stretched samples.
+   * @arg {Float} f - The new tempo factor. 0.9 = slow down by 10%; 1.1 = faster
+   * by 10%.
+   * @returns {Promise} stretchedCore - The new time-stretched Wavecore.
+   */
+  tempo(f) {
+    return new Promise((resolve, reject) => {
+      const tempoCmd = nanoprocess('sox', [
+        '-r',
+        '48000',
+        '-b',
+        '16',
+        '-e',
+        'signed',
+        '-t',
+        'raw',
+        '-',
+        '-t',
+        'raw',
+        '-',
+        'tempo',
+        '-s',
+        `${f}`,
+      ])
+      tempoCmd.open((err) => {
+        if (err) throw err
+
+        // TODO figure out why number of indeces higher in new wavecore
+        const newCore = new Hypercore(ram)
+
+        const pt = new PassThrough()
+        pt.on('data', (d) => newCore.append(d))
+
+        tempoCmd.on('close', (code) => {
+          if (code !== 0) reject(new Error('Non-zero exit code'))
+          resolve(Wavecore.fromCore(newCore, this))
+        })
+        tempoCmd.stdout.pipe(pt)
+
+        let rs = this.core.createReadStream()
+        rs.pipe(tempoCmd.stdin)
+      })
+    })
   }
   /**
    * Truncate the Hypercore to a shorter length.
