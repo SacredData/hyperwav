@@ -2,6 +2,16 @@
 A data structure for real-time reading, editing, seeking, and encoding of mono
 WAV audio files via hypercore v10. Version control, branches, and peering come
 for free thanks to the [`hypercore@next`][h] branch.
+## Getting Started
+### Installation
+```sh
+$ npm install command goes here
+```
+### Status
+> WIP, expect breaking changes
+### Notes
+- Use signed 16-bit fixed integer mono PCM samples at 48kHz sampling rate
+- Raw and WAV both supported (for now) as inputs
 ## Background
 This library's intent is to enable real-time peer-to-peer recording, editing, and
 remixing of audio content without sacrificing fidelity, privacy, nor speed.
@@ -46,11 +56,6 @@ occur on each channel of audio without worrying about data interleaving.
 - [ ] Cue points
 #### P2P
 - [ ] Replication between Wavecores
-## Getting Started
-### Installation
-```sh
-$ npm install command goes here
-```
 ## Examples
 ### Recording Into A Wavecore
 ```js
