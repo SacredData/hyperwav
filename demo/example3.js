@@ -16,7 +16,7 @@ async function main() {
   const source2 = new Source('./clip.wav')
   const middle = new Wavecore( { source: source2 })
 
-  await Promise.all([ head.toHypercore(), middle.toHypercore(), tail.toHypercore()])
+  await Promise.all([ head.open(), middle.open(), tail.open()])
 
   console.log(head.core.length, middle.core.length, tail.core.length)
 

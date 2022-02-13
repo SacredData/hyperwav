@@ -17,7 +17,7 @@ async function main(num=0) {
   const source = new Source('./clip.wav')
   const wavecore = new Wavecore({ source })
 
-  await Promise.resolve(wavecore.toHypercore())
+  await Promise.resolve(wavecore.open())
   console.log(wavecore.core)
 
   const blocks = []
