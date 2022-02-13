@@ -468,7 +468,7 @@ class Wavecore {
    * @returns {Promise} statsOut - The string of stats information returned by
    * SoX
    */
-  stats(opts={index:null}) {
+  stats(opts = { index: null }) {
     return new Promise((resolve, reject) => {
       const { index } = opts
       const statsCmd = nanoprocess('sox', [
@@ -483,7 +483,7 @@ class Wavecore {
         '-',
         '-n',
         'stats',
-        'stat'
+        'stat',
       ])
       statsCmd.open((err) => {
         if (err) throw err
@@ -491,7 +491,7 @@ class Wavecore {
         const statsOut = []
 
         const pt = new PassThrough()
-        pt.on('data', d => statsOut.push(`${d}`))
+        pt.on('data', (d) => statsOut.push(`${d}`))
 
         statsCmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-zero exit code'))
@@ -502,7 +502,7 @@ class Wavecore {
         let rs = null
 
         if (index !== null) {
-          rs = this._rawStream(index, index+1)
+          rs = this._rawStream(index, index + 1)
         } else {
           rs = this.core.createReadStream()
         }
