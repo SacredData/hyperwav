@@ -656,7 +656,7 @@ class Wavecore {
    * the Wavecore class instance.
    * @returns {Promise} wavBuf - WAV file Buffer
    */
-  wav(opts={store:false}) {
+  wav(opts = { store: false }) {
     const { store } = opts
     return new Promise((resolve, reject) => {
       const bufs = []
