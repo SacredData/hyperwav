@@ -113,6 +113,9 @@ class Wavecore {
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
    * @returns {Promise} - Promise resolving with the AudioBuffer data
+   * @see {@link
+   * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
+   * MDN}
    */
   _audioBuffer() {
     return new Promise((resolve, reject) => {
@@ -131,6 +134,8 @@ class Wavecore {
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
    * @returns {Buffer} discoveryKey
+   * @see {@link
+   * https://github.com/hypercore-protocol/hypercore#feeddiscoverykey|discoveryKey}
    */
   _discoveryKey() {
     return this.core.discoveryKey
@@ -195,6 +200,7 @@ class Wavecore {
    * @arg {Number} byteLength - The byteLength from which to start the search
    * @returns {Array} nextZ - Array containing the index number and relative byte
    * offset of the next zero crossing in the audio data.
+   * @see {@link https://en.wikipedia.org/wiki/Zero_crossing|Zero Crossing}
    */
   async _nextZero(b) {
     const [i, rel] = await this.core.seek(b)
@@ -293,6 +299,7 @@ class Wavecore {
    * @arg {Boolean} [opts.loadSamples=false] - Whether to load WAV samples into memory
    * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
    * @returns {Hypercore} - The Hypercore v10 data structure
+   * @see {@link https://github.com/hypercore-protocol/hypercore|Hypercore}
    */
   async open(opts = { source: null }) {
     const { source } = opts
@@ -332,6 +339,7 @@ class Wavecore {
   /**
    * Play the raw Wavecore PCM audio via a nanoprocess
    * @arg {nanoprocess} [np=null] - Optional custom nanoprocess for playback
+   * @see {@link https://github.com/little-core-labs/nanoprocess nanoprocess}
    */
   play(np) {
     let proc = null
@@ -480,7 +488,8 @@ class Wavecore {
     return
   }
   /**
-   * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file.
+   * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file. Requires
+   * `sox` in PATH.
    * @returns {Promise} wavBuf - WAV file Buffer
    */
   wav() {
