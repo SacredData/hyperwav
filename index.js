@@ -330,6 +330,14 @@ class Wavecore {
     })
   }
   /**
+   * Check if the Wavecore has the block at the provided index number.
+   * @arg {Number} i - The index number to check for
+   * @returns {Boolean} - Does the wavecore have that index?
+   */
+  async has(i) {
+    return await this.core.has(i)
+  }
+  /**
    * Normalize the audio data in the Wavecore. Returns a new Wavecore instance.
    */
   norm() {
