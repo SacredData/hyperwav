@@ -387,32 +387,18 @@ class Wavecore {
     if (source instanceof Source) this.source = Source.from(source)
     try {
       await this.core.ready()
-      return new Promise(async (resolve, reject) => {
-        if (!this.source.opened) {
-          this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
+      this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
 
-          this.source.open((err) => {
-            if (err) reject(err)
-            // PassThrough will append each block received from readStream to hypercore
-            const pt = new PassThrough()
-            pt.on('error', (err) => reject(err))
-            pt.on('data', async (d) => await this.core.append(d))
-            pt.on('close', async () => {
-              await this.core.update()
-              resolve(this.core)
-            })
+      for await (
+        const block of fs.createReadStream(this.source.pathname, {
+          highWaterMark: this.indexSize
+        })
+      ) {
+        await this.core.append(block)
+      }
 
-            const rs = fs.createReadStream(this.source.pathname, {
-              highWaterMark: this.indexSize,
-            })
-            rs.on('error', (err) => reject(err))
-
-            rs.pipe(pt)
-          })
-        } else {
-          resolve(this.core)
-        }
-      })
+      await this.core.update()
+      return this.core
     } catch (err) {
       throw err
     }
