@@ -617,8 +617,8 @@ class Wavecore {
    * @arg {Number} index - Index number from which to split the Wavecore audio.
    * @returns {Wavecore[]} cores - Array of the new head and tail hypercores
    */
-  split(index, opts={zeroCross: false}) {
-    const zeroCross = {opts}
+  split(index, opts = { zeroCross: false }) {
+    const zeroCross = { opts }
     return new Promise((resolve, reject) => {
       if (Number(index) > this.core.length)
         reject(new Error('Index greater than core size!'))
