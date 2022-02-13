@@ -102,8 +102,6 @@ class Wavecore {
     if (!this.core) this.core = new Hypercore(storage, Wavecore.coreOpts())
     this.core.ready().then(
       process.nextTick(() => {
-        this.appends = new Set()
-        this.core.on('append', () => this.appends.add(Date.now()))
         this.indexSize = indexSize ? indexSize : INDEX_SIZE
         this.tags = new Map()
       })
