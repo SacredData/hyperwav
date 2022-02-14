@@ -605,9 +605,14 @@ class Wavecore {
    * time-stretched samples.
    * @arg {Float} f - The new tempo factor. 0.9 = slow down by 10%; 1.1 = faster
    * by 10%.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Boolean} [opts.stats=false] - Whether to also get SoX stats on the
+   * time-stretched audio data. Currently these stats are output to `stdout`.
+   * Useful for getting the new Wavecore's audio duration.
    * @returns {Promise} stretchedCore - The new time-stretched Wavecore.
    */
-  tempo(f) {
+  tempo(f, opts={stats:false}) {
+    const { stats } = opts
     return new Promise((resolve, reject) => {
       const tempoCmd = nanoprocess('sox', [
         '-r',
@@ -625,6 +630,7 @@ class Wavecore {
         'tempo',
         '-s',
         `${f}`,
+        'stats',
       ])
       tempoCmd.open((err) => {
         if (err) throw err
@@ -640,6 +646,7 @@ class Wavecore {
           resolve(Wavecore.fromCore(newCore, this))
         })
         tempoCmd.stdout.pipe(pt)
+        if (stats) tempoCmd.stderr.pipe(process.stdout)
 
         let rs = this._rawStream()
         rs.pipe(tempoCmd.stdin)

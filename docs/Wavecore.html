@@ -4618,7 +4618,7 @@ new <code>Wavecore</code> instances.</p>
       </svg>
     </a>
     <h4 class="name" id="tempo">
-      <span class="type-signature"></span>tempo<span class="signature">(f)</span><span class="type-signature"> &rarr; {Promise}</span>
+      <span class="type-signature"></span>tempo<span class="signature">(f, opts<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span>
     </h4>
   </span>
 
@@ -4651,7 +4651,11 @@ time-stretched samples.</p>
       <th>Type</th>
 
       
+        <th>Attributes</th>
+      
 
+      
+        <th>Default</th>
       
 
       <th class="last">Description</th>
@@ -4679,12 +4683,146 @@ time-stretched samples.</p>
         </td>
 
         
+          <td class="attributes">
+            
 
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
         
 
         <td class="description last">
           <p>The new tempo factor. 0.9 = slow down by 10%; 1.1 = faster
 by 10%.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>opts</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              {}
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Optional options object</p>
+          
+            <h6>Properties</h6>
+            
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>stats</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              false
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Whether to also get SoX stats on the
+time-stretched audio data. Currently these stats are output to <code>stdout</code>.
+Useful for getting the new Wavecore's audio duration.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
           
         </td>
       </tr>
@@ -4728,7 +4866,7 @@ by 10%.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="index.js.html">index.js</a>, <a href="index.js.html#line610">line 610</a>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line614">line 614</a>
         </li>
       </ul>
     </dd>
@@ -5012,7 +5150,7 @@ operation later on.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="index.js.html">index.js</a>, <a href="index.js.html#line658">line 658</a>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line665">line 665</a>
         </li>
       </ul>
     </dd>
@@ -5255,7 +5393,7 @@ the Wavecore class instance.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="index.js.html">index.js</a>, <a href="index.js.html#line673">line 673</a>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line680">line 680</a>
         </li>
       </ul>
     </dd>
