@@ -635,7 +635,6 @@ class Wavecore {
       tempoCmd.open((err) => {
         if (err) throw err
 
-        // TODO figure out why number of indeces higher in new wavecore
         const newCore = new Hypercore(ram)
 
         const pt = new PassThrough()
