@@ -655,7 +655,7 @@ class Wavecore {
    * before truncation occurs. This is recommended if you may want to undo this
    * operation later on.
    */
-  async truncate(length, opts={snapshot:false}) {
+  async truncate(length, opts = { snapshot: false }) {
     if (!length || !length instanceof Number) return
     if (length > this.core.length) throw new Error('Must be a shorter length')
     if (opts.snapshot) await this.snapshot()
