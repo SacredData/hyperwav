@@ -49,6 +49,13 @@ describe('Wavecore', function () {
       await core5.truncate(20)
       expect(core5.core.length).to.equal(20)
     })
+    it('should snapshot the wavecore if that option is passed', async function () {
+      const core5b = new Wavecore({ source })
+      await Promise.resolve(core5b.open())
+      await core5b.truncate(19, { snapshot: true })
+      console.log(core5b, core5b.sessions())
+      expect(core5b.core.length).to.equal(19)
+    })
   })
   describe('#seek', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
@@ -191,6 +198,21 @@ describe('Wavecore', function () {
       await Promise.resolve(core22.open())
       const nzArr = await Promise.resolve(core22._nextZero(741444))
       expect(nzArr).to.be.instanceof(Array).that.includes(9).that.includes(50365)
+    })
+  })
+  describe('#wav', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core23 = new Wavecore({ source })
+    const core24 = new Wavecore({ source })
+    it('should produce a buffer of the WAV file output', async function () {
+      await Promise.resolve(core23.open())
+      const wavBuf = await Promise.resolve(core23.wav())
+      expect(wavBuf).to.be.instanceof(Buffer)
+    })
+    it('should store the buffer in the wavecore class instance', async function () {
+      await Promise.resolve(core24.open())
+      await Promise.resolve(core24.wav({store: true}))
+      expect(core24.wavBuffer).to.be.instanceof(Buffer)
     })
   })
 })
