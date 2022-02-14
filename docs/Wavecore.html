@@ -4767,7 +4767,7 @@ by 10%.</p>
       </svg>
     </a>
     <h4 class="name" id="truncate">
-      <span class="type-signature">(async) </span>truncate<span class="signature">(length)</span><span class="type-signature"></span>
+      <span class="type-signature">(async) </span>truncate<span class="signature">(length, opts<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -4798,7 +4798,11 @@ by 10%.</p>
       <th>Type</th>
 
       
+        <th>Attributes</th>
+      
 
+      
+        <th>Default</th>
       
 
       <th class="last">Description</th>
@@ -4826,11 +4830,145 @@ by 10%.</p>
         </td>
 
         
+          <td class="attributes">
+            
 
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
         
 
         <td class="description last">
           <p>The new length. Must be shorter than current length.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>opts</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              {}
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Optional options object</p>
+          
+            <h6>Properties</h6>
+            
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>snapshot</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              false
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Whether to snapshot the Wavecore
+before truncation occurs. This is recommended if you may want to undo this
+operation later on.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
           
         </td>
       </tr>
@@ -4874,7 +5012,7 @@ by 10%.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="index.js.html">index.js</a>, <a href="index.js.html#line654">line 654</a>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line658">line 658</a>
         </li>
       </ul>
     </dd>
@@ -5117,7 +5255,7 @@ the Wavecore class instance.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="index.js.html">index.js</a>, <a href="index.js.html#line668">line 668</a>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line673">line 673</a>
         </li>
       </ul>
     </dd>

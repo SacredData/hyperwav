@@ -641,7 +641,7 @@ class Wavecore {
         })
         tempoCmd.stdout.pipe(pt)
 
-        let rs = this.core.createReadStream()
+        let rs = this._rawStream()
         rs.pipe(tempoCmd.stdin)
       })
     })
@@ -650,10 +650,15 @@ class Wavecore {
    * Truncate the Hypercore to a shorter length.
    * @async
    * @arg {Number} length - The new length. Must be shorter than current length.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Boolean} [opts.snapshot=false] - Whether to snapshot the Wavecore
+   * before truncation occurs. This is recommended if you may want to undo this
+   * operation later on.
    */
-  async truncate(length) {
+  async truncate(length, opts={snapshot:false}) {
     if (!length || !length instanceof Number) return
     if (length > this.core.length) throw new Error('Must be a shorter length')
+    if (opts.snapshot) await this.snapshot()
     await this.core.truncate(length)
     return
   }
