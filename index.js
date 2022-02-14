@@ -1,6 +1,7 @@
 const abf = require('audio-buffer-from')
 const fs = require('fs')
 const Hypercore = require('hypercore')
+const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
 const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')

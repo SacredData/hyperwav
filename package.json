@@ -16,6 +16,7 @@
     "@storyboard-fm/little-media-box": "github:Storyboard-fm/little-media-box",
     "audio-buffer-from": "^1.1.1",
     "hypercore": "github:hypercore-protocol/hypercore-next",
+    "hyperswarm": "^3.0.1",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
     "pino": "^7.6.3",
