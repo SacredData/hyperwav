@@ -147,6 +147,10 @@ describe('Wavecore', function () {
       await core14.addBlank(3)
       expect(core14.core.length).to.equal(3)
     })
+    it('should produce 1 index of blank data by default', async function () {
+      await core14.addBlank()
+      expect(core14.core.length).to.equal(4)
+    })
   })
   describe('#append', async function () {
     const core15 = new Wavecore()
