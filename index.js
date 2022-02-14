@@ -611,7 +611,7 @@ class Wavecore {
    * Useful for getting the new Wavecore's audio duration.
    * @returns {Promise} stretchedCore - The new time-stretched Wavecore.
    */
-  tempo(f, opts={stats:false}) {
+  tempo(f, opts = { stats: false }) {
     const { stats } = opts
     return new Promise((resolve, reject) => {
       const tempoCmd = nanoprocess('sox', [
