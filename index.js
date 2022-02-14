@@ -615,7 +615,7 @@ class Wavecore {
   tempo(f, opts = { stats: false }) {
     const { stats } = opts
     return new Promise((resolve, reject) => {
-      const tempoCmd = nanoprocess('sox', [
+      const cmdOpts = [
         '-r',
         '48000',
         '-b',
@@ -631,8 +631,9 @@ class Wavecore {
         'tempo',
         '-s',
         `${f}`,
-        'stats',
-      ])
+      ]
+      if (stats) cmdOpts.push('stats')
+      const tempoCmd = nanoprocess('sox', cmdOpts)
       tempoCmd.open((err) => {
         if (err) throw err
 
