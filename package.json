@@ -19,7 +19,6 @@
     "hyperswarm": "^3.0.1",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
-    "pino": "^7.6.3",
     "random-access-memory": "^4.0.0"
   },
   "devDependencies": {
