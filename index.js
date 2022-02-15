@@ -448,6 +448,16 @@ class Wavecore {
     })
   }
   /**
+   * Record a stream of data into the Wavecore's hypercore.
+   * @arg {Stream} st - The stream to record into the Wavecore.
+   */
+  recStream(st) {
+    if (!st) return
+    const ws = this.core.createWriteStream()
+    st.pipe(ws)
+    return
+  }
+  /**
    * Returns index and byte position of a byte offset.
    * @async
    * @arg {Number} byteOffset - Number of bytes to seek from beginning of file
