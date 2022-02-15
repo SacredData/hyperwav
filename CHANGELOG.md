@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - open method so it does not open cores twice
 
+### Added
+- a class method to record an audio stream into a Wavecore
+
 ## [0.0.7] - 2022-02-15
 ### Changed
 - some functions to class getters, improving performance
