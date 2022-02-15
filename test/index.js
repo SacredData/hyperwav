@@ -87,45 +87,45 @@ describe('Wavecore', function () {
         expect(rs.readable).to.be.true
     })
   })
-  describe('#_discoveryKey', function () {
+  describe('#discoveryKey', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a Buffer containing the hypercore discovery key', async function() {
       const core9 = new Wavecore({ source })
       await Promise.resolve(core9.open())
-      const dk = core9._discoveryKey()
+      const dk = core9.discoveryKey
       expect(dk).to.be.instanceof(Buffer)
     })
   })
-  describe('#_fork', function () {
+  describe('#fork', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return the hypercore fork number', async function () {
       const core10 = new Wavecore({ source })
       await Promise.resolve(core10.open())
-      const forkId = core10._fork()
+      const forkId = core10.fork
       expect(typeof(forkId)).to.equal('number') &&
         expect(forkId).to.equal(0)
     })
   })
-  describe('#_length', function () {
+  describe('#length', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core11 = new Wavecore({ source })
     it('should return a length of 0 before the WAV is read into the core', function () {
-      const length = core11._length()
+      const length = core11.length
       expect(length).to.not.equal(null) &&
         expect(length).to.equal(0)
     })
     it('should return a length of 58 after the WAV is read into the core', async function () {
       await Promise.resolve(core11.open())
-      const newLength = core11._length()
+      const newLength = core11.length
       expect(newLength).to.not.equal(null) &&
         expect(newLength).to.equal(57)
     })
   })
-  describe('#_keyPair', function() {
+  describe('#keyPair', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return public and secret keys', async function() {
       const core12 = new Wavecore({ source })
-      const kp = core12._keyPair()
+      const kp = core12.keyPair
       expect(typeof(kp)).to.equal('object')
     })
   })
@@ -177,12 +177,12 @@ describe('Wavecore', function () {
       expect(result).to.equal(true)
     })
   })
-  describe('#_lastIndexSize', function () {
+  describe('#lastIndexSize', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core20 = new Wavecore({ source })
     it('should return the last index size in bytes', async function () {
       await Promise.resolve(core20.open())
-      const result = core20._lastIndexSize()
+      const result = core20.lastIndexSize
       expect(result).to.equal(26156)
     })
   })
