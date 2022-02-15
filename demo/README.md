@@ -7,6 +7,8 @@
 - `example3.js`: Audio production template example
 - `example4.js`: Audio silence analysis example (change `main()` input arg to get
   different index analysed).
+- `example5.js`: Change audio speed (without changing pitch) and play back a
+  section of it.
 
 ## Running The Demos
 
