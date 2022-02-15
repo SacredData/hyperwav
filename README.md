@@ -83,6 +83,23 @@ mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
 ```
+### Playing A Wavecore
+#### Play Indexed Audio Data
+```js
+const wavecore = new Wavecore({ source })
+await wavecore.open()
+wavecore.play({start: 5, end: 13}) // Play indeces 5 through 13
+```
+#### Listen For Live Audio Updates
+> Listen to the audio being inserted in the Wavecore **in real-time!**
+> ***Yes, you read that correctly: REAL-TIME!***
+```js
+const wavecore = new Wavecore({ source })
+await wavecore.open()
+const waveStream = wavecore._liveStream()
+// Consume this ReadableStream to listen to the audio as it gets recorded into
+// the Wavecore!
+```
 ### Splitting Audio
 
 Execute this script at `example2.js`.

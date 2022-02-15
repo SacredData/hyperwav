@@ -211,6 +211,23 @@ mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
 </code></pre>
+<h3>Playing A Wavecore</h3>
+<h4>Play Indexed Audio Data</h4>
+<pre class="prettyprint source lang-js"><code>const wavecore = new Wavecore({ source })
+await wavecore.open()
+wavecore.play({start: 5, end: 13}) // Play indeces 5 through 13
+</code></pre>
+<h4>Listen For Live Audio Updates</h4>
+<blockquote>
+<p>Listen to the audio being inserted in the Wavecore <strong>in real-time!</strong>
+<em><strong>Yes, you read that correctly: REAL-TIME!</strong></em></p>
+</blockquote>
+<pre class="prettyprint source lang-js"><code>const wavecore = new Wavecore({ source })
+await wavecore.open()
+const waveStream = wavecore._liveStream()
+// Consume this ReadableStream to listen to the audio as it gets recorded into
+// the Wavecore!
+</code></pre>
 <h3>Splitting Audio</h3>
 <p>Execute this script at <code>example2.js</code>.</p>
 <pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
