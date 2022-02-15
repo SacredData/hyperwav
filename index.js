@@ -130,6 +130,9 @@ class Wavecore {
       rs.pipe(pt)
     })
   }
+  get core() {
+    return this.core
+  }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
    * @returns {Buffer} discoveryKey
