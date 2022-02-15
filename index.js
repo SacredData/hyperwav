@@ -223,6 +223,12 @@ class Wavecore {
     )
   }
   /**
+   * Get a list of the sessions on this Wavecore's hypercore.
+   */
+  get sessions() {
+    return this.core.sessions
+  }
+  /**
    * Get the maximum volume adjustment value for the Wavecore's PCM audio data.
    * Used by the `norm()` method to ensure the normalized audio does not clip.
    * @returns {Number} vol - The SoX `vol -v` value.
@@ -477,12 +483,6 @@ class Wavecore {
    */
   session() {
     return this.core.session()
-  }
-  /**
-   * Get a list of the sessions on this Wavecore's hypercore.
-   */
-  sessions() {
-    return this.core.sessions
   }
   /**
    * Snapshot the current session and begin a new one.
