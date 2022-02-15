@@ -616,30 +616,30 @@ class Wavecore {
    * @arg {Boolean} [opts.stats=false] - Whether to also get SoX stats on the
    * time-stretched audio data. Currently these stats are output to `stdout`.
    * Useful for getting the new Wavecore's audio duration.
-   * @returns {Promise} stretchedCore - The new time-stretched Wavecore.
+   * @returns {Wavecore} stretchedCore - The new time-stretched Wavecore.
    */
-  tempo(f, opts = { stats: false }) {
+  async tempo(f, opts = { stats: false }) {
     const { stats } = opts
-    return new Promise((resolve, reject) => {
-      const cmdOpts = [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-        '-t',
-        'raw',
-        '-',
-        'tempo',
-        '-s',
-        `${f}`,
-      ]
-      if (stats) cmdOpts.push('stats')
-      const tempoCmd = nanoprocess('sox', cmdOpts)
+    const cmdOpts = [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+      '-t',
+      'raw',
+      '-',
+      'tempo',
+      '-s',
+      `${f}`,
+    ]
+    if (stats) cmdOpts.push('stats')
+    const tempoCmd = nanoprocess('sox', cmdOpts)
+    const prom = new Promise((resolve, reject) => {
       tempoCmd.open((err) => {
         if (err) throw err
 
@@ -659,6 +659,7 @@ class Wavecore {
         rs.pipe(tempoCmd.stdin)
       })
     })
+    return await Promise.resolve(prom)
   }
   /**
    * Truncate the Hypercore to a shorter length.
@@ -682,29 +683,29 @@ class Wavecore {
    * @arg {Object} [opts={}] - Optional options object
    * @arg {Boolean} [opts.store=false] - Whether to store the wav as a buffer in
    * the Wavecore class instance.
-   * @returns {Promise} wavBuf - WAV file Buffer
+   * @returns {Buffer} wavBuf - WAV file Buffer
    */
-  wav(opts = { store: false }) {
+  async wav(opts = { store: false }) {
     const { store } = opts
-    return new Promise((resolve, reject) => {
-      const bufs = []
-      const pt = new PassThrough()
-      pt.on('error', (err) => reject(err))
-      pt.on('data', (d) => bufs.push(d))
-      const soxCmd = nanoprocess('sox', [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-        '-t',
-        'wav',
-        '-',
-      ])
+    const bufs = []
+    const pt = new PassThrough()
+    pt.on('error', (err) => reject(err))
+    pt.on('data', (d) => bufs.push(d))
+    const soxCmd = nanoprocess('sox', [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+      '-t',
+      'wav',
+      '-',
+    ])
+    const np = new Promise((resolve, reject) => {
       soxCmd.open((err) => {
         if (err) reject(err)
 
@@ -718,6 +719,7 @@ class Wavecore {
         rs.pipe(soxCmd.stdin)
       })
     })
+    return await Promise.resolve(np)
   }
 }
 
