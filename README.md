@@ -152,7 +152,7 @@ console.log(snapshot.core.length) // 58
 
 | Statements                  | Branches                | Functions                 | Lines             |
 | --------------------------- | ----------------------- | ------------------------- | ----------------- |
-| ![Statements](https://img.shields.io/badge/statements-50.88%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-42.04%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-52.5%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-55.23%25-red.svg?style=flat) |
+| ![Statements](https://img.shields.io/badge/statements-44.48%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-37.5%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-46.25%25-red.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-48.53%25-red.svg?style=flat) |
 
 We use `mocha`, with `nyc` for test coverage reporting.
 ```sh
