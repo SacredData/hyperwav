@@ -523,7 +523,7 @@ class Wavecore {
    * @arg {nanoprocess} [opts.np=null] - Declare a custom nanoprocess for playback
    * @see {@link https://github.com/little-core-labs/nanoprocess nanoprocess}
    */
-  play(opts={start:0,end:-1,np:null}) {
+  play(opts = { start: 0, end: -1, np: null }) {
     const { np, start, end } = opts
 
     let proc = null

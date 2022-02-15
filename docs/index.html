@@ -270,6 +270,25 @@ await wave.truncate(10)
 console.log(wave.core.length) // 10
 console.log(snapshot.core.length) // 58
 </code></pre>
+<h3>Signal Processing</h3>
+<h4>Normalization</h4>
+<blockquote>
+<p>Increase gain so that the peak dBFS value = 0</p>
+</blockquote>
+<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+await wave.open()
+await wave.norm()
+</code></pre>
+<h4>Playback Rate</h4>
+<blockquote>
+<p>Change the &quot;tempo&quot; of the audio without changing the pitch</p>
+</blockquote>
+<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+await wave.open()
+const snap = wave.snapshot() // save copy of original audio
+const slowerWave = await Promise.resolve(wave.tempo(0.8)) // 20% slower
+const fasterWave = await Promise.resolve(wave.tempo(1.1)) // 10% faster
+</code></pre>
 <h2>Tests</h2>
 <table>
 <thead>
