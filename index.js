@@ -387,7 +387,7 @@ class Wavecore {
         const newCore = new Hypercore(ram)
 
         const pt = new PassThrough()
-        pt.on('error', err => reject(err))
+        pt.on('error', (err) => reject(err))
         pt.on('data', (d) => newCore.append(d))
 
         normCmd.on('close', (code) => {
