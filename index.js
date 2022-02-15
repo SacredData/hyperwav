@@ -300,6 +300,7 @@ class Wavecore {
    * @returns {Promise}
    */
   async close() {
+    if (this.core.closing) return
     await this.core.close()
     return new Promise((resolve, reject) => {
       if (!this.core.closed) {
