@@ -136,7 +136,7 @@ class Wavecore {
    * @see {@link
    * https://github.com/hypercore-protocol/hypercore#feeddiscoverykey|discoveryKey}
    */
-  _discoveryKey() {
+  get discoveryKey() {
     return this.core.discoveryKey
   }
   /**
@@ -158,14 +158,14 @@ class Wavecore {
    * Return the fork ID of the Wavecore.
    * @returns {Number} forkId
    */
-  _fork() {
+  get fork() {
     return this.core.fork
   }
   /**
    * Returns an `Object` with the public and secret keys for the Wavecore.
    * @returns {Object} keyPair
    */
-  _keyPair() {
+  get keyPair() {
     return this.core.keyPair
   }
   /**
@@ -173,14 +173,14 @@ class Wavecore {
    * when it is known that the last index does not contain a buffer that matches
    * the declared `indexSize` of the Wavecore.
    */
-  _lastIndexSize() {
+  get lastIndexSize() {
     return this.core.byteLength - (this.core.length - 1) * this.indexSize
   }
   /**
    * Returns the current length of the Wavecore's hypercore.
    * @returns {Number} length
    */
-  _length() {
+  get length() {
     return this.core.length
   }
   /**
@@ -188,7 +188,7 @@ class Wavecore {
    * good way to listen for live changes to the Wavecore.
    * @returns {Readable} liveStream
    */
-  _liveStream() {
+  get liveStream() {
     return this.core.createReadStream({ live: true, snapshot: false })
   }
   /**
