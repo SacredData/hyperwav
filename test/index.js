@@ -54,8 +54,8 @@ describe('Wavecore', function () {
       await Promise.resolve(core5b.open())
       await core5b.truncate(19, { snapshot: true })
       expect(core5b.core.length).to.equal(19) &&
-        expect(core5b.sessions()[1].length).to.equal(57) &&
-        expect(core5b.sessions().length).to.equal(2)
+        expect(core5b.sessions[1].length).to.equal(57) &&
+        expect(core5b.sessions.length).to.equal(2)
     })
   })
   describe('#seek', function () {
