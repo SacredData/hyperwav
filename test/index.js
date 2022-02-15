@@ -186,12 +186,12 @@ describe('Wavecore', function () {
       expect(result).to.equal(26156)
     })
   })
-  describe('#_audioBuffer', function () {
+  describe('#audioBuffer', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core21 = new Wavecore({ source })
     it('should produce an audiobuffer from the PCM data', async function () {
       await Promise.resolve(core21.open())
-      const ab = await Promise.resolve(core21._audioBuffer())
+      const ab = await Promise.resolve(core21.audioBuffer())
       expect(ab).to.be.instanceof(Object) &&
         expect(ab).to.have.property('length')
     })
