@@ -325,17 +325,21 @@ class Wavecore {
    * @returns {Wavecore}
    */
   async concat(wavecores) {
-    const allCores = [this, ...wavecores]
-    const coreStreams = new MultiStream(allCores.map((c) => c._rawStream()))
-    const concatCore = new Hypercore(ram)
-    const prom = new Promise((resolve, reject) => {
-      const concatWriter = concatCore.createWriteStream()
-      concatWriter.on('close', () => {
-        resolve(Wavecore.fromCore(concatCore, this))
+    try {
+      const allCores = [this, ...wavecores]
+      const coreStreams = new MultiStream(allCores.map((c) => c._rawStream()))
+      const concatCore = new Hypercore(ram)
+      const prom = new Promise((resolve, reject) => {
+        const concatWriter = concatCore.createWriteStream()
+        concatWriter.on('close', () => {
+          resolve(Wavecore.fromCore(concatCore, this))
+        })
+        coreStreams.pipe(concatWriter)
       })
-      coreStreams.pipe(concatWriter)
-    })
-    return await Promise.resolve(prom)
+      return await Promise.resolve(prom)
+    } catch (err) {
+      throw err
+    }
   }
   /**
    * Check if the Wavecore has the block at the provided index number.
@@ -343,37 +347,47 @@ class Wavecore {
    * @returns {Boolean} - Does the wavecore have that index?
    */
   async has(i) {
-    return await this.core.has(i)
+    try {
+      return await this.core.has(i)
+    } catch (err) {
+      throw err
+    }
   }
   /**
    * Normalize the audio data in the Wavecore. Returns a new Wavecore instance.
    */
   async norm() {
-    const vol = await this._volAdjust()
-    const normCmd = nanoprocess('sox', [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-      '-t',
-      'raw',
-      '-',
-      'vol',
-      vol,
-    ])
+    try {
+      const vol = await this._volAdjust()
+      const normCmd = nanoprocess('sox', [
+        '-r',
+        '48000',
+        '-b',
+        '16',
+        '-e',
+        'signed',
+        '-t',
+        'raw',
+        '-',
+        '-t',
+        'raw',
+        '-',
+        'vol',
+        vol,
+      ])
+    } catch (err) {
+      throw err
+    }
+
     const prom = new Promise((resolve, reject) => {
       normCmd.open((err) => {
-        if (err) throw err
+        if (err) reject(err)
 
         // TODO figure out why number of indeces higher in new wavecore
         const newCore = new Hypercore(ram)
 
         const pt = new PassThrough()
+        pt.on('error', err => reject(err))
         pt.on('data', (d) => newCore.append(d))
 
         normCmd.on('close', (code) => {
