@@ -392,6 +392,7 @@ class Wavecore {
    */
   async open(opts = { source: null }) {
     const { source } = opts
+    if (this.core.length > 0 && this.core.opened) return
     if (source instanceof Source) this.source = Source.from(source)
     try {
       await this.core.ready()
