@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2022-02-15
+### Changed
+- some functions to class getters, improving performance
+
 ## [0.0.6] - 2022-02-15
 ### Added
 - custom playback range option for playback method
@@ -28,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.6...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/Storyboard-fm/wavecore/releases/tags/v0.0.5
