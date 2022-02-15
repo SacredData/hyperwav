@@ -116,19 +116,22 @@ class Wavecore {
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
    * MDN}
    */
-  _audioBuffer() {
-    return new Promise((resolve, reject) => {
-      const bufs = []
-      const rs = this.core.createReadStream()
-      const pt = new PassThrough()
-      pt.on('data', (d) => bufs.push(d))
+  async audioBuffer(opts = { store: false }) {
+    const { store } = opts
+    const bufs = []
+    const rs = this.core.createReadStream()
+    const pt = new PassThrough()
+    pt.on('data', (d) => bufs.push(d))
+    const prom = new Promise((resolve, reject) => {
       pt.on('error', (err) => reject(err))
       pt.on('end', () => {
         const audioBuffer = abf(Buffer.concat(bufs), 'stereo buffer le 48000')
+        if (store) this.audioBuffer = audioBuffer
         resolve(audioBuffer)
       })
       rs.pipe(pt)
     })
+    return await Promise.resolve(prom)
   }
   /**
    * Get the Wavecore's discovery key so the hypercore can be found by others.
