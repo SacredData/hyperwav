@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.0] - 2022-02-16
 ### Changed
 - volume adjustment and normalization methods to allow for a custom range of indeces to process, rather than the entire wavecore
+
+### Added
+- new methods for creating a wavecore from a new recording via the `rec` command line tool
 
 ## [0.0.9] - 2022-02-16
 ### Added
@@ -45,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.9...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.9...v0.1.0
 [0.0.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.6...v0.0.7
