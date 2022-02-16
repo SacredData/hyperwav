@@ -14,8 +14,7 @@ function silentOrVoice(data) {
 }
 
 async function main(num=0) {
-  // const source = new Source('./clip.wav')
-  const source = new Source('/home/gwohl/Downloads/m.wav')
+  const source = new Source('./clip.wav')
   const wavecore = new Wavecore({ source })
 
   const INDEX_MS = 800
