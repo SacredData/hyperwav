@@ -239,7 +239,7 @@ class Wavecore {
    * @arg {Number} [opts.end=-1] - Index where the stream should end.
    * @returns {Number} vol - The SoX `vol -v` value.
    */
-  _volAdjust(opts={start:0,end:-1}) {
+  _volAdjust(opts = { start: 0, end: -1 }) {
     const { start, end } = opts
     return new Promise((resolve, reject) => {
       const statsCmd = nanoprocess('sox', [
@@ -416,7 +416,7 @@ class Wavecore {
    * @arg {Number} [opts.start=0] - Index from which to start the stream
    * @arg {Number} [opts.end=-1] - Index where the stream should end.
    */
-  async norm(opts={start:0,end:-1}) {
+  async norm(opts = { start: 0, end: -1 }) {
     const { start, end } = opts
     try {
       const vol = await this._volAdjust({ start, end })
