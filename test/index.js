@@ -222,4 +222,23 @@ describe('Wavecore', function () {
       expect(core24.wavBuffer).to.be.instanceof(Buffer)
     })
   })
+  describe('#tempo', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core25 = new Wavecore({ source })
+    it('should slow down the audio by 50%', async function () {
+      await Promise.resolve(core25.open())
+      const orig = core25.core.byteLength
+      const slowBy50 = await core25.tempo(0.5)
+      await slowBy50.core.update()
+      const slow = slowBy50.core.byteLength
+      expect(slow).to.equal(orig*2)
+    })
+    it('should speed up the audio by 200%', async function () {
+      const orig = core25.core.byteLength
+      const fasterBy200 = await core25.tempo(2.0)
+      await fasterBy200.core.update()
+      const faster = fasterBy200.core.byteLength
+      expect(faster).to.equal(orig/2)
+    })
+  })
 })
