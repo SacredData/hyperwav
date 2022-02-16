@@ -241,4 +241,33 @@ describe('Wavecore', function () {
       expect(faster).to.equal(orig/2)
     })
   })
+  describe('#stats', function () {
+      const source = new Source(path.join(__dirname, 'test.wav'))
+      const core26 = new Wavecore({ source })
+    it('should get sox stats and stat output on the audio data', async function () {
+      await Promise.resolve(core26.open())
+      const statsOut = await core26.stats()
+      expect(statsOut).to.not.equal(null)
+    })
+  })
+  describe('#_volAdjust', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core27 = new Wavecore({ source })
+    it('should get the max volume adjustment without clipping', async function () {
+      await Promise.resolve(core27.open())
+      const vol = await core27._volAdjust()
+      console.log(vol)
+      expect(vol).to.equal(1.076)
+    })
+  })
+  describe('#norm', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core28 = new Wavecore({ source })
+    it('should normalize the audio to 0dBFS', async function () {
+      await Promise.resolve(core28.open())
+      const norm = await core28.norm()
+      const stats = await norm.stats()
+      expect(stats.split('\n')[3]).to.equal('Pk lev dB      -0.00')
+    })
+  })
 })
