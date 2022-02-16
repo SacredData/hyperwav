@@ -568,35 +568,36 @@ class Wavecore {
   }
   /**
    * Runs `sox -n stats` on the raw audio in the Wavecore, via a nanoprocess.
+   * @async
    * @arg {Object} [opts={}] - Optional opts object for declaring index
    * @arg {Number} [opts.index=null] - Declare index to get stats on
-   * @returns {Promise} statsOut - The string of stats information returned by
+   * @returns {String} statsOut - The string of stats information returned by
    * SoX
    */
-  stats(opts = { index: null }) {
-    return new Promise((resolve, reject) => {
-      const { index } = opts
-      const statsCmd = nanoprocess('sox', [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-        '-n',
-        'stats',
-        'stat',
-      ])
+  async stats(opts = { index: null }) {
+    const { index } = opts
+    const statsCmd = nanoprocess('sox', [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+      '-n',
+      'stats',
+      'stat',
+    ])
+
+    const statsOut = []
+
+    const pt = new PassThrough()
+    pt.on('data', (d) => statsOut.push(`${d}`))
+    const prom = new Promise((resolve, reject) => {
       statsCmd.open((err) => {
         if (err) throw err
-
-        const statsOut = []
-
-        const pt = new PassThrough()
-        pt.on('data', (d) => statsOut.push(`${d}`))
 
         statsCmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-zero exit code'))
@@ -615,6 +616,7 @@ class Wavecore {
         rs.pipe(statsCmd.stdin)
       })
     })
+    return await Promise.resolve(prom)
   }
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
