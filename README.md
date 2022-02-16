@@ -49,6 +49,9 @@ applications, and web apps all from one codebase.
 #### DSP Operations
 - [x] [Normalization][norm]
 - [x] [Time Stretch][tempo]
+#### Helper Functions
+- [x] [Sessions][session]
+- [x] [Snapshots][snapshot]
 #### Analysis Operations
 - [x] SoX `stat`
 - [x] SoX `stats`
@@ -201,6 +204,8 @@ $ npm run test
 [play]:  https://storyboard-fm.github.io/wavecore/Wavecore.html#play
 [ras]: https://github.com/random-access-storage
 [seek]: https://storyboard-fm.github.io/wavecore/Wavecore.html#seek
+[session]: https://storyboard-fm.github.io/wavecore/Wavecore.html#session
+[snapshot]: https://storyboard-fm.github.io/wavecore/Wavecore.html#snapshot
 [shift]: https://storyboard-fm.github.io/wavecore/Wavecore.html#shift
 [sox]: http://sox.sourceforge.net/
 [split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
