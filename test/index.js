@@ -270,4 +270,14 @@ describe('Wavecore', function () {
       expect(stats.split('\n')[3]).to.equal('Pk lev dB      -0.00')
     })
   })
+  describe('#_rec', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core29 = new Wavecore({ source })
+    it('should record one second of audio', async function () {
+      await core29._rec("00:01")
+      setTimeout(() => {}, 2000)
+      await core29.core.update()
+      expect(core29.core.byteLength).to.equal(96000)
+    })
+  })
 })
