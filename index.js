@@ -352,7 +352,7 @@ class Wavecore {
    * gain function to prevent clipping.
    * @returns {Wavecore} - New Wavecore with the gain processing applied.
    */
-  async gain(g, opts={start:0,end:-1,limiter:false}) {
+  async gain(g, opts = { start: 0, end: -1, limiter: false }) {
     const { start, end, limiter } = opts
     const rs = this._rawStream(start, end)
     const cmdOpts = [
@@ -380,9 +380,13 @@ class Wavecore {
         if (err) reject(err)
 
         const newGainCore = new Hypercore(ram)
-        const ws = newGainCore.createWriteStream({ highWaterMark: this.indexSize })
+        const ws = newGainCore.createWriteStream({
+          highWaterMark: this.indexSize,
+        })
         ws.on('close', () => {
-          newGainCore.update().then(() => resolve(Wavecore.fromCore(newGainCore, this)))
+          newGainCore
+            .update()
+            .then(() => resolve(Wavecore.fromCore(newGainCore, this)))
         })
         gainCmd.stdout.pipe(ws)
         rs.pipe(gainCmd.stdin)
