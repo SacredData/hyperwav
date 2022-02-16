@@ -427,6 +427,28 @@ class Wavecore {
     }
   }
   /**
+   * Listen live to the audio data coming in to the Wavecore. Great way to
+   * monitor the audio inputs or broadcast the content to others.
+   */
+  monitor() {
+    const cmdOpts = [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+    ]
+    const playCmd = nanoprocess('play', cmdOpts)
+    playCmd.open((err) => {
+      playCmd.stdout.pipe(process.stdout)
+      this.liveStream.pipe(playCmd.stdin)
+    })
+  }
+  /**
    * Normalize the audio data in the Wavecore. Returns a new Wavecore instance.
    * @arg {Object} [opts={}] - Optional options object
    * @arg {Number} [opts.start=0] - Index from which to start the stream
