@@ -209,6 +209,7 @@ specific data ranges before having to allocate buffer resources.</p>
 occur on each channel of audio without worrying about data interleaving.</p>
 <h2>Examples</h2>
 <h3>Recording Into A Wavecore</h3>
+<h4><a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder"><code>MediaRecorder</code></a></h4>
 <pre class="prettyprint source lang-js"><code>const core = new Hypercore(ram)
 mediaRecorder.onstop = function() {
   const wave = new Wavecore({ core })
@@ -216,6 +217,12 @@ mediaRecorder.onstop = function() {
 mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
+</code></pre>
+<h4>CLI</h4>
+<pre class="prettyprint source lang-js"><code>// Will record your microphone for 30 minutes
+const recording = Wavecore.fromRec(&quot;30:00&quot;)
+// Write the audio to your local disk and listen in real-time!
+recording.liveStream.pipe(fs.createWriteStream('liverecording.wav'))
 </code></pre>
 <h3>Playing A Wavecore</h3>
 <h4>Play Indexed Audio Data</h4>
