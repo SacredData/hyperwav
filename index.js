@@ -536,7 +536,7 @@ class Wavecore {
    * @arg {String} [dur="30:00"] - Duration string for recording; defaults to
    * 30min.
    */
-  async rec(dur="30:00") {
+  async rec(dur = '30:00') {
     const cmdOpts = [
       '-r',
       '48000',
@@ -551,12 +551,12 @@ class Wavecore {
       '-',
       'trim',
       '0',
-      `${dur}`
+      `${dur}`,
     ]
     const recCmd = nanoprocess('rec', cmdOpts)
     const prom = new Promise((resolve, reject) => {
       recCmd.open((err) => {
-        if (err) reject (err)
+        if (err) reject(err)
 
         recCmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-Zero exit code!', code))
