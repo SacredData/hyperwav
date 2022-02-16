@@ -342,6 +342,56 @@ class Wavecore {
     }
   }
   /**
+   * Apply gain attenuation or amplification to the Wavecore audio.
+   * @arg {String} g - A string beginning with `+` or `-` indicating gain
+   * operation to perform on the audio, i.e., `+8` or `-2.3`.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Number} [opts.start=0] - Start index
+   * @arg {Number} [opts.end=-1] - End index
+   * @arg {Boolean} [opts.limiter=false] - Whether to apply a limiter to the
+   * gain function to prevent clipping.
+   * @returns {Wavecore} - New Wavecore with the gain processing applied.
+   */
+  async gain(g, opts={start:0,end:-1,limiter:false}) {
+    const { start, end, limiter } = opts
+    const rs = this._rawStream(start, end)
+    const cmdOpts = [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+      '-t',
+      'raw',
+      '-',
+      'gain',
+    ]
+    if (limiter) cmdOpts.push('-l')
+    cmdOpts.push(`${g}`)
+
+    const gainCmd = nanoprocess('sox', cmdOpts)
+
+    const prom = new Promise((resolve, reject) => {
+      gainCmd.open((err) => {
+        if (err) reject(err)
+
+        const newGainCore = new Hypercore(ram)
+        const ws = newGainCore.createWriteStream({ highWaterMark: this.indexSize })
+        ws.on('close', () => {
+          newGainCore.update().then(() => resolve(Wavecore.fromCore(newGainCore, this)))
+        })
+        gainCmd.stdout.pipe(ws)
+        rs.pipe(gainCmd.stdin)
+      })
+    })
+
+    return await Promise.resolve(prom)
+  }
+  /**
    * Check if the Wavecore has the block at the provided index number.
    * @arg {Number} i - The index number to check for
    * @returns {Boolean} - Does the wavecore have that index?
