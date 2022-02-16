@@ -34,7 +34,6 @@ applications, and web apps all from one codebase.
 - [x] Create new Wavecore with [`random-access-storage`][ras] input
 #### Write Operations
 - [x] Append
-- ~[ ] Pad head (Add blank data to head to extend duration)~ (just concat a new core instead)
 - [x] Pad tail (Add blank data to tail to extend duration)
 #### Editing Operations
 > Wavecore audio editing tasks mimic the methods offered by [JavaScript
