@@ -78,6 +78,7 @@ By forcing all Wavecores to be mono-first, we also enable different processing t
 occur on each channel of audio without worrying about data interleaving.
 ## Examples
 ### Recording Into A Wavecore
+#### [`MediaRecorder`][mr]
 ```js
 const core = new Hypercore(ram)
 mediaRecorder.onstop = function() {
@@ -86,6 +87,13 @@ mediaRecorder.onstop = function() {
 mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
+```
+#### CLI
+```js
+// Will record your microphone for 30 minutes
+const recording = Wavecore.fromRec("30:00")
+// Write the audio to your local disk and listen in real-time!
+recording.liveStream.pipe(fs.createWriteStream('liverecording.wav'))
 ```
 ### Playing A Wavecore
 #### Play Indexed Audio Data
@@ -202,6 +210,7 @@ $ npm run test
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [mdnarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+[mr]: https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
 [norm]: https://storyboard-fm.github.io/wavecore/Wavecore.html#norm
 [play]:  https://storyboard-fm.github.io/wavecore/Wavecore.html#play
 [ras]: https://github.com/random-access-storage
