@@ -47,6 +47,7 @@ applications, and web apps all from one codebase.
 - [x] [Playback][play]
 - [x] [Seeking][seek]
 #### DSP Operations
+- [x] [Gain][gain]
 - [x] [Normalization][norm]
 - [x] [Time Stretch][tempo]
 #### Helper Functions
@@ -197,6 +198,7 @@ $ npm run test
 ```
 
 [concat]: https://storyboard-fm.github.io/wavecore/Wavecore.html#concat
+[gain]: https://storyboard-fm.github.io/wavecore/Wavecore.html#gain
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [mdnarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
