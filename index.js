@@ -215,7 +215,7 @@ class Wavecore {
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
    * as a readable stream.
-   * @arg {Number} [start=1] - Index from which to start the stream
+   * @arg {Number} [start=0] - Index from which to start the stream
    * @arg {Number} [end=-1] - Index where the stream should end.
    * @returns {Readable} readStream
    */
@@ -234,9 +234,13 @@ class Wavecore {
   /**
    * Get the maximum volume adjustment value for the Wavecore's PCM audio data.
    * Used by the `norm()` method to ensure the normalized audio does not clip.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Number} [opts.start=0] - Index from which to start the stream
+   * @arg {Number} [opts.end=-1] - Index where the stream should end.
    * @returns {Number} vol - The SoX `vol -v` value.
    */
-  _volAdjust() {
+  _volAdjust(opts={start:0,end:-1}) {
+    const { start, end } = opts
     return new Promise((resolve, reject) => {
       const statsCmd = nanoprocess('sox', [
         '-r',
@@ -266,8 +270,7 @@ class Wavecore {
         })
         statsCmd.stderr.pipe(pt)
 
-        let rs = this.core.createReadStream()
-        rs.pipe(statsCmd.stdin)
+        this._rawStream(start, end).pipe(statsCmd.stdin)
       })
     })
   }
@@ -409,10 +412,14 @@ class Wavecore {
   }
   /**
    * Normalize the audio data in the Wavecore. Returns a new Wavecore instance.
+   * @arg {Object} [opts={}] - Optional options object
+   * @arg {Number} [opts.start=0] - Index from which to start the stream
+   * @arg {Number} [opts.end=-1] - Index where the stream should end.
    */
-  async norm() {
+  async norm(opts={start:0,end:-1}) {
+    const { start, end } = opts
     try {
-      const vol = await this._volAdjust()
+      const vol = await this._volAdjust({ start, end })
       const normCmd = nanoprocess('sox', [
         '-r',
         '48000',
@@ -429,32 +436,33 @@ class Wavecore {
         'vol',
         vol,
       ])
+
+      const rs = this._rawStream(start, end)
+
+      const prom = new Promise((resolve, reject) => {
+        normCmd.open((err) => {
+          if (err) reject(err)
+
+          // TODO figure out why number of indeces higher in new wavecore
+          const newCore = new Hypercore(ram)
+
+          const pt = new PassThrough()
+          pt.on('error', (err) => reject(err))
+          pt.on('data', (d) => newCore.append(d))
+
+          normCmd.on('close', (code) => {
+            if (code !== 0) reject(new Error('Non-zero exit code'))
+            resolve(Wavecore.fromCore(newCore, this))
+          })
+          normCmd.stdout.pipe(pt)
+
+          rs.pipe(normCmd.stdin)
+        })
+      })
+      return await Promise.resolve(prom)
     } catch (err) {
       throw err
     }
-
-    const prom = new Promise((resolve, reject) => {
-      normCmd.open((err) => {
-        if (err) reject(err)
-
-        // TODO figure out why number of indeces higher in new wavecore
-        const newCore = new Hypercore(ram)
-
-        const pt = new PassThrough()
-        pt.on('error', (err) => reject(err))
-        pt.on('data', (d) => newCore.append(d))
-
-        normCmd.on('close', (code) => {
-          if (code !== 0) reject(new Error('Non-zero exit code'))
-          resolve(Wavecore.fromCore(newCore, this))
-        })
-        normCmd.stdout.pipe(pt)
-
-        let rs = this._rawStream()
-        rs.pipe(normCmd.stdin)
-      })
-    })
-    return await Promise.resolve(prom)
   }
   /**
    * Reads the source WAV into the class instance's Hypercore v10.
