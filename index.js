@@ -62,6 +62,22 @@ class Wavecore {
     return new this({ source, indexSize })
   }
   /**
+   * Start recording via the `rec` CLI application, then create a new Wavecore
+   * instance from the resulting audio data.
+   * @arg {String} [dur="30:00"] - Duration of the recording to capture
+   * @arg {Object} [opts={}] - Options
+   * @arg {Number} [opts.indexSize=76800] - Size of each index in bytes
+   * @returns {Wavecore}
+   */
+  static fromRec(dur="30:00", opts = { indexSize: null }) {
+    let source = new Source()
+    const { indexSize } = opts
+
+    const newWavecore = new this({ source, indexSize })
+    newWavecore._rec(dur)
+    return newWavecore
+  }
+  /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
    * @arg {Hypercore} [opts.core=null] - Provide a previously-made hypercore.
@@ -536,7 +552,7 @@ class Wavecore {
    * @arg {String} [dur="30:00"] - Duration string for recording; defaults to
    * 30min.
    */
-  async rec(dur = '30:00') {
+  async _rec(dur = '30:00') {
     const cmdOpts = [
       '-r',
       '48000',
