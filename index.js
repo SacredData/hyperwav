@@ -532,6 +532,44 @@ class Wavecore {
       rs.pipe(proc.stdin)
     })
   }
+  /** Record into the Wavecore via the `rec` CLI application.
+   * @arg {String} [dur="30:00"] - Duration string for recording; defaults to
+   * 30min.
+   */
+  async rec(dur="30:00") {
+    const cmdOpts = [
+      '-r',
+      '48000',
+      '-c',
+      '1',
+      '-b',
+      '16',
+      '-e',
+      'signed-integer',
+      '-t',
+      'raw',
+      '-',
+      'trim',
+      '0',
+      `${dur}`
+    ]
+    const recCmd = nanoprocess('rec', cmdOpts)
+    const prom = new Promise((resolve, reject) => {
+      recCmd.open((err) => {
+        if (err) reject (err)
+
+        recCmd.on('close', (code) => {
+          if (code !== 0) reject(new Error('Non-Zero exit code!', code))
+
+          this.core.update().then(() => resolve())
+        })
+
+        recCmd.stdout.pipe(this.core.createWriteStream())
+      })
+    })
+
+    await Promise.resolve(prom)
+  }
   /**
    * Record a stream of data into the Wavecore's hypercore.
    * @arg {Stream} st - The stream to record into the Wavecore.
