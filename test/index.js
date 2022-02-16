@@ -270,4 +270,13 @@ describe('Wavecore', function () {
       expect(stats.split('\n')[3]).to.equal('Pk lev dB      -0.00')
     })
   })
+  describe('#liveStream', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core29 = new Wavecore({ source })
+    it('should return a live ReadableStream of the audio input', async function () {
+      await Promise.resolve(core29.open())
+      const ls = core29.liveStream
+      expect(ls).to.be.instanceof(Object).that.has.any.key('live')
+    })
+  })
 })
