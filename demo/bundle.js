@@ -39,7 +39,330 @@ async function main() {
 
 main()
 
-},{"../web":167,"media-recorder-stream":71}],2:[function(require,module,exports){
+},{"../web":212,"media-recorder-stream":105}],2:[function(require,module,exports){
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],3:[function(require,module,exports){
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+module.exports = _arrayWithHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],4:[function(require,module,exports){
+var arrayLikeToArray = require("./arrayLikeToArray.js");
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return arrayLikeToArray(arr);
+}
+
+module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./arrayLikeToArray.js":2}],5:[function(require,module,exports){
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+module.exports = _assertThisInitialized, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],6:[function(require,module,exports){
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
+module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],7:[function(require,module,exports){
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+module.exports = _classCallCheck, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],8:[function(require,module,exports){
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
+  return Constructor;
+}
+
+module.exports = _createClass, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],9:[function(require,module,exports){
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],10:[function(require,module,exports){
+function _getPrototypeOf(o) {
+  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
+  return _getPrototypeOf(o);
+}
+
+module.exports = _getPrototypeOf, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],11:[function(require,module,exports){
+var setPrototypeOf = require("./setPrototypeOf.js");
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  Object.defineProperty(subClass, "prototype", {
+    writable: false
+  });
+  if (superClass) setPrototypeOf(subClass, superClass);
+}
+
+module.exports = _inherits, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./setPrototypeOf.js":19}],12:[function(require,module,exports){
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+}
+
+module.exports = _iterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],13:[function(require,module,exports){
+function _iterableToArrayLimit(arr, i) {
+  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+
+  if (_i == null) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+
+  var _s, _e;
+
+  try {
+    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+module.exports = _iterableToArrayLimit, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],14:[function(require,module,exports){
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+module.exports = _nonIterableRest, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],15:[function(require,module,exports){
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+module.exports = _nonIterableSpread, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],16:[function(require,module,exports){
+var objectWithoutPropertiesLoose = require("./objectWithoutPropertiesLoose.js");
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+  var target = objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutProperties, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./objectWithoutPropertiesLoose.js":17}],17:[function(require,module,exports){
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutPropertiesLoose, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],18:[function(require,module,exports){
+var _typeof = require("./typeof.js")["default"];
+
+var assertThisInitialized = require("./assertThisInitialized.js");
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
+  }
+
+  return assertThisInitialized(self);
+}
+
+module.exports = _possibleConstructorReturn, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./assertThisInitialized.js":5,"./typeof.js":22}],19:[function(require,module,exports){
+function _setPrototypeOf(o, p) {
+  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
+  return _setPrototypeOf(o, p);
+}
+
+module.exports = _setPrototypeOf, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],20:[function(require,module,exports){
+var arrayWithHoles = require("./arrayWithHoles.js");
+
+var iterableToArrayLimit = require("./iterableToArrayLimit.js");
+
+var unsupportedIterableToArray = require("./unsupportedIterableToArray.js");
+
+var nonIterableRest = require("./nonIterableRest.js");
+
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
+}
+
+module.exports = _slicedToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./arrayWithHoles.js":3,"./iterableToArrayLimit.js":13,"./nonIterableRest.js":14,"./unsupportedIterableToArray.js":23}],21:[function(require,module,exports){
+var arrayWithoutHoles = require("./arrayWithoutHoles.js");
+
+var iterableToArray = require("./iterableToArray.js");
+
+var unsupportedIterableToArray = require("./unsupportedIterableToArray.js");
+
+var nonIterableSpread = require("./nonIterableSpread.js");
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./arrayWithoutHoles.js":4,"./iterableToArray.js":12,"./nonIterableSpread.js":15,"./unsupportedIterableToArray.js":23}],22:[function(require,module,exports){
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
+}
+
+module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{}],23:[function(require,module,exports){
+var arrayLikeToArray = require("./arrayLikeToArray.js");
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+}
+
+module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+},{"./arrayLikeToArray.js":2}],24:[function(require,module,exports){
+module.exports = require("regenerator-runtime");
+
+},{"regenerator-runtime":154}],25:[function(require,module,exports){
 const { hash, createKeyPair } = require('./lib/crypto')
 
 module.exports = class Stub {
@@ -56,7 +379,7 @@ module.exports = class Stub {
   }
 }
 
-},{"./lib/crypto":3}],3:[function(require,module,exports){
+},{"./lib/crypto":26}],26:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -79,7 +402,7 @@ module.exports = {
   createKeyPair
 }
 
-},{"b4a":18,"sodium-universal":151}],4:[function(require,module,exports){
+},{"b4a":42,"sodium-universal":193}],27:[function(require,module,exports){
 const { Pull, Push, HEADERBYTES, KEYBYTES, ABYTES } = require('sodium-secretstream')
 const sodium = require('sodium-universal')
 const { Duplex } = require('streamx')
@@ -498,7 +821,7 @@ function streamId (handshakeHash, isInitiator, out = b4a.allocUnsafe(32)) {
   return out
 }
 
-},{"./lib/bridge":5,"./lib/handshake":6,"b4a":18,"sodium-secretstream":133,"sodium-universal":151,"streamx":157}],5:[function(require,module,exports){
+},{"./lib/bridge":28,"./lib/handshake":29,"b4a":42,"sodium-secretstream":175,"sodium-universal":193,"streamx":200}],28:[function(require,module,exports){
 const { Duplex } = require('streamx')
 
 class ReversePassThrough extends Duplex {
@@ -572,7 +895,7 @@ module.exports = class Bridge extends Duplex {
   }
 }
 
-},{"streamx":157}],6:[function(require,module,exports){
+},{"streamx":200}],29:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const curve = require('noise-curve-ed')
 const Noise = require('noise-handshake')
@@ -652,7 +975,7 @@ function writeUint24le (n, buf) {
   buf[2] = (n >>> 16) & 255
 }
 
-},{"b4a":18,"noise-curve-ed":85,"noise-handshake":89,"sodium-universal":151}],7:[function(require,module,exports){
+},{"b4a":42,"noise-curve-ed":120,"noise-handshake":124,"sodium-universal":193}],30:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -1162,7 +1485,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":91,"util/":10}],8:[function(require,module,exports){
+},{"object-assign":126,"util/":33}],31:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1187,14 +1510,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],9:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],10:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1784,12 +2107,12 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":9,"_process":97,"inherits":8}],11:[function(require,module,exports){
+},{"./support/isBuffer":32,"_process":132,"inherits":31}],34:[function(require,module,exports){
 module.exports = function _atob(str) {
   return atob(str)
 }
 
-},{}],12:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * @module  audio-dtype
  */
@@ -1940,7 +2263,7 @@ function getFormat (arg) {
 	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
 }
 
-},{"audio-buffer":14,"audio-context":15,"audio-format":16,"is-audio-buffer":66,"is-plain-obj":13,"pcm-convert":94,"pick-by-alias":95,"string-to-arraybuffer":158}],13:[function(require,module,exports){
+},{"audio-buffer":37,"audio-context":38,"audio-format":39,"is-audio-buffer":98,"is-plain-obj":36,"pcm-convert":129,"pick-by-alias":130,"string-to-arraybuffer":201}],36:[function(require,module,exports){
 'use strict';
 var toString = Object.prototype.toString;
 
@@ -1949,7 +2272,7 @@ module.exports = function (x) {
 	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
 };
 
-},{}],14:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * AudioBuffer class
  *
@@ -2062,7 +2385,7 @@ AudioBuffer.prototype.copyToChannel = function (source, channelNumber, startInCh
 };
 
 
-},{"audio-context":15}],15:[function(require,module,exports){
+},{"audio-context":38}],38:[function(require,module,exports){
 'use strict'
 
 var cache = {}
@@ -2108,7 +2431,7 @@ module.exports = function getContext (options) {
 	return ctx
 }
 
-},{}],16:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  * @module audio-format
  */
@@ -2287,9 +2610,372 @@ function getType (arg) {
 	if (arg instanceof Uint32Array) return 'uint32'
 }
 
-},{"is-audio-buffer":66,"is-buffer":68,"is-plain-obj":17,"os":93,"pick-by-alias":95,"sample-rate":120}],17:[function(require,module,exports){
-arguments[4][13][0].apply(exports,arguments)
-},{"dup":13}],18:[function(require,module,exports){
+},{"is-audio-buffer":98,"is-buffer":100,"is-plain-obj":40,"os":128,"pick-by-alias":130,"sample-rate":162}],40:[function(require,module,exports){
+arguments[4][36][0].apply(exports,arguments)
+},{"dup":36}],41:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/createClass')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/createClass'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.automationEvents = {}, global._slicedToArray, global._classCallCheck, global._createClass));
+})(this, (function (exports, _slicedToArray, _classCallCheck, _createClass) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _slicedToArray__default = /*#__PURE__*/_interopDefaultLegacy(_slicedToArray);
+    var _classCallCheck__default = /*#__PURE__*/_interopDefaultLegacy(_classCallCheck);
+    var _createClass__default = /*#__PURE__*/_interopDefaultLegacy(_createClass);
+
+    var createExtendedExponentialRampToValueAutomationEvent = function createExtendedExponentialRampToValueAutomationEvent(value, endTime, insertTime) {
+      return {
+        endTime: endTime,
+        insertTime: insertTime,
+        type: 'exponentialRampToValue',
+        value: value
+      };
+    };
+
+    var createExtendedLinearRampToValueAutomationEvent = function createExtendedLinearRampToValueAutomationEvent(value, endTime, insertTime) {
+      return {
+        endTime: endTime,
+        insertTime: insertTime,
+        type: 'linearRampToValue',
+        value: value
+      };
+    };
+
+    var createSetValueAutomationEvent = function createSetValueAutomationEvent(value, startTime) {
+      return {
+        startTime: startTime,
+        type: 'setValue',
+        value: value
+      };
+    };
+
+    var createSetValueCurveAutomationEvent = function createSetValueCurveAutomationEvent(values, startTime, duration) {
+      return {
+        duration: duration,
+        startTime: startTime,
+        type: 'setValueCurve',
+        values: values
+      };
+    };
+
+    var getTargetValueAtTime = function getTargetValueAtTime(time, valueAtStartTime, _ref) {
+      var startTime = _ref.startTime,
+          target = _ref.target,
+          timeConstant = _ref.timeConstant;
+      return target + (valueAtStartTime - target) * Math.exp((startTime - time) / timeConstant);
+    };
+
+    var isExponentialRampToValueAutomationEvent = function isExponentialRampToValueAutomationEvent(automationEvent) {
+      return automationEvent.type === 'exponentialRampToValue';
+    };
+
+    var isLinearRampToValueAutomationEvent = function isLinearRampToValueAutomationEvent(automationEvent) {
+      return automationEvent.type === 'linearRampToValue';
+    };
+
+    var isAnyRampToValueAutomationEvent = function isAnyRampToValueAutomationEvent(automationEvent) {
+      return isExponentialRampToValueAutomationEvent(automationEvent) || isLinearRampToValueAutomationEvent(automationEvent);
+    };
+
+    var isSetValueAutomationEvent = function isSetValueAutomationEvent(automationEvent) {
+      return automationEvent.type === 'setValue';
+    };
+
+    var isSetValueCurveAutomationEvent = function isSetValueCurveAutomationEvent(automationEvent) {
+      return automationEvent.type === 'setValueCurve';
+    };
+
+    var getValueOfAutomationEventAtIndexAtTime = function getValueOfAutomationEventAtIndexAtTime(automationEvents, index, time, defaultValue) {
+      var automationEvent = automationEvents[index];
+      return automationEvent === undefined ? defaultValue : isAnyRampToValueAutomationEvent(automationEvent) || isSetValueAutomationEvent(automationEvent) ? automationEvent.value : isSetValueCurveAutomationEvent(automationEvent) ? automationEvent.values[automationEvent.values.length - 1] : getTargetValueAtTime(time, getValueOfAutomationEventAtIndexAtTime(automationEvents, index - 1, automationEvent.startTime, defaultValue), automationEvent);
+    };
+
+    var getEndTimeAndValueOfPreviousAutomationEvent = function getEndTimeAndValueOfPreviousAutomationEvent(automationEvents, index, currentAutomationEvent, nextAutomationEvent, defaultValue) {
+      return currentAutomationEvent === undefined ? [nextAutomationEvent.insertTime, defaultValue] : isAnyRampToValueAutomationEvent(currentAutomationEvent) ? [currentAutomationEvent.endTime, currentAutomationEvent.value] : isSetValueAutomationEvent(currentAutomationEvent) ? [currentAutomationEvent.startTime, currentAutomationEvent.value] : isSetValueCurveAutomationEvent(currentAutomationEvent) ? [currentAutomationEvent.startTime + currentAutomationEvent.duration, currentAutomationEvent.values[currentAutomationEvent.values.length - 1]] : [currentAutomationEvent.startTime, getValueOfAutomationEventAtIndexAtTime(automationEvents, index - 1, currentAutomationEvent.startTime, defaultValue)];
+    };
+
+    var isCancelAndHoldAutomationEvent = function isCancelAndHoldAutomationEvent(automationEvent) {
+      return automationEvent.type === 'cancelAndHold';
+    };
+
+    var isCancelScheduledValuesAutomationEvent = function isCancelScheduledValuesAutomationEvent(automationEvent) {
+      return automationEvent.type === 'cancelScheduledValues';
+    };
+
+    var getEventTime = function getEventTime(automationEvent) {
+      if (isCancelAndHoldAutomationEvent(automationEvent) || isCancelScheduledValuesAutomationEvent(automationEvent)) {
+        return automationEvent.cancelTime;
+      }
+
+      if (isExponentialRampToValueAutomationEvent(automationEvent) || isLinearRampToValueAutomationEvent(automationEvent)) {
+        return automationEvent.endTime;
+      }
+
+      return automationEvent.startTime;
+    };
+
+    var getExponentialRampValueAtTime = function getExponentialRampValueAtTime(time, startTime, valueAtStartTime, _ref) {
+      var endTime = _ref.endTime,
+          value = _ref.value;
+
+      if (valueAtStartTime === value) {
+        return value;
+      }
+
+      if (0 < valueAtStartTime && 0 < value || valueAtStartTime < 0 && value < 0) {
+        return valueAtStartTime * Math.pow(value / valueAtStartTime, (time - startTime) / (endTime - startTime));
+      }
+
+      return 0;
+    };
+
+    var getLinearRampValueAtTime = function getLinearRampValueAtTime(time, startTime, valueAtStartTime, _ref) {
+      var endTime = _ref.endTime,
+          value = _ref.value;
+      return valueAtStartTime + (time - startTime) / (endTime - startTime) * (value - valueAtStartTime);
+    };
+
+    var interpolateValue = function interpolateValue(values, theoreticIndex) {
+      var lowerIndex = Math.floor(theoreticIndex);
+      var upperIndex = Math.ceil(theoreticIndex);
+
+      if (lowerIndex === upperIndex) {
+        return values[lowerIndex];
+      }
+
+      return (1 - (theoreticIndex - lowerIndex)) * values[lowerIndex] + (1 - (upperIndex - theoreticIndex)) * values[upperIndex];
+    };
+
+    var getValueCurveValueAtTime = function getValueCurveValueAtTime(time, _ref) {
+      var duration = _ref.duration,
+          startTime = _ref.startTime,
+          values = _ref.values;
+      var theoreticIndex = (time - startTime) / duration * (values.length - 1);
+      return interpolateValue(values, theoreticIndex);
+    };
+
+    var isSetTargetAutomationEvent = function isSetTargetAutomationEvent(automationEvent) {
+      return automationEvent.type === 'setTarget';
+    };
+
+    var AutomationEventList = /*#__PURE__*/function (_Symbol$iterator) {
+      function AutomationEventList(defaultValue) {
+        _classCallCheck__default["default"](this, AutomationEventList);
+
+        this._automationEvents = [];
+        this._currenTime = 0;
+        this._defaultValue = defaultValue;
+      }
+
+      _createClass__default["default"](AutomationEventList, [{
+        key: _Symbol$iterator,
+        value: function value() {
+          return this._automationEvents[Symbol.iterator]();
+        }
+      }, {
+        key: "add",
+        value: function add(automationEvent) {
+          var eventTime = getEventTime(automationEvent);
+
+          if (isCancelAndHoldAutomationEvent(automationEvent) || isCancelScheduledValuesAutomationEvent(automationEvent)) {
+            var index = this._automationEvents.findIndex(function (currentAutomationEvent) {
+              if (isCancelScheduledValuesAutomationEvent(automationEvent) && isSetValueCurveAutomationEvent(currentAutomationEvent)) {
+                return currentAutomationEvent.startTime + currentAutomationEvent.duration >= eventTime;
+              }
+
+              return getEventTime(currentAutomationEvent) >= eventTime;
+            });
+
+            var removedAutomationEvent = this._automationEvents[index];
+
+            if (index !== -1) {
+              this._automationEvents = this._automationEvents.slice(0, index);
+            }
+
+            if (isCancelAndHoldAutomationEvent(automationEvent)) {
+              var lastAutomationEvent = this._automationEvents[this._automationEvents.length - 1];
+
+              if (removedAutomationEvent !== undefined && isAnyRampToValueAutomationEvent(removedAutomationEvent)) {
+                if (isSetTargetAutomationEvent(lastAutomationEvent)) {
+                  throw new Error('The internal list is malformed.');
+                }
+
+                var startTime = isSetValueCurveAutomationEvent(lastAutomationEvent) ? lastAutomationEvent.startTime + lastAutomationEvent.duration : getEventTime(lastAutomationEvent);
+                var startValue = isSetValueCurveAutomationEvent(lastAutomationEvent) ? lastAutomationEvent.values[lastAutomationEvent.values.length - 1] : lastAutomationEvent.value;
+                var value = isExponentialRampToValueAutomationEvent(removedAutomationEvent) ? getExponentialRampValueAtTime(eventTime, startTime, startValue, removedAutomationEvent) : getLinearRampValueAtTime(eventTime, startTime, startValue, removedAutomationEvent);
+                var truncatedAutomationEvent = isExponentialRampToValueAutomationEvent(removedAutomationEvent) ? createExtendedExponentialRampToValueAutomationEvent(value, eventTime, this._currenTime) : createExtendedLinearRampToValueAutomationEvent(value, eventTime, this._currenTime);
+
+                this._automationEvents.push(truncatedAutomationEvent);
+              }
+
+              if (lastAutomationEvent !== undefined && isSetTargetAutomationEvent(lastAutomationEvent)) {
+                this._automationEvents.push(createSetValueAutomationEvent(this.getValue(eventTime), eventTime));
+              }
+
+              if (lastAutomationEvent !== undefined && isSetValueCurveAutomationEvent(lastAutomationEvent) && lastAutomationEvent.startTime + lastAutomationEvent.duration > eventTime) {
+                this._automationEvents[this._automationEvents.length - 1] = createSetValueCurveAutomationEvent(new Float32Array([6, 7]), lastAutomationEvent.startTime, eventTime - lastAutomationEvent.startTime);
+              }
+            }
+          } else {
+            var _index = this._automationEvents.findIndex(function (currentAutomationEvent) {
+              return getEventTime(currentAutomationEvent) > eventTime;
+            });
+
+            var previousAutomationEvent = _index === -1 ? this._automationEvents[this._automationEvents.length - 1] : this._automationEvents[_index - 1];
+
+            if (previousAutomationEvent !== undefined && isSetValueCurveAutomationEvent(previousAutomationEvent) && getEventTime(previousAutomationEvent) + previousAutomationEvent.duration > eventTime) {
+              return false;
+            }
+
+            var persistentAutomationEvent = isExponentialRampToValueAutomationEvent(automationEvent) ? createExtendedExponentialRampToValueAutomationEvent(automationEvent.value, automationEvent.endTime, this._currenTime) : isLinearRampToValueAutomationEvent(automationEvent) ? createExtendedLinearRampToValueAutomationEvent(automationEvent.value, eventTime, this._currenTime) : automationEvent;
+
+            if (_index === -1) {
+              this._automationEvents.push(persistentAutomationEvent);
+            } else {
+              if (isSetValueCurveAutomationEvent(automationEvent) && eventTime + automationEvent.duration > getEventTime(this._automationEvents[_index])) {
+                return false;
+              }
+
+              this._automationEvents.splice(_index, 0, persistentAutomationEvent);
+            }
+          }
+
+          return true;
+        }
+      }, {
+        key: "flush",
+        value: function flush(time) {
+          var index = this._automationEvents.findIndex(function (currentAutomationEvent) {
+            return getEventTime(currentAutomationEvent) > time;
+          });
+
+          if (index > 1) {
+            var remainingAutomationEvents = this._automationEvents.slice(index - 1);
+
+            var firstRemainingAutomationEvent = remainingAutomationEvents[0];
+
+            if (isSetTargetAutomationEvent(firstRemainingAutomationEvent)) {
+              remainingAutomationEvents.unshift(createSetValueAutomationEvent(getValueOfAutomationEventAtIndexAtTime(this._automationEvents, index - 2, firstRemainingAutomationEvent.startTime, this._defaultValue), firstRemainingAutomationEvent.startTime));
+            }
+
+            this._automationEvents = remainingAutomationEvents;
+          }
+        }
+      }, {
+        key: "getValue",
+        value: function getValue(time) {
+          if (this._automationEvents.length === 0) {
+            return this._defaultValue;
+          }
+
+          var indexOfNextEvent = this._automationEvents.findIndex(function (automationEvent) {
+            return getEventTime(automationEvent) > time;
+          });
+
+          var nextAutomationEvent = this._automationEvents[indexOfNextEvent];
+          var indexOfCurrentEvent = (indexOfNextEvent === -1 ? this._automationEvents.length : indexOfNextEvent) - 1;
+          var currentAutomationEvent = this._automationEvents[indexOfCurrentEvent];
+
+          if (currentAutomationEvent !== undefined && isSetTargetAutomationEvent(currentAutomationEvent) && (nextAutomationEvent === undefined || !isAnyRampToValueAutomationEvent(nextAutomationEvent) || nextAutomationEvent.insertTime > time)) {
+            return getTargetValueAtTime(time, getValueOfAutomationEventAtIndexAtTime(this._automationEvents, indexOfCurrentEvent - 1, currentAutomationEvent.startTime, this._defaultValue), currentAutomationEvent);
+          }
+
+          if (currentAutomationEvent !== undefined && isSetValueAutomationEvent(currentAutomationEvent) && (nextAutomationEvent === undefined || !isAnyRampToValueAutomationEvent(nextAutomationEvent))) {
+            return currentAutomationEvent.value;
+          }
+
+          if (currentAutomationEvent !== undefined && isSetValueCurveAutomationEvent(currentAutomationEvent) && (nextAutomationEvent === undefined || !isAnyRampToValueAutomationEvent(nextAutomationEvent) || currentAutomationEvent.startTime + currentAutomationEvent.duration > time)) {
+            if (time < currentAutomationEvent.startTime + currentAutomationEvent.duration) {
+              return getValueCurveValueAtTime(time, currentAutomationEvent);
+            }
+
+            return currentAutomationEvent.values[currentAutomationEvent.values.length - 1];
+          }
+
+          if (currentAutomationEvent !== undefined && isAnyRampToValueAutomationEvent(currentAutomationEvent) && (nextAutomationEvent === undefined || !isAnyRampToValueAutomationEvent(nextAutomationEvent))) {
+            return currentAutomationEvent.value;
+          }
+
+          if (nextAutomationEvent !== undefined && isExponentialRampToValueAutomationEvent(nextAutomationEvent)) {
+            var _getEndTimeAndValueOf = getEndTimeAndValueOfPreviousAutomationEvent(this._automationEvents, indexOfCurrentEvent, currentAutomationEvent, nextAutomationEvent, this._defaultValue),
+                _getEndTimeAndValueOf2 = _slicedToArray__default["default"](_getEndTimeAndValueOf, 2),
+                startTime = _getEndTimeAndValueOf2[0],
+                value = _getEndTimeAndValueOf2[1];
+
+            return getExponentialRampValueAtTime(time, startTime, value, nextAutomationEvent);
+          }
+
+          if (nextAutomationEvent !== undefined && isLinearRampToValueAutomationEvent(nextAutomationEvent)) {
+            var _getEndTimeAndValueOf3 = getEndTimeAndValueOfPreviousAutomationEvent(this._automationEvents, indexOfCurrentEvent, currentAutomationEvent, nextAutomationEvent, this._defaultValue),
+                _getEndTimeAndValueOf4 = _slicedToArray__default["default"](_getEndTimeAndValueOf3, 2),
+                _startTime = _getEndTimeAndValueOf4[0],
+                _value = _getEndTimeAndValueOf4[1];
+
+            return getLinearRampValueAtTime(time, _startTime, _value, nextAutomationEvent);
+          }
+
+          return this._defaultValue;
+        }
+      }]);
+
+      return AutomationEventList;
+    }(Symbol.iterator);
+
+    var createCancelAndHoldAutomationEvent = function createCancelAndHoldAutomationEvent(cancelTime) {
+      return {
+        cancelTime: cancelTime,
+        type: 'cancelAndHold'
+      };
+    };
+
+    var createCancelScheduledValuesAutomationEvent = function createCancelScheduledValuesAutomationEvent(cancelTime) {
+      return {
+        cancelTime: cancelTime,
+        type: 'cancelScheduledValues'
+      };
+    };
+
+    var createExponentialRampToValueAutomationEvent = function createExponentialRampToValueAutomationEvent(value, endTime) {
+      return {
+        endTime: endTime,
+        type: 'exponentialRampToValue',
+        value: value
+      };
+    };
+
+    var createLinearRampToValueAutomationEvent = function createLinearRampToValueAutomationEvent(value, endTime) {
+      return {
+        endTime: endTime,
+        type: 'linearRampToValue',
+        value: value
+      };
+    };
+
+    var createSetTargetAutomationEvent = function createSetTargetAutomationEvent(target, startTime, timeConstant) {
+      return {
+        startTime: startTime,
+        target: target,
+        timeConstant: timeConstant,
+        type: 'setTarget'
+      };
+    };
+
+    exports.AutomationEventList = AutomationEventList;
+    exports.createCancelAndHoldAutomationEvent = createCancelAndHoldAutomationEvent;
+    exports.createCancelScheduledValuesAutomationEvent = createCancelScheduledValuesAutomationEvent;
+    exports.createExponentialRampToValueAutomationEvent = createExponentialRampToValueAutomationEvent;
+    exports.createLinearRampToValueAutomationEvent = createLinearRampToValueAutomationEvent;
+    exports.createSetTargetAutomationEvent = createSetTargetAutomationEvent;
+    exports.createSetValueAutomationEvent = createSetValueAutomationEvent;
+    exports.createSetValueCurveAutomationEvent = createSetValueCurveAutomationEvent;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/classCallCheck":7,"@babel/runtime/helpers/createClass":8,"@babel/runtime/helpers/slicedToArray":20}],42:[function(require,module,exports){
 const ascii = require('./lib/ascii')
 const base64 = require('./lib/base64')
 const hex = require('./lib/hex')
@@ -2617,7 +3303,7 @@ module.exports = {
   write
 }
 
-},{"./lib/ascii":19,"./lib/base64":20,"./lib/hex":21,"./lib/utf16le":22,"./lib/utf8":23}],19:[function(require,module,exports){
+},{"./lib/ascii":43,"./lib/base64":44,"./lib/hex":45,"./lib/utf16le":46,"./lib/utf8":47}],43:[function(require,module,exports){
 function byteLength (string) {
   return string.length
 }
@@ -2650,7 +3336,7 @@ module.exports = {
   write
 }
 
-},{}],20:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 const codes = new Uint8Array(256)
@@ -2717,7 +3403,7 @@ module.exports = {
   write
 }
 
-},{}],21:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 function byteLength (string) {
   return string.length >>> 1
 }
@@ -2770,7 +3456,7 @@ function hexValue (char) {
   if (char >= 0x61 && char <= 0x66) return char - 0x61 + 10
 }
 
-},{}],22:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 function byteLength (string) {
   return string.length * 2
 }
@@ -2812,7 +3498,7 @@ module.exports = {
   write
 }
 
-},{}],23:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 function byteLength (string) {
   let length = 0
 
@@ -2959,7 +3645,7 @@ module.exports = {
   write
 }
 
-},{}],24:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -3111,7 +3797,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],25:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 const FACTOR = new Uint16Array(8)
 
 function factor4096 (i, n) {
@@ -3235,7 +3921,7 @@ class TinyArray {
   }
 }
 
-},{}],26:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -3271,7 +3957,7 @@ module.exports = async (imports) => {
   return instance.exports;
 };
 
-},{}],27:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 var assert = require('nanoassert')
 var b4a = require('b4a')
 
@@ -3407,7 +4093,7 @@ Blake2b.prototype.setPartialHash = function (ph) {
 
 function noop () {}
 
-},{"./blake2b":26,"b4a":18,"nanoassert":84}],28:[function(require,module,exports){
+},{"./blake2b":50,"b4a":42,"nanoassert":119}],52:[function(require,module,exports){
 var assert = require('nanoassert')
 var b2wasm = require('blake2b-wasm')
 
@@ -3732,9 +4418,208 @@ b2wasm.ready(function (err) {
   }
 })
 
-},{"blake2b-wasm":27,"nanoassert":84}],29:[function(require,module,exports){
+},{"blake2b-wasm":51,"nanoassert":119}],53:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/defineProperty'), require('@babel/runtime/helpers/slicedToArray'), require('fast-unique-numbers'), require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/defineProperty', '@babel/runtime/helpers/slicedToArray', 'fast-unique-numbers', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.brokerFactory = {}, global._defineProperty, global._slicedToArray, global.fastUniqueNumbers, global._asyncToGenerator, global._regeneratorRuntime));
+})(this, (function (exports, _defineProperty, _slicedToArray, fastUniqueNumbers, _asyncToGenerator, _regeneratorRuntime) { 'use strict';
 
-},{}],30:[function(require,module,exports){
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _defineProperty__default = /*#__PURE__*/_interopDefaultLegacy(_defineProperty);
+    var _slicedToArray__default = /*#__PURE__*/_interopDefaultLegacy(_slicedToArray);
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+
+    var isMessagePort = function isMessagePort(sender) {
+      return typeof sender.start === 'function';
+    };
+
+    var PORT_MAP = new WeakMap();
+
+    function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var extendBrokerImplementation = function extendBrokerImplementation(partialBrokerImplementation) {
+      return _objectSpread$1(_objectSpread$1({}, partialBrokerImplementation), {}, {
+        connect: function connect(_ref) {
+          var call = _ref.call;
+          return /*#__PURE__*/_asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+            var _MessageChannel, port1, port2, portId;
+
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _MessageChannel = new MessageChannel(), port1 = _MessageChannel.port1, port2 = _MessageChannel.port2;
+                    _context.next = 3;
+                    return call('connect', {
+                      port: port1
+                    }, [port1]);
+
+                  case 3:
+                    portId = _context.sent;
+                    PORT_MAP.set(port2, portId);
+                    return _context.abrupt("return", port2);
+
+                  case 6:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+        },
+        disconnect: function disconnect(_ref3) {
+          var call = _ref3.call;
+          return /*#__PURE__*/function () {
+            var _ref4 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(port) {
+              var portId;
+              return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      portId = PORT_MAP.get(port);
+
+                      if (!(portId === undefined)) {
+                        _context2.next = 3;
+                        break;
+                      }
+
+                      throw new Error('The given port is not connected.');
+
+                    case 3:
+                      _context2.next = 5;
+                      return call('disconnect', {
+                        portId: portId
+                      });
+
+                    case 5:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }
+              }, _callee2);
+            }));
+
+            return function (_x) {
+              return _ref4.apply(this, arguments);
+            };
+          }();
+        },
+        isSupported: function isSupported(_ref5) {
+          var call = _ref5.call;
+          return function () {
+            return call('isSupported');
+          };
+        }
+      });
+    };
+
+    function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var ONGOING_REQUESTS = new WeakMap();
+
+    var createOrGetOngoingRequests = function createOrGetOngoingRequests(sender) {
+      if (ONGOING_REQUESTS.has(sender)) {
+        // @todo TypeScript needs to be convinced that has() works as expected.
+        return ONGOING_REQUESTS.get(sender);
+      }
+
+      var ongoingRequests = new Map();
+      ONGOING_REQUESTS.set(sender, ongoingRequests);
+      return ongoingRequests;
+    };
+
+    var createBroker = function createBroker(brokerImplementation) {
+      var fullBrokerImplementation = extendBrokerImplementation(brokerImplementation);
+      return function (sender) {
+        var ongoingRequests = createOrGetOngoingRequests(sender);
+        sender.addEventListener('message', function (_ref) {
+          var message = _ref.data;
+          var id = message.id;
+
+          if (id !== null && ongoingRequests.has(id)) {
+            var _ongoingRequests$get = ongoingRequests.get(id),
+                reject = _ongoingRequests$get.reject,
+                resolve = _ongoingRequests$get.resolve;
+
+            ongoingRequests["delete"](id);
+
+            if (message.error === undefined) {
+              resolve(message.result);
+            } else {
+              reject(new Error(message.error.message));
+            }
+          }
+        });
+
+        if (isMessagePort(sender)) {
+          sender.start();
+        }
+
+        var call = function call(method) {
+          var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+          var transferables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+          return new Promise(function (resolve, reject) {
+            var id = fastUniqueNumbers.generateUniqueNumber(ongoingRequests);
+            ongoingRequests.set(id, {
+              reject: reject,
+              resolve: resolve
+            });
+
+            if (params === null) {
+              sender.postMessage({
+                id: id,
+                method: method
+              }, transferables);
+            } else {
+              sender.postMessage({
+                id: id,
+                method: method,
+                params: params
+              }, transferables);
+            }
+          });
+        };
+
+        var notify = function notify(method, params) {
+          var transferables = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+          sender.postMessage({
+            id: null,
+            method: method,
+            params: params
+          }, transferables);
+        };
+
+        var functions = {};
+
+        for (var _i = 0, _Object$entries = Object.entries(fullBrokerImplementation); _i < _Object$entries.length; _i++) {
+          var _Object$entries$_i = _slicedToArray__default["default"](_Object$entries[_i], 2),
+              key = _Object$entries$_i[0],
+              handler = _Object$entries$_i[1];
+
+          functions = _objectSpread(_objectSpread({}, functions), {}, _defineProperty__default["default"]({}, key, handler({
+            call: call,
+            notify: notify
+          })));
+        }
+
+        return _objectSpread({}, functions);
+      };
+    };
+
+    exports.createBroker = createBroker;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/helpers/defineProperty":9,"@babel/runtime/helpers/slicedToArray":20,"@babel/runtime/regenerator":24,"fast-unique-numbers":69}],54:[function(require,module,exports){
+
+},{}],55:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -5515,7 +6400,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":24,"buffer":30,"ieee754":64}],31:[function(require,module,exports){
+},{"base64-js":48,"buffer":55,"ieee754":95}],56:[function(require,module,exports){
 const assert = require('nanoassert')
 
 module.exports = Chacha20
@@ -5652,7 +6537,7 @@ function QR (obj, a, b, c, d) {
   obj[b] = rotl(obj[b], 7)
 }
 
-},{"nanoassert":84}],32:[function(require,module,exports){
+},{"nanoassert":119}],57:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = codecs
@@ -5728,7 +6613,7 @@ function createString (type) {
   }
 }
 
-},{"b4a":18}],33:[function(require,module,exports){
+},{"b4a":42}],58:[function(require,module,exports){
 const b = require('b4a')
 
 const LE = (new Uint8Array(new Uint16Array([255]).buffer))[0] === 0xff
@@ -6150,7 +7035,156 @@ function zigZagEncode (n) {
   return n < 0 ? (2 * -n) - 1 : n === 0 ? 0 : 2 * n
 }
 
-},{"b4a":18}],34:[function(require,module,exports){
+},{"b4a":42}],59:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/toConsumableArray'), require('dashify'), require('indefinite-article')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/toConsumableArray', 'dashify', 'indefinite-article'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.compilerr = {}, global._toConsumableArray, global.dashify, global.indefiniteArticle));
+})(this, (function (exports, _toConsumableArray, dashify, indefiniteArticle) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _toConsumableArray__default = /*#__PURE__*/_interopDefaultLegacy(_toConsumableArray);
+    var dashify__default = /*#__PURE__*/_interopDefaultLegacy(dashify);
+    var indefiniteArticle__default = /*#__PURE__*/_interopDefaultLegacy(indefiniteArticle);
+
+    var applyModifiers = function applyModifiers(name, modifiers) {
+      if (modifiers === undefined) {
+        return name;
+      }
+
+      return modifiers.reduce(function (modifiedName, modifier) {
+        if (modifier === 'capitalize') {
+          var head = modifiedName.charAt(0).toUpperCase();
+          var tail = modifiedName.slice(1);
+          return "".concat(head).concat(tail);
+        }
+
+        if (modifier === 'dashify') {
+          return dashify__default["default"](modifiedName);
+        }
+
+        if (modifier === 'prependIndefiniteArticle') {
+          return "".concat(indefiniteArticle__default["default"](modifiedName), " ").concat(modifiedName);
+        }
+
+        return modifiedName;
+      }, name);
+    };
+
+    var buildRegex = function buildRegex(variable) {
+      var expression = variable.name + variable.modifiers.map(function (modifier) {
+        return "\\.".concat(modifier, "\\(\\)");
+      }).join('');
+      return new RegExp("\\$\\{".concat(expression, "}"), 'g');
+    };
+
+    var preRenderString = function preRenderString(string, parameters) {
+      var expressionRegex = /\${([^.}]+)((\.[^(]+\(\))*)}/g;
+      var variables = [];
+      var expressionResult = expressionRegex.exec(string);
+
+      while (expressionResult !== null) {
+        var variable = {
+          modifiers: [],
+          name: expressionResult[1]
+        };
+
+        if (expressionResult[3] !== undefined) {
+          var modifiersRegex = /\.[^(]+\(\)/g;
+          var modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
+
+          while (modifiersRegexResult !== null) {
+            variable.modifiers.push(modifiersRegexResult[0].slice(1, -2));
+            modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
+          }
+        }
+
+        variables.push(variable);
+        expressionResult = expressionRegex.exec(string);
+      }
+
+      var preRenderedParts = variables.reduce(function (parts, variable) {
+        return parts.map(function (part) {
+          if (typeof part === 'string') {
+            return part.split(buildRegex(variable)).reduce(function (prts, prt, index) {
+              if (index === 0) {
+                return [prt];
+              }
+
+              if (variable.name in parameters) {
+                return [].concat(_toConsumableArray__default["default"](prts), [applyModifiers(parameters[variable.name], variable.modifiers), prt]);
+              }
+
+              return [].concat(_toConsumableArray__default["default"](prts), [function (prmtrs) {
+                return applyModifiers(prmtrs[variable.name], variable.modifiers);
+              }, prt]);
+            }, []);
+          }
+
+          return [part];
+        }).reduce(function (prts, part) {
+          return [].concat(_toConsumableArray__default["default"](prts), _toConsumableArray__default["default"](part));
+        }, []);
+      }, [string]);
+      return function (missingParameters) {
+        return preRenderedParts.reduce(function (renderedParts, preRenderedPart) {
+          if (typeof preRenderedPart === 'string') {
+            return [].concat(_toConsumableArray__default["default"](renderedParts), [preRenderedPart]);
+          }
+
+          return [].concat(_toConsumableArray__default["default"](renderedParts), [preRenderedPart(missingParameters)]);
+        }, []).join('');
+      };
+    };
+
+    var compile = function compile(template) {
+      var knownParameters = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var renderCode = template.code === undefined ? undefined : preRenderString(template.code, knownParameters);
+      var renderMessage = template.message === undefined ? undefined : preRenderString(template.message, knownParameters);
+
+      function render() {
+        var causeOrMissingParameters = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var optionalCause = arguments.length > 1 ? arguments[1] : undefined;
+        var hasNoOptionalCause = optionalCause === undefined && (causeOrMissingParameters instanceof Error || causeOrMissingParameters.code !== undefined && causeOrMissingParameters.code.slice(-9) === 'Exception');
+
+        var _ref = hasNoOptionalCause ? {
+          cause: causeOrMissingParameters,
+          missingParameters: {}
+        } : {
+          cause: optionalCause,
+          missingParameters: causeOrMissingParameters
+        },
+            cause = _ref.cause,
+            missingParameters = _ref.missingParameters;
+
+        var err = renderMessage === undefined ? new Error() : new Error(renderMessage(missingParameters));
+
+        if (cause !== null) {
+          err.cause = cause;
+        }
+
+        if (renderCode !== undefined) {
+          err.code = renderCode(missingParameters);
+        }
+
+        if (template.status !== undefined) {
+          err.status = template.status;
+        }
+
+        return err;
+      }
+
+      return render;
+    };
+
+    exports.compile = compile;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/toConsumableArray":21,"dashify":62,"indefinite-article":96}],60:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6259,7 +7293,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-},{"buffer":30}],35:[function(require,module,exports){
+},{"buffer":55}],61:[function(require,module,exports){
 /**!
  * Fast CRC32 in JavaScript
  * 101arrowz (https://github.com/101arrowz)
@@ -6319,7 +7353,27 @@ function crc32 (d) {
   return (~c) >>> 0
 }
 
-},{}],36:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
+/*!
+ * dashify <https://github.com/jonschlinkert/dashify>
+ *
+ * Copyright (c) 2015-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+'use strict';
+
+module.exports = (str, options) => {
+  if (typeof str !== 'string') throw new TypeError('expected a string');
+  return str.trim()
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/\W/g, m => /[À-ž]/.test(m) ? m : '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, m => options && options.condense ? '-' : m)
+    .toLowerCase();
+};
+
+},{}],63:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6818,7 +7872,1490 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],37:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('broker-factory')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', 'broker-factory'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.extendableMediaRecorderWavEncoderBroker = {}, global._asyncToGenerator, global._regeneratorRuntime, global.brokerFactory));
+})(this, (function (exports, _asyncToGenerator, _regeneratorRuntime, brokerFactory) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+
+    var wrap = brokerFactory.createBroker({
+      characterize: function characterize(_ref) {
+        var call = _ref.call;
+        return function () {
+          return call('characterize');
+        };
+      },
+      encode: function encode(_ref2) {
+        var call = _ref2.call;
+        return function (recordingId, timeslice) {
+          return call('encode', {
+            recordingId: recordingId,
+            timeslice: timeslice
+          });
+        };
+      },
+      record: function record(_ref3) {
+        var call = _ref3.call;
+        return /*#__PURE__*/function () {
+          var _ref4 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(recordingId, sampleRate, typedArrays) {
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _context.next = 2;
+                    return call('record', {
+                      recordingId: recordingId,
+                      sampleRate: sampleRate,
+                      typedArrays: typedArrays
+                    }, typedArrays.map(function (_ref5) {
+                      var buffer = _ref5.buffer;
+                      return buffer;
+                    }));
+
+                  case 2:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function (_x, _x2, _x3) {
+            return _ref4.apply(this, arguments);
+          };
+        }();
+      }
+    });
+    var load = function load(url) {
+      var worker = new Worker(url);
+      return wrap(worker);
+    };
+
+    exports.load = load;
+    exports.wrap = wrap;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/regenerator":24,"broker-factory":53}],65:[function(require,module,exports){
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('extendable-media-recorder-wav-encoder-broker')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'extendable-media-recorder-wav-encoder-broker'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.extendableMediaRecorderWavEncoder = {}, global.extendableMediaRecorderWavEncoderBroker));
+})(this, (function (exports, extendableMediaRecorderWavEncoderBroker) { 'use strict';
+
+	// This is the minified and stringified code of the extendable-media-recorder-wav-encoder-worker package.
+	var worker = "(()=>{var e={228:e=>{e.exports=function(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n},e.exports.__esModule=!0,e.exports.default=e.exports},646:(e,t,r)=>{var n=r(228);e.exports=function(e){if(Array.isArray(e))return n(e)},e.exports.__esModule=!0,e.exports.default=e.exports},926:e=>{function t(e,t,r,n,o,a,i){try{var u=e[a](i),s=u.value}catch(e){return void r(e)}u.done?t(s):Promise.resolve(s).then(n,o)}e.exports=function(e){return function(){var r=this,n=arguments;return new Promise((function(o,a){var i=e.apply(r,n);function u(e){t(i,o,a,u,s,\"next\",e)}function s(e){t(i,o,a,u,s,\"throw\",e)}u(void 0)}))}},e.exports.__esModule=!0,e.exports.default=e.exports},713:e=>{e.exports=function(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e},e.exports.__esModule=!0,e.exports.default=e.exports},860:e=>{e.exports=function(e){if(\"undefined\"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e[\"@@iterator\"])return Array.from(e)},e.exports.__esModule=!0,e.exports.default=e.exports},206:e=>{e.exports=function(){throw new TypeError(\"Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\")},e.exports.__esModule=!0,e.exports.default=e.exports},319:(e,t,r)=>{var n=r(646),o=r(860),a=r(379),i=r(206);e.exports=function(e){return n(e)||o(e)||a(e)||i()},e.exports.__esModule=!0,e.exports.default=e.exports},379:(e,t,r)=>{var n=r(228);e.exports=function(e,t){if(e){if(\"string\"==typeof e)return n(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return\"Object\"===r&&e.constructor&&(r=e.constructor.name),\"Map\"===r||\"Set\"===r?Array.from(e):\"Arguments\"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?n(e,t):void 0}},e.exports.__esModule=!0,e.exports.default=e.exports},757:(e,t,r)=>{e.exports=r(666)},881:e=>{\"use strict\";e.exports=function(e,t){if(\"string\"!=typeof e)throw new TypeError(\"expected a string\");return e.trim().replace(/([a-z])([A-Z])/g,\"$1-$2\").replace(/\\W/g,(function(e){return/[\xC0-\u017E]/.test(e)?e:\"-\"})).replace(/^-+|-+$/g,\"\").replace(/-{2,}/g,(function(e){return t&&t.condense?\"-\":e})).toLowerCase()}},404:function(e,t,r){!function(e,t,r,n){\"use strict\";function o(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var a=o(t),i=o(r),u=o(n),s=function(e,t){return void 0===t?e:t.reduce((function(e,t){if(\"capitalize\"===t){var r=e.charAt(0).toUpperCase(),n=e.slice(1);return\"\".concat(r).concat(n)}return\"dashify\"===t?i.default(e):\"prependIndefiniteArticle\"===t?\"\".concat(u.default(e),\" \").concat(e):e}),e)},c=function(e){var t=e.name+e.modifiers.map((function(e){return\"\\\\.\".concat(e,\"\\\\(\\\\)\")})).join(\"\");return new RegExp(\"\\\\$\\\\{\".concat(t,\"}\"),\"g\")},f=function(e,t){for(var r=/\\${([^.}]+)((\\.[^(]+\\(\\))*)}/g,n=[],o=r.exec(e);null!==o;){var i={modifiers:[],name:o[1]};if(void 0!==o[3])for(var u=/\\.[^(]+\\(\\)/g,f=u.exec(o[2]);null!==f;)i.modifiers.push(f[0].slice(1,-2)),f=u.exec(o[2]);n.push(i),o=r.exec(e)}var l=n.reduce((function(e,r){return e.map((function(e){return\"string\"==typeof e?e.split(c(r)).reduce((function(e,n,o){return 0===o?[n]:r.name in t?[].concat(a.default(e),[s(t[r.name],r.modifiers),n]):[].concat(a.default(e),[function(e){return s(e[r.name],r.modifiers)},n])}),[]):[e]})).reduce((function(e,t){return[].concat(a.default(e),a.default(t))}),[])}),[e]);return function(e){return l.reduce((function(t,r){return[].concat(a.default(t),\"string\"==typeof r?[r]:[r(e)])}),[]).join(\"\")}},l=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},r=void 0===e.code?void 0:f(e.code,t),n=void 0===e.message?void 0:f(e.message,t);function o(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},o=arguments.length>1?arguments[1]:void 0,a=void 0===o&&(t instanceof Error||void 0!==t.code&&\"Exception\"===t.code.slice(-9))?{cause:t,missingParameters:{}}:{cause:o,missingParameters:t},i=a.cause,u=a.missingParameters,s=void 0===n?new Error:new Error(n(u));return null!==i&&(s.cause=i),void 0!==r&&(s.code=r(u)),void 0!==e.status&&(s.status=e.status),s}return o};e.compile=l,Object.defineProperty(e,\"__esModule\",{value:!0})}(t,r(319),r(881),r(932))},352:function(e,t,r){!function(e){\"use strict\";var t=function(e){return function(t,r,n){var o=e.get(t);if(void 0===o){var a={channelDataArrays:n.map((function(e){return[e]})),isComplete:!0,sampleRate:r};return e.set(t,a),a}return o.channelDataArrays.forEach((function(e,t){return e.push(n[t])})),o}},r=function(e,t){return function(r,n,o,a){var i=o>>3,u=\"subsequent\"===n?0:44,s=r.length,c=e(r[0]),f=new ArrayBuffer(c*s*i+u),l=new DataView(f);return\"subsequent\"!==n&&t(l,o,s,\"complete\"===n?c:Number.POSITIVE_INFINITY,a),r.forEach((function(e,t){var r=u+t*i;e.forEach((function(e){for(var t=e.length,n=0;n<t;n+=1){var o=e[n];l.setInt16(r,o<0?32768*Math.max(-1,o):32767*Math.min(1,o),!0),r+=s*i}}))})),[f]}},n=function(e){return e.reduce((function(e,t){return e+t.length}),0)},o=function(e,t,r,n,o){var a=t>>3,i=Math.min(n*r*a,4294967251);e.setUint32(0,1380533830),e.setUint32(4,i+36,!0),e.setUint32(8,1463899717),e.setUint32(12,1718449184),e.setUint32(16,16,!0),e.setUint16(20,1,!0),e.setUint16(22,r,!0),e.setUint32(24,o,!0),e.setUint32(28,o*r*a,!0),e.setUint16(32,r*a,!0),e.setUint16(34,t,!0),e.setUint32(36,1684108385),e.setUint32(40,i,!0)},a=function(e,t){var r=[],n=0;e:for(;n<t;)for(var o=e.length,a=0;a<o;a+=1){var i=e[a];void 0===r[a]&&(r[a]=[]);var u=i.shift();if(void 0===u)break e;r[a].push(u),0===a&&(n+=u.length)}if(n>t){var s=n-t;r.forEach((function(t,r){var n=t.pop(),o=n.length-s;t.push(n.subarray(0,o)),e[r].unshift(n.subarray(o))}))}return r},i=new Map,u=t(i),s=r(n,o),c=new Map;e.createWorker(self,{characterize:function(){return{result:/^audio\\/wav$/}},encode:function(e){var t=e.recordingId,r=e.timeslice,o=c.get(t);void 0!==o&&(c.delete(t),o.reject(new Error(\"Another request was made to initiate an encoding.\")));var u=i.get(t);if(null!==r){if(void 0===u||n(u.channelDataArrays[0])*(1e3/u.sampleRate)<r)return new Promise((function(e,n){c.set(t,{reject:n,resolve:e,timeslice:r})}));var f=a(u.channelDataArrays,Math.ceil(r*(u.sampleRate/1e3))),l=s(f,u.isComplete?\"initial\":\"subsequent\",16,u.sampleRate);return u.isComplete=!1,{result:l,transferables:l}}if(void 0!==u){var p=s(u.channelDataArrays,u.isComplete?\"complete\":\"subsequent\",16,u.sampleRate);return i.delete(t),{result:p,transferables:p}}return{result:[],transferables:[]}},record:function(e){var t=e.recordingId,r=e.sampleRate,o=e.typedArrays,i=u(t,r,o),f=c.get(t);if(void 0!==f&&n(i.channelDataArrays[0])*(1e3/r)>=f.timeslice){var l=a(i.channelDataArrays,Math.ceil(f.timeslice*(r/1e3))),p=s(l,i.isComplete?\"initial\":\"subsequent\",16,r);i.isComplete=!1,c.delete(t),f.resolve({result:p,transferables:p})}return{result:null}}})}(r(868))},650:function(e,t){!function(e){\"use strict\";var t=function(e){return function(t){var r=e(t);return t.add(r),r}},r=function(e){return function(t,r){return e.set(t,r),r}},n=void 0===Number.MAX_SAFE_INTEGER?9007199254740991:Number.MAX_SAFE_INTEGER,o=536870912,a=2*o,i=function(e,t){return function(r){var i=t.get(r),u=void 0===i?r.size:i<a?i+1:0;if(!r.has(u))return e(r,u);if(r.size<o){for(;r.has(u);)u=Math.floor(Math.random()*a);return e(r,u)}if(r.size>n)throw new Error(\"Congratulations, you created a collection of unique numbers which uses all available integers!\");for(;r.has(u);)u=Math.floor(Math.random()*n);return e(r,u)}},u=new WeakMap,s=r(u),c=i(s,u),f=t(c);e.addUniqueNumber=f,e.generateUniqueNumber=c,Object.defineProperty(e,\"__esModule\",{value:!0})}(t)},932:e=>{var t=function(e){var t,r,n=/\\w+/.exec(e);if(!n)return\"an\";var o=(r=n[0]).toLowerCase(),a=[\"honest\",\"hour\",\"hono\"];for(t in a)if(0==o.indexOf(a[t]))return\"an\";if(1==o.length)return\"aedhilmnorsx\".indexOf(o)>=0?\"an\":\"a\";if(r.match(/(?!FJO|[HLMNS]Y.|RY[EO]|SQU|(F[LR]?|[HL]|MN?|N|RH?|S[CHKLMNPTVW]?|X(YL)?)[AEIOU])[FHLMNRSX][A-Z]/))return\"an\";var i=[/^e[uw]/,/^onc?e\\b/,/^uni([^nmd]|mo)/,/^u[bcfhjkqrst][aeiou]/];for(t=0;t<i.length;t++)if(o.match(i[t]))return\"a\";return r.match(/^U[NK][AIEO]/)?\"a\":r==r.toUpperCase()?\"aedhilmnorsx\".indexOf(o[0])>=0?\"an\":\"a\":\"aeiou\".indexOf(o[0])>=0||o.match(/^y(b[lor]|cl[ea]|fere|gg|p[ios]|rou|tt)/)?\"an\":\"a\"};void 0!==e.exports?e.exports=t:window.indefiniteArticle=t},666:e=>{var t=function(e){\"use strict\";var t,r=Object.prototype,n=r.hasOwnProperty,o=\"function\"==typeof Symbol?Symbol:{},a=o.iterator||\"@@iterator\",i=o.asyncIterator||\"@@asyncIterator\",u=o.toStringTag||\"@@toStringTag\";function s(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{s({},\"\")}catch(e){s=function(e,t,r){return e[t]=r}}function c(e,t,r,n){var o=t&&t.prototype instanceof m?t:m,a=Object.create(o.prototype),i=new j(n||[]);return a._invoke=function(e,t,r){var n=l;return function(o,a){if(n===d)throw new Error(\"Generator is already running\");if(n===h){if(\"throw\"===o)throw a;return P()}for(r.method=o,r.arg=a;;){var i=r.delegate;if(i){var u=L(i,r);if(u){if(u===v)continue;return u}}if(\"next\"===r.method)r.sent=r._sent=r.arg;else if(\"throw\"===r.method){if(n===l)throw n=h,r.arg;r.dispatchException(r.arg)}else\"return\"===r.method&&r.abrupt(\"return\",r.arg);n=d;var s=f(e,t,r);if(\"normal\"===s.type){if(n=r.done?h:p,s.arg===v)continue;return{value:s.arg,done:r.done}}\"throw\"===s.type&&(n=h,r.method=\"throw\",r.arg=s.arg)}}}(e,r,i),a}function f(e,t,r){try{return{type:\"normal\",arg:e.call(t,r)}}catch(e){return{type:\"throw\",arg:e}}}e.wrap=c;var l=\"suspendedStart\",p=\"suspendedYield\",d=\"executing\",h=\"completed\",v={};function m(){}function y(){}function g(){}var x={};s(x,a,(function(){return this}));var b=Object.getPrototypeOf,w=b&&b(b(N([])));w&&w!==r&&n.call(w,a)&&(x=w);var E=g.prototype=m.prototype=Object.create(x);function O(e){[\"next\",\"throw\",\"return\"].forEach((function(t){s(e,t,(function(e){return this._invoke(t,e)}))}))}function _(e,t){function r(o,a,i,u){var s=f(e[o],e,a);if(\"throw\"!==s.type){var c=s.arg,l=c.value;return l&&\"object\"==typeof l&&n.call(l,\"__await\")?t.resolve(l.__await).then((function(e){r(\"next\",e,i,u)}),(function(e){r(\"throw\",e,i,u)})):t.resolve(l).then((function(e){c.value=e,i(c)}),(function(e){return r(\"throw\",e,i,u)}))}u(s.arg)}var o;this._invoke=function(e,n){function a(){return new t((function(t,o){r(e,n,t,o)}))}return o=o?o.then(a,a):a()}}function L(e,r){var n=e.iterator[r.method];if(n===t){if(r.delegate=null,\"throw\"===r.method){if(e.iterator.return&&(r.method=\"return\",r.arg=t,L(e,r),\"throw\"===r.method))return v;r.method=\"throw\",r.arg=new TypeError(\"The iterator does not provide a 'throw' method\")}return v}var o=f(n,e.iterator,r.arg);if(\"throw\"===o.type)return r.method=\"throw\",r.arg=o.arg,r.delegate=null,v;var a=o.arg;return a?a.done?(r[e.resultName]=a.value,r.next=e.nextLoc,\"return\"!==r.method&&(r.method=\"next\",r.arg=t),r.delegate=null,v):a:(r.method=\"throw\",r.arg=new TypeError(\"iterator result is not an object\"),r.delegate=null,v)}function A(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function M(e){var t=e.completion||{};t.type=\"normal\",delete t.arg,e.completion=t}function j(e){this.tryEntries=[{tryLoc:\"root\"}],e.forEach(A,this),this.reset(!0)}function N(e){if(e){var r=e[a];if(r)return r.call(e);if(\"function\"==typeof e.next)return e;if(!isNaN(e.length)){var o=-1,i=function r(){for(;++o<e.length;)if(n.call(e,o))return r.value=e[o],r.done=!1,r;return r.value=t,r.done=!0,r};return i.next=i}}return{next:P}}function P(){return{value:t,done:!0}}return y.prototype=g,s(E,\"constructor\",g),s(g,\"constructor\",y),y.displayName=s(g,u,\"GeneratorFunction\"),e.isGeneratorFunction=function(e){var t=\"function\"==typeof e&&e.constructor;return!!t&&(t===y||\"GeneratorFunction\"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,g):(e.__proto__=g,s(e,u,\"GeneratorFunction\")),e.prototype=Object.create(E),e},e.awrap=function(e){return{__await:e}},O(_.prototype),s(_.prototype,i,(function(){return this})),e.AsyncIterator=_,e.async=function(t,r,n,o,a){void 0===a&&(a=Promise);var i=new _(c(t,r,n,o),a);return e.isGeneratorFunction(r)?i:i.next().then((function(e){return e.done?e.value:i.next()}))},O(E),s(E,u,\"Generator\"),s(E,a,(function(){return this})),s(E,\"toString\",(function(){return\"[object Generator]\"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=N,j.prototype={constructor:j,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=t,this.done=!1,this.delegate=null,this.method=\"next\",this.arg=t,this.tryEntries.forEach(M),!e)for(var r in this)\"t\"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=t)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if(\"throw\"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var r=this;function o(n,o){return u.type=\"throw\",u.arg=e,r.next=n,o&&(r.method=\"next\",r.arg=t),!!o}for(var a=this.tryEntries.length-1;a>=0;--a){var i=this.tryEntries[a],u=i.completion;if(\"root\"===i.tryLoc)return o(\"end\");if(i.tryLoc<=this.prev){var s=n.call(i,\"catchLoc\"),c=n.call(i,\"finallyLoc\");if(s&&c){if(this.prev<i.catchLoc)return o(i.catchLoc,!0);if(this.prev<i.finallyLoc)return o(i.finallyLoc)}else if(s){if(this.prev<i.catchLoc)return o(i.catchLoc,!0)}else{if(!c)throw new Error(\"try statement without catch or finally\");if(this.prev<i.finallyLoc)return o(i.finallyLoc)}}}},abrupt:function(e,t){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,\"finallyLoc\")&&this.prev<o.finallyLoc){var a=o;break}}a&&(\"break\"===e||\"continue\"===e)&&a.tryLoc<=t&&t<=a.finallyLoc&&(a=null);var i=a?a.completion:{};return i.type=e,i.arg=t,a?(this.method=\"next\",this.next=a.finallyLoc,v):this.complete(i)},complete:function(e,t){if(\"throw\"===e.type)throw e.arg;return\"break\"===e.type||\"continue\"===e.type?this.next=e.arg:\"return\"===e.type?(this.rval=this.arg=e.arg,this.method=\"return\",this.next=\"end\"):\"normal\"===e.type&&t&&(this.next=t),v},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),M(r),v}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if(\"throw\"===n.type){var o=n.arg;M(r)}return o}}throw new Error(\"illegal catch attempt\")},delegateYield:function(e,r,n){return this.delegate={iterator:N(e),resultName:r,nextLoc:n},\"next\"===this.method&&(this.arg=t),v}},e}(e.exports);try{regeneratorRuntime=t}catch(e){\"object\"==typeof globalThis?globalThis.regeneratorRuntime=t:Function(\"r\",\"regeneratorRuntime = r\")(t)}},868:function(e,t,r){!function(e,t,r,n,o,a){\"use strict\";function i(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var u=i(t),s=i(r),c=i(o),f={INTERNAL_ERROR:-32603,INVALID_PARAMS:-32602,METHOD_NOT_FOUND:-32601},l=n.compile({message:'The requested method called \"${method}\" is not supported.',status:f.METHOD_NOT_FOUND}),p=n.compile({message:'The handler of the method called \"${method}\" returned no required result.',status:f.INTERNAL_ERROR}),d=n.compile({message:'The handler of the method called \"${method}\" returned an unexpected result.',status:f.INTERNAL_ERROR}),h=n.compile({message:'The specified parameter called \"portId\" with the given value \"${portId}\" does not identify a port connected to this worker.',status:f.INVALID_PARAMS}),v=function(e,t){return function(){var r=u.default(s.default.mark((function r(n){var o,a,i,u,c,f,h,v,m,y,g,x,b;return s.default.wrap((function(r){for(;;)switch(r.prev=r.next){case 0:if(o=n.data,a=o.id,i=o.method,u=o.params,c=t[i],r.prev=2,void 0!==c){r.next=5;break}throw l({method:i});case 5:if(void 0!==(f=void 0===u?c():c(u))){r.next=8;break}throw p({method:i});case 8:if(!(f instanceof Promise)){r.next=14;break}return r.next=11,f;case 11:r.t0=r.sent,r.next=15;break;case 14:r.t0=f;case 15:if(h=r.t0,null!==a){r.next=21;break}if(void 0===h.result){r.next=19;break}throw d({method:i});case 19:r.next=25;break;case 21:if(void 0!==h.result){r.next=23;break}throw d({method:i});case 23:v=h.result,m=h.transferables,y=void 0===m?[]:m,e.postMessage({id:a,result:v},y);case 25:r.next=31;break;case 27:r.prev=27,r.t1=r.catch(2),g=r.t1.message,x=r.t1.status,b=void 0===x?-32603:x,e.postMessage({error:{code:b,message:g},id:a});case 31:case\"end\":return r.stop()}}),r,null,[[2,27]])})));return function(e){return r.apply(this,arguments)}}()},m=function(){return new Promise((function(e){var t=new ArrayBuffer(0),r=new MessageChannel,n=r.port1,o=r.port2;n.onmessage=function(t){var r=t.data;return e(null!==r)},o.postMessage(t,[t])}))};function y(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function g(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?y(Object(r),!0).forEach((function(t){c.default(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):y(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}var x=new Map,b=function(e,t,r){return g(g({},t),{},{connect:function(r){var n=r.port;n.start();var o=e(n,t),i=a.generateUniqueNumber(x);return x.set(i,(function(){o(),n.close(),x.delete(i)})),{result:i}},disconnect:function(e){var t=e.portId,r=x.get(t);if(void 0===r)throw h({portId:t.toString()});return r(),{result:null}},isSupported:function(){var e=u.default(s.default.mark((function e(){var t,n;return s.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,m();case 2:if(!e.sent){e.next=14;break}if(!((t=r())instanceof Promise)){e.next=11;break}return e.next=8,t;case 8:e.t0=e.sent,e.next=12;break;case 11:e.t0=t;case 12:return n=e.t0,e.abrupt(\"return\",{result:n});case 14:return e.abrupt(\"return\",{result:!1});case 15:case\"end\":return e.stop()}}),e)})));function t(){return e.apply(this,arguments)}return t}()})},w=function e(t,r){var n=b(e,r,arguments.length>2&&void 0!==arguments[2]?arguments[2]:function(){return!0}),o=v(t,n);return t.addEventListener(\"message\",o),function(){return t.removeEventListener(\"message\",o)}};e.createWorker=w,e.isSupported=m,Object.defineProperty(e,\"__esModule\",{value:!0})}(t,r(926),r(757),r(404),r(713),r(650))}},t={};function r(n){var o=t[n];if(void 0!==o)return o.exports;var a=t[n]={exports:{}};return e[n].call(a.exports,a,a.exports,r),a.exports}r.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return r.d(t,{a:t}),t},r.d=(e,t)=>{for(var n in t)r.o(t,n)&&!r.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},r.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{\"use strict\";r(352)})()})();"; // tslint:disable-line:max-line-length
+
+	var blob = new Blob([worker], {
+	  type: 'application/javascript; charset=utf-8'
+	});
+	var url = URL.createObjectURL(blob);
+	var extendableMediaRecorderWavEncoder = extendableMediaRecorderWavEncoderBroker.load(url);
+	var characterize = extendableMediaRecorderWavEncoder.characterize;
+	var connect = extendableMediaRecorderWavEncoder.connect;
+	var disconnect = extendableMediaRecorderWavEncoder.disconnect;
+	var encode = extendableMediaRecorderWavEncoder.encode;
+	var isSupported = extendableMediaRecorderWavEncoder.isSupported;
+	var record = extendableMediaRecorderWavEncoder.record;
+	URL.revokeObjectURL(url);
+
+	exports.characterize = characterize;
+	exports.connect = connect;
+	exports.disconnect = disconnect;
+	exports.encode = encode;
+	exports.isSupported = isSupported;
+	exports.record = record;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"extendable-media-recorder-wav-encoder-broker":64}],66:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('media-encoder-host'), require('@babel/runtime/helpers/objectWithoutProperties'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/createClass'), require('@babel/runtime/helpers/assertThisInitialized'), require('@babel/runtime/helpers/inherits'), require('@babel/runtime/helpers/possibleConstructorReturn'), require('@babel/runtime/helpers/getPrototypeOf'), require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/toConsumableArray'), require('recorder-audio-worklet'), require('standardized-audio-context'), require('multi-buffer-data-view'), require('subscribable-things')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', 'media-encoder-host', '@babel/runtime/helpers/objectWithoutProperties', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/createClass', '@babel/runtime/helpers/assertThisInitialized', '@babel/runtime/helpers/inherits', '@babel/runtime/helpers/possibleConstructorReturn', '@babel/runtime/helpers/getPrototypeOf', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/toConsumableArray', 'recorder-audio-worklet', 'standardized-audio-context', 'multi-buffer-data-view', 'subscribable-things'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.extendableMediaRecorder = {}, global._asyncToGenerator, global._regeneratorRuntime, global.mediaEncoderHost, global._objectWithoutProperties, global._classCallCheck, global._createClass, global._assertThisInitialized, global._inherits, global._possibleConstructorReturn, global._getPrototypeOf, global._slicedToArray, global._toConsumableArray, global.recorderAudioWorklet, global.standardizedAudioContext, global.multiBufferDataView, global.subscribableThings));
+})(this, (function (exports, _asyncToGenerator, _regeneratorRuntime, mediaEncoderHost, _objectWithoutProperties, _classCallCheck, _createClass, _assertThisInitialized, _inherits, _possibleConstructorReturn, _getPrototypeOf, _slicedToArray, _toConsumableArray, recorderAudioWorklet, standardizedAudioContext, multiBufferDataView, subscribableThings) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+    var _objectWithoutProperties__default = /*#__PURE__*/_interopDefaultLegacy(_objectWithoutProperties);
+    var _classCallCheck__default = /*#__PURE__*/_interopDefaultLegacy(_classCallCheck);
+    var _createClass__default = /*#__PURE__*/_interopDefaultLegacy(_createClass);
+    var _assertThisInitialized__default = /*#__PURE__*/_interopDefaultLegacy(_assertThisInitialized);
+    var _inherits__default = /*#__PURE__*/_interopDefaultLegacy(_inherits);
+    var _possibleConstructorReturn__default = /*#__PURE__*/_interopDefaultLegacy(_possibleConstructorReturn);
+    var _getPrototypeOf__default = /*#__PURE__*/_interopDefaultLegacy(_getPrototypeOf);
+    var _slicedToArray__default = /*#__PURE__*/_interopDefaultLegacy(_slicedToArray);
+    var _toConsumableArray__default = /*#__PURE__*/_interopDefaultLegacy(_toConsumableArray);
+
+    var _excluded = ["data"];
+    var createBlobEventFactory = function createBlobEventFactory(nativeBlobEventConstructor) {
+      return function (type, blobEventInit) {
+        // Bug #14: Safari does not yet support the BlobEvent.
+        if (nativeBlobEventConstructor === null) {
+          var data = blobEventInit.data,
+              eventInit = _objectWithoutProperties__default["default"](blobEventInit, _excluded);
+
+          var fakeBlobEvent = new Event(type, eventInit);
+          fakeBlobEvent.data = data;
+          return fakeBlobEvent;
+        }
+
+        return new nativeBlobEventConstructor(type, blobEventInit);
+      };
+    };
+
+    var createDecodeWebMChunk = function createDecodeWebMChunk(readElementContent, readElementType) {
+      return function (dataView, elementType, channelCount) {
+        var contents = [];
+        var currentElementType = elementType;
+        var offset = 0;
+
+        while (offset < dataView.byteLength) {
+          if (currentElementType === null) {
+            var lengthAndType = readElementType(dataView, offset);
+
+            if (lengthAndType === null) {
+              break;
+            }
+
+            var length = lengthAndType.length,
+                type = lengthAndType.type;
+            currentElementType = type;
+            offset += length;
+          } else {
+            var contentAndLength = readElementContent(dataView, offset, currentElementType, channelCount);
+
+            if (contentAndLength === null) {
+              break;
+            }
+
+            var content = contentAndLength.content,
+                _length = contentAndLength.length;
+            currentElementType = null;
+            offset += _length;
+
+            if (content !== null) {
+              contents.push(content);
+            }
+          }
+        }
+
+        return {
+          contents: contents,
+          currentElementType: currentElementType,
+          offset: offset
+        };
+      };
+    };
+
+    var createEventTargetConstructor = function createEventTargetConstructor(createEventTarget, wrapEventListener) {
+      return /*#__PURE__*/function () {
+        function EventTarget() {
+          var nativeEventTarget = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+          _classCallCheck__default["default"](this, EventTarget);
+
+          this._listeners = new WeakMap();
+          this._nativeEventTarget = nativeEventTarget === null ? createEventTarget() : nativeEventTarget;
+        }
+
+        _createClass__default["default"](EventTarget, [{
+          key: "addEventListener",
+          value: function addEventListener(type, listener, options) {
+            if (listener !== null) {
+              var wrappedEventListener = this._listeners.get(listener);
+
+              if (wrappedEventListener === undefined) {
+                wrappedEventListener = wrapEventListener(this, listener);
+
+                if (typeof listener === 'function') {
+                  this._listeners.set(listener, wrappedEventListener);
+                }
+              }
+
+              this._nativeEventTarget.addEventListener(type, wrappedEventListener, options);
+            }
+          }
+        }, {
+          key: "dispatchEvent",
+          value: function dispatchEvent(event) {
+            return this._nativeEventTarget.dispatchEvent(event);
+          }
+        }, {
+          key: "removeEventListener",
+          value: function removeEventListener(type, listener, options) {
+            var wrappedEventListener = listener === null ? undefined : this._listeners.get(listener);
+
+            this._nativeEventTarget.removeEventListener(type, wrappedEventListener === undefined ? null : wrappedEventListener, options);
+          }
+        }]);
+
+        return EventTarget;
+      }();
+    };
+
+    var createEventTargetFactory = function createEventTargetFactory(window) {
+      return function () {
+        if (window === null) {
+          throw new Error('A native EventTarget could not be created.');
+        }
+
+        return window.document.createElement('p');
+      };
+    };
+
+    var createInvalidModificationError = function createInvalidModificationError() {
+      var message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+      try {
+        return new DOMException(message, 'InvalidModificationError');
+      } catch (err) {
+        // @todo Edge is the only browser that does not yet allow to construct a DOMException.
+        err.code = 13;
+        err.message = message;
+        err.name = 'InvalidModificationError';
+        return err;
+      }
+    };
+
+    var createInvalidStateError = function createInvalidStateError() {
+      try {
+        return new DOMException('', 'InvalidStateError');
+      } catch (err) {
+        // Bug #122: Edge is the only browser that does not yet allow to construct a DOMException.
+        err.code = 11;
+        err.name = 'InvalidStateError';
+        return err;
+      }
+    };
+
+    var createIsSupportedPromise = function createIsSupportedPromise(window) {
+      if (window !== null && window.MediaStream !== undefined && (
+      /*
+       * Bug #10: An early experimental implemenation in Safari did not provide the isTypeSupported() function.
+       */
+      window.MediaRecorder === undefined || window.MediaRecorder.isTypeSupported !== undefined)) {
+        /*
+         * Bug #5: Up until v70 Firefox did emit a blob of type video/webm when asked to encode a MediaStream with a video track into an
+         * audio codec.
+         */
+        return new Promise(function (resolve) {
+          // Bug #11 Safari does not yet support the MediaRecorder but that isn't tested here.
+          if (window.MediaRecorder === undefined) {
+            return resolve(true);
+          } // @todo captureStream() is not defined yet.
+
+
+          var canvasElement = document.createElement('canvas'); // @todo https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
+
+          canvasElement.getContext('2d');
+
+          if (typeof canvasElement.captureStream !== 'function') {
+            return resolve(false);
+          }
+
+          var mediaStream = canvasElement.captureStream();
+          var mimeType = 'audio/webm';
+
+          try {
+            var mediaRecorder = new window.MediaRecorder(mediaStream, {
+              mimeType: mimeType
+            });
+            mediaRecorder.addEventListener('dataavailable', function (_ref) {
+              var data = _ref.data;
+              return resolve(data.type === mimeType);
+            });
+            mediaRecorder.start();
+            setTimeout(function () {
+              return mediaRecorder.stop();
+            }, 10);
+          } catch (err) {
+            resolve(err.name === 'NotSupportedError');
+          }
+        });
+      }
+
+      return Promise.resolve(false);
+    };
+
+    function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var createMediaRecorderConstructor = function createMediaRecorderConstructor(createNativeMediaRecorder, createNotSupportedError, createWebAudioMediaRecorder, createWebmPcmMediaRecorder, encoderRegexes, eventTargetConstructor, nativeMediaRecorderConstructor) {
+      return /*#__PURE__*/function (_eventTargetConstruct) {
+        _inherits__default["default"](MediaRecorder, _eventTargetConstruct);
+
+        var _super = _createSuper(MediaRecorder);
+
+        function MediaRecorder(stream) {
+          var _this;
+
+          var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+          _classCallCheck__default["default"](this, MediaRecorder);
+
+          var mimeType = options.mimeType;
+
+          if (nativeMediaRecorderConstructor !== null && ( // Bug #10: Safari does not yet implement the isTypeSupported() method.
+          mimeType === undefined || nativeMediaRecorderConstructor.isTypeSupported !== undefined && nativeMediaRecorderConstructor.isTypeSupported(mimeType))) {
+            var internalMediaRecorder = createNativeMediaRecorder(nativeMediaRecorderConstructor, stream, options);
+            _this = _super.call(this, internalMediaRecorder);
+            _this._internalMediaRecorder = internalMediaRecorder;
+          } else if (mimeType !== undefined && encoderRegexes.some(function (regex) {
+            return regex.test(mimeType);
+          })) {
+            _this = _super.call(this); // Bug #10: Safari does not yet implement the isTypeSupported() method.
+
+            if (nativeMediaRecorderConstructor !== null && nativeMediaRecorderConstructor.isTypeSupported !== undefined && nativeMediaRecorderConstructor.isTypeSupported('audio/webm;codecs=pcm')) {
+              _this._internalMediaRecorder = createWebmPcmMediaRecorder(_assertThisInitialized__default["default"](_this), nativeMediaRecorderConstructor, stream, mimeType);
+            } else {
+              _this._internalMediaRecorder = createWebAudioMediaRecorder(_assertThisInitialized__default["default"](_this), stream, mimeType);
+            }
+          } else {
+            // This is creating a native MediaRecorder just to provoke it to throw an error.
+            if (nativeMediaRecorderConstructor !== null) {
+              createNativeMediaRecorder(nativeMediaRecorderConstructor, stream, options);
+            }
+
+            throw createNotSupportedError();
+          }
+
+          _this._ondataavailable = null;
+          _this._onerror = null;
+          _this._onpause = null;
+          _this._onresume = null;
+          _this._onstart = null;
+          _this._onstop = null;
+          return _possibleConstructorReturn__default["default"](_this);
+        }
+
+        _createClass__default["default"](MediaRecorder, [{
+          key: "mimeType",
+          get: function get() {
+            return this._internalMediaRecorder.mimeType;
+          }
+        }, {
+          key: "ondataavailable",
+          get: function get() {
+            return this._ondataavailable === null ? this._ondataavailable : this._ondataavailable[0];
+          },
+          set: function set(value) {
+            if (this._ondataavailable !== null) {
+              this.removeEventListener('dataavailable', this._ondataavailable[1]);
+            }
+
+            if (typeof value === 'function') {
+              var boundListener = value.bind(this);
+              this.addEventListener('dataavailable', boundListener);
+              this._ondataavailable = [value, boundListener];
+            } else {
+              this._ondataavailable = null;
+            }
+          }
+        }, {
+          key: "onerror",
+          get: function get() {
+            return this._onerror === null ? this._onerror : this._onerror[0];
+          },
+          set: function set(value) {
+            if (this._onerror !== null) {
+              this.removeEventListener('error', this._onerror[1]);
+            }
+
+            if (typeof value === 'function') {
+              var boundListener = value.bind(this);
+              this.addEventListener('error', boundListener);
+              this._onerror = [value, boundListener];
+            } else {
+              this._onerror = null;
+            }
+          }
+        }, {
+          key: "onpause",
+          get: function get() {
+            return this._onpause === null ? this._onpause : this._onpause[0];
+          },
+          set: function set(value) {
+            if (this._onpause !== null) {
+              this.removeEventListener('pause', this._onpause[1]);
+            }
+
+            if (typeof value === 'function') {
+              var boundListener = value.bind(this);
+              this.addEventListener('pause', boundListener);
+              this._onpause = [value, boundListener];
+            } else {
+              this._onpause = null;
+            }
+          }
+        }, {
+          key: "onresume",
+          get: function get() {
+            return this._onresume === null ? this._onresume : this._onresume[0];
+          },
+          set: function set(value) {
+            if (this._onresume !== null) {
+              this.removeEventListener('resume', this._onresume[1]);
+            }
+
+            if (typeof value === 'function') {
+              var boundListener = value.bind(this);
+              this.addEventListener('resume', boundListener);
+              this._onresume = [value, boundListener];
+            } else {
+              this._onresume = null;
+            }
+          }
+        }, {
+          key: "onstart",
+          get: function get() {
+            return this._onstart === null ? this._onstart : this._onstart[0];
+          },
+          set: function set(value) {
+            if (this._onstart !== null) {
+              this.removeEventListener('start', this._onstart[1]);
+            }
+
+            if (typeof value === 'function') {
+              var boundListener = value.bind(this);
+              this.addEventListener('start', boundListener);
+              this._onstart = [value, boundListener];
+            } else {
+              this._onstart = null;
+            }
+          }
+        }, {
+          key: "onstop",
+          get: function get() {
+            return this._onstop === null ? this._onstop : this._onstop[0];
+          },
+          set: function set(value) {
+            if (this._onstop !== null) {
+              this.removeEventListener('stop', this._onstop[1]);
+            }
+
+            if (typeof value === 'function') {
+              var boundListener = value.bind(this);
+              this.addEventListener('stop', boundListener);
+              this._onstop = [value, boundListener];
+            } else {
+              this._onstop = null;
+            }
+          }
+        }, {
+          key: "state",
+          get: function get() {
+            return this._internalMediaRecorder.state;
+          }
+        }, {
+          key: "pause",
+          value: function pause() {
+            return this._internalMediaRecorder.pause();
+          }
+        }, {
+          key: "resume",
+          value: function resume() {
+            return this._internalMediaRecorder.resume();
+          }
+        }, {
+          key: "start",
+          value: function start(timeslice) {
+            return this._internalMediaRecorder.start(timeslice);
+          }
+        }, {
+          key: "stop",
+          value: function stop() {
+            return this._internalMediaRecorder.stop();
+          }
+        }], [{
+          key: "isTypeSupported",
+          value: function isTypeSupported(mimeType) {
+            return nativeMediaRecorderConstructor !== null && // Bug #10: Safari does not yet implement the isTypeSupported() method.
+            nativeMediaRecorderConstructor.isTypeSupported !== undefined && nativeMediaRecorderConstructor.isTypeSupported(mimeType) || encoderRegexes.some(function (regex) {
+              return regex.test(mimeType);
+            });
+          }
+        }]);
+
+        return MediaRecorder;
+      }(eventTargetConstructor);
+    };
+
+    var createNativeBlobEventConstructor = function createNativeBlobEventConstructor(window) {
+      if (window !== null && window.BlobEvent !== undefined) {
+        return window.BlobEvent;
+      }
+
+      return null;
+    };
+
+    var createNativeMediaRecorderFactory = function createNativeMediaRecorderFactory(createInvalidModificationError, createNotSupportedError) {
+      return function (nativeMediaRecorderConstructor, stream, mediaRecorderOptions) {
+        var bufferedBlobs = [];
+        var dataAvailableListeners = new WeakMap();
+        var errorListeners = new WeakMap();
+        var nativeMediaRecorder = new nativeMediaRecorderConstructor(stream, mediaRecorderOptions);
+        var stopListeners = new WeakMap();
+        var isActive = true;
+
+        nativeMediaRecorder.addEventListener = function (addEventListener) {
+          return function (type, listener, options) {
+            var patchedEventListener = listener;
+
+            if (typeof listener === 'function') {
+              if (type === 'dataavailable') {
+                // Bug #7 & #8: Chrome fires the dataavailable and stop events before it fires the error event.
+                patchedEventListener = function patchedEventListener(event) {
+                  setTimeout(function () {
+                    if (isActive && nativeMediaRecorder.state === 'inactive') {
+                      bufferedBlobs.push(event.data);
+                    } else {
+                      if (bufferedBlobs.length > 0) {
+                        var blob = event.data;
+                        Object.defineProperty(event, 'data', {
+                          value: new Blob([].concat(bufferedBlobs, [blob]), {
+                            type: blob.type
+                          })
+                        });
+                        bufferedBlobs.length = 0;
+                      }
+
+                      listener.call(nativeMediaRecorder, event);
+                    }
+                  });
+                };
+
+                dataAvailableListeners.set(listener, patchedEventListener);
+              } else if (type === 'error') {
+                // Bug #12 & #13: Firefox fires a regular event with an error property.
+                patchedEventListener = function patchedEventListener(event) {
+                  // Bug #3 & #4: Chrome throws an error event without any error.
+                  if (event.error === undefined) {
+                    listener.call(nativeMediaRecorder, new ErrorEvent('error', {
+                      error: createInvalidModificationError()
+                    })); // Bug #1 & #2: Firefox throws an error event with an UnknownError.
+                  } else if (event.error.name === 'UnknownError') {
+                    var message = event.error.message;
+                    listener.call(nativeMediaRecorder, new ErrorEvent('error', {
+                      error: createInvalidModificationError(message)
+                    }));
+                  } else if (event instanceof ErrorEvent) {
+                    listener.call(nativeMediaRecorder, event);
+                  } else {
+                    listener.call(nativeMediaRecorder, new ErrorEvent('error', {
+                      error: event.error
+                    }));
+                  }
+                };
+
+                errorListeners.set(listener, patchedEventListener);
+              } else if (type === 'stop') {
+                // Bug #7 & #8: Chrome fires the dataavailable and stop events before it fires the error event.
+                patchedEventListener = function patchedEventListener(event) {
+                  isActive = false;
+                  setTimeout(function () {
+                    return listener.call(nativeMediaRecorder, event);
+                  });
+                };
+
+                stopListeners.set(listener, patchedEventListener);
+              }
+            }
+
+            return addEventListener.call(nativeMediaRecorder, type, patchedEventListener, options);
+          };
+        }(nativeMediaRecorder.addEventListener);
+
+        nativeMediaRecorder.dispatchEvent = function (dispatchEvent) {
+          // Bug #7 & #8: Chrome fires the dataavailable and stop events before it fires the error event.
+          return function (event) {
+            var wasActive;
+            setTimeout(function () {
+              wasActive = isActive;
+              isActive = false;
+            });
+            var returnValue = dispatchEvent.call(nativeMediaRecorder, event);
+            setTimeout(function () {
+              return isActive = wasActive;
+            });
+            return returnValue;
+          };
+        }(nativeMediaRecorder.dispatchEvent);
+
+        nativeMediaRecorder.removeEventListener = function (removeEventListener) {
+          return function (type, listener, options) {
+            var patchedEventListener = listener;
+
+            if (typeof listener === 'function') {
+              if (type === 'dataavailable') {
+                var dataAvailableListener = dataAvailableListeners.get(listener);
+
+                if (dataAvailableListener !== undefined) {
+                  patchedEventListener = dataAvailableListener;
+                }
+              } else if (type === 'error') {
+                var errorListener = errorListeners.get(listener);
+
+                if (errorListener !== undefined) {
+                  patchedEventListener = errorListener;
+                }
+              } else if (type === 'stop') {
+                var stopListener = stopListeners.get(listener);
+
+                if (stopListener !== undefined) {
+                  patchedEventListener = stopListener;
+                }
+              }
+            }
+
+            return removeEventListener.call(nativeMediaRecorder, type, patchedEventListener, options);
+          };
+        }(nativeMediaRecorder.removeEventListener);
+
+        nativeMediaRecorder.start = function (start) {
+          return function (timeslice) {
+            /*
+             * Bug #6: Chrome will emit a blob without any data when asked to encode a MediaStream with a video track into an audio
+             * codec.
+             */
+            if (mediaRecorderOptions.mimeType !== undefined && mediaRecorderOptions.mimeType.startsWith('audio/') && stream.getVideoTracks().length > 0) {
+              throw createNotSupportedError();
+            }
+
+            isActive = timeslice !== undefined;
+            return timeslice === undefined ? start.call(nativeMediaRecorder) : start.call(nativeMediaRecorder, timeslice);
+          };
+        }(nativeMediaRecorder.start);
+
+        return nativeMediaRecorder;
+      };
+    };
+
+    var createNativeMediaRecorderConstructor = function createNativeMediaRecorderConstructor(window) {
+      if (window === null) {
+        return null;
+      }
+
+      return window.MediaRecorder === undefined ? null : window.MediaRecorder;
+    };
+
+    var createNotSupportedError = function createNotSupportedError() {
+      try {
+        return new DOMException('', 'NotSupportedError');
+      } catch (err) {
+        // @todo Edge is the only browser that does not yet allow to construct a DOMException.
+        err.code = 9;
+        err.name = 'NotSupportedError';
+        return err;
+      }
+    };
+
+    var createReadElementContent = function createReadElementContent(readVariableSizeInteger) {
+      return function (dataView, offset, type) {
+        var channelCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 2;
+        var lengthAndValue = readVariableSizeInteger(dataView, offset);
+
+        if (lengthAndValue === null) {
+          return lengthAndValue;
+        }
+
+        var length = lengthAndValue.length,
+            value = lengthAndValue.value;
+
+        if (type === 'master') {
+          return {
+            content: null,
+            length: length
+          };
+        }
+
+        if (offset + length + value > dataView.byteLength) {
+          return null;
+        }
+
+        if (type === 'binary') {
+          var numberOfSamples = (value / Float32Array.BYTES_PER_ELEMENT - 1) / channelCount;
+          var content = Array.from({
+            length: channelCount
+          }, function () {
+            return new Float32Array(numberOfSamples);
+          });
+
+          for (var i = 0; i < numberOfSamples; i += 1) {
+            var elementOffset = i * channelCount + 1;
+
+            for (var j = 0; j < channelCount; j += 1) {
+              content[j][i] = dataView.getFloat32(offset + length + (elementOffset + j) * Float32Array.BYTES_PER_ELEMENT, true);
+            }
+          }
+
+          return {
+            content: content,
+            length: length + value
+          };
+        }
+
+        return {
+          content: null,
+          length: length + value
+        };
+      };
+    };
+
+    var createReadElementType = function createReadElementType(readVariableSizeInteger) {
+      return function (dataView, offset) {
+        var lengthAndValue = readVariableSizeInteger(dataView, offset);
+
+        if (lengthAndValue === null) {
+          return lengthAndValue;
+        }
+
+        var length = lengthAndValue.length,
+            value = lengthAndValue.value;
+
+        if (value === 35) {
+          return {
+            length: length,
+            type: 'binary'
+          };
+        }
+
+        if (value === 46 || value === 97 || value === 88713574 || value === 106212971 || value === 139690087 || value === 172351395 || value === 256095861) {
+          return {
+            length: length,
+            type: 'master'
+          };
+        }
+
+        return {
+          length: length,
+          type: 'unknown'
+        };
+      };
+    };
+
+    var createReadVariableSizeInteger = function createReadVariableSizeInteger(readVariableSizeIntegerLength) {
+      return function (dataView, offset) {
+        var length = readVariableSizeIntegerLength(dataView, offset);
+
+        if (length === null) {
+          return length;
+        }
+
+        var firstDataByteOffset = offset + Math.floor((length - 1) / 8);
+
+        if (firstDataByteOffset + length > dataView.byteLength) {
+          return null;
+        }
+
+        var firstDataByte = dataView.getUint8(firstDataByteOffset);
+        var value = firstDataByte & (1 << 8 - length % 8) - 1; // tslint:disable-line:no-bitwise
+
+        for (var i = 1; i < length; i += 1) {
+          value = (value << 8) + dataView.getUint8(firstDataByteOffset + i); // tslint:disable-line:no-bitwise
+        }
+
+        return {
+          length: length,
+          value: value
+        };
+      };
+    };
+
+    var ERROR_MESSAGE = 'Missing AudioWorklet support. Maybe this is not running in a secure context.'; // @todo This should live in a separate file.
+
+    var createPromisedAudioNodesEncoderIdAndPort = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(audioBuffer, audioContext, channelCount, mediaStream, mimeType) {
+        var _yield$instantiate, encoderId, port, audioBufferSourceNode, mediaStreamAudioSourceNode, recorderAudioWorkletNode;
+
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return mediaEncoderHost.instantiate(mimeType, audioContext.sampleRate);
+
+              case 2:
+                _yield$instantiate = _context.sent;
+                encoderId = _yield$instantiate.encoderId;
+                port = _yield$instantiate.port;
+
+                if (!(standardizedAudioContext.AudioWorkletNode === undefined)) {
+                  _context.next = 7;
+                  break;
+                }
+
+                throw new Error(ERROR_MESSAGE);
+
+              case 7:
+                audioBufferSourceNode = new standardizedAudioContext.AudioBufferSourceNode(audioContext, {
+                  buffer: audioBuffer
+                });
+                mediaStreamAudioSourceNode = new standardizedAudioContext.MediaStreamAudioSourceNode(audioContext, {
+                  mediaStream: mediaStream
+                });
+                recorderAudioWorkletNode = recorderAudioWorklet.createRecorderAudioWorkletNode(standardizedAudioContext.AudioWorkletNode, audioContext, {
+                  channelCount: channelCount
+                });
+                return _context.abrupt("return", {
+                  audioBufferSourceNode: audioBufferSourceNode,
+                  encoderId: encoderId,
+                  mediaStreamAudioSourceNode: mediaStreamAudioSourceNode,
+                  port: port,
+                  recorderAudioWorkletNode: recorderAudioWorkletNode
+                });
+
+              case 11:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function createPromisedAudioNodesEncoderIdAndPort(_x, _x2, _x3, _x4, _x5) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    var createWebAudioMediaRecorderFactory = function createWebAudioMediaRecorderFactory(createBlobEvent, createInvalidModificationError, createInvalidStateError, createNotSupportedError) {
+      return function (eventTarget, mediaStream, mimeType) {
+        var _a;
+
+        var sampleRate = (_a = mediaStream.getAudioTracks()[0]) === null || _a === void 0 ? void 0 : _a.getSettings().sampleRate;
+        var audioContext = new standardizedAudioContext.MinimalAudioContext({
+          latencyHint: 'playback',
+          sampleRate: sampleRate
+        });
+        var length = Math.max(1024, Math.ceil(audioContext.baseLatency * audioContext.sampleRate));
+        var audioBuffer = new standardizedAudioContext.AudioBuffer({
+          length: length,
+          sampleRate: audioContext.sampleRate
+        });
+        var bufferedArrayBuffers = [];
+        var promisedAudioWorkletModule = recorderAudioWorklet.addRecorderAudioWorkletModule(function (url) {
+          if (standardizedAudioContext.addAudioWorkletModule === undefined) {
+            throw new Error(ERROR_MESSAGE);
+          }
+
+          return standardizedAudioContext.addAudioWorkletModule(audioContext, url);
+        });
+        var abortRecording = null;
+        var intervalId = null;
+        var promisedAudioNodesAndEncoderId = null;
+        var promisedPartialRecording = null;
+        var isAudioContextRunning = true;
+
+        var dispatchDataAvailableEvent = function dispatchDataAvailableEvent(arrayBuffers) {
+          eventTarget.dispatchEvent(createBlobEvent('dataavailable', {
+            data: new Blob(arrayBuffers, {
+              type: mimeType
+            })
+          }));
+        };
+
+        var requestNextPartialRecording = /*#__PURE__*/function () {
+          var _ref2 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(encoderId, timeslice) {
+            var arrayBuffers;
+            return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+              while (1) {
+                switch (_context2.prev = _context2.next) {
+                  case 0:
+                    _context2.next = 2;
+                    return mediaEncoderHost.encode(encoderId, timeslice);
+
+                  case 2:
+                    arrayBuffers = _context2.sent;
+
+                    if (promisedAudioNodesAndEncoderId === null) {
+                      bufferedArrayBuffers.push.apply(bufferedArrayBuffers, _toConsumableArray__default["default"](arrayBuffers));
+                    } else {
+                      dispatchDataAvailableEvent(arrayBuffers);
+                      promisedPartialRecording = requestNextPartialRecording(encoderId, timeslice);
+                    }
+
+                  case 4:
+                  case "end":
+                    return _context2.stop();
+                }
+              }
+            }, _callee2);
+          }));
+
+          return function requestNextPartialRecording(_x6, _x7) {
+            return _ref2.apply(this, arguments);
+          };
+        }();
+
+        var _resume = function resume() {
+          isAudioContextRunning = true;
+          return audioContext.resume();
+        };
+
+        var stop = function stop() {
+          if (promisedAudioNodesAndEncoderId === null) {
+            return;
+          }
+
+          if (abortRecording !== null) {
+            mediaStream.removeEventListener('addtrack', abortRecording);
+            mediaStream.removeEventListener('removetrack', abortRecording);
+          }
+
+          if (intervalId !== null) {
+            clearTimeout(intervalId);
+          }
+
+          promisedAudioNodesAndEncoderId.then( /*#__PURE__*/function () {
+            var _ref4 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee3(_ref3) {
+              var encoderId, mediaStreamAudioSourceNode, recorderAudioWorkletNode, arrayBuffers;
+              return _regeneratorRuntime__default["default"].wrap(function _callee3$(_context3) {
+                while (1) {
+                  switch (_context3.prev = _context3.next) {
+                    case 0:
+                      encoderId = _ref3.encoderId, mediaStreamAudioSourceNode = _ref3.mediaStreamAudioSourceNode, recorderAudioWorkletNode = _ref3.recorderAudioWorkletNode;
+
+                      if (promisedPartialRecording !== null) {
+                        promisedPartialRecording["catch"](function () {
+                          /* @todo Only catch the errors caused by a duplicate call to encode. */
+                        });
+                        promisedPartialRecording = null;
+                      }
+
+                      _context3.next = 4;
+                      return recorderAudioWorkletNode.stop();
+
+                    case 4:
+                      mediaStreamAudioSourceNode.disconnect(recorderAudioWorkletNode);
+                      _context3.next = 7;
+                      return mediaEncoderHost.encode(encoderId, null);
+
+                    case 7:
+                      arrayBuffers = _context3.sent;
+
+                      if (!(promisedAudioNodesAndEncoderId === null)) {
+                        _context3.next = 11;
+                        break;
+                      }
+
+                      _context3.next = 11;
+                      return suspend();
+
+                    case 11:
+                      dispatchDataAvailableEvent([].concat(bufferedArrayBuffers, _toConsumableArray__default["default"](arrayBuffers)));
+                      bufferedArrayBuffers.length = 0;
+                      eventTarget.dispatchEvent(new Event('stop'));
+
+                    case 14:
+                    case "end":
+                      return _context3.stop();
+                  }
+                }
+              }, _callee3);
+            }));
+
+            return function (_x8) {
+              return _ref4.apply(this, arguments);
+            };
+          }());
+          promisedAudioNodesAndEncoderId = null;
+        };
+
+        var suspend = function suspend() {
+          isAudioContextRunning = false;
+          return audioContext.suspend();
+        };
+
+        suspend();
+        return {
+          get mimeType() {
+            return mimeType;
+          },
+
+          get state() {
+            return promisedAudioNodesAndEncoderId === null ? 'inactive' : isAudioContextRunning ? 'recording' : 'paused';
+          },
+
+          pause: function pause() {
+            if (promisedAudioNodesAndEncoderId === null) {
+              throw createInvalidStateError();
+            }
+
+            if (isAudioContextRunning) {
+              suspend();
+              eventTarget.dispatchEvent(new Event('pause'));
+            }
+          },
+          resume: function resume() {
+            if (promisedAudioNodesAndEncoderId === null) {
+              throw createInvalidStateError();
+            }
+
+            if (!isAudioContextRunning) {
+              _resume();
+
+              eventTarget.dispatchEvent(new Event('resume'));
+            }
+          },
+          start: function start(timeslice) {
+            var _a;
+
+            if (promisedAudioNodesAndEncoderId !== null) {
+              throw createInvalidStateError();
+            }
+
+            if (mediaStream.getVideoTracks().length > 0) {
+              throw createNotSupportedError();
+            }
+
+            eventTarget.dispatchEvent(new Event('start'));
+            var audioTracks = mediaStream.getAudioTracks(); // @todo TypeScript v4.4.2 removed the channelCount property from the MediaTrackSettings interface.
+
+            var channelCount = audioTracks.length === 0 ? 2 : (_a = audioTracks[0].getSettings().channelCount) !== null && _a !== void 0 ? _a : 2;
+            promisedAudioNodesAndEncoderId = Promise.all([_resume(), promisedAudioWorkletModule.then(function () {
+              return createPromisedAudioNodesEncoderIdAndPort(audioBuffer, audioContext, channelCount, mediaStream, mimeType);
+            })]).then( /*#__PURE__*/function () {
+              var _ref6 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee4(_ref5) {
+                var _ref7, _ref7$, audioBufferSourceNode, encoderId, mediaStreamAudioSourceNode, port, recorderAudioWorkletNode;
+
+                return _regeneratorRuntime__default["default"].wrap(function _callee4$(_context4) {
+                  while (1) {
+                    switch (_context4.prev = _context4.next) {
+                      case 0:
+                        _ref7 = _slicedToArray__default["default"](_ref5, 2), _ref7$ = _ref7[1], audioBufferSourceNode = _ref7$.audioBufferSourceNode, encoderId = _ref7$.encoderId, mediaStreamAudioSourceNode = _ref7$.mediaStreamAudioSourceNode, port = _ref7$.port, recorderAudioWorkletNode = _ref7$.recorderAudioWorkletNode;
+                        mediaStreamAudioSourceNode.connect(recorderAudioWorkletNode);
+                        _context4.next = 4;
+                        return new Promise(function (resolve) {
+                          audioBufferSourceNode.onended = resolve;
+                          audioBufferSourceNode.connect(recorderAudioWorkletNode);
+                          audioBufferSourceNode.start(audioContext.currentTime + length / audioContext.sampleRate);
+                        });
+
+                      case 4:
+                        audioBufferSourceNode.disconnect(recorderAudioWorkletNode);
+                        _context4.next = 7;
+                        return recorderAudioWorkletNode.record(port);
+
+                      case 7:
+                        if (timeslice !== undefined) {
+                          promisedPartialRecording = requestNextPartialRecording(encoderId, timeslice);
+                        }
+
+                        return _context4.abrupt("return", {
+                          encoderId: encoderId,
+                          mediaStreamAudioSourceNode: mediaStreamAudioSourceNode,
+                          recorderAudioWorkletNode: recorderAudioWorkletNode
+                        });
+
+                      case 9:
+                      case "end":
+                        return _context4.stop();
+                    }
+                  }
+                }, _callee4);
+              }));
+
+              return function (_x9) {
+                return _ref6.apply(this, arguments);
+              };
+            }());
+            var tracks = mediaStream.getTracks();
+
+            abortRecording = function abortRecording() {
+              stop();
+              eventTarget.dispatchEvent(new ErrorEvent('error', {
+                error: createInvalidModificationError()
+              }));
+            };
+
+            mediaStream.addEventListener('addtrack', abortRecording);
+            mediaStream.addEventListener('removetrack', abortRecording);
+            intervalId = setInterval(function () {
+              var currentTracks = mediaStream.getTracks();
+
+              if ((currentTracks.length !== tracks.length || currentTracks.some(function (track, index) {
+                return track !== tracks[index];
+              })) && abortRecording !== null) {
+                abortRecording();
+              }
+            }, 1000);
+          },
+          stop: stop
+        };
+      };
+    };
+
+    var createWebmPcmMediaRecorderFactory = function createWebmPcmMediaRecorderFactory(createBlobEvent, createInvalidModificationError, createNotSupportedError, decodeWebMChunk, readVariableSizeInteger) {
+      return function (eventTarget, nativeMediaRecorderConstructor, mediaStream, mimeType) {
+        var audioTracks = mediaStream.getAudioTracks();
+        var bufferedArrayBuffers = []; // @todo TypeScript v4.4.2 removed the channelCount property from the MediaTrackSettings interface.
+
+        var channelCount = audioTracks.length === 0 ? undefined : audioTracks[0].getSettings().channelCount;
+        var nativeMediaRecorder = new nativeMediaRecorderConstructor(mediaStream, {
+          mimeType: 'audio/webm;codecs=pcm'
+        });
+        var sampleRate = audioTracks.length === 0 ? undefined : audioTracks[0].getSettings().sampleRate;
+        var promisedPartialRecording = null;
+
+        var stopRecording = function stopRecording() {}; // tslint:disable-line:no-empty
+
+
+        var dispatchDataAvailableEvent = function dispatchDataAvailableEvent(arrayBuffers) {
+          eventTarget.dispatchEvent(createBlobEvent('dataavailable', {
+            data: new Blob(arrayBuffers, {
+              type: mimeType
+            })
+          }));
+        };
+
+        var requestNextPartialRecording = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(encoderId, timeslice) {
+            var arrayBuffers;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _context.next = 2;
+                    return mediaEncoderHost.encode(encoderId, timeslice);
+
+                  case 2:
+                    arrayBuffers = _context.sent;
+
+                    if (nativeMediaRecorder.state === 'inactive') {
+                      bufferedArrayBuffers.push.apply(bufferedArrayBuffers, _toConsumableArray__default["default"](arrayBuffers));
+                    } else {
+                      dispatchDataAvailableEvent(arrayBuffers);
+                      promisedPartialRecording = requestNextPartialRecording(encoderId, timeslice);
+                    }
+
+                  case 4:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function requestNextPartialRecording(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        var stop = function stop() {
+          if (nativeMediaRecorder.state === 'inactive') {
+            return;
+          }
+
+          if (promisedPartialRecording !== null) {
+            promisedPartialRecording["catch"](function () {
+              /* @todo Only catch the errors caused by a duplicate call to encode. */
+            });
+            promisedPartialRecording = null;
+          }
+
+          stopRecording();
+
+          stopRecording = function stopRecording() {}; // tslint:disable-line:no-empty
+
+
+          nativeMediaRecorder.stop();
+        };
+
+        nativeMediaRecorder.addEventListener('error', function () {
+          stop(); // Bug #3 & #4: Chrome throws an error event without any error.
+
+          eventTarget.dispatchEvent(new ErrorEvent('error', {
+            error: createInvalidModificationError()
+          }));
+        });
+        nativeMediaRecorder.addEventListener('start', function () {
+          return eventTarget.dispatchEvent(new Event('start'));
+        });
+        return {
+          get mimeType() {
+            return mimeType;
+          },
+
+          get state() {
+            return nativeMediaRecorder.state;
+          },
+
+          pause: function pause() {
+            return nativeMediaRecorder.pause();
+          },
+          resume: function resume() {
+            return nativeMediaRecorder.resume();
+          },
+          start: function start(timeslice) {
+            /*
+             * Bug #6: Chrome will emit a blob without any data when asked to encode a MediaStream with a video track into an audio
+             * codec.
+             */
+            if (mediaStream.getVideoTracks().length > 0) {
+              throw createNotSupportedError();
+            }
+
+            if (nativeMediaRecorder.state === 'inactive') {
+              if (sampleRate === undefined) {
+                throw new Error('The sampleRate is not defined.');
+              }
+
+              var isRecording = false;
+              var isStopped = false; // Bug #9: Chrome sometimes fires more than one dataavailable event while being inactive.
+
+              var pendingInvocations = 0;
+              var promisedDataViewElementTypeEncoderIdAndPort = mediaEncoderHost.instantiate(mimeType, sampleRate);
+
+              stopRecording = function stopRecording() {
+                isStopped = true;
+              };
+
+              var removeEventListener = subscribableThings.on(nativeMediaRecorder, 'dataavailable')(function (_ref2) {
+                var data = _ref2.data;
+                pendingInvocations += 1;
+                promisedDataViewElementTypeEncoderIdAndPort = promisedDataViewElementTypeEncoderIdAndPort.then( /*#__PURE__*/function () {
+                  var _ref4 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(_ref3) {
+                    var _ref3$dataView, dataView, _ref3$elementType, elementType, encoderId, port, arrayBuffer, currentDataView, lengthAndValue, value, _decodeWebMChunk, currentElementType, offset, contents, remainingDataView;
+
+                    return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+                      while (1) {
+                        switch (_context2.prev = _context2.next) {
+                          case 0:
+                            _ref3$dataView = _ref3.dataView, dataView = _ref3$dataView === void 0 ? null : _ref3$dataView, _ref3$elementType = _ref3.elementType, elementType = _ref3$elementType === void 0 ? null : _ref3$elementType, encoderId = _ref3.encoderId, port = _ref3.port;
+                            _context2.next = 3;
+                            return data.arrayBuffer();
+
+                          case 3:
+                            arrayBuffer = _context2.sent;
+                            pendingInvocations -= 1;
+                            currentDataView = dataView === null ? new multiBufferDataView.MultiBufferDataView([arrayBuffer]) : new multiBufferDataView.MultiBufferDataView([].concat(_toConsumableArray__default["default"](dataView.buffers), [arrayBuffer]), dataView.byteOffset);
+
+                            if (!(!isRecording && nativeMediaRecorder.state === 'recording' && !isStopped)) {
+                              _context2.next = 14;
+                              break;
+                            }
+
+                            lengthAndValue = readVariableSizeInteger(currentDataView, 0);
+
+                            if (!(lengthAndValue === null)) {
+                              _context2.next = 10;
+                              break;
+                            }
+
+                            return _context2.abrupt("return", {
+                              dataView: currentDataView,
+                              elementType: elementType,
+                              encoderId: encoderId,
+                              port: port
+                            });
+
+                          case 10:
+                            value = lengthAndValue.value;
+
+                            if (!(value !== 172351395)) {
+                              _context2.next = 13;
+                              break;
+                            }
+
+                            return _context2.abrupt("return", {
+                              dataView: dataView,
+                              elementType: elementType,
+                              encoderId: encoderId,
+                              port: port
+                            });
+
+                          case 13:
+                            isRecording = true;
+
+                          case 14:
+                            _decodeWebMChunk = decodeWebMChunk(currentDataView, elementType, channelCount), currentElementType = _decodeWebMChunk.currentElementType, offset = _decodeWebMChunk.offset, contents = _decodeWebMChunk.contents;
+                            remainingDataView = offset < currentDataView.byteLength ? new multiBufferDataView.MultiBufferDataView(currentDataView.buffers, currentDataView.byteOffset + offset) : null;
+                            contents.forEach(function (content) {
+                              return port.postMessage(content, content.map(function (_ref5) {
+                                var buffer = _ref5.buffer;
+                                return buffer;
+                              }));
+                            });
+
+                            if (pendingInvocations === 0 && (nativeMediaRecorder.state === 'inactive' || isStopped)) {
+                              mediaEncoderHost.encode(encoderId, null).then(function (arrayBuffers) {
+                                dispatchDataAvailableEvent([].concat(bufferedArrayBuffers, _toConsumableArray__default["default"](arrayBuffers)));
+                                bufferedArrayBuffers.length = 0;
+                                eventTarget.dispatchEvent(new Event('stop'));
+                              });
+                              port.postMessage([]);
+                              port.close();
+                              removeEventListener();
+                            }
+
+                            return _context2.abrupt("return", {
+                              dataView: remainingDataView,
+                              elementType: currentElementType,
+                              encoderId: encoderId,
+                              port: port
+                            });
+
+                          case 19:
+                          case "end":
+                            return _context2.stop();
+                        }
+                      }
+                    }, _callee2);
+                  }));
+
+                  return function (_x3) {
+                    return _ref4.apply(this, arguments);
+                  };
+                }());
+              });
+
+              if (timeslice !== undefined) {
+                promisedDataViewElementTypeEncoderIdAndPort.then(function (_ref6) {
+                  var encoderId = _ref6.encoderId;
+                  return promisedPartialRecording = requestNextPartialRecording(encoderId, timeslice);
+                });
+              }
+            }
+
+            nativeMediaRecorder.start(100);
+          },
+          stop: stop
+        };
+      };
+    };
+
+    var createWindow = function createWindow() {
+      return typeof window === 'undefined' ? null : window;
+    };
+
+    var readVariableSizeIntegerLength = function readVariableSizeIntegerLength(dataView, offset) {
+      if (offset >= dataView.byteLength) {
+        return null;
+      }
+
+      var _byte = dataView.getUint8(offset);
+
+      if (_byte > 127) {
+        return 1;
+      }
+
+      if (_byte > 63) {
+        return 2;
+      }
+
+      if (_byte > 31) {
+        return 3;
+      }
+
+      if (_byte > 15) {
+        return 4;
+      }
+
+      if (_byte > 7) {
+        return 5;
+      }
+
+      if (_byte > 3) {
+        return 6;
+      }
+
+      if (_byte > 1) {
+        return 7;
+      }
+
+      if (_byte > 0) {
+        return 8;
+      }
+
+      var length = readVariableSizeIntegerLength(dataView, offset + 1);
+      return length === null ? null : length + 8;
+    };
+
+    var wrapEventListener = function wrapEventListener(target, eventListener) {
+      return function (event) {
+        var descriptor = {
+          value: target
+        };
+        Object.defineProperties(event, {
+          currentTarget: descriptor,
+          target: descriptor
+        });
+
+        if (typeof eventListener === 'function') {
+          return eventListener.call(target, event);
+        }
+
+        return eventListener.handleEvent.call(target, event);
+      };
+    };
+
+    var encoderRegexes = [];
+    var window$1 = createWindow();
+    var nativeBlobEventConstructor = createNativeBlobEventConstructor(window$1);
+    var createBlobEvent = createBlobEventFactory(nativeBlobEventConstructor);
+    var createWebAudioMediaRecorder = createWebAudioMediaRecorderFactory(createBlobEvent, createInvalidModificationError, createInvalidStateError, createNotSupportedError);
+    var readVariableSizeInteger = createReadVariableSizeInteger(readVariableSizeIntegerLength);
+    var readElementContent = createReadElementContent(readVariableSizeInteger);
+    var readElementType = createReadElementType(readVariableSizeInteger);
+    var decodeWebMChunk = createDecodeWebMChunk(readElementContent, readElementType);
+    var createWebmPcmMediaRecorder = createWebmPcmMediaRecorderFactory(createBlobEvent, createInvalidModificationError, createNotSupportedError, decodeWebMChunk, readVariableSizeInteger);
+    var createEventTarget = createEventTargetFactory(window$1);
+    var nativeMediaRecorderConstructor = createNativeMediaRecorderConstructor(window$1);
+    var createNativeMediaRecorder = createNativeMediaRecorderFactory(createInvalidModificationError, createNotSupportedError);
+    var mediaRecorderConstructor = createMediaRecorderConstructor(createNativeMediaRecorder, createNotSupportedError, createWebAudioMediaRecorder, createWebmPcmMediaRecorder, encoderRegexes, createEventTargetConstructor(createEventTarget, wrapEventListener), nativeMediaRecorderConstructor);
+    var isSupported = function isSupported() {
+      return createIsSupportedPromise(window$1);
+    };
+    var register = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(port) {
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.t0 = encoderRegexes;
+                _context.next = 3;
+                return mediaEncoderHost.register(port);
+
+              case 3:
+                _context.t1 = _context.sent;
+
+                _context.t0.push.call(_context.t0, _context.t1);
+
+              case 5:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function register(_x) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    exports.MediaRecorder = mediaRecorderConstructor;
+    exports.isSupported = isSupported;
+    exports.register = register;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/assertThisInitialized":5,"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/helpers/classCallCheck":7,"@babel/runtime/helpers/createClass":8,"@babel/runtime/helpers/getPrototypeOf":10,"@babel/runtime/helpers/inherits":11,"@babel/runtime/helpers/objectWithoutProperties":16,"@babel/runtime/helpers/possibleConstructorReturn":18,"@babel/runtime/helpers/slicedToArray":20,"@babel/runtime/helpers/toConsumableArray":21,"@babel/runtime/regenerator":24,"media-encoder-host":104,"multi-buffer-data-view":117,"recorder-audio-worklet":153,"standardized-audio-context":198,"subscribable-things":203}],67:[function(require,module,exports){
 module.exports = class FixedFIFO {
   constructor (hwm) {
     if (!(hwm > 0) || ((hwm - 1) & hwm) !== 0) throw new Error('Max size for a FixedFIFO should be a power of two')
@@ -6853,7 +9390,7 @@ module.exports = class FixedFIFO {
   }
 }
 
-},{}],38:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 const FixedFIFO = require('./fixed-size')
 
 module.exports = class FastFIFO {
@@ -6891,7 +9428,95 @@ module.exports = class FastFIFO {
   }
 }
 
-},{"./fixed-size":37}],39:[function(require,module,exports){
+},{"./fixed-size":67}],69:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.fastUniqueNumbers = {}));
+})(this, (function (exports) { 'use strict';
+
+    var createAddUniqueNumber = function createAddUniqueNumber(generateUniqueNumber) {
+      return function (set) {
+        var number = generateUniqueNumber(set);
+        set.add(number);
+        return number;
+      };
+    };
+
+    var createCache = function createCache(lastNumberWeakMap) {
+      return function (collection, nextNumber) {
+        lastNumberWeakMap.set(collection, nextNumber);
+        return nextNumber;
+      };
+    };
+
+    /*
+     * The value of the constant Number.MAX_SAFE_INTEGER equals (2 ** 53 - 1) but it
+     * is fairly new.
+     */
+    var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER === undefined ? 9007199254740991 : Number.MAX_SAFE_INTEGER;
+    var TWO_TO_THE_POWER_OF_TWENTY_NINE = 536870912;
+    var TWO_TO_THE_POWER_OF_THIRTY = TWO_TO_THE_POWER_OF_TWENTY_NINE * 2;
+    var createGenerateUniqueNumber = function createGenerateUniqueNumber(cache, lastNumberWeakMap) {
+      return function (collection) {
+        var lastNumber = lastNumberWeakMap.get(collection);
+        /*
+         * Let's try the cheapest algorithm first. It might fail to produce a new
+         * number, but it is so cheap that it is okay to take the risk. Just
+         * increase the last number by one or reset it to 0 if we reached the upper
+         * bound of SMIs (which stands for small integers). When the last number is
+         * unknown it is assumed that the collection contains zero based consecutive
+         * numbers.
+         */
+
+        var nextNumber = lastNumber === undefined ? collection.size : lastNumber < TWO_TO_THE_POWER_OF_THIRTY ? lastNumber + 1 : 0;
+
+        if (!collection.has(nextNumber)) {
+          return cache(collection, nextNumber);
+        }
+        /*
+         * If there are less than half of 2 ** 30 numbers stored in the collection,
+         * the chance to generate a new random number in the range from 0 to 2 ** 30
+         * is at least 50%. It's benifitial to use only SMIs because they perform
+         * much better in any environment based on V8.
+         */
+
+
+        if (collection.size < TWO_TO_THE_POWER_OF_TWENTY_NINE) {
+          while (collection.has(nextNumber)) {
+            nextNumber = Math.floor(Math.random() * TWO_TO_THE_POWER_OF_THIRTY);
+          }
+
+          return cache(collection, nextNumber);
+        } // Quickly check if there is a theoretical chance to generate a new number.
+
+
+        if (collection.size > MAX_SAFE_INTEGER) {
+          throw new Error('Congratulations, you created a collection of unique numbers which uses all available integers!');
+        } // Otherwise use the full scale of safely usable integers.
+
+
+        while (collection.has(nextNumber)) {
+          nextNumber = Math.floor(Math.random() * MAX_SAFE_INTEGER);
+        }
+
+        return cache(collection, nextNumber);
+      };
+    };
+
+    var LAST_NUMBER_WEAK_MAP = new WeakMap();
+    var cache = createCache(LAST_NUMBER_WEAK_MAP);
+    var generateUniqueNumber = createGenerateUniqueNumber(cache, LAST_NUMBER_WEAK_MAP);
+    var addUniqueNumber = createAddUniqueNumber(generateUniqueNumber);
+
+    exports.addUniqueNumber = addUniqueNumber;
+    exports.generateUniqueNumber = generateUniqueNumber;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{}],70:[function(require,module,exports){
 exports.fullRoots = function (index, result) {
   if (index & 1) throw new Error('You can only look up roots for depth(0) blocks')
   if (!result) result = []
@@ -7148,7 +9773,7 @@ Iterator.prototype.fullRoot = function (index) {
   return true
 }
 
-},{}],40:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /* eslint-disable camelcase */
 var { sodium_malloc, sodium_memzero } = require('sodium-universal/memory')
 var { crypto_generichash, crypto_generichash_batch } = require('sodium-universal/crypto_generichash')
@@ -7192,7 +9817,7 @@ module.exports = function hmac (out, data, key) {
 module.exports.BYTES = HASHLEN
 module.exports.KEYBYTES = BLOCKLEN
 
-},{"nanoassert":41,"sodium-universal/crypto_generichash":137,"sodium-universal/memory":154}],41:[function(require,module,exports){
+},{"nanoassert":72,"sodium-universal/crypto_generichash":179,"sodium-universal/memory":196}],72:[function(require,module,exports){
 assert.notEqual = notEqual
 assert.notOk = notOk
 assert.equal = equal
@@ -7216,7 +9841,7 @@ function assert (t, m) {
   if (!t) throw new Error(m || 'AssertionError')
 }
 
-},{}],42:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const c = require('compact-encoding')
 const b4a = require('b4a')
@@ -7326,7 +9951,7 @@ if (sodium.sodium_free) {
   exports.free = function () {}
 }
 
-},{"b4a":18,"compact-encoding":33,"sodium-universal":151}],43:[function(require,module,exports){
+},{"b4a":42,"compact-encoding":58,"sodium-universal":193}],74:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const raf = require('random-access-file')
 const isOptions = require('is-options')
@@ -7947,7 +10572,7 @@ function preappend (blocks) {
   }
 }
 
-},{"./lib/block-encryption":45,"./lib/core":47,"./lib/extensions":48,"./lib/replicator":55,"./lib/streams":56,"@hyperswarm/secret-stream":4,"b4a":18,"codecs":32,"compact-encoding":33,"events":36,"hypercore-crypto":42,"is-options":69,"random-access-file":99,"xache":164}],44:[function(require,module,exports){
+},{"./lib/block-encryption":76,"./lib/core":78,"./lib/extensions":79,"./lib/replicator":86,"./lib/streams":87,"@hyperswarm/secret-stream":27,"b4a":42,"codecs":57,"compact-encoding":58,"events":63,"hypercore-crypto":73,"is-options":101,"random-access-file":134,"xache":209}],75:[function(require,module,exports){
 // TODO: needs massive improvements obvs
 
 const BigSparseArray = require('big-sparse-array')
@@ -8104,7 +10729,7 @@ function ensureSize (uint32, size) {
   return a
 }
 
-},{"b4a":18,"big-sparse-array":25}],45:[function(require,module,exports){
+},{"b4a":42,"big-sparse-array":49}],76:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const c = require('compact-encoding')
 const b4a = require('b4a')
@@ -8174,7 +10799,7 @@ module.exports = class BlockEncryption {
   }
 }
 
-},{"b4a":18,"compact-encoding":33,"sodium-universal":151}],46:[function(require,module,exports){
+},{"b4a":42,"compact-encoding":58,"sodium-universal":193}],77:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = class BlockStore {
@@ -8234,7 +10859,7 @@ module.exports = class BlockStore {
   }
 }
 
-},{"b4a":18}],47:[function(require,module,exports){
+},{"b4a":42}],78:[function(require,module,exports){
 const hypercoreCrypto = require('hypercore-crypto')
 const b4a = require('b4a')
 const Oplog = require('./oplog')
@@ -8705,7 +11330,7 @@ function updateUserData (list, key, value) {
 
 function noop () {}
 
-},{"./bitfield":44,"./block-store":46,"./merkle-tree":49,"./messages":50,"./mutex":51,"./oplog":52,"b4a":18,"hypercore-crypto":42}],48:[function(require,module,exports){
+},{"./bitfield":75,"./block-store":77,"./merkle-tree":80,"./messages":81,"./mutex":82,"./oplog":83,"b4a":42,"hypercore-crypto":73}],79:[function(require,module,exports){
 class Extension {
   constructor (extensions, name, handlers) {
     this.extensions = extensions
@@ -8783,7 +11408,7 @@ module.exports = class Extensions {
 
 function noop () {}
 
-},{}],49:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 const flat = require('flat-tree')
 const crypto = require('hypercore-crypto')
 const c = require('compact-encoding')
@@ -9923,7 +12548,7 @@ function signable (hash, length, fork) {
   return state.buffer
 }
 
-},{"b4a":18,"compact-encoding":33,"flat-tree":39,"hypercore-crypto":42}],50:[function(require,module,exports){
+},{"b4a":42,"compact-encoding":58,"flat-tree":70,"hypercore-crypto":73}],81:[function(require,module,exports){
 const c = require('compact-encoding')
 
 const node = exports.node = {
@@ -10505,7 +13130,7 @@ exports.oplogHeader = {
   }
 }
 
-},{"compact-encoding":33}],51:[function(require,module,exports){
+},{"compact-encoding":58}],82:[function(require,module,exports){
 module.exports = class Mutex {
   constructor () {
     this.locked = false
@@ -10546,7 +13171,7 @@ module.exports = class Mutex {
   }
 }
 
-},{}],52:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const crc32 = require('crc32-universal')
@@ -10772,7 +13397,7 @@ module.exports = class Oplog {
   }
 }
 
-},{"b4a":18,"compact-encoding":33,"crc32-universal":35}],53:[function(require,module,exports){
+},{"b4a":42,"compact-encoding":58,"crc32-universal":61}],84:[function(require,module,exports){
 const { uint, from: fromEncoding } = require('compact-encoding')
 const b4a = require('b4a')
 const safetyCatch = require('safety-catch')
@@ -11380,7 +14005,7 @@ function hypercoreCapability (initiator, handshakeHash, key, cap = b4a.alloc(32)
   return cap
 }
 
-},{"./messages":50,"b4a":18,"codecs":32,"compact-encoding":33,"safety-catch":119,"sodium-universal":151}],54:[function(require,module,exports){
+},{"./messages":81,"b4a":42,"codecs":57,"compact-encoding":58,"safety-catch":161,"sodium-universal":193}],85:[function(require,module,exports){
 const BigSparseArray = require('big-sparse-array')
 
 module.exports = class RemoteBitfield {
@@ -11406,7 +14031,7 @@ module.exports = class RemoteBitfield {
   }
 }
 
-},{"big-sparse-array":25}],55:[function(require,module,exports){
+},{"big-sparse-array":49}],86:[function(require,module,exports){
 const Protocol = require('./protocol')
 const RemoteBitfield = require('./remote-bitfield')
 const RandomIterator = require('random-array-iterator')
@@ -12285,7 +14910,7 @@ function log2 (n) {
   return res
 }
 
-},{"../package.json":57,"./protocol":53,"./remote-bitfield":54,"b4a":18,"random-array-iterator":102}],56:[function(require,module,exports){
+},{"../package.json":88,"./protocol":84,"./remote-bitfield":85,"b4a":42,"random-array-iterator":137}],87:[function(require,module,exports){
 const { Writable, Readable } = require('streamx')
 
 class ReadStream extends Readable {
@@ -12343,7 +14968,7 @@ class WriteStream extends Writable {
 
 exports.WriteStream = WriteStream
 
-},{"streamx":157}],57:[function(require,module,exports){
+},{"streamx":200}],88:[function(require,module,exports){
 module.exports={
   "name": "hypercore",
   "version": "10.0.0-alpha.24",
@@ -12406,7 +15031,7 @@ module.exports={
   }
 }
 
-},{}],58:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const DHT = require('@hyperswarm/dht')
 const spq = require('shuffled-priority-queue')
@@ -12761,7 +15386,7 @@ function isOpen (stream) {
   return !!stream.id
 }
 
-},{"./lib/connection-set":60,"./lib/peer-discovery":61,"./lib/peer-info":62,"./lib/retry-timer":63,"@hyperswarm/dht":2,"events":36,"shuffled-priority-queue":129}],59:[function(require,module,exports){
+},{"./lib/connection-set":91,"./lib/peer-discovery":92,"./lib/peer-info":93,"./lib/retry-timer":94,"@hyperswarm/dht":25,"events":63,"shuffled-priority-queue":171}],90:[function(require,module,exports){
 module.exports = class BulkTimer {
   constructor (time, fn) {
     this._time = time
@@ -12796,7 +15421,7 @@ module.exports = class BulkTimer {
   }
 }
 
-},{}],60:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 module.exports = class ConnectionSet {
   constructor () {
     this._byPublicKey = new Map()
@@ -12830,7 +15455,7 @@ module.exports = class ConnectionSet {
   }
 }
 
-},{}],61:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 const REFRESH_INTERVAL = 1000 * 60 * 10 // 10 min
 const RANDOM_JITTER = 1000 * 60 * 2 // 2 min
 const DELAY_GRACE_PERIOD = 1000 * 30 // 30s
@@ -12967,7 +15592,7 @@ module.exports = class PeerDiscovery {
 
 function noop () {}
 
-},{}],62:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 const { EventEmitter } = require('events')
 
 const VERY_LOW_PRIORITY = 0
@@ -13066,7 +15691,7 @@ module.exports = class PeerInfo extends EventEmitter {
   }
 }
 
-},{"events":36}],63:[function(require,module,exports){
+},{"events":63}],94:[function(require,module,exports){
 const BulkTimer = require('./bulk-timer')
 
 const BACKOFF_JITTER = 500
@@ -13115,7 +15740,7 @@ module.exports = class RetryTimer {
   }
 }
 
-},{"./bulk-timer":59}],64:[function(require,module,exports){
+},{"./bulk-timer":90}],95:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -13202,7 +15827,100 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],65:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
+/*
+ * indefinite-article.js v1.0.0, 12-18-2011
+ *
+ * @author: Rodrigo Neri (@rigoneri)
+ *
+ * (The MIT License)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+var indefiniteArticle = function(phrase) {
+    var i, word;
+
+    // Getting the first word
+    var match = /\w+/.exec(phrase);
+    if (match)
+        word = match[0];
+    else
+        return "an";
+
+    var l_word = word.toLowerCase();
+    // Specific start of words that should be preceeded by 'an'
+    var alt_cases = ["honest", "hour", "hono"];
+    for (i in alt_cases) {
+        if (l_word.indexOf(alt_cases[i]) == 0)
+            return "an";
+    }
+
+    // Single letter word which should be preceeded by 'an'
+    if (l_word.length == 1) {
+        if ("aedhilmnorsx".indexOf(l_word) >= 0)
+            return "an";
+        else
+            return "a";
+    }
+
+    // Capital words which should likely be preceeded by 'an'
+    if (word.match(/(?!FJO|[HLMNS]Y.|RY[EO]|SQU|(F[LR]?|[HL]|MN?|N|RH?|S[CHKLMNPTVW]?|X(YL)?)[AEIOU])[FHLMNRSX][A-Z]/)) {
+        return "an";
+    }
+
+    // Special cases where a word that begins with a vowel should be preceeded by 'a'
+    var regexes = [/^e[uw]/, /^onc?e\b/, /^uni([^nmd]|mo)/, /^u[bcfhjkqrst][aeiou]/];
+    for (i = 0; i < regexes.length; i++) {
+        if (l_word.match(regexes[i]))
+            return "a"
+    }
+
+    // Special capital words (UK, UN)
+    if (word.match(/^U[NK][AIEO]/)) {
+        return "a";
+    }
+    else if (word == word.toUpperCase()) {
+        if ("aedhilmnorsx".indexOf(l_word[0]) >= 0)
+            return "an";
+        else
+            return "a";
+    }
+
+    // Basic method of words that begin with a vowel being preceeded by 'an'
+    if ("aeiou".indexOf(l_word[0]) >= 0)
+        return "an";
+
+    // Instances where y follwed by specific letters is preceeded by 'an'
+    if (l_word.match(/^y(b[lor]|cl[ea]|fere|gg|p[ios]|rou|tt)/))
+        return "an";
+
+    return "a";
+};
+
+if ((typeof module !== 'undefined') && (typeof module.exports !== 'undefined')) {
+    module.exports = indefiniteArticle;
+} else {
+    window.indefiniteArticle = indefiniteArticle;
+}
+
+},{}],97:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -13231,7 +15949,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],66:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /**
  * @module  is-audio-buffer
  */
@@ -13248,7 +15966,7 @@ module.exports = function isAudioBuffer (buffer) {
 	&& typeof buffer.duration === 'number'
 };
 
-},{}],67:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 (function(root) {
   'use strict';
 
@@ -13290,7 +16008,7 @@ module.exports = function isAudioBuffer (buffer) {
   }
 })(this);
 
-},{}],68:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -13313,23 +16031,164 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],69:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = function isOptions (opts) {
   return typeof opts === 'object' && opts && !b4a.isBuffer(opts)
 }
 
-},{"b4a":18}],70:[function(require,module,exports){
+},{"b4a":42}],102:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],71:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('broker-factory'), require('fast-unique-numbers')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', 'broker-factory', 'fast-unique-numbers'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.mediaEncoderHostBroker = {}, global._asyncToGenerator, global._regeneratorRuntime, global.brokerFactory, global.fastUniqueNumbers));
+})(this, (function (exports, _asyncToGenerator, _regeneratorRuntime, brokerFactory, fastUniqueNumbers) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+
+    var encoderIds = new Set();
+    var wrap = brokerFactory.createBroker({
+      encode: function encode(_ref) {
+        var call = _ref.call;
+        return /*#__PURE__*/function () {
+          var _ref2 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(encoderId, timeslice) {
+            var arrayBuffers;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _context.next = 2;
+                    return call('encode', {
+                      encoderId: encoderId,
+                      timeslice: timeslice
+                    });
+
+                  case 2:
+                    arrayBuffers = _context.sent;
+                    encoderIds["delete"](encoderId);
+                    return _context.abrupt("return", arrayBuffers);
+
+                  case 5:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function (_x, _x2) {
+            return _ref2.apply(this, arguments);
+          };
+        }();
+      },
+      instantiate: function instantiate(_ref3) {
+        var call = _ref3.call;
+        return /*#__PURE__*/function () {
+          var _ref4 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(mimeType, sampleRate) {
+            var encoderId, port;
+            return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+              while (1) {
+                switch (_context2.prev = _context2.next) {
+                  case 0:
+                    encoderId = fastUniqueNumbers.addUniqueNumber(encoderIds);
+                    _context2.next = 3;
+                    return call('instantiate', {
+                      encoderId: encoderId,
+                      mimeType: mimeType,
+                      sampleRate: sampleRate
+                    });
+
+                  case 3:
+                    port = _context2.sent;
+                    return _context2.abrupt("return", {
+                      encoderId: encoderId,
+                      port: port
+                    });
+
+                  case 5:
+                  case "end":
+                    return _context2.stop();
+                }
+              }
+            }, _callee2);
+          }));
+
+          return function (_x3, _x4) {
+            return _ref4.apply(this, arguments);
+          };
+        }();
+      },
+      register: function register(_ref5) {
+        var call = _ref5.call;
+        return function (port) {
+          return call('register', {
+            port: port
+          }, [port]);
+        };
+      }
+    });
+    var load = function load(url) {
+      var worker = new Worker(url);
+      return wrap(worker);
+    };
+
+    exports.load = load;
+    exports.wrap = wrap;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/regenerator":24,"broker-factory":53,"fast-unique-numbers":69}],104:[function(require,module,exports){
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('media-encoder-host-broker')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'media-encoder-host-broker'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.mediaEncoderHost = {}, global.mediaEncoderHostBroker));
+})(this, (function (exports, mediaEncoderHostBroker) { 'use strict';
+
+	// This is the minified and stringified code of the media-encoder-host-worker package.
+	var worker = "(()=>{var e={228:e=>{e.exports=function(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n},e.exports.__esModule=!0,e.exports.default=e.exports},858:e=>{e.exports=function(e){if(Array.isArray(e))return e},e.exports.__esModule=!0,e.exports.default=e.exports},646:(e,t,r)=>{var n=r(228);e.exports=function(e){if(Array.isArray(e))return n(e)},e.exports.__esModule=!0,e.exports.default=e.exports},926:e=>{function t(e,t,r,n,o,a,i){try{var u=e[a](i),c=u.value}catch(e){return void r(e)}u.done?t(c):Promise.resolve(c).then(n,o)}e.exports=function(e){return function(){var r=this,n=arguments;return new Promise((function(o,a){var i=e.apply(r,n);function u(e){t(i,o,a,u,c,\"next\",e)}function c(e){t(i,o,a,u,c,\"throw\",e)}u(void 0)}))}},e.exports.__esModule=!0,e.exports.default=e.exports},713:e=>{e.exports=function(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e},e.exports.__esModule=!0,e.exports.default=e.exports},860:e=>{e.exports=function(e){if(\"undefined\"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e[\"@@iterator\"])return Array.from(e)},e.exports.__esModule=!0,e.exports.default=e.exports},884:e=>{e.exports=function(e,t){var r=null==e?null:\"undefined\"!=typeof Symbol&&e[Symbol.iterator]||e[\"@@iterator\"];if(null!=r){var n,o,a=[],i=!0,u=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(a.push(n.value),!t||a.length!==t);i=!0);}catch(e){u=!0,o=e}finally{try{i||null==r.return||r.return()}finally{if(u)throw o}}return a}},e.exports.__esModule=!0,e.exports.default=e.exports},521:e=>{e.exports=function(){throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\")},e.exports.__esModule=!0,e.exports.default=e.exports},206:e=>{e.exports=function(){throw new TypeError(\"Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\")},e.exports.__esModule=!0,e.exports.default=e.exports},38:(e,t,r)=>{var n=r(858),o=r(884),a=r(379),i=r(521);e.exports=function(e,t){return n(e)||o(e,t)||a(e,t)||i()},e.exports.__esModule=!0,e.exports.default=e.exports},319:(e,t,r)=>{var n=r(646),o=r(860),a=r(379),i=r(206);e.exports=function(e){return n(e)||o(e)||a(e)||i()},e.exports.__esModule=!0,e.exports.default=e.exports},379:(e,t,r)=>{var n=r(228);e.exports=function(e,t){if(e){if(\"string\"==typeof e)return n(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return\"Object\"===r&&e.constructor&&(r=e.constructor.name),\"Map\"===r||\"Set\"===r?Array.from(e):\"Arguments\"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?n(e,t):void 0}},e.exports.__esModule=!0,e.exports.default=e.exports},757:(e,t,r)=>{e.exports=r(666)},881:e=>{\"use strict\";e.exports=function(e,t){if(\"string\"!=typeof e)throw new TypeError(\"expected a string\");return e.trim().replace(/([a-z])([A-Z])/g,\"$1-$2\").replace(/\\W/g,(function(e){return/[\xC0-\u017E]/.test(e)?e:\"-\"})).replace(/^-+|-+$/g,\"\").replace(/-{2,}/g,(function(e){return t&&t.condense?\"-\":e})).toLowerCase()}},774:function(e,t,r){!function(e,t,r,n,o,a){\"use strict\";function i(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var u=i(t),c=i(r),s=i(o),f=i(a),l=function(e){return\"function\"==typeof e.start},p=new WeakMap;function d(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function h(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?d(Object(r),!0).forEach((function(t){u.default(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):d(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}var v=function(e){return h(h({},e),{},{connect:function(e){var t=e.call;return s.default(f.default.mark((function e(){var r,n,o,a;return f.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return r=new MessageChannel,n=r.port1,o=r.port2,e.next=3,t(\"connect\",{port:n},[n]);case 3:return a=e.sent,p.set(o,a),e.abrupt(\"return\",o);case 6:case\"end\":return e.stop()}}),e)})))},disconnect:function(e){var t=e.call;return function(){var e=s.default(f.default.mark((function e(r){var n;return f.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(void 0!==(n=p.get(r))){e.next=3;break}throw new Error(\"The given port is not connected.\");case 3:return e.next=5,t(\"disconnect\",{portId:n});case 5:case\"end\":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}()},isSupported:function(e){var t=e.call;return function(){return t(\"isSupported\")}}})};function y(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function m(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?y(Object(r),!0).forEach((function(t){u.default(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):y(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}var g=new WeakMap,w=function(e){if(g.has(e))return g.get(e);var t=new Map;return g.set(e,t),t},b=function(e){var t=v(e);return function(e){var r=w(e);e.addEventListener(\"message\",(function(e){var t=e.data,n=t.id;if(null!==n&&r.has(n)){var o=r.get(n),a=o.reject,i=o.resolve;r.delete(n),void 0===t.error?i(t.result):a(new Error(t.error.message))}})),l(e)&&e.start();for(var o=function(t){var o=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:[];return new Promise((function(i,u){var c=n.generateUniqueNumber(r);r.set(c,{reject:u,resolve:i}),null===o?e.postMessage({id:c,method:t},a):e.postMessage({id:c,method:t,params:o},a)}))},a=function(t,r){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:[];e.postMessage({id:null,method:t,params:r},n)},i={},s=0,f=Object.entries(t);s<f.length;s++){var p=c.default(f[s],2),d=p[0],h=p[1];i=m(m({},i),{},u.default({},d,h({call:o,notify:a})))}return m({},i)}};e.createBroker=b,Object.defineProperty(e,\"__esModule\",{value:!0})}(t,r(713),r(38),r(650),r(926),r(757))},404:function(e,t,r){!function(e,t,r,n){\"use strict\";function o(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var a=o(t),i=o(r),u=o(n),c=function(e,t){return void 0===t?e:t.reduce((function(e,t){if(\"capitalize\"===t){var r=e.charAt(0).toUpperCase(),n=e.slice(1);return\"\".concat(r).concat(n)}return\"dashify\"===t?i.default(e):\"prependIndefiniteArticle\"===t?\"\".concat(u.default(e),\" \").concat(e):e}),e)},s=function(e){var t=e.name+e.modifiers.map((function(e){return\"\\\\.\".concat(e,\"\\\\(\\\\)\")})).join(\"\");return new RegExp(\"\\\\$\\\\{\".concat(t,\"}\"),\"g\")},f=function(e,t){for(var r=/\\${([^.}]+)((\\.[^(]+\\(\\))*)}/g,n=[],o=r.exec(e);null!==o;){var i={modifiers:[],name:o[1]};if(void 0!==o[3])for(var u=/\\.[^(]+\\(\\)/g,f=u.exec(o[2]);null!==f;)i.modifiers.push(f[0].slice(1,-2)),f=u.exec(o[2]);n.push(i),o=r.exec(e)}var l=n.reduce((function(e,r){return e.map((function(e){return\"string\"==typeof e?e.split(s(r)).reduce((function(e,n,o){return 0===o?[n]:r.name in t?[].concat(a.default(e),[c(t[r.name],r.modifiers),n]):[].concat(a.default(e),[function(e){return c(e[r.name],r.modifiers)},n])}),[]):[e]})).reduce((function(e,t){return[].concat(a.default(e),a.default(t))}),[])}),[e]);return function(e){return l.reduce((function(t,r){return[].concat(a.default(t),\"string\"==typeof r?[r]:[r(e)])}),[]).join(\"\")}},l=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},r=void 0===e.code?void 0:f(e.code,t),n=void 0===e.message?void 0:f(e.message,t);function o(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},o=arguments.length>1?arguments[1]:void 0,a=void 0===o&&(t instanceof Error||void 0!==t.code&&\"Exception\"===t.code.slice(-9))?{cause:t,missingParameters:{}}:{cause:o,missingParameters:t},i=a.cause,u=a.missingParameters,c=void 0===n?new Error:new Error(n(u));return null!==i&&(c.cause=i),void 0!==r&&(c.code=r(u)),void 0!==e.status&&(c.status=e.status),c}return o};e.compile=l,Object.defineProperty(e,\"__esModule\",{value:!0})}(t,r(319),r(881),r(932))},831:function(e,t,r){!function(e,t,r,n){\"use strict\";function o(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var a=o(t),i=o(r),u=n.createBroker({characterize:function(e){var t=e.call;return function(){return t(\"characterize\")}},encode:function(e){var t=e.call;return function(e,r){return t(\"encode\",{recordingId:e,timeslice:r})}},record:function(e){var t=e.call;return function(){var e=a.default(i.default.mark((function e(r,n,o){return i.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,t(\"record\",{recordingId:r,sampleRate:n,typedArrays:o},o.map((function(e){return e.buffer})));case 2:case\"end\":return e.stop()}}),e)})));return function(t,r,n){return e.apply(this,arguments)}}()}}),c=function(e){var t=new Worker(e);return u(t)};e.load=c,e.wrap=u,Object.defineProperty(e,\"__esModule\",{value:!0})}(t,r(926),r(757),r(774))},650:function(e,t){!function(e){\"use strict\";var t=function(e){return function(t){var r=e(t);return t.add(r),r}},r=function(e){return function(t,r){return e.set(t,r),r}},n=void 0===Number.MAX_SAFE_INTEGER?9007199254740991:Number.MAX_SAFE_INTEGER,o=536870912,a=2*o,i=function(e,t){return function(r){var i=t.get(r),u=void 0===i?r.size:i<a?i+1:0;if(!r.has(u))return e(r,u);if(r.size<o){for(;r.has(u);)u=Math.floor(Math.random()*a);return e(r,u)}if(r.size>n)throw new Error(\"Congratulations, you created a collection of unique numbers which uses all available integers!\");for(;r.has(u);)u=Math.floor(Math.random()*n);return e(r,u)}},u=new WeakMap,c=r(u),s=i(c,u),f=t(s);e.addUniqueNumber=f,e.generateUniqueNumber=s,Object.defineProperty(e,\"__esModule\",{value:!0})}(t)},932:e=>{var t=function(e){var t,r,n=/\\w+/.exec(e);if(!n)return\"an\";var o=(r=n[0]).toLowerCase(),a=[\"honest\",\"hour\",\"hono\"];for(t in a)if(0==o.indexOf(a[t]))return\"an\";if(1==o.length)return\"aedhilmnorsx\".indexOf(o)>=0?\"an\":\"a\";if(r.match(/(?!FJO|[HLMNS]Y.|RY[EO]|SQU|(F[LR]?|[HL]|MN?|N|RH?|S[CHKLMNPTVW]?|X(YL)?)[AEIOU])[FHLMNRSX][A-Z]/))return\"an\";var i=[/^e[uw]/,/^onc?e\\b/,/^uni([^nmd]|mo)/,/^u[bcfhjkqrst][aeiou]/];for(t=0;t<i.length;t++)if(o.match(i[t]))return\"a\";return r.match(/^U[NK][AIEO]/)?\"a\":r==r.toUpperCase()?\"aedhilmnorsx\".indexOf(o[0])>=0?\"an\":\"a\":\"aeiou\".indexOf(o[0])>=0||o.match(/^y(b[lor]|cl[ea]|fere|gg|p[ios]|rou|tt)/)?\"an\":\"a\"};void 0!==e.exports?e.exports=t:window.indefiniteArticle=t},108:function(e,t,r){!function(e,t,r,n,o){\"use strict\";function a(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var i=a(e),u=a(t),c=a(n),s=function(e,t){return function(r){var n=t(r),o=c.default(n,4),a=o[0],i=o[1],u=o[2],s=o[3];return u?new Promise((function(t){i.onmessage=function(n){var o=n.data;0===o.length?(e(i),t(a.encode(r,null))):a.record(r,s,o)}})):a.encode(r,null)}},f=function(e){return function(t){var r=e.get(t);if(void 0===r)throw new Error(\"There was no instance of an encoder stored with the given id.\");return r}},l=function(e,t,r){return function(n,o,a){if(t.has(n))throw new Error('There is already an encoder registered with an id called \"'.concat(n,'\".'));var i=r(o),u=new MessageChannel,c=u.port1,s=u.port2,f=[i,c,!0,a];return t.set(n,f),c.onmessage=function(t){var r=t.data;0===r.length?(e(c),f[2]=!1):i.record(n,a,r)},s}},p=function(e){return function(t){for(var r=0,n=Array.from(e.values());r<n.length;r++){var o=c.default(n[r],2),a=o[0],i=o[1];if(a.test(t))return i}throw new Error(\"There is no encoder registered which could handle the given mimeType.\")}},d=function(e,t){return function(r){var n=t(r);return e.delete(r),n}},h=function(e){return function(t,r){var n=e(t);return c.default(n,1)[0].encode(t,r)}},v=function(e){e.onmessage=null,e.close()},y=function(){var e=i.default(u.default.mark((function e(t,r){var n,a,i;return u.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return n=o.wrap(r),e.next=3,n.characterize();case 3:if(a=e.sent,i=a.toString(),!t.has(i)){e.next=7;break}throw new Error(\"There is already an encoder stored which handles exactly the same mime types.\");case 7:return t.set(i,[a,n]),e.abrupt(\"return\",a);case 9:case\"end\":return e.stop()}}),e)})));return function(t,r){return e.apply(this,arguments)}}(),m=new Map,g=f(m),w=d(m,g),b=new Map,x=s(v,w),O=p(b),j=l(v,m,O),_=h(g);r.createWorker(self,{encode:function(){var e=i.default(u.default.mark((function e(t){var r,n,o;return u.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(r=t.encoderId,null!==(n=t.timeslice)){e.next=7;break}return e.next=4,x(r);case 4:e.t0=e.sent,e.next=10;break;case 7:return e.next=9,_(r,n);case 9:e.t0=e.sent;case 10:return o=e.t0,e.abrupt(\"return\",{result:o,transferables:o});case 12:case\"end\":return e.stop()}}),e)})));function t(t){return e.apply(this,arguments)}return t}(),instantiate:function(e){var t=e.encoderId,r=e.mimeType,n=e.sampleRate,o=j(t,r,n);return{result:o,transferables:[o]}},register:function(){var e=i.default(u.default.mark((function e(t){var r;return u.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return r=t.port,e.next=3,y(b,r);case 3:return e.t0=e.sent,e.abrupt(\"return\",{result:e.t0});case 5:case\"end\":return e.stop()}}),e)})));function t(t){return e.apply(this,arguments)}return t}()})}(r(926),r(757),r(868),r(38),r(831))},666:e=>{var t=function(e){\"use strict\";var t,r=Object.prototype,n=r.hasOwnProperty,o=\"function\"==typeof Symbol?Symbol:{},a=o.iterator||\"@@iterator\",i=o.asyncIterator||\"@@asyncIterator\",u=o.toStringTag||\"@@toStringTag\";function c(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{c({},\"\")}catch(e){c=function(e,t,r){return e[t]=r}}function s(e,t,r,n){var o=t&&t.prototype instanceof y?t:y,a=Object.create(o.prototype),i=new k(n||[]);return a._invoke=function(e,t,r){var n=l;return function(o,a){if(n===d)throw new Error(\"Generator is already running\");if(n===h){if(\"throw\"===o)throw a;return A()}for(r.method=o,r.arg=a;;){var i=r.delegate;if(i){var u=E(i,r);if(u){if(u===v)continue;return u}}if(\"next\"===r.method)r.sent=r._sent=r.arg;else if(\"throw\"===r.method){if(n===l)throw n=h,r.arg;r.dispatchException(r.arg)}else\"return\"===r.method&&r.abrupt(\"return\",r.arg);n=d;var c=f(e,t,r);if(\"normal\"===c.type){if(n=r.done?h:p,c.arg===v)continue;return{value:c.arg,done:r.done}}\"throw\"===c.type&&(n=h,r.method=\"throw\",r.arg=c.arg)}}}(e,r,i),a}function f(e,t,r){try{return{type:\"normal\",arg:e.call(t,r)}}catch(e){return{type:\"throw\",arg:e}}}e.wrap=s;var l=\"suspendedStart\",p=\"suspendedYield\",d=\"executing\",h=\"completed\",v={};function y(){}function m(){}function g(){}var w={};c(w,a,(function(){return this}));var b=Object.getPrototypeOf,x=b&&b(b(L([])));x&&x!==r&&n.call(x,a)&&(w=x);var O=g.prototype=y.prototype=Object.create(w);function j(e){[\"next\",\"throw\",\"return\"].forEach((function(t){c(e,t,(function(e){return this._invoke(t,e)}))}))}function _(e,t){function r(o,a,i,u){var c=f(e[o],e,a);if(\"throw\"!==c.type){var s=c.arg,l=s.value;return l&&\"object\"==typeof l&&n.call(l,\"__await\")?t.resolve(l.__await).then((function(e){r(\"next\",e,i,u)}),(function(e){r(\"throw\",e,i,u)})):t.resolve(l).then((function(e){s.value=e,i(s)}),(function(e){return r(\"throw\",e,i,u)}))}u(c.arg)}var o;this._invoke=function(e,n){function a(){return new t((function(t,o){r(e,n,t,o)}))}return o=o?o.then(a,a):a()}}function E(e,r){var n=e.iterator[r.method];if(n===t){if(r.delegate=null,\"throw\"===r.method){if(e.iterator.return&&(r.method=\"return\",r.arg=t,E(e,r),\"throw\"===r.method))return v;r.method=\"throw\",r.arg=new TypeError(\"The iterator does not provide a 'throw' method\")}return v}var o=f(n,e.iterator,r.arg);if(\"throw\"===o.type)return r.method=\"throw\",r.arg=o.arg,r.delegate=null,v;var a=o.arg;return a?a.done?(r[e.resultName]=a.value,r.next=e.nextLoc,\"return\"!==r.method&&(r.method=\"next\",r.arg=t),r.delegate=null,v):a:(r.method=\"throw\",r.arg=new TypeError(\"iterator result is not an object\"),r.delegate=null,v)}function P(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function M(e){var t=e.completion||{};t.type=\"normal\",delete t.arg,e.completion=t}function k(e){this.tryEntries=[{tryLoc:\"root\"}],e.forEach(P,this),this.reset(!0)}function L(e){if(e){var r=e[a];if(r)return r.call(e);if(\"function\"==typeof e.next)return e;if(!isNaN(e.length)){var o=-1,i=function r(){for(;++o<e.length;)if(n.call(e,o))return r.value=e[o],r.done=!1,r;return r.value=t,r.done=!0,r};return i.next=i}}return{next:A}}function A(){return{value:t,done:!0}}return m.prototype=g,c(O,\"constructor\",g),c(g,\"constructor\",m),m.displayName=c(g,u,\"GeneratorFunction\"),e.isGeneratorFunction=function(e){var t=\"function\"==typeof e&&e.constructor;return!!t&&(t===m||\"GeneratorFunction\"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,g):(e.__proto__=g,c(e,u,\"GeneratorFunction\")),e.prototype=Object.create(O),e},e.awrap=function(e){return{__await:e}},j(_.prototype),c(_.prototype,i,(function(){return this})),e.AsyncIterator=_,e.async=function(t,r,n,o,a){void 0===a&&(a=Promise);var i=new _(s(t,r,n,o),a);return e.isGeneratorFunction(r)?i:i.next().then((function(e){return e.done?e.value:i.next()}))},j(O),c(O,u,\"Generator\"),c(O,a,(function(){return this})),c(O,\"toString\",(function(){return\"[object Generator]\"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=L,k.prototype={constructor:k,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=t,this.done=!1,this.delegate=null,this.method=\"next\",this.arg=t,this.tryEntries.forEach(M),!e)for(var r in this)\"t\"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=t)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if(\"throw\"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var r=this;function o(n,o){return u.type=\"throw\",u.arg=e,r.next=n,o&&(r.method=\"next\",r.arg=t),!!o}for(var a=this.tryEntries.length-1;a>=0;--a){var i=this.tryEntries[a],u=i.completion;if(\"root\"===i.tryLoc)return o(\"end\");if(i.tryLoc<=this.prev){var c=n.call(i,\"catchLoc\"),s=n.call(i,\"finallyLoc\");if(c&&s){if(this.prev<i.catchLoc)return o(i.catchLoc,!0);if(this.prev<i.finallyLoc)return o(i.finallyLoc)}else if(c){if(this.prev<i.catchLoc)return o(i.catchLoc,!0)}else{if(!s)throw new Error(\"try statement without catch or finally\");if(this.prev<i.finallyLoc)return o(i.finallyLoc)}}}},abrupt:function(e,t){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,\"finallyLoc\")&&this.prev<o.finallyLoc){var a=o;break}}a&&(\"break\"===e||\"continue\"===e)&&a.tryLoc<=t&&t<=a.finallyLoc&&(a=null);var i=a?a.completion:{};return i.type=e,i.arg=t,a?(this.method=\"next\",this.next=a.finallyLoc,v):this.complete(i)},complete:function(e,t){if(\"throw\"===e.type)throw e.arg;return\"break\"===e.type||\"continue\"===e.type?this.next=e.arg:\"return\"===e.type?(this.rval=this.arg=e.arg,this.method=\"return\",this.next=\"end\"):\"normal\"===e.type&&t&&(this.next=t),v},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),M(r),v}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if(\"throw\"===n.type){var o=n.arg;M(r)}return o}}throw new Error(\"illegal catch attempt\")},delegateYield:function(e,r,n){return this.delegate={iterator:L(e),resultName:r,nextLoc:n},\"next\"===this.method&&(this.arg=t),v}},e}(e.exports);try{regeneratorRuntime=t}catch(e){\"object\"==typeof globalThis?globalThis.regeneratorRuntime=t:Function(\"r\",\"regeneratorRuntime = r\")(t)}},868:function(e,t,r){!function(e,t,r,n,o,a){\"use strict\";function i(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var u=i(t),c=i(r),s=i(o),f={INTERNAL_ERROR:-32603,INVALID_PARAMS:-32602,METHOD_NOT_FOUND:-32601},l=n.compile({message:'The requested method called \"${method}\" is not supported.',status:f.METHOD_NOT_FOUND}),p=n.compile({message:'The handler of the method called \"${method}\" returned no required result.',status:f.INTERNAL_ERROR}),d=n.compile({message:'The handler of the method called \"${method}\" returned an unexpected result.',status:f.INTERNAL_ERROR}),h=n.compile({message:'The specified parameter called \"portId\" with the given value \"${portId}\" does not identify a port connected to this worker.',status:f.INVALID_PARAMS}),v=function(e,t){return function(){var r=u.default(c.default.mark((function r(n){var o,a,i,u,s,f,h,v,y,m,g,w,b;return c.default.wrap((function(r){for(;;)switch(r.prev=r.next){case 0:if(o=n.data,a=o.id,i=o.method,u=o.params,s=t[i],r.prev=2,void 0!==s){r.next=5;break}throw l({method:i});case 5:if(void 0!==(f=void 0===u?s():s(u))){r.next=8;break}throw p({method:i});case 8:if(!(f instanceof Promise)){r.next=14;break}return r.next=11,f;case 11:r.t0=r.sent,r.next=15;break;case 14:r.t0=f;case 15:if(h=r.t0,null!==a){r.next=21;break}if(void 0===h.result){r.next=19;break}throw d({method:i});case 19:r.next=25;break;case 21:if(void 0!==h.result){r.next=23;break}throw d({method:i});case 23:v=h.result,y=h.transferables,m=void 0===y?[]:y,e.postMessage({id:a,result:v},m);case 25:r.next=31;break;case 27:r.prev=27,r.t1=r.catch(2),g=r.t1.message,w=r.t1.status,b=void 0===w?-32603:w,e.postMessage({error:{code:b,message:g},id:a});case 31:case\"end\":return r.stop()}}),r,null,[[2,27]])})));return function(e){return r.apply(this,arguments)}}()},y=function(){return new Promise((function(e){var t=new ArrayBuffer(0),r=new MessageChannel,n=r.port1,o=r.port2;n.onmessage=function(t){var r=t.data;return e(null!==r)},o.postMessage(t,[t])}))};function m(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function g(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?m(Object(r),!0).forEach((function(t){s.default(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):m(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}var w=new Map,b=function(e,t,r){return g(g({},t),{},{connect:function(r){var n=r.port;n.start();var o=e(n,t),i=a.generateUniqueNumber(w);return w.set(i,(function(){o(),n.close(),w.delete(i)})),{result:i}},disconnect:function(e){var t=e.portId,r=w.get(t);if(void 0===r)throw h({portId:t.toString()});return r(),{result:null}},isSupported:function(){var e=u.default(c.default.mark((function e(){var t,n;return c.default.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,y();case 2:if(!e.sent){e.next=14;break}if(!((t=r())instanceof Promise)){e.next=11;break}return e.next=8,t;case 8:e.t0=e.sent,e.next=12;break;case 11:e.t0=t;case 12:return n=e.t0,e.abrupt(\"return\",{result:n});case 14:return e.abrupt(\"return\",{result:!1});case 15:case\"end\":return e.stop()}}),e)})));function t(){return e.apply(this,arguments)}return t}()})},x=function e(t,r){var n=b(e,r,arguments.length>2&&void 0!==arguments[2]?arguments[2]:function(){return!0}),o=v(t,n);return t.addEventListener(\"message\",o),function(){return t.removeEventListener(\"message\",o)}};e.createWorker=x,e.isSupported=y,Object.defineProperty(e,\"__esModule\",{value:!0})}(t,r(926),r(757),r(404),r(713),r(650))}},t={};function r(n){var o=t[n];if(void 0!==o)return o.exports;var a=t[n]={exports:{}};return e[n].call(a.exports,a,a.exports,r),a.exports}r.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return r.d(t,{a:t}),t},r.d=(e,t)=>{for(var n in t)r.o(t,n)&&!r.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},r.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{\"use strict\";r(108)})()})();"; // tslint:disable-line:max-line-length
+
+	var blob = new Blob([worker], {
+	  type: 'application/javascript; charset=utf-8'
+	});
+	var url = URL.createObjectURL(blob);
+	var mediaEncoderHost = mediaEncoderHostBroker.load(url);
+	var connect = mediaEncoderHost.connect;
+	var disconnect = mediaEncoderHost.disconnect;
+	var encode = mediaEncoderHost.encode;
+	var instantiate = mediaEncoderHost.instantiate;
+	var isSupported = mediaEncoderHost.isSupported;
+	var register = mediaEncoderHost.register;
+	URL.revokeObjectURL(url);
+
+	exports.connect = connect;
+	exports.disconnect = disconnect;
+	exports.encode = encode;
+	exports.instantiate = instantiate;
+	exports.isSupported = isSupported;
+	exports.register = register;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"media-encoder-host-broker":103}],105:[function(require,module,exports){
 (function (Buffer){(function (){
 var stream = require('readable-stream')
+var { MediaRecorder } = require('extendable-media-recorder')
+var { connect } = require('extendable-media-recorder-wav-encoder')
 
 module.exports = createRecordStream
 
@@ -13410,7 +16269,7 @@ function createRecordStream (media, opts) {
 function noop () {}
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":30,"readable-stream":80}],72:[function(require,module,exports){
+},{"buffer":55,"extendable-media-recorder":66,"extendable-media-recorder-wav-encoder":65,"readable-stream":114}],106:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13542,7 +16401,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":74,"./_stream_writable":76,"core-util-is":34,"inherits":65,"process-nextick-args":96}],73:[function(require,module,exports){
+},{"./_stream_readable":108,"./_stream_writable":110,"core-util-is":60,"inherits":97,"process-nextick-args":131}],107:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13590,7 +16449,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":75,"core-util-is":34,"inherits":65}],74:[function(require,module,exports){
+},{"./_stream_transform":109,"core-util-is":60,"inherits":97}],108:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -14612,7 +17471,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":72,"./internal/streams/BufferList":77,"./internal/streams/destroy":78,"./internal/streams/stream":79,"_process":97,"core-util-is":34,"events":36,"inherits":65,"isarray":70,"process-nextick-args":96,"safe-buffer":81,"string_decoder/":82,"util":29}],75:[function(require,module,exports){
+},{"./_stream_duplex":106,"./internal/streams/BufferList":111,"./internal/streams/destroy":112,"./internal/streams/stream":113,"_process":132,"core-util-is":60,"events":63,"inherits":97,"isarray":102,"process-nextick-args":131,"safe-buffer":115,"string_decoder/":116,"util":54}],109:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14827,7 +17686,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":72,"core-util-is":34,"inherits":65}],76:[function(require,module,exports){
+},{"./_stream_duplex":106,"core-util-is":60,"inherits":97}],110:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15517,7 +18376,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":72,"./internal/streams/destroy":78,"./internal/streams/stream":79,"_process":97,"core-util-is":34,"inherits":65,"process-nextick-args":96,"safe-buffer":81,"timers":160,"util-deprecate":162}],77:[function(require,module,exports){
+},{"./_stream_duplex":106,"./internal/streams/destroy":112,"./internal/streams/stream":113,"_process":132,"core-util-is":60,"inherits":97,"process-nextick-args":131,"safe-buffer":115,"timers":204,"util-deprecate":206}],111:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -15597,7 +18456,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":81,"util":29}],78:[function(require,module,exports){
+},{"safe-buffer":115,"util":54}],112:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -15672,10 +18531,10 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":96}],79:[function(require,module,exports){
+},{"process-nextick-args":131}],113:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":36}],80:[function(require,module,exports){
+},{"events":63}],114:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -15684,7 +18543,7 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":72,"./lib/_stream_passthrough.js":73,"./lib/_stream_readable.js":74,"./lib/_stream_transform.js":75,"./lib/_stream_writable.js":76}],81:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":106,"./lib/_stream_passthrough.js":107,"./lib/_stream_readable.js":108,"./lib/_stream_transform.js":109,"./lib/_stream_writable.js":110}],115:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -15748,7 +18607,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":30}],82:[function(require,module,exports){
+},{"buffer":55}],116:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16045,7 +18904,320 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":81}],83:[function(require,module,exports){
+},{"safe-buffer":115}],117:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/createClass')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/createClass'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.multiBufferDataView = {}, global._slicedToArray, global._classCallCheck, global._createClass));
+})(this, (function (exports, _slicedToArray, _classCallCheck, _createClass) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _slicedToArray__default = /*#__PURE__*/_interopDefaultLegacy(_slicedToArray);
+    var _classCallCheck__default = /*#__PURE__*/_interopDefaultLegacy(_classCallCheck);
+    var _createClass__default = /*#__PURE__*/_interopDefaultLegacy(_createClass);
+
+    function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+    function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var MultiBufferDataView = /*#__PURE__*/function () {
+      function MultiBufferDataView(buffers) {
+        var byteOffset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+        var byteLength = arguments.length > 2 ? arguments[2] : undefined;
+
+        _classCallCheck__default["default"](this, MultiBufferDataView);
+
+        if (byteOffset < 0 || byteLength !== undefined && byteLength < 0) {
+          throw new RangeError();
+        }
+
+        var availableBytes = buffers.reduce(function (length, buffer) {
+          return length + buffer.byteLength;
+        }, 0);
+
+        if (byteOffset > availableBytes || byteLength !== undefined && byteOffset + byteLength > availableBytes) {
+          throw new RangeError();
+        }
+
+        var dataViews = [];
+        var effectiveByteLength = byteLength === undefined ? availableBytes - byteOffset : byteLength;
+        var truncatedBuffers = [];
+        var consumedByteLength = 0;
+        var truncatedByteOffset = byteOffset;
+
+        var _iterator = _createForOfIteratorHelper(buffers),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var buffer = _step.value;
+
+            if (truncatedBuffers.length === 0) {
+              if (buffer.byteLength > truncatedByteOffset) {
+                consumedByteLength = buffer.byteLength - truncatedByteOffset;
+                var byteLengthOfDataView = consumedByteLength > effectiveByteLength ? effectiveByteLength : consumedByteLength;
+                dataViews.push(new DataView(buffer, truncatedByteOffset, byteLengthOfDataView));
+                truncatedBuffers.push(buffer);
+              } else {
+                truncatedByteOffset -= buffer.byteLength;
+              }
+            } else if (consumedByteLength < effectiveByteLength) {
+              consumedByteLength += buffer.byteLength;
+
+              var _byteLengthOfDataView = consumedByteLength > effectiveByteLength ? buffer.byteLength - consumedByteLength + effectiveByteLength : buffer.byteLength;
+
+              dataViews.push(new DataView(buffer, 0, _byteLengthOfDataView));
+              truncatedBuffers.push(buffer);
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        this._buffers = truncatedBuffers;
+        this._byteLength = effectiveByteLength;
+        this._byteOffset = truncatedByteOffset;
+        this._dataViews = dataViews;
+        this._internalBuffer = new DataView(new ArrayBuffer(8));
+      }
+
+      _createClass__default["default"](MultiBufferDataView, [{
+        key: "buffers",
+        get: function get() {
+          return this._buffers;
+        }
+      }, {
+        key: "byteLength",
+        get: function get() {
+          return this._byteLength;
+        }
+      }, {
+        key: "byteOffset",
+        get: function get() {
+          return this._byteOffset;
+        }
+      }, {
+        key: "getFloat32",
+        value: function getFloat32(byteOffset, littleEndian) {
+          this._internalBuffer.setUint8(0, this.getUint8(byteOffset + 0));
+
+          this._internalBuffer.setUint8(1, this.getUint8(byteOffset + 1));
+
+          this._internalBuffer.setUint8(2, this.getUint8(byteOffset + 2));
+
+          this._internalBuffer.setUint8(3, this.getUint8(byteOffset + 3));
+
+          return this._internalBuffer.getFloat32(0, littleEndian);
+        }
+      }, {
+        key: "getFloat64",
+        value: function getFloat64(byteOffset, littleEndian) {
+          this._internalBuffer.setUint8(0, this.getUint8(byteOffset + 0));
+
+          this._internalBuffer.setUint8(1, this.getUint8(byteOffset + 1));
+
+          this._internalBuffer.setUint8(2, this.getUint8(byteOffset + 2));
+
+          this._internalBuffer.setUint8(3, this.getUint8(byteOffset + 3));
+
+          this._internalBuffer.setUint8(4, this.getUint8(byteOffset + 4));
+
+          this._internalBuffer.setUint8(5, this.getUint8(byteOffset + 5));
+
+          this._internalBuffer.setUint8(6, this.getUint8(byteOffset + 6));
+
+          this._internalBuffer.setUint8(7, this.getUint8(byteOffset + 7));
+
+          return this._internalBuffer.getFloat64(0, littleEndian);
+        }
+      }, {
+        key: "getInt16",
+        value: function getInt16(byteOffset, littleEndian) {
+          this._internalBuffer.setUint8(0, this.getUint8(byteOffset + 0));
+
+          this._internalBuffer.setUint8(1, this.getUint8(byteOffset + 1));
+
+          return this._internalBuffer.getInt16(0, littleEndian);
+        }
+      }, {
+        key: "getInt32",
+        value: function getInt32(byteOffset, littleEndian) {
+          this._internalBuffer.setUint8(0, this.getUint8(byteOffset + 0));
+
+          this._internalBuffer.setUint8(1, this.getUint8(byteOffset + 1));
+
+          this._internalBuffer.setUint8(2, this.getUint8(byteOffset + 2));
+
+          this._internalBuffer.setUint8(3, this.getUint8(byteOffset + 3));
+
+          return this._internalBuffer.getInt32(0, littleEndian);
+        }
+      }, {
+        key: "getInt8",
+        value: function getInt8(byteOffset) {
+          var _this$_findDataViewWi = this._findDataViewWithOffset(byteOffset),
+              _this$_findDataViewWi2 = _slicedToArray__default["default"](_this$_findDataViewWi, 2),
+              dataView = _this$_findDataViewWi2[0],
+              byteOffsetOfDataView = _this$_findDataViewWi2[1];
+
+          return dataView.getInt8(byteOffset - byteOffsetOfDataView);
+        }
+      }, {
+        key: "getUint16",
+        value: function getUint16(byteOffset, littleEndian) {
+          this._internalBuffer.setUint8(0, this.getUint8(byteOffset + 0));
+
+          this._internalBuffer.setUint8(1, this.getUint8(byteOffset + 1));
+
+          return this._internalBuffer.getUint16(0, littleEndian);
+        }
+      }, {
+        key: "getUint32",
+        value: function getUint32(byteOffset, littleEndian) {
+          this._internalBuffer.setUint8(0, this.getUint8(byteOffset + 0));
+
+          this._internalBuffer.setUint8(1, this.getUint8(byteOffset + 1));
+
+          this._internalBuffer.setUint8(2, this.getUint8(byteOffset + 2));
+
+          this._internalBuffer.setUint8(3, this.getUint8(byteOffset + 3));
+
+          return this._internalBuffer.getUint32(0, littleEndian);
+        }
+      }, {
+        key: "getUint8",
+        value: function getUint8(byteOffset) {
+          var _this$_findDataViewWi3 = this._findDataViewWithOffset(byteOffset),
+              _this$_findDataViewWi4 = _slicedToArray__default["default"](_this$_findDataViewWi3, 2),
+              dataView = _this$_findDataViewWi4[0],
+              byteOffsetOfDataView = _this$_findDataViewWi4[1];
+
+          return dataView.getUint8(byteOffset - byteOffsetOfDataView);
+        }
+      }, {
+        key: "setFloat32",
+        value: function setFloat32(byteOffset, value, littleEndian) {
+          this._internalBuffer.setFloat32(0, value, littleEndian);
+
+          this.setUint8(byteOffset, this._internalBuffer.getUint8(0));
+          this.setUint8(byteOffset + 1, this._internalBuffer.getUint8(1));
+          this.setUint8(byteOffset + 2, this._internalBuffer.getUint8(2));
+          this.setUint8(byteOffset + 3, this._internalBuffer.getUint8(3));
+        }
+      }, {
+        key: "setFloat64",
+        value: function setFloat64(byteOffset, value, littleEndian) {
+          this._internalBuffer.setFloat64(0, value, littleEndian);
+
+          this.setUint8(byteOffset, this._internalBuffer.getUint8(0));
+          this.setUint8(byteOffset + 1, this._internalBuffer.getUint8(1));
+          this.setUint8(byteOffset + 2, this._internalBuffer.getUint8(2));
+          this.setUint8(byteOffset + 3, this._internalBuffer.getUint8(3));
+          this.setUint8(byteOffset + 4, this._internalBuffer.getUint8(4));
+          this.setUint8(byteOffset + 5, this._internalBuffer.getUint8(5));
+          this.setUint8(byteOffset + 6, this._internalBuffer.getUint8(6));
+          this.setUint8(byteOffset + 7, this._internalBuffer.getUint8(7));
+        }
+      }, {
+        key: "setInt16",
+        value: function setInt16(byteOffset, value, littleEndian) {
+          this._internalBuffer.setInt16(0, value, littleEndian);
+
+          this.setUint8(byteOffset, this._internalBuffer.getUint8(0));
+          this.setUint8(byteOffset + 1, this._internalBuffer.getUint8(1));
+        }
+      }, {
+        key: "setInt32",
+        value: function setInt32(byteOffset, value, littleEndian) {
+          this._internalBuffer.setInt32(0, value, littleEndian);
+
+          this.setUint8(byteOffset, this._internalBuffer.getUint8(0));
+          this.setUint8(byteOffset + 1, this._internalBuffer.getUint8(1));
+          this.setUint8(byteOffset + 2, this._internalBuffer.getUint8(2));
+          this.setUint8(byteOffset + 3, this._internalBuffer.getUint8(3));
+        }
+      }, {
+        key: "setInt8",
+        value: function setInt8(byteOffset, value) {
+          var _this$_findDataViewWi5 = this._findDataViewWithOffset(byteOffset),
+              _this$_findDataViewWi6 = _slicedToArray__default["default"](_this$_findDataViewWi5, 2),
+              dataView = _this$_findDataViewWi6[0],
+              byteOffsetOfDataView = _this$_findDataViewWi6[1];
+
+          dataView.setInt8(byteOffset - byteOffsetOfDataView, value);
+        }
+      }, {
+        key: "setUint16",
+        value: function setUint16(byteOffset, value, littleEndian) {
+          this._internalBuffer.setUint16(0, value, littleEndian);
+
+          this.setUint8(byteOffset, this._internalBuffer.getUint8(0));
+          this.setUint8(byteOffset + 1, this._internalBuffer.getUint8(1));
+        }
+      }, {
+        key: "setUint32",
+        value: function setUint32(byteOffset, value, littleEndian) {
+          this._internalBuffer.setUint32(0, value, littleEndian);
+
+          this.setUint8(byteOffset, this._internalBuffer.getUint8(0));
+          this.setUint8(byteOffset + 1, this._internalBuffer.getUint8(1));
+          this.setUint8(byteOffset + 2, this._internalBuffer.getUint8(2));
+          this.setUint8(byteOffset + 3, this._internalBuffer.getUint8(3));
+        }
+      }, {
+        key: "setUint8",
+        value: function setUint8(byteOffset, value) {
+          var _this$_findDataViewWi7 = this._findDataViewWithOffset(byteOffset),
+              _this$_findDataViewWi8 = _slicedToArray__default["default"](_this$_findDataViewWi7, 2),
+              dataView = _this$_findDataViewWi8[0],
+              byteOffsetOfDataView = _this$_findDataViewWi8[1];
+
+          dataView.setUint8(byteOffset - byteOffsetOfDataView, value);
+        }
+      }, {
+        key: "_findDataViewWithOffset",
+        value: function _findDataViewWithOffset(byteOffset) {
+          var byteOffsetOfDataView = 0;
+
+          var _iterator2 = _createForOfIteratorHelper(this._dataViews),
+              _step2;
+
+          try {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var dataView = _step2.value;
+              var byteOffsetOfNextDataView = byteOffsetOfDataView + dataView.byteLength;
+
+              if (byteOffset >= byteOffsetOfDataView && byteOffset < byteOffsetOfNextDataView) {
+                return [dataView, byteOffsetOfDataView];
+              }
+
+              byteOffsetOfDataView = byteOffsetOfNextDataView;
+            }
+          } catch (err) {
+            _iterator2.e(err);
+          } finally {
+            _iterator2.f();
+          }
+
+          throw new RangeError();
+        }
+      }]);
+
+      return MultiBufferDataView;
+    }();
+
+    exports.MultiBufferDataView = MultiBufferDataView;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/classCallCheck":7,"@babel/runtime/helpers/createClass":8,"@babel/runtime/helpers/slicedToArray":20}],118:[function(require,module,exports){
 /*! multistream. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 const stream = require('readable-stream')
 const once = require('once')
@@ -16213,7 +19385,7 @@ function destroy (stream, err, cb) {
   }
 }
 
-},{"once":92,"readable-stream":117}],84:[function(require,module,exports){
+},{"once":127,"readable-stream":152}],119:[function(require,module,exports){
 module.exports = assert
 
 class AssertionError extends Error {}
@@ -16233,7 +19405,7 @@ function assert (t, m) {
   }
 }
 
-},{}],85:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
@@ -16296,7 +19468,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":18,"nanoassert":84,"sodium-universal":151}],86:[function(require,module,exports){
+},{"b4a":42,"nanoassert":119,"sodium-universal":193}],121:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -16389,7 +19561,7 @@ function decryptWithAD (key, counter, additionalData, ciphertext) {
   return plaintext
 }
 
-},{"b4a":18,"sodium-universal":151}],87:[function(require,module,exports){
+},{"b4a":42,"sodium-universal":193}],122:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_kx_SEEDBYTES, crypto_kx_keypair, crypto_kx_seed_keypair } = require('sodium-universal/crypto_kx')
 const { crypto_scalarmult_BYTES, crypto_scalarmult_SCALARBYTES, crypto_scalarmult, crypto_scalarmult_base } = require('sodium-universal/crypto_scalarmult')
@@ -16455,7 +19627,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":18,"nanoassert":84,"sodium-universal/crypto_kx":141,"sodium-universal/crypto_scalarmult":143}],88:[function(require,module,exports){
+},{"b4a":42,"nanoassert":119,"sodium-universal/crypto_kx":183,"sodium-universal/crypto_scalarmult":185}],123:[function(require,module,exports){
 const assert = require('nanoassert')
 const hmacBlake2b = require('hmac-blake2b')
 const b4a = require('b4a')
@@ -16504,7 +19676,7 @@ function hmacDigest (key, input) {
   return hmac
 }
 
-},{"b4a":18,"hmac-blake2b":40,"nanoassert":84}],89:[function(require,module,exports){
+},{"b4a":42,"hmac-blake2b":71,"nanoassert":119}],124:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -16765,7 +19937,7 @@ function keyPattern (pattern, initiator) {
   }
 }
 
-},{"./hkdf":88,"./symmetric-state":90,"b4a":18,"nanoassert":84}],90:[function(require,module,exports){
+},{"./hkdf":123,"./symmetric-state":125,"b4a":42,"nanoassert":119}],125:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
 const b4a = require('b4a')
@@ -16844,7 +20016,7 @@ function accumulateDigest (digest, input) {
   sodium.crypto_generichash(digest, toHash)
 }
 
-},{"./cipher":86,"./dh":87,"./hkdf":88,"b4a":18,"nanoassert":84,"sodium-universal":151}],91:[function(require,module,exports){
+},{"./cipher":121,"./dh":122,"./hkdf":123,"b4a":42,"nanoassert":119,"sodium-universal":193}],126:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -16936,7 +20108,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],92:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 var wrappy = require('wrappy')
 module.exports = wrappy(once)
 module.exports.strict = wrappy(onceStrict)
@@ -16980,7 +20152,7 @@ function onceStrict (fn) {
   return f
 }
 
-},{"wrappy":163}],93:[function(require,module,exports){
+},{"wrappy":208}],128:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -17031,7 +20203,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],94:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 /**
  * @module pcm-convert
  */
@@ -17318,7 +20490,7 @@ function normalize (obj) {
 	return obj
 }
 
-},{"assert":7,"audio-format":16,"is-audio-buffer":66,"is-buffer":68,"object-assign":91}],95:[function(require,module,exports){
+},{"assert":30,"audio-format":39,"is-audio-buffer":98,"is-buffer":100,"object-assign":126}],130:[function(require,module,exports){
 'use strict'
 
 
@@ -17397,7 +20569,7 @@ function toList(arg) {
 	return arg
 }
 
-},{}],96:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -17446,7 +20618,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":97}],97:[function(require,module,exports){
+},{"_process":132}],132:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -17632,15 +20804,15 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],98:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 module.exports = typeof queueMicrotask === 'function' ? queueMicrotask : (fn) => Promise.resolve().then(fn)
 
-},{}],99:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 module.exports = function () {
   throw new Error('random-access-file is not supported in the browser')
 }
 
-},{}],100:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 const RandomAccess = require('random-access-storage')
 const isOptions = require('is-options')
 const inherits = require('inherits')
@@ -17776,7 +20948,7 @@ RAM.prototype.toBuffer = function () {
   return buf
 }
 
-},{"b4a":18,"inherits":65,"is-options":69,"random-access-storage":101}],101:[function(require,module,exports){
+},{"b4a":42,"inherits":97,"is-options":101,"random-access-storage":136}],136:[function(require,module,exports){
 var events = require('events')
 var inherits = require('inherits')
 var queueTick = require('queue-tick')
@@ -18048,7 +21220,7 @@ function nextTick (req, err, val) {
   queueTick(() => req.callback(err, val))
 }
 
-},{"events":36,"inherits":65,"queue-tick":98}],102:[function(require,module,exports){
+},{"events":63,"inherits":97,"queue-tick":133}],137:[function(require,module,exports){
 module.exports = class RandomArrayIterator {
   constructor (values) {
     this.values = values
@@ -18096,7 +21268,7 @@ module.exports = class RandomArrayIterator {
   }
 }
 
-},{}],103:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -18225,7 +21397,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],104:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18367,7 +21539,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":106,"./_stream_writable":108,"_process":97,"inherits":65}],105:[function(require,module,exports){
+},{"./_stream_readable":141,"./_stream_writable":143,"_process":132,"inherits":97}],140:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18407,7 +21579,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":107,"inherits":65}],106:[function(require,module,exports){
+},{"./_stream_transform":142,"inherits":97}],141:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -19534,7 +22706,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":103,"./_stream_duplex":104,"./internal/streams/async_iterator":109,"./internal/streams/buffer_list":110,"./internal/streams/destroy":111,"./internal/streams/from":113,"./internal/streams/state":115,"./internal/streams/stream":116,"_process":97,"buffer":30,"events":36,"inherits":65,"string_decoder/":159,"util":29}],107:[function(require,module,exports){
+},{"../errors":138,"./_stream_duplex":139,"./internal/streams/async_iterator":144,"./internal/streams/buffer_list":145,"./internal/streams/destroy":146,"./internal/streams/from":148,"./internal/streams/state":150,"./internal/streams/stream":151,"_process":132,"buffer":55,"events":63,"inherits":97,"string_decoder/":202,"util":54}],142:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19736,7 +22908,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":103,"./_stream_duplex":104,"inherits":65}],108:[function(require,module,exports){
+},{"../errors":138,"./_stream_duplex":139,"inherits":97}],143:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20436,7 +23608,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":103,"./_stream_duplex":104,"./internal/streams/destroy":111,"./internal/streams/state":115,"./internal/streams/stream":116,"_process":97,"buffer":30,"inherits":65,"util-deprecate":162}],109:[function(require,module,exports){
+},{"../errors":138,"./_stream_duplex":139,"./internal/streams/destroy":146,"./internal/streams/state":150,"./internal/streams/stream":151,"_process":132,"buffer":55,"inherits":97,"util-deprecate":206}],144:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -20646,7 +23818,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":112,"_process":97}],110:[function(require,module,exports){
+},{"./end-of-stream":147,"_process":132}],145:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -20857,7 +24029,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":30,"util":29}],111:[function(require,module,exports){
+},{"buffer":55,"util":54}],146:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -20965,7 +24137,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":97}],112:[function(require,module,exports){
+},{"_process":132}],147:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -21070,12 +24242,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":103}],113:[function(require,module,exports){
+},{"../../../errors":138}],148:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],114:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -21173,7 +24345,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":103,"./end-of-stream":112}],115:[function(require,module,exports){
+},{"../../../errors":138,"./end-of-stream":147}],150:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -21201,9 +24373,9 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":103}],116:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"dup":79,"events":36}],117:[function(require,module,exports){
+},{"../../../errors":138}],151:[function(require,module,exports){
+arguments[4][113][0].apply(exports,arguments)
+},{"dup":113,"events":63}],152:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -21214,7 +24386,1090 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":104,"./lib/_stream_passthrough.js":105,"./lib/_stream_readable.js":106,"./lib/_stream_transform.js":107,"./lib/_stream_writable.js":108,"./lib/internal/streams/end-of-stream.js":112,"./lib/internal/streams/pipeline.js":114}],118:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":139,"./lib/_stream_passthrough.js":140,"./lib/_stream_readable.js":141,"./lib/_stream_transform.js":142,"./lib/_stream_writable.js":143,"./lib/internal/streams/end-of-stream.js":147,"./lib/internal/streams/pipeline.js":149}],153:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('fast-unique-numbers'), require('subscribable-things'), require('worker-factory'), require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('@babel/runtime/helpers/defineProperty')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'fast-unique-numbers', 'subscribable-things', 'worker-factory', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', '@babel/runtime/helpers/defineProperty'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.recorderAudioWorklet = {}, global.fastUniqueNumbers, global.subscribableThings, global.workerFactory, global._asyncToGenerator, global._regeneratorRuntime, global._defineProperty));
+})(this, (function (exports, fastUniqueNumbers, subscribableThings, workerFactory, _asyncToGenerator, _regeneratorRuntime, _defineProperty) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+    var _defineProperty__default = /*#__PURE__*/_interopDefaultLegacy(_defineProperty);
+
+    var createAddRecorderAudioWorkletModule = function createAddRecorderAudioWorkletModule(blobConstructor, urlConstructor, worklet) {
+      return /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(addAudioWorkletModule) {
+          var blob, url;
+          return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  blob = new blobConstructor([worklet], {
+                    type: 'application/javascript; charset=utf-8'
+                  });
+                  url = urlConstructor.createObjectURL(blob);
+                  _context.prev = 2;
+                  _context.next = 5;
+                  return addAudioWorkletModule(url);
+
+                case 5:
+                  _context.prev = 5;
+                  urlConstructor.revokeObjectURL(url);
+                  return _context.finish(5);
+
+                case 8:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, null, [[2,, 5, 8]]);
+        }));
+
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }();
+    };
+
+    var createListener = function createListener(ongoingRequests) {
+      return function (_ref) {
+        var message = _ref.data;
+        var id = message.id;
+
+        if (id !== null) {
+          var ongoingRequest = ongoingRequests.get(id);
+
+          if (ongoingRequest !== undefined) {
+            var reject = ongoingRequest.reject,
+                resolve = ongoingRequest.resolve;
+            ongoingRequests["delete"](id);
+
+            if (message.error === undefined) {
+              resolve(message.result);
+            } else {
+              reject(new Error(message.error.message));
+            }
+          }
+        }
+      };
+    };
+
+    function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var createPostMessageFactory = function createPostMessageFactory(generateUniqueNumber) {
+      return function (ongoingRequests, port) {
+        return function (message) {
+          var transferables = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+          return new Promise(function (resolve, reject) {
+            var id = generateUniqueNumber(ongoingRequests);
+            ongoingRequests.set(id, {
+              reject: reject,
+              resolve: resolve
+            });
+            port.postMessage(_objectSpread$1({
+              id: id
+            }, message), transferables);
+          });
+        };
+      };
+    };
+
+    function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var createRecorderAudioWorkletNodeFactory = function createRecorderAudioWorkletNodeFactory(createListener, createPostMessage, on, validateState) {
+      return function (audioWorkletNodeConstructor, context) {
+        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        var audioWorkletNode = new audioWorkletNodeConstructor(context, 'recorder-audio-worklet-processor', _objectSpread(_objectSpread({}, options), {}, {
+          channelCountMode: 'explicit',
+          numberOfInputs: 1,
+          numberOfOutputs: 0
+        }));
+        var ongoingRequests = new Map();
+        var postMessage = createPostMessage(ongoingRequests, audioWorkletNode.port);
+        var unsubscribe = on(audioWorkletNode.port, 'message')(createListener(ongoingRequests));
+        audioWorkletNode.port.start();
+        var state = 'inactive';
+        Object.defineProperties(audioWorkletNode, {
+          pause: {
+            get: function get() {
+              return /*#__PURE__*/_asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+                return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        validateState(['recording'], state);
+                        state = 'paused';
+                        return _context.abrupt("return", postMessage({
+                          method: 'pause'
+                        }));
+
+                      case 3:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }
+                }, _callee);
+              }));
+            }
+          },
+          port: {
+            get: function get() {
+              throw new Error("The port of a RecorderAudioWorkletNode can't be accessed.");
+            }
+          },
+          record: {
+            get: function get() {
+              return /*#__PURE__*/function () {
+                var _ref2 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(encoderPort) {
+                  return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          validateState(['inactive'], state);
+                          state = 'recording';
+                          return _context2.abrupt("return", postMessage({
+                            method: 'record',
+                            params: {
+                              encoderPort: encoderPort
+                            }
+                          }, [encoderPort]));
+
+                        case 3:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _callee2);
+                }));
+
+                return function (_x) {
+                  return _ref2.apply(this, arguments);
+                };
+              }();
+            }
+          },
+          resume: {
+            get: function get() {
+              return /*#__PURE__*/_asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee3() {
+                return _regeneratorRuntime__default["default"].wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        validateState(['paused'], state);
+                        state = 'recording';
+                        return _context3.abrupt("return", postMessage({
+                          method: 'resume'
+                        }));
+
+                      case 3:
+                      case "end":
+                        return _context3.stop();
+                    }
+                  }
+                }, _callee3);
+              }));
+            }
+          },
+          stop: {
+            get: function get() {
+              return /*#__PURE__*/_asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee4() {
+                return _regeneratorRuntime__default["default"].wrap(function _callee4$(_context4) {
+                  while (1) {
+                    switch (_context4.prev = _context4.next) {
+                      case 0:
+                        validateState(['paused', 'recording'], state);
+                        state = 'stopped';
+                        _context4.prev = 2;
+                        _context4.next = 5;
+                        return postMessage({
+                          method: 'stop'
+                        });
+
+                      case 5:
+                        _context4.prev = 5;
+                        unsubscribe();
+                        return _context4.finish(5);
+
+                      case 8:
+                      case "end":
+                        return _context4.stop();
+                    }
+                  }
+                }, _callee4, null, [[2,, 5, 8]]);
+              }));
+            }
+          }
+        });
+        return audioWorkletNode;
+      };
+    };
+
+    var validateState = function validateState(expectedStates, currentState) {
+      if (!expectedStates.includes(currentState)) {
+        throw new Error("Expected the state to be ".concat(expectedStates.map(function (expectedState) {
+          return "\"".concat(expectedState, "\"");
+        }).join(' or '), " but it was \"").concat(currentState, "\"."));
+      }
+    };
+
+    // This is the minified and stringified code of the recorder-audio-worklet-processor package.
+    var worklet = "(()=>{var e={228:e=>{e.exports=function(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,o=new Array(t);r<t;r++)o[r]=e[r];return o},e.exports.__esModule=!0,e.exports.default=e.exports},858:e=>{e.exports=function(e){if(Array.isArray(e))return e},e.exports.__esModule=!0,e.exports.default=e.exports},506:e=>{e.exports=function(e){if(void 0===e)throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\");return e},e.exports.__esModule=!0,e.exports.default=e.exports},575:e=>{e.exports=function(e,t){if(!(e instanceof t))throw new TypeError(\"Cannot call a class as a function\")},e.exports.__esModule=!0,e.exports.default=e.exports},100:(e,t,r)=>{var o=r(489),n=r(67);function s(t,r,u){return n()?(e.exports=s=Reflect.construct,e.exports.__esModule=!0,e.exports.default=e.exports):(e.exports=s=function(e,t,r){var n=[null];n.push.apply(n,t);var s=new(Function.bind.apply(e,n));return r&&o(s,r.prototype),s},e.exports.__esModule=!0,e.exports.default=e.exports),s.apply(null,arguments)}e.exports=s,e.exports.__esModule=!0,e.exports.default=e.exports},913:e=>{function t(e,t){for(var r=0;r<t.length;r++){var o=t[r];o.enumerable=o.enumerable||!1,o.configurable=!0,\"value\"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}e.exports=function(e,r,o){return r&&t(e.prototype,r),o&&t(e,o),Object.defineProperty(e,\"prototype\",{writable:!1}),e},e.exports.__esModule=!0,e.exports.default=e.exports},754:e=>{function t(r){return e.exports=t=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)},e.exports.__esModule=!0,e.exports.default=e.exports,t(r)}e.exports=t,e.exports.__esModule=!0,e.exports.default=e.exports},205:(e,t,r)=>{var o=r(489);e.exports=function(e,t){if(\"function\"!=typeof t&&null!==t)throw new TypeError(\"Super expression must either be null or a function\");e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&o(e,t)},e.exports.__esModule=!0,e.exports.default=e.exports},430:e=>{e.exports=function(e){return-1!==Function.toString.call(e).indexOf(\"[native code]\")},e.exports.__esModule=!0,e.exports.default=e.exports},67:e=>{e.exports=function(){if(\"undefined\"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if(\"function\"==typeof Proxy)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(e){return!1}},e.exports.__esModule=!0,e.exports.default=e.exports},884:e=>{e.exports=function(e,t){var r=null==e?null:\"undefined\"!=typeof Symbol&&e[Symbol.iterator]||e[\"@@iterator\"];if(null!=r){var o,n,s=[],u=!0,a=!1;try{for(r=r.call(e);!(u=(o=r.next()).done)&&(s.push(o.value),!t||s.length!==t);u=!0);}catch(e){a=!0,n=e}finally{try{u||null==r.return||r.return()}finally{if(a)throw n}}return s}},e.exports.__esModule=!0,e.exports.default=e.exports},521:e=>{e.exports=function(){throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\")},e.exports.__esModule=!0,e.exports.default=e.exports},585:(e,t,r)=>{var o=r(8).default,n=r(506);e.exports=function(e,t){if(t&&(\"object\"===o(t)||\"function\"==typeof t))return t;if(void 0!==t)throw new TypeError(\"Derived constructors may only return object or undefined\");return n(e)},e.exports.__esModule=!0,e.exports.default=e.exports},489:e=>{function t(r,o){return e.exports=t=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e},e.exports.__esModule=!0,e.exports.default=e.exports,t(r,o)}e.exports=t,e.exports.__esModule=!0,e.exports.default=e.exports},38:(e,t,r)=>{var o=r(858),n=r(884),s=r(379),u=r(521);e.exports=function(e,t){return o(e)||n(e,t)||s(e,t)||u()},e.exports.__esModule=!0,e.exports.default=e.exports},8:e=>{function t(r){return e.exports=t=\"function\"==typeof Symbol&&\"symbol\"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&\"function\"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?\"symbol\":typeof e},e.exports.__esModule=!0,e.exports.default=e.exports,t(r)}e.exports=t,e.exports.__esModule=!0,e.exports.default=e.exports},379:(e,t,r)=>{var o=r(228);e.exports=function(e,t){if(e){if(\"string\"==typeof e)return o(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return\"Object\"===r&&e.constructor&&(r=e.constructor.name),\"Map\"===r||\"Set\"===r?Array.from(e):\"Arguments\"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?o(e,t):void 0}},e.exports.__esModule=!0,e.exports.default=e.exports},957:(e,t,r)=>{var o=r(754),n=r(489),s=r(430),u=r(100);function a(t){var r=\"function\"==typeof Map?new Map:void 0;return e.exports=a=function(e){if(null===e||!s(e))return e;if(\"function\"!=typeof e)throw new TypeError(\"Super expression must either be null or a function\");if(void 0!==r){if(r.has(e))return r.get(e);r.set(e,t)}function t(){return u(e,arguments,o(this).constructor)}return t.prototype=Object.create(e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),n(t,e)},e.exports.__esModule=!0,e.exports.default=e.exports,a(t)}e.exports=a,e.exports.__esModule=!0,e.exports.default=e.exports},242:function(e,t,r){!function(e,t,r,o,n,s,u){\"use strict\";function a(e){return e&&\"object\"==typeof e&&\"default\"in e?e:{default:e}}var p=a(e),i=a(t),l=a(r),c=a(o),f=a(n),d=a(s);function x(e){var t=_();return function(){var r,o=d.default(e);if(t){var n=d.default(this).constructor;r=Reflect.construct(o,arguments,n)}else r=o.apply(this,arguments);return f.default(this,r)}}function _(){if(\"undefined\"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if(\"function\"==typeof Proxy)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(e){return!1}}var y=function(e){c.default(r,e);var t=x(r);function r(){var e;return i.default(this,r),(e=t.call(this))._encoderPort=null,e._state=\"inactive\",e.port.onmessage=function(t){var r=t.data;\"pause\"===r.method?\"active\"===e._state||\"recording\"===e._state?(e._state=\"paused\",e._sendAcknowledgement(r.id)):e._sendUnexpectedStateError(r.id):\"record\"===r.method?\"inactive\"===e._state?(e._encoderPort=r.params.encoderPort,e._state=\"active\",e._sendAcknowledgement(r.id)):e._sendUnexpectedStateError(r.id):\"resume\"===r.method?\"paused\"===e._state?(e._state=\"active\",e._sendAcknowledgement(r.id)):e._sendUnexpectedStateError(r.id):\"stop\"===r.method?\"active\"!==e._state&&\"paused\"!==e._state&&\"recording\"!==e._state||null===e._encoderPort?e._sendUnexpectedStateError(r.id):(e._stop(e._encoderPort),e._sendAcknowledgement(r.id)):\"number\"==typeof r.id&&e.port.postMessage({error:{code:-32601,message:\"The requested method is not supported.\"},id:r.id})},e}return l.default(r,[{key:\"process\",value:function(e){var t=p.default(e,1)[0];if(\"inactive\"===this._state||\"paused\"===this._state)return!0;if(\"active\"===this._state){if(void 0===t)throw new Error(\"No channelData was received for the first input.\");if(0===t.length)return!0;this._state=\"recording\"}if(\"recording\"===this._state&&null!==this._encoderPort){if(void 0===t)throw new Error(\"No channelData was received for the first input.\");if(0!==t.length)return this._encoderPort.postMessage(t,t.map((function(e){return e.buffer}))),!0;this._stop(this._encoderPort)}return!1}},{key:\"_sendAcknowledgement\",value:function(e){this.port.postMessage({id:e,result:null})}},{key:\"_sendUnexpectedStateError\",value:function(e){this.port.postMessage({error:{code:-32603,message:\"The internal state does not allow to process the given message.\"},id:e})}},{key:\"_stop\",value:function(e){e.postMessage([]),e.close(),this._encoderPort=null,this._state=\"stopped\"}}]),r}(a(u).default(AudioWorkletProcessor));y.parameterDescriptors=[],registerProcessor(\"recorder-audio-worklet-processor\",y)}(r(38),r(575),r(913),r(205),r(585),r(754),r(957))}},t={};function r(o){var n=t[o];if(void 0!==n)return n.exports;var s=t[o]={exports:{}};return e[o].call(s.exports,s,s.exports,r),s.exports}r.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return r.d(t,{a:t}),t},r.d=(e,t)=>{for(var o in t)r.o(t,o)&&!r.o(e,o)&&Object.defineProperty(e,o,{enumerable:!0,get:t[o]})},r.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{\"use strict\";r(242)})()})();"; // tslint:disable-line:max-line-length
+
+    var addRecorderAudioWorkletModule = createAddRecorderAudioWorkletModule(Blob, URL, worklet);
+    var createRecorderAudioWorkletNode = createRecorderAudioWorkletNodeFactory(createListener, createPostMessageFactory(fastUniqueNumbers.generateUniqueNumber), subscribableThings.on, validateState);
+
+    Object.defineProperty(exports, 'isSupported', {
+        enumerable: true,
+        get: function () { return workerFactory.isSupported; }
+    });
+    exports.addRecorderAudioWorkletModule = addRecorderAudioWorkletModule;
+    exports.createRecorderAudioWorkletNode = createRecorderAudioWorkletNode;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/helpers/defineProperty":9,"@babel/runtime/regenerator":24,"fast-unique-numbers":69,"subscribable-things":203,"worker-factory":207}],154:[function(require,module,exports){
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var runtime = (function (exports) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  function define(obj, key, value) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+    return obj[key];
+  }
+  try {
+    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
+    define({}, "");
+  } catch (err) {
+    define = function(obj, key, value) {
+      return obj[key] = value;
+    };
+  }
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  exports.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  define(IteratorPrototype, iteratorSymbol, function () {
+    return this;
+  });
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = GeneratorFunctionPrototype;
+  define(Gp, "constructor", GeneratorFunctionPrototype);
+  define(GeneratorFunctionPrototype, "constructor", GeneratorFunction);
+  GeneratorFunction.displayName = define(
+    GeneratorFunctionPrototype,
+    toStringTagSymbol,
+    "GeneratorFunction"
+  );
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      define(prototype, method, function(arg) {
+        return this._invoke(method, arg);
+      });
+    });
+  }
+
+  exports.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  exports.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      define(genFun, toStringTagSymbol, "GeneratorFunction");
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  exports.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator, PromiseImpl) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return PromiseImpl.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return PromiseImpl.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new PromiseImpl(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+    return this;
+  });
+  exports.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+    if (PromiseImpl === void 0) PromiseImpl = Promise;
+
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList),
+      PromiseImpl
+    );
+
+    return exports.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  define(Gp, toStringTagSymbol, "Generator");
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  define(Gp, iteratorSymbol, function() {
+    return this;
+  });
+
+  define(Gp, "toString", function() {
+    return "[object Generator]";
+  });
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  exports.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  exports.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+  typeof module === "object" ? module.exports : {}
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, in modern engines
+  // we can explicitly access globalThis. In older engines we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  if (typeof globalThis === "object") {
+    globalThis.regeneratorRuntime = runtime;
+  } else {
+    Function("r", "regeneratorRuntime = r")(runtime);
+  }
+}
+
+},{}],155:[function(require,module,exports){
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(require("./patch"), exports);
+__exportStar(require("./symbols"), exports);
+__exportStar(require("./to-observer"), exports);
+__exportStar(require("./types"), exports);
+
+},{"./patch":156,"./symbols":157,"./to-observer":158,"./types":159}],156:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.patch = void 0;
+const symbols_1 = require("./symbols");
+function patch(arg) {
+    if (!Symbol.observable) {
+        if (typeof arg === "function" &&
+            arg.prototype &&
+            arg.prototype[Symbol.observable]) {
+            arg.prototype[symbols_1.observable] = arg.prototype[Symbol.observable];
+            delete arg.prototype[Symbol.observable];
+        }
+        else {
+            arg[symbols_1.observable] = arg[Symbol.observable];
+            delete arg[Symbol.observable];
+        }
+    }
+    return arg;
+}
+exports.patch = patch;
+
+},{"./symbols":157}],157:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.observable = void 0;
+exports.observable = Symbol.observable || "@@observable";
+
+},{}],158:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.toObserver = void 0;
+const noop = () => { };
+const rethrow = (error) => {
+    throw error;
+};
+function toObserver(observer) {
+    if (observer) {
+        if (observer.next && observer.error && observer.complete) {
+            return observer;
+        }
+        return {
+            complete: (observer.complete ?? noop).bind(observer),
+            error: (observer.error ?? rethrow).bind(observer),
+            next: (observer.next ?? noop).bind(observer),
+        };
+    }
+    return {
+        complete: noop,
+        error: rethrow,
+        next: noop,
+    };
+}
+exports.toObserver = toObserver;
+
+},{}],159:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+
+},{}],160:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -21281,7 +25536,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":30}],119:[function(require,module,exports){
+},{"buffer":55}],161:[function(require,module,exports){
 module.exports = safetyCatch
 
 function isActuallyUncaught (err) {
@@ -21305,7 +25560,7 @@ function safetyCatch (err) {
   }
 }
 
-},{}],120:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 module.exports={
 "8000": 8000,
 "11025": 11025,
@@ -21321,7 +25576,7 @@ module.exports={
 "384000": 384000
 }
 
-},{}],121:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 const js = require('./sha256.js')
 const wasm = require('sha256-wasm')
 
@@ -21349,7 +25604,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha256.js":122,"sha256-wasm":123}],122:[function(require,module,exports){
+},{"./sha256.js":164,"sha256-wasm":165}],164:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -21586,7 +25841,7 @@ function bswap (a) {
   return r | l
 }
 
-},{"b4a":18,"nanoassert":84}],123:[function(require,module,exports){
+},{"b4a":42,"nanoassert":119}],165:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -21757,7 +26012,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha256.js":124,"b4a":18,"nanoassert":84}],124:[function(require,module,exports){
+},{"./sha256.js":166,"b4a":42,"nanoassert":119}],166:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -21793,7 +26048,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],125:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 const js = require('./sha512.js')
 const wasm = require('sha512-wasm')
 
@@ -21821,7 +26076,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha512.js":126,"sha512-wasm":127}],126:[function(require,module,exports){
+},{"./sha512.js":168,"sha512-wasm":169}],168:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -22381,7 +26636,7 @@ HMAC.prototype.digest = function (enc, offset = 0) {
 
 Sha512.HMAC = HMAC
 
-},{"b4a":18,"nanoassert":84}],127:[function(require,module,exports){
+},{"b4a":42,"nanoassert":119}],169:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -22554,7 +26809,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha512.js":128,"b4a":18,"nanoassert":84}],128:[function(require,module,exports){
+},{"./sha512.js":170,"b4a":42,"nanoassert":119}],170:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -22590,7 +26845,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],129:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 const set = require('unordered-set')
 
 module.exports = opts => new ShuffledPriorityQueue(opts)
@@ -22726,7 +26981,7 @@ function add (len, b) {
   return len + b.length
 }
 
-},{"unordered-set":161}],130:[function(require,module,exports){
+},{"unordered-set":205}],172:[function(require,module,exports){
 module.exports = fallback
 
 function _add (a, b) {
@@ -22848,7 +27103,7 @@ function fallback (out, m, key) { // modified from https://github.com/jedisct1/s
   out[7] = (h.h >> 24) & 0xff
 }
 
-},{}],131:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 var assert = require('nanoassert')
 var wasm = typeof WebAssembly !== 'undefined' && require('./siphash24')()
 var fallback = require('./fallback')
@@ -22889,7 +27144,7 @@ function realloc (size) {
   memory = new Uint8Array(wasm.memory.buffer)
 }
 
-},{"./fallback":130,"./siphash24":132,"nanoassert":84}],132:[function(require,module,exports){
+},{"./fallback":172,"./siphash24":174,"nanoassert":119}],174:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -22925,7 +27180,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],133:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -22996,7 +27251,7 @@ module.exports = {
   Pull
 }
 
-},{"b4a":18,"sodium-universal":151}],134:[function(require,module,exports){
+},{"b4a":42,"sodium-universal":193}],176:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_stream_chacha20_ietf, crypto_stream_chacha20_ietf_xor_ic } = require('./crypto_stream_chacha20')
 const { crypto_verify_16 } = require('./crypto_verify')
@@ -23158,7 +27413,7 @@ module.exports = {
   crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX
 }
 
-},{"./crypto_stream_chacha20":148,"./crypto_verify":149,"./internal/poly1305":153,"nanoassert":84}],135:[function(require,module,exports){
+},{"./crypto_stream_chacha20":190,"./crypto_verify":191,"./internal/poly1305":195,"nanoassert":119}],177:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_verify_32 } = require('./crypto_verify')
 const Sha512 = require('sha512-universal')
@@ -23195,7 +27450,7 @@ module.exports = {
   crypto_auth_verify
 }
 
-},{"./crypto_verify":149,"nanoassert":84,"sha512-universal":125}],136:[function(require,module,exports){
+},{"./crypto_verify":191,"nanoassert":119,"sha512-universal":167}],178:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_hash_sha512 } = require('./crypto_hash')
 const { crypto_scalarmult, crypto_scalarmult_base } = require('./crypto_scalarmult')
@@ -23397,7 +27652,7 @@ function cleanup (arr) {
   for (let i = 0; i < arr.length; i++) arr[i] = 0
 }
 
-},{"./crypto_generichash":137,"./crypto_hash":138,"./crypto_scalarmult":143,"./crypto_secretbox":144,"./crypto_stream":147,"./randombytes":155,"nanoassert":84,"xsalsa20":165}],137:[function(require,module,exports){
+},{"./crypto_generichash":179,"./crypto_hash":180,"./crypto_scalarmult":185,"./crypto_secretbox":186,"./crypto_stream":189,"./randombytes":197,"nanoassert":119,"xsalsa20":210}],179:[function(require,module,exports){
 var blake2b = require('blake2b')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -23435,7 +27690,7 @@ blake2b.ready(function (_) {
   module.exports.crypto_generichash_WASM_LOADED = blake2b.WASM_LOADED
 })
 
-},{"blake2b":28}],138:[function(require,module,exports){
+},{"blake2b":52}],180:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha512 = require('sha512-universal')
 const assert = require('nanoassert')
@@ -23463,7 +27718,7 @@ module.exports = {
   crypto_hash_BYTES
 }
 
-},{"nanoassert":84,"sha512-universal":125}],139:[function(require,module,exports){
+},{"nanoassert":119,"sha512-universal":167}],181:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha256 = require('sha256-universal')
 const assert = require('nanoassert')
@@ -23484,7 +27739,7 @@ module.exports = {
   crypto_hash_sha256_BYTES
 }
 
-},{"nanoassert":84,"sha256-universal":121}],140:[function(require,module,exports){
+},{"nanoassert":119,"sha256-universal":163}],182:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const randombytes_buf = require('./randombytes').randombytes_buf
@@ -23526,7 +27781,7 @@ module.exports.crypto_kdf_keygen = function crypto_kdf_keygen (out) {
   randombytes_buf(out.subarray(0, module.exports.crypto_kdf_KEYBYTES))
 }
 
-},{"./randombytes":155,"blake2b":28,"nanoassert":84}],141:[function(require,module,exports){
+},{"./randombytes":197,"blake2b":52,"nanoassert":119}],183:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_scalarmult_base } = require('./crypto_scalarmult')
 const { crypto_generichash } = require('./crypto_generichash')
@@ -23562,7 +27817,7 @@ module.exports = {
   crypto_kx_PUBLICKEYBYTES
 }
 
-},{"./crypto_generichash":137,"./crypto_scalarmult":143,"./randombytes":155,"nanoassert":84}],142:[function(require,module,exports){
+},{"./crypto_generichash":179,"./crypto_scalarmult":185,"./randombytes":197,"nanoassert":119}],184:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const Poly1305 = require('./internal/poly1305')
@@ -23600,7 +27855,7 @@ function crypto_onetimeauth_verify (mac, msg, key) {
   return crypto_verify_16(mac, 0, tmp, 0)
 }
 
-},{"./crypto_verify":149,"./internal/poly1305":153,"nanoassert":84}],143:[function(require,module,exports){
+},{"./crypto_verify":191,"./internal/poly1305":195,"nanoassert":119}],185:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { _9, _121665, gf, inv25519, pack25519, unpack25519, sel25519, A, M, Z, S } = require('./internal/ed25519')
 
@@ -23678,7 +27933,7 @@ function check (buf, len) {
   if (!buf || (len && buf.length < len)) throw new Error('Argument must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./internal/ed25519":152}],144:[function(require,module,exports){
+},{"./internal/ed25519":194}],186:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { crypto_stream, crypto_stream_xor } = require('./crypto_stream')
@@ -23791,7 +28046,7 @@ function crypto_secretbox_open_easy (msg, box, n, k) {
   return true
 }
 
-},{"./crypto_onetimeauth":142,"./crypto_stream":147,"nanoassert":84}],145:[function(require,module,exports){
+},{"./crypto_onetimeauth":184,"./crypto_stream":189,"nanoassert":119}],187:[function(require,module,exports){
 var siphash = require('siphash24')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -23807,7 +28062,7 @@ function shorthash (out, data, key, noAssert) {
   siphash(data, key, out, noAssert)
 }
 
-},{"siphash24":131}],146:[function(require,module,exports){
+},{"siphash24":173}],188:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { crypto_verify_32 } = require('./crypto_verify')
 const { crypto_hash } = require('./crypto_hash')
@@ -24278,7 +28533,7 @@ function check (buf, len, arg = 'Argument') {
   if (!buf || (len && buf.length < len)) throw new Error(arg + ' must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./crypto_hash":138,"./crypto_hash.js":138,"./crypto_scalarmult.js":143,"./crypto_verify":149,"./internal/ed25519":152,"./randombytes":155,"nanoassert":84}],147:[function(require,module,exports){
+},{"./crypto_hash":180,"./crypto_hash.js":180,"./crypto_scalarmult.js":185,"./crypto_verify":191,"./internal/ed25519":194,"./randombytes":197,"nanoassert":119}],189:[function(require,module,exports){
 /* eslint-disable camelcase */
 const xsalsa20 = require('xsalsa20')
 
@@ -24318,7 +28573,7 @@ XOR.prototype.final = function () {
   this._instance = null
 }
 
-},{"xsalsa20":165}],148:[function(require,module,exports){
+},{"xsalsa20":210}],190:[function(require,module,exports){
 const assert = require('nanoassert')
 const Chacha20 = require('chacha20-universal')
 
@@ -24404,7 +28659,7 @@ exports.crypto_stream_chacha20_ietf_xor_instance = function (n, k) {
   return new Chacha20(n, k)
 }
 
-},{"chacha20-universal":31,"nanoassert":84}],149:[function(require,module,exports){
+},{"chacha20-universal":56,"nanoassert":119}],191:[function(require,module,exports){
 /* eslint-disable camelcase */
 module.exports = {
   crypto_verify_16,
@@ -24435,7 +28690,7 @@ function crypto_verify_64 (x, xi, y, yi) {
   return vn(x, xi, y, yi, 64) === 0
 }
 
-},{}],150:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { vn } = require('./crypto_verify')
@@ -24468,7 +28723,7 @@ module.exports = {
   sodium_is_zero
 }
 
-},{"./crypto_verify":149,"nanoassert":84}],151:[function(require,module,exports){
+},{"./crypto_verify":191,"nanoassert":119}],193:[function(require,module,exports){
 'use strict'
 
 // Based on https://github.com/dchest/tweetnacl-js/blob/6dcbcaf5f5cbfd313f2dcfe763db35c828c8ff5b/nacl-fast.js.
@@ -24505,7 +28760,7 @@ function forward (submodule) {
   })
 }
 
-},{"./crypto_aead":134,"./crypto_auth":135,"./crypto_box":136,"./crypto_generichash":137,"./crypto_hash":138,"./crypto_hash_sha256":139,"./crypto_kdf":140,"./crypto_kx":141,"./crypto_onetimeauth":142,"./crypto_scalarmult":143,"./crypto_secretbox":144,"./crypto_shorthash":145,"./crypto_sign":146,"./crypto_stream":147,"./crypto_stream_chacha20":148,"./crypto_verify":149,"./helpers":150,"./memory":154,"./randombytes":155}],152:[function(require,module,exports){
+},{"./crypto_aead":176,"./crypto_auth":177,"./crypto_box":178,"./crypto_generichash":179,"./crypto_hash":180,"./crypto_hash_sha256":181,"./crypto_kdf":182,"./crypto_kx":183,"./crypto_onetimeauth":184,"./crypto_scalarmult":185,"./crypto_secretbox":186,"./crypto_shorthash":187,"./crypto_sign":188,"./crypto_stream":189,"./crypto_stream_chacha20":190,"./crypto_verify":191,"./helpers":192,"./memory":196,"./randombytes":197}],194:[function(require,module,exports){
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
 
 var gf = function(init) {
@@ -24990,7 +29245,7 @@ module.exports = {
   I
 }
 
-},{}],153:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 /*
 * Port of Andrew Moon's Poly1305-donna-16. Public domain.
 * https://github.com/floodyberry/poly1305-donna
@@ -25352,7 +29607,7 @@ poly1305.prototype.update = function(m, mpos, bytes) {
 
 module.exports = poly1305
 
-},{}],154:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 /* eslint-disable camelcase */
 
 function sodium_malloc (n) {
@@ -25384,7 +29639,7 @@ module.exports = {
   sodium_memzero
 }
 
-},{}],155:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 var assert = require('nanoassert')
 
 var randombytes = (function () {
@@ -25426,7 +29681,12101 @@ module.exports.randombytes_buf = function (out) {
   randombytes(out, out.byteLength)
 }
 
-},{"nanoassert":84}],156:[function(require,module,exports){
+},{"nanoassert":119}],198:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('automation-events'), require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/createClass'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/typeof'), require('@babel/runtime/helpers/defineProperty'), require('@babel/runtime/helpers/inherits'), require('@babel/runtime/helpers/possibleConstructorReturn'), require('@babel/runtime/helpers/getPrototypeOf'), require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('@babel/runtime/helpers/assertThisInitialized'), require('@babel/runtime/helpers/toConsumableArray'), require('@babel/runtime/helpers/objectWithoutProperties')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'automation-events', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/createClass', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/typeof', '@babel/runtime/helpers/defineProperty', '@babel/runtime/helpers/inherits', '@babel/runtime/helpers/possibleConstructorReturn', '@babel/runtime/helpers/getPrototypeOf', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', '@babel/runtime/helpers/assertThisInitialized', '@babel/runtime/helpers/toConsumableArray', '@babel/runtime/helpers/objectWithoutProperties'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.standardizedAudioContext = {}, global.automationEvents, global._slicedToArray, global._createClass, global._classCallCheck, global._typeof, global._defineProperty, global._inherits, global._possibleConstructorReturn, global._getPrototypeOf, global._asyncToGenerator, global._regeneratorRuntime, global._assertThisInitialized, global._toConsumableArray, global._objectWithoutProperties));
+})(this, (function (exports, automationEvents, _slicedToArray, _createClass, _classCallCheck, _typeof, _defineProperty, _inherits, _possibleConstructorReturn, _getPrototypeOf, _asyncToGenerator, _regeneratorRuntime, _assertThisInitialized, _toConsumableArray, _objectWithoutProperties) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _slicedToArray__default = /*#__PURE__*/_interopDefaultLegacy(_slicedToArray);
+    var _createClass__default = /*#__PURE__*/_interopDefaultLegacy(_createClass);
+    var _classCallCheck__default = /*#__PURE__*/_interopDefaultLegacy(_classCallCheck);
+    var _typeof__default = /*#__PURE__*/_interopDefaultLegacy(_typeof);
+    var _defineProperty__default = /*#__PURE__*/_interopDefaultLegacy(_defineProperty);
+    var _inherits__default = /*#__PURE__*/_interopDefaultLegacy(_inherits);
+    var _possibleConstructorReturn__default = /*#__PURE__*/_interopDefaultLegacy(_possibleConstructorReturn);
+    var _getPrototypeOf__default = /*#__PURE__*/_interopDefaultLegacy(_getPrototypeOf);
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+    var _assertThisInitialized__default = /*#__PURE__*/_interopDefaultLegacy(_assertThisInitialized);
+    var _toConsumableArray__default = /*#__PURE__*/_interopDefaultLegacy(_toConsumableArray);
+    var _objectWithoutProperties__default = /*#__PURE__*/_interopDefaultLegacy(_objectWithoutProperties);
+
+    var createAbortError = function createAbortError() {
+      return new DOMException('', 'AbortError');
+    };
+
+    var createAddActiveInputConnectionToAudioNode = function createAddActiveInputConnectionToAudioNode(insertElementInSet) {
+      return function (activeInputs, source, _ref, ignoreDuplicates) {
+        var _ref2 = _slicedToArray__default["default"](_ref, 3),
+            output = _ref2[0],
+            input = _ref2[1],
+            eventListener = _ref2[2];
+
+        insertElementInSet(activeInputs[input], [source, output, eventListener], function (activeInputConnection) {
+          return activeInputConnection[0] === source && activeInputConnection[1] === output;
+        }, ignoreDuplicates);
+      };
+    };
+
+    var createAddAudioNodeConnections = function createAddAudioNodeConnections(audioNodeConnectionsStore) {
+      return function (audioNode, audioNodeRenderer, nativeAudioNode) {
+        var activeInputs = [];
+
+        for (var i = 0; i < nativeAudioNode.numberOfInputs; i += 1) {
+          activeInputs.push(new Set());
+        }
+
+        audioNodeConnectionsStore.set(audioNode, {
+          activeInputs: activeInputs,
+          outputs: new Set(),
+          passiveInputs: new WeakMap(),
+          renderer: audioNodeRenderer
+        });
+      };
+    };
+
+    var createAddAudioParamConnections = function createAddAudioParamConnections(audioParamConnectionsStore) {
+      return function (audioParam, audioParamRenderer) {
+        audioParamConnectionsStore.set(audioParam, {
+          activeInputs: new Set(),
+          passiveInputs: new WeakMap(),
+          renderer: audioParamRenderer
+        });
+      };
+    };
+
+    var ACTIVE_AUDIO_NODE_STORE = new WeakSet();
+    var AUDIO_NODE_CONNECTIONS_STORE = new WeakMap();
+    var AUDIO_NODE_STORE = new WeakMap();
+    var AUDIO_PARAM_CONNECTIONS_STORE = new WeakMap();
+    var AUDIO_PARAM_STORE = new WeakMap();
+    var CONTEXT_STORE = new WeakMap();
+    var EVENT_LISTENERS = new WeakMap();
+    var CYCLE_COUNTERS = new WeakMap(); // This clunky name is borrowed from the spec. :-)
+
+    var NODE_NAME_TO_PROCESSOR_CONSTRUCTOR_MAPS = new WeakMap();
+    var NODE_TO_PROCESSOR_MAPS = new WeakMap();
+
+    var handler = {
+      construct: function construct() {
+        return handler;
+      }
+    };
+    var isConstructible = function isConstructible(constructible) {
+      try {
+        var proxy = new Proxy(constructible, handler);
+        new proxy(); // tslint:disable-line:no-unused-expression
+      } catch (_unused) {
+        return false;
+      }
+
+      return true;
+    };
+
+    /*
+     * This massive regex tries to cover all the following cases.
+     *
+     * import './path';
+     * import defaultImport from './path';
+     * import { namedImport } from './path';
+     * import { namedImport as renamendImport } from './path';
+     * import * as namespaceImport from './path';
+     * import defaultImport, { namedImport } from './path';
+     * import defaultImport, { namedImport as renamendImport } from './path';
+     * import defaultImport, * as namespaceImport from './path';
+     */
+    var IMPORT_STATEMENT_REGEX = /^import(?:(?:[\s]+[\w]+|(?:[\s]+[\w]+[\s]*,)?[\s]*\{[\s]*[\w]+(?:[\s]+as[\s]+[\w]+)?(?:[\s]*,[\s]*[\w]+(?:[\s]+as[\s]+[\w]+)?)*[\s]*}|(?:[\s]+[\w]+[\s]*,)?[\s]*\*[\s]+as[\s]+[\w]+)[\s]+from)?(?:[\s]*)("([^"\\]|\\.)+"|'([^'\\]|\\.)+')(?:[\s]*);?/; // tslint:disable-line:max-line-length
+
+    var splitImportStatements = function splitImportStatements(source, url) {
+      var importStatements = [];
+      var sourceWithoutImportStatements = source.replace(/^[\s]+/, '');
+      var result = sourceWithoutImportStatements.match(IMPORT_STATEMENT_REGEX);
+
+      while (result !== null) {
+        var unresolvedUrl = result[1].slice(1, -1);
+        var importStatementWithResolvedUrl = result[0].replace(/([\s]+)?;?$/, '').replace(unresolvedUrl, new URL(unresolvedUrl, url).toString());
+        importStatements.push(importStatementWithResolvedUrl);
+        sourceWithoutImportStatements = sourceWithoutImportStatements.slice(result[0].length).replace(/^[\s]+/, '');
+        result = sourceWithoutImportStatements.match(IMPORT_STATEMENT_REGEX);
+      }
+
+      return [importStatements.join(';'), sourceWithoutImportStatements];
+    };
+
+    var verifyParameterDescriptors = function verifyParameterDescriptors(parameterDescriptors) {
+      if (parameterDescriptors !== undefined && !Array.isArray(parameterDescriptors)) {
+        throw new TypeError('The parameterDescriptors property of given value for processorCtor is not an array.');
+      }
+    };
+
+    var verifyProcessorCtor = function verifyProcessorCtor(processorCtor) {
+      if (!isConstructible(processorCtor)) {
+        throw new TypeError('The given value for processorCtor should be a constructor.');
+      }
+
+      if (processorCtor.prototype === null || _typeof__default["default"](processorCtor.prototype) !== 'object') {
+        throw new TypeError('The given value for processorCtor should have a prototype.');
+      }
+    };
+
+    var createAddAudioWorkletModule = function createAddAudioWorkletModule(cacheTestResult, createNotSupportedError, evaluateSource, exposeCurrentFrameAndCurrentTime, fetchSource, getNativeContext, getOrCreateBackupOfflineAudioContext, isNativeOfflineAudioContext, nativeAudioWorkletNodeConstructor, ongoingRequests, resolvedRequests, testAudioWorkletProcessorPostMessageSupport, window) {
+      var index = 0;
+      return function (context, moduleURL) {
+        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+          credentials: 'omit'
+        };
+        var resolvedRequestsOfContext = resolvedRequests.get(context);
+
+        if (resolvedRequestsOfContext !== undefined && resolvedRequestsOfContext.has(moduleURL)) {
+          return Promise.resolve();
+        }
+
+        var ongoingRequestsOfContext = ongoingRequests.get(context);
+
+        if (ongoingRequestsOfContext !== undefined) {
+          var promiseOfOngoingRequest = ongoingRequestsOfContext.get(moduleURL);
+
+          if (promiseOfOngoingRequest !== undefined) {
+            return promiseOfOngoingRequest;
+          }
+        }
+
+        var nativeContext = getNativeContext(context); // Bug #59: Safari does not implement the audioWorklet property.
+
+        var promise = nativeContext.audioWorklet === undefined ? fetchSource(moduleURL).then(function (_ref) {
+          var _ref2 = _slicedToArray__default["default"](_ref, 2),
+              source = _ref2[0],
+              absoluteUrl = _ref2[1];
+
+          var _splitImportStatement = splitImportStatements(source, absoluteUrl),
+              _splitImportStatement2 = _slicedToArray__default["default"](_splitImportStatement, 2),
+              importStatements = _splitImportStatement2[0],
+              sourceWithoutImportStatements = _splitImportStatement2[1];
+          /*
+           * This is the unminified version of the code used below:
+           *
+           * ```js
+           * ${ importStatements };
+           * ((a, b) => {
+           *     (a[b] = a[b] || [ ]).push(
+           *         (AudioWorkletProcessor, global, registerProcessor, sampleRate, self, window) => {
+           *             ${ sourceWithoutImportStatements }
+           *         }
+           *     );
+           * })(window, '_AWGS');
+           * ```
+           */
+          // tslint:disable-next-line:max-line-length
+
+
+          var wrappedSource = "".concat(importStatements, ";((a,b)=>{(a[b]=a[b]||[]).push((AudioWorkletProcessor,global,registerProcessor,sampleRate,self,window)=>{").concat(sourceWithoutImportStatements, "\n})})(window,'_AWGS')"); // @todo Evaluating the given source code is a possible security problem.
+
+          return evaluateSource(wrappedSource);
+        }).then(function () {
+          var evaluateAudioWorkletGlobalScope = window._AWGS.pop();
+
+          if (evaluateAudioWorkletGlobalScope === undefined) {
+            // Bug #182 Chrome, Edge and Opera do throw an instance of a SyntaxError instead of a DOMException.
+            throw new SyntaxError();
+          }
+
+          exposeCurrentFrameAndCurrentTime(nativeContext.currentTime, nativeContext.sampleRate, function () {
+            return evaluateAudioWorkletGlobalScope( /*#__PURE__*/_createClass__default["default"](function AudioWorkletProcessor() {
+              _classCallCheck__default["default"](this, AudioWorkletProcessor);
+            }), undefined, function (name, processorCtor) {
+              if (name.trim() === '') {
+                throw createNotSupportedError();
+              }
+
+              var nodeNameToProcessorConstructorMap = NODE_NAME_TO_PROCESSOR_CONSTRUCTOR_MAPS.get(nativeContext);
+
+              if (nodeNameToProcessorConstructorMap !== undefined) {
+                if (nodeNameToProcessorConstructorMap.has(name)) {
+                  throw createNotSupportedError();
+                }
+
+                verifyProcessorCtor(processorCtor);
+                verifyParameterDescriptors(processorCtor.parameterDescriptors);
+                nodeNameToProcessorConstructorMap.set(name, processorCtor);
+              } else {
+                verifyProcessorCtor(processorCtor);
+                verifyParameterDescriptors(processorCtor.parameterDescriptors);
+                NODE_NAME_TO_PROCESSOR_CONSTRUCTOR_MAPS.set(nativeContext, new Map([[name, processorCtor]]));
+              }
+            }, nativeContext.sampleRate, undefined, undefined);
+          });
+        }) : Promise.all([fetchSource(moduleURL), Promise.resolve(cacheTestResult(testAudioWorkletProcessorPostMessageSupport, testAudioWorkletProcessorPostMessageSupport))]).then(function (_ref3) {
+          var _ref4 = _slicedToArray__default["default"](_ref3, 2),
+              _ref4$ = _slicedToArray__default["default"](_ref4[0], 2),
+              source = _ref4$[0],
+              absoluteUrl = _ref4$[1],
+              isSupportingPostMessage = _ref4[1];
+
+          var currentIndex = index + 1;
+          index = currentIndex;
+
+          var _splitImportStatement3 = splitImportStatements(source, absoluteUrl),
+              _splitImportStatement4 = _slicedToArray__default["default"](_splitImportStatement3, 2),
+              importStatements = _splitImportStatement4[0],
+              sourceWithoutImportStatements = _splitImportStatement4[1];
+          /*
+           * Bug #179: Firefox does not allow to transfer any buffer which has been passed to the process() method as an argument.
+           *
+           * This is the unminified version of the code used below.
+           *
+           * ```js
+           * class extends AudioWorkletProcessor {
+           *
+           *     __buffers = new WeakSet();
+           *
+           *     constructor () {
+           *         super();
+           *
+           *         this.port.postMessage = ((postMessage) => {
+           *             return (message, transferables) => {
+           *                 const filteredTransferables = (transferables)
+           *                     ? transferables.filter((transferable) => !this.__buffers.has(transferable))
+           *                     : transferables;
+           *
+           *                 return postMessage.call(this.port, message, filteredTransferables);
+           *              };
+           *         })(this.port.postMessage);
+           *     }
+           * }
+           * ```
+           */
+
+
+          var patchedAudioWorkletProcessor = isSupportingPostMessage ? 'AudioWorkletProcessor' : 'class extends AudioWorkletProcessor {__b=new WeakSet();constructor(){super();(p=>p.postMessage=(q=>(m,t)=>q.call(p,m,t?t.filter(u=>!this.__b.has(u)):t))(p.postMessage))(this.port)}}';
+          /*
+           * Bug #170: Chrome and Edge do call process() with an array with empty channelData for each input if no input is connected.
+           *
+           * Bug #179: Firefox does not allow to transfer any buffer which has been passed to the process() method as an argument.
+           *
+           * Bug #190: Safari doesn't throw an error when loading an unparsable module.
+           *
+           * This is the unminified version of the code used below:
+           *
+           * ```js
+           * `${ importStatements };
+           * ((AudioWorkletProcessor, registerProcessor) => {${ sourceWithoutImportStatements }
+           * })(
+           *     ${ patchedAudioWorkletProcessor },
+           *     (name, processorCtor) => registerProcessor(name, class extends processorCtor {
+           *
+           *         __collectBuffers = (array) => {
+           *             array.forEach((element) => this.__buffers.add(element.buffer));
+           *         };
+           *
+           *         process (inputs, outputs, parameters) {
+           *             inputs.forEach(this.__collectBuffers);
+           *             outputs.forEach(this.__collectBuffers);
+           *             this.__collectBuffers(Object.values(parameters));
+           *
+           *             return super.process(
+           *                 (inputs.map((input) => input.some((channelData) => channelData.length === 0)) ? [ ] : input),
+           *                 outputs,
+           *                 parameters
+           *             );
+           *         }
+           *
+           *     })
+           * );
+           *
+           * registerProcessor(`__sac${currentIndex}`, class extends AudioWorkletProcessor{
+           *
+           *     process () {
+           *         return false;
+           *     }
+           *
+           * })`
+           * ```
+           */
+
+          var memberDefinition = isSupportingPostMessage ? '' : '__c = (a) => a.forEach(e=>this.__b.add(e.buffer));';
+          var bufferRegistration = isSupportingPostMessage ? '' : 'i.forEach(this.__c);o.forEach(this.__c);this.__c(Object.values(p));';
+          var wrappedSource = "".concat(importStatements, ";((AudioWorkletProcessor,registerProcessor)=>{").concat(sourceWithoutImportStatements, "\n})(").concat(patchedAudioWorkletProcessor, ",(n,p)=>registerProcessor(n,class extends p{").concat(memberDefinition, "process(i,o,p){").concat(bufferRegistration, "return super.process(i.map(j=>j.some(k=>k.length===0)?[]:j),o,p)}}));registerProcessor('__sac").concat(currentIndex, "',class extends AudioWorkletProcessor{process(){return !1}})");
+          var blob = new Blob([wrappedSource], {
+            type: 'application/javascript; charset=utf-8'
+          });
+          var url = URL.createObjectURL(blob);
+          return nativeContext.audioWorklet.addModule(url, options).then(function () {
+            if (isNativeOfflineAudioContext(nativeContext)) {
+              return nativeContext;
+            } // Bug #186: Chrome, Edge and Opera do not allow to create an AudioWorkletNode on a closed AudioContext.
+
+
+            var backupOfflineAudioContext = getOrCreateBackupOfflineAudioContext(nativeContext);
+            return backupOfflineAudioContext.audioWorklet.addModule(url, options).then(function () {
+              return backupOfflineAudioContext;
+            });
+          }).then(function (nativeContextOrBackupOfflineAudioContext) {
+            if (nativeAudioWorkletNodeConstructor === null) {
+              throw new SyntaxError();
+            }
+
+            try {
+              // Bug #190: Safari doesn't throw an error when loading an unparsable module.
+              new nativeAudioWorkletNodeConstructor(nativeContextOrBackupOfflineAudioContext, "__sac".concat(currentIndex)); // tslint:disable-line:no-unused-expression
+            } catch (_unused) {
+              throw new SyntaxError();
+            }
+          })["finally"](function () {
+            return URL.revokeObjectURL(url);
+          });
+        });
+
+        if (ongoingRequestsOfContext === undefined) {
+          ongoingRequests.set(context, new Map([[moduleURL, promise]]));
+        } else {
+          ongoingRequestsOfContext.set(moduleURL, promise);
+        }
+
+        promise.then(function () {
+          var updatedResolvedRequestsOfContext = resolvedRequests.get(context);
+
+          if (updatedResolvedRequestsOfContext === undefined) {
+            resolvedRequests.set(context, new Set([moduleURL]));
+          } else {
+            updatedResolvedRequestsOfContext.add(moduleURL);
+          }
+        })["finally"](function () {
+          var updatedOngoingRequestsOfContext = ongoingRequests.get(context);
+
+          if (updatedOngoingRequestsOfContext !== undefined) {
+            updatedOngoingRequestsOfContext["delete"](moduleURL);
+          }
+        });
+        return promise;
+      };
+    };
+
+    var getValueForKey = function getValueForKey(map, key) {
+      var value = map.get(key);
+
+      if (value === undefined) {
+        throw new Error('A value with the given key could not be found.');
+      }
+
+      return value;
+    };
+
+    var pickElementFromSet = function pickElementFromSet(set, predicate) {
+      var matchingElements = Array.from(set).filter(predicate);
+
+      if (matchingElements.length > 1) {
+        throw Error('More than one element was found.');
+      }
+
+      if (matchingElements.length === 0) {
+        throw Error('No element was found.');
+      }
+
+      var _matchingElements = _slicedToArray__default["default"](matchingElements, 1),
+          matchingElement = _matchingElements[0];
+
+      set["delete"](matchingElement);
+      return matchingElement;
+    };
+
+    var deletePassiveInputConnectionToAudioNode = function deletePassiveInputConnectionToAudioNode(passiveInputs, source, output, input) {
+      var passiveInputConnections = getValueForKey(passiveInputs, source);
+      var matchingConnection = pickElementFromSet(passiveInputConnections, function (passiveInputConnection) {
+        return passiveInputConnection[0] === output && passiveInputConnection[1] === input;
+      });
+
+      if (passiveInputConnections.size === 0) {
+        passiveInputs["delete"](source);
+      }
+
+      return matchingConnection;
+    };
+
+    var getEventListenersOfAudioNode = function getEventListenersOfAudioNode(audioNode) {
+      return getValueForKey(EVENT_LISTENERS, audioNode);
+    };
+
+    var setInternalStateToActive = function setInternalStateToActive(audioNode) {
+      if (ACTIVE_AUDIO_NODE_STORE.has(audioNode)) {
+        throw new Error('The AudioNode is already stored.');
+      }
+
+      ACTIVE_AUDIO_NODE_STORE.add(audioNode);
+      getEventListenersOfAudioNode(audioNode).forEach(function (eventListener) {
+        return eventListener(true);
+      });
+    };
+
+    var isAudioWorkletNode = function isAudioWorkletNode(audioNode) {
+      return 'port' in audioNode;
+    };
+
+    var setInternalStateToPassive = function setInternalStateToPassive(audioNode) {
+      if (!ACTIVE_AUDIO_NODE_STORE.has(audioNode)) {
+        throw new Error('The AudioNode is not stored.');
+      }
+
+      ACTIVE_AUDIO_NODE_STORE["delete"](audioNode);
+      getEventListenersOfAudioNode(audioNode).forEach(function (eventListener) {
+        return eventListener(false);
+      });
+    };
+
+    var setInternalStateToPassiveWhenNecessary = function setInternalStateToPassiveWhenNecessary(audioNode, activeInputs) {
+      if (!isAudioWorkletNode(audioNode) && activeInputs.every(function (connections) {
+        return connections.size === 0;
+      })) {
+        setInternalStateToPassive(audioNode);
+      }
+    };
+
+    var createAddConnectionToAudioNode = function createAddConnectionToAudioNode(addActiveInputConnectionToAudioNode, addPassiveInputConnectionToAudioNode, connectNativeAudioNodeToNativeAudioNode, deleteActiveInputConnectionToAudioNode, disconnectNativeAudioNodeFromNativeAudioNode, getAudioNodeConnections, getAudioNodeTailTime, getEventListenersOfAudioNode, getNativeAudioNode, insertElementInSet, isActiveAudioNode, isPartOfACycle, isPassiveAudioNode) {
+      var tailTimeTimeoutIds = new WeakMap();
+      return function (source, destination, output, input, isOffline) {
+        var _getAudioNodeConnecti = getAudioNodeConnections(destination),
+            activeInputs = _getAudioNodeConnecti.activeInputs,
+            passiveInputs = _getAudioNodeConnecti.passiveInputs;
+
+        var _getAudioNodeConnecti2 = getAudioNodeConnections(source),
+            outputs = _getAudioNodeConnecti2.outputs;
+
+        var eventListeners = getEventListenersOfAudioNode(source);
+
+        var eventListener = function eventListener(isActive) {
+          var nativeDestinationAudioNode = getNativeAudioNode(destination);
+          var nativeSourceAudioNode = getNativeAudioNode(source);
+
+          if (isActive) {
+            var partialConnection = deletePassiveInputConnectionToAudioNode(passiveInputs, source, output, input);
+            addActiveInputConnectionToAudioNode(activeInputs, source, partialConnection, false);
+
+            if (!isOffline && !isPartOfACycle(source)) {
+              connectNativeAudioNodeToNativeAudioNode(nativeSourceAudioNode, nativeDestinationAudioNode, output, input);
+            }
+
+            if (isPassiveAudioNode(destination)) {
+              setInternalStateToActive(destination);
+            }
+          } else {
+            var _partialConnection = deleteActiveInputConnectionToAudioNode(activeInputs, source, output, input);
+
+            addPassiveInputConnectionToAudioNode(passiveInputs, input, _partialConnection, false);
+
+            if (!isOffline && !isPartOfACycle(source)) {
+              disconnectNativeAudioNodeFromNativeAudioNode(nativeSourceAudioNode, nativeDestinationAudioNode, output, input);
+            }
+
+            var tailTime = getAudioNodeTailTime(destination);
+
+            if (tailTime === 0) {
+              if (isActiveAudioNode(destination)) {
+                setInternalStateToPassiveWhenNecessary(destination, activeInputs);
+              }
+            } else {
+              var tailTimeTimeoutId = tailTimeTimeoutIds.get(destination);
+
+              if (tailTimeTimeoutId !== undefined) {
+                clearTimeout(tailTimeTimeoutId);
+              }
+
+              tailTimeTimeoutIds.set(destination, setTimeout(function () {
+                if (isActiveAudioNode(destination)) {
+                  setInternalStateToPassiveWhenNecessary(destination, activeInputs);
+                }
+              }, tailTime * 1000));
+            }
+          }
+        };
+
+        if (insertElementInSet(outputs, [destination, output, input], function (outputConnection) {
+          return outputConnection[0] === destination && outputConnection[1] === output && outputConnection[2] === input;
+        }, true)) {
+          eventListeners.add(eventListener);
+
+          if (isActiveAudioNode(source)) {
+            addActiveInputConnectionToAudioNode(activeInputs, source, [output, input, eventListener], true);
+          } else {
+            addPassiveInputConnectionToAudioNode(passiveInputs, input, [source, output, eventListener], true);
+          }
+
+          return true;
+        }
+
+        return false;
+      };
+    };
+
+    var createAddPassiveInputConnectionToAudioNode = function createAddPassiveInputConnectionToAudioNode(insertElementInSet) {
+      return function (passiveInputs, input, _ref, ignoreDuplicates) {
+        var _ref2 = _slicedToArray__default["default"](_ref, 3),
+            source = _ref2[0],
+            output = _ref2[1],
+            eventListener = _ref2[2];
+
+        var passiveInputConnections = passiveInputs.get(source);
+
+        if (passiveInputConnections === undefined) {
+          passiveInputs.set(source, new Set([[output, input, eventListener]]));
+        } else {
+          insertElementInSet(passiveInputConnections, [output, input, eventListener], function (passiveInputConnection) {
+            return passiveInputConnection[0] === output && passiveInputConnection[1] === input;
+          }, ignoreDuplicates);
+        }
+      };
+    };
+
+    var createAddSilentConnection = function createAddSilentConnection(createNativeGainNode) {
+      return function (nativeContext, nativeAudioScheduledSourceNode) {
+        var nativeGainNode = createNativeGainNode(nativeContext, {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete',
+          gain: 0
+        });
+        nativeAudioScheduledSourceNode.connect(nativeGainNode).connect(nativeContext.destination);
+
+        var disconnect = function disconnect() {
+          nativeAudioScheduledSourceNode.removeEventListener('ended', disconnect);
+          nativeAudioScheduledSourceNode.disconnect(nativeGainNode);
+          nativeGainNode.disconnect();
+        };
+
+        nativeAudioScheduledSourceNode.addEventListener('ended', disconnect);
+      };
+    };
+
+    var createAddUnrenderedAudioWorkletNode = function createAddUnrenderedAudioWorkletNode(getUnrenderedAudioWorkletNodes) {
+      return function (nativeContext, audioWorkletNode) {
+        getUnrenderedAudioWorkletNodes(nativeContext).add(audioWorkletNode);
+      };
+    };
+
+    function ownKeys$w(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$w(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$w(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$w(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$k = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      fftSize: 2048,
+      maxDecibels: -30,
+      minDecibels: -100,
+      smoothingTimeConstant: 0.8
+    };
+    var createAnalyserNodeConstructor = function createAnalyserNodeConstructor(audionNodeConstructor, createAnalyserNodeRenderer, createIndexSizeError, createNativeAnalyserNode, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audionNodeConstructo) {
+        _inherits__default["default"](AnalyserNode, _audionNodeConstructo);
+
+        var _super = _createSuper$r(AnalyserNode);
+
+        function AnalyserNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, AnalyserNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$w(_objectSpread$w({}, DEFAULT_OPTIONS$k), options);
+
+          var nativeAnalyserNode = createNativeAnalyserNode(nativeContext, mergedOptions);
+          var analyserNodeRenderer = isNativeOfflineAudioContext(nativeContext) ? createAnalyserNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeAnalyserNode, analyserNodeRenderer);
+          _this._nativeAnalyserNode = nativeAnalyserNode;
+          return _this;
+        }
+
+        _createClass__default["default"](AnalyserNode, [{
+          key: "fftSize",
+          get: function get() {
+            return this._nativeAnalyserNode.fftSize;
+          },
+          set: function set(value) {
+            this._nativeAnalyserNode.fftSize = value;
+          }
+        }, {
+          key: "frequencyBinCount",
+          get: function get() {
+            return this._nativeAnalyserNode.frequencyBinCount;
+          }
+        }, {
+          key: "maxDecibels",
+          get: function get() {
+            return this._nativeAnalyserNode.maxDecibels;
+          },
+          set: function set(value) {
+            // Bug #118: Safari does not throw an error if maxDecibels is not more than minDecibels.
+            var maxDecibels = this._nativeAnalyserNode.maxDecibels;
+            this._nativeAnalyserNode.maxDecibels = value;
+
+            if (!(value > this._nativeAnalyserNode.minDecibels)) {
+              this._nativeAnalyserNode.maxDecibels = maxDecibels;
+              throw createIndexSizeError();
+            }
+          }
+        }, {
+          key: "minDecibels",
+          get: function get() {
+            return this._nativeAnalyserNode.minDecibels;
+          },
+          set: function set(value) {
+            // Bug #118: Safari does not throw an error if maxDecibels is not more than minDecibels.
+            var minDecibels = this._nativeAnalyserNode.minDecibels;
+            this._nativeAnalyserNode.minDecibels = value;
+
+            if (!(this._nativeAnalyserNode.maxDecibels > value)) {
+              this._nativeAnalyserNode.minDecibels = minDecibels;
+              throw createIndexSizeError();
+            }
+          }
+        }, {
+          key: "smoothingTimeConstant",
+          get: function get() {
+            return this._nativeAnalyserNode.smoothingTimeConstant;
+          },
+          set: function set(value) {
+            this._nativeAnalyserNode.smoothingTimeConstant = value;
+          }
+        }, {
+          key: "getByteFrequencyData",
+          value: function getByteFrequencyData(array) {
+            this._nativeAnalyserNode.getByteFrequencyData(array);
+          }
+        }, {
+          key: "getByteTimeDomainData",
+          value: function getByteTimeDomainData(array) {
+            this._nativeAnalyserNode.getByteTimeDomainData(array);
+          }
+        }, {
+          key: "getFloatFrequencyData",
+          value: function getFloatFrequencyData(array) {
+            this._nativeAnalyserNode.getFloatFrequencyData(array);
+          }
+        }, {
+          key: "getFloatTimeDomainData",
+          value: function getFloatTimeDomainData(array) {
+            this._nativeAnalyserNode.getFloatTimeDomainData(array);
+          }
+        }]);
+
+        return AnalyserNode;
+      }(audionNodeConstructor);
+    };
+
+    var isOwnedByContext = function isOwnedByContext(nativeAudioNode, nativeContext) {
+      return nativeAudioNode.context === nativeContext;
+    };
+
+    var createAnalyserNodeRendererFactory = function createAnalyserNodeRendererFactory(createNativeAnalyserNode, getNativeAudioNode, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeAnalyserNodes = new WeakMap();
+
+        var createAnalyserNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeAnalyserNode, nativeAnalyserNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeAnalyserNode = getNativeAudioNode(proxy); // If the initially used nativeAnalyserNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeAnalyserNodeIsOwnedByContext = isOwnedByContext(nativeAnalyserNode, nativeOfflineAudioContext);
+
+                    if (!nativeAnalyserNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeAnalyserNode.channelCount,
+                        channelCountMode: nativeAnalyserNode.channelCountMode,
+                        channelInterpretation: nativeAnalyserNode.channelInterpretation,
+                        fftSize: nativeAnalyserNode.fftSize,
+                        maxDecibels: nativeAnalyserNode.maxDecibels,
+                        minDecibels: nativeAnalyserNode.minDecibels,
+                        smoothingTimeConstant: nativeAnalyserNode.smoothingTimeConstant
+                      };
+                      nativeAnalyserNode = createNativeAnalyserNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeAnalyserNodes.set(nativeOfflineAudioContext, nativeAnalyserNode);
+                    _context.next = 6;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeAnalyserNode);
+
+                  case 6:
+                    return _context.abrupt("return", nativeAnalyserNode);
+
+                  case 7:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createAnalyserNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeAnalyserNode = renderedNativeAnalyserNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeAnalyserNode !== undefined) {
+              return Promise.resolve(renderedNativeAnalyserNode);
+            }
+
+            return createAnalyserNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var testAudioBufferCopyChannelMethodsOutOfBoundsSupport = function testAudioBufferCopyChannelMethodsOutOfBoundsSupport(nativeAudioBuffer) {
+      try {
+        nativeAudioBuffer.copyToChannel(new Float32Array(1), 0, -1);
+      } catch (_unused) {
+        return false;
+      }
+
+      return true;
+    };
+
+    var createIndexSizeError = function createIndexSizeError() {
+      return new DOMException('', 'IndexSizeError');
+    };
+
+    var wrapAudioBufferGetChannelDataMethod = function wrapAudioBufferGetChannelDataMethod(audioBuffer) {
+      audioBuffer.getChannelData = function (getChannelData) {
+        return function (channel) {
+          try {
+            return getChannelData.call(audioBuffer, channel);
+          } catch (err) {
+            if (err.code === 12) {
+              throw createIndexSizeError();
+            }
+
+            throw err;
+          }
+        };
+      }(audioBuffer.getChannelData);
+    };
+
+    function ownKeys$v(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$v(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$v(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$v(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var DEFAULT_OPTIONS$j = {
+      numberOfChannels: 1
+    };
+    var createAudioBufferConstructor = function createAudioBufferConstructor(audioBufferStore, cacheTestResult, createNotSupportedError, nativeAudioBufferConstructor, nativeOfflineAudioContextConstructor, testNativeAudioBufferConstructorSupport, wrapAudioBufferCopyChannelMethods, wrapAudioBufferCopyChannelMethodsOutOfBounds) {
+      var nativeOfflineAudioContext = null;
+      return /*#__PURE__*/function (_Symbol$hasInstance) {
+        function AudioBuffer(options) {
+          _classCallCheck__default["default"](this, AudioBuffer);
+
+          if (nativeOfflineAudioContextConstructor === null) {
+            throw new Error('Missing the native OfflineAudioContext constructor.');
+          }
+
+          var _DEFAULT_OPTIONS$opti = _objectSpread$v(_objectSpread$v({}, DEFAULT_OPTIONS$j), options),
+              length = _DEFAULT_OPTIONS$opti.length,
+              numberOfChannels = _DEFAULT_OPTIONS$opti.numberOfChannels,
+              sampleRate = _DEFAULT_OPTIONS$opti.sampleRate;
+
+          if (nativeOfflineAudioContext === null) {
+            nativeOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+          }
+          /*
+           * Bug #99: Firefox does not throw a NotSupportedError when the numberOfChannels is zero. But it only does it when using the
+           * factory function. But since Firefox also supports the constructor everything should be fine.
+           */
+
+
+          var audioBuffer = nativeAudioBufferConstructor !== null && cacheTestResult(testNativeAudioBufferConstructorSupport, testNativeAudioBufferConstructorSupport) ? new nativeAudioBufferConstructor({
+            length: length,
+            numberOfChannels: numberOfChannels,
+            sampleRate: sampleRate
+          }) : nativeOfflineAudioContext.createBuffer(numberOfChannels, length, sampleRate); // Bug #99: Safari does not throw an error when the numberOfChannels is zero.
+
+          if (audioBuffer.numberOfChannels === 0) {
+            throw createNotSupportedError();
+          } // Bug #5: Safari does not support copyFromChannel() and copyToChannel().
+          // Bug #100: Safari does throw a wrong error when calling getChannelData() with an out-of-bounds value.
+
+
+          if (typeof audioBuffer.copyFromChannel !== 'function') {
+            wrapAudioBufferCopyChannelMethods(audioBuffer);
+            wrapAudioBufferGetChannelDataMethod(audioBuffer); // Bug #157: Firefox does not allow the bufferOffset to be out-of-bounds.
+          } else if (!cacheTestResult(testAudioBufferCopyChannelMethodsOutOfBoundsSupport, function () {
+            return testAudioBufferCopyChannelMethodsOutOfBoundsSupport(audioBuffer);
+          })) {
+            wrapAudioBufferCopyChannelMethodsOutOfBounds(audioBuffer);
+          }
+
+          audioBufferStore.add(audioBuffer);
+          /*
+           * This does violate all good pratices but it is necessary to allow this AudioBuffer to be used with native
+           * (Offline)AudioContexts.
+           */
+
+          return audioBuffer;
+        }
+
+        _createClass__default["default"](AudioBuffer, null, [{
+          key: _Symbol$hasInstance,
+          value: function value(instance) {
+            return instance !== null && _typeof__default["default"](instance) === 'object' && Object.getPrototypeOf(instance) === AudioBuffer.prototype || audioBufferStore.has(instance);
+          }
+        }]);
+
+        return AudioBuffer;
+      }(Symbol.hasInstance);
+    };
+
+    var MOST_NEGATIVE_SINGLE_FLOAT = -3.4028234663852886e38;
+    var MOST_POSITIVE_SINGLE_FLOAT = -MOST_NEGATIVE_SINGLE_FLOAT;
+
+    var isActiveAudioNode = function isActiveAudioNode(audioNode) {
+      return ACTIVE_AUDIO_NODE_STORE.has(audioNode);
+    };
+
+    function ownKeys$u(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$u(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$u(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$u(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$i = {
+      buffer: null,
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      // Bug #149: Safari does not yet support the detune AudioParam.
+      loop: false,
+      loopEnd: 0,
+      loopStart: 0,
+      playbackRate: 1
+    };
+    var createAudioBufferSourceNodeConstructor = function createAudioBufferSourceNodeConstructor(audioNodeConstructor, createAudioBufferSourceNodeRenderer, createAudioParam, createInvalidStateError, createNativeAudioBufferSourceNode, getNativeContext, isNativeOfflineAudioContext, wrapEventListener) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](AudioBufferSourceNode, _audioNodeConstructor);
+
+        var _super = _createSuper$q(AudioBufferSourceNode);
+
+        function AudioBufferSourceNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, AudioBufferSourceNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$u(_objectSpread$u({}, DEFAULT_OPTIONS$i), options);
+
+          var nativeAudioBufferSourceNode = createNativeAudioBufferSourceNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var audioBufferSourceNodeRenderer = isOffline ? createAudioBufferSourceNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeAudioBufferSourceNode, audioBufferSourceNodeRenderer);
+          _this._audioBufferSourceNodeRenderer = audioBufferSourceNodeRenderer;
+          _this._isBufferNullified = false;
+          _this._isBufferSet = mergedOptions.buffer !== null;
+          _this._nativeAudioBufferSourceNode = nativeAudioBufferSourceNode;
+          _this._onended = null; // Bug #73: Safari does not export the correct values for maxValue and minValue.
+
+          _this._playbackRate = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeAudioBufferSourceNode.playbackRate, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          return _this;
+        }
+
+        _createClass__default["default"](AudioBufferSourceNode, [{
+          key: "buffer",
+          get: function get() {
+            if (this._isBufferNullified) {
+              return null;
+            }
+
+            return this._nativeAudioBufferSourceNode.buffer;
+          },
+          set: function set(value) {
+            this._nativeAudioBufferSourceNode.buffer = value; // Bug #72: Only Chrome, Edge & Opera do not allow to reassign the buffer yet.
+
+            if (value !== null) {
+              if (this._isBufferSet) {
+                throw createInvalidStateError();
+              }
+
+              this._isBufferSet = true;
+            }
+          }
+        }, {
+          key: "loop",
+          get: function get() {
+            return this._nativeAudioBufferSourceNode.loop;
+          },
+          set: function set(value) {
+            this._nativeAudioBufferSourceNode.loop = value;
+          }
+        }, {
+          key: "loopEnd",
+          get: function get() {
+            return this._nativeAudioBufferSourceNode.loopEnd;
+          },
+          set: function set(value) {
+            this._nativeAudioBufferSourceNode.loopEnd = value;
+          }
+        }, {
+          key: "loopStart",
+          get: function get() {
+            return this._nativeAudioBufferSourceNode.loopStart;
+          },
+          set: function set(value) {
+            this._nativeAudioBufferSourceNode.loopStart = value;
+          }
+        }, {
+          key: "onended",
+          get: function get() {
+            return this._onended;
+          },
+          set: function set(value) {
+            var wrappedListener = typeof value === 'function' ? wrapEventListener(this, value) : null;
+            this._nativeAudioBufferSourceNode.onended = wrappedListener;
+            var nativeOnEnded = this._nativeAudioBufferSourceNode.onended;
+            this._onended = nativeOnEnded !== null && nativeOnEnded === wrappedListener ? value : nativeOnEnded;
+          }
+        }, {
+          key: "playbackRate",
+          get: function get() {
+            return this._playbackRate;
+          }
+        }, {
+          key: "start",
+          value: function start() {
+            var _this2 = this;
+
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var duration = arguments.length > 2 ? arguments[2] : undefined;
+
+            this._nativeAudioBufferSourceNode.start(when, offset, duration);
+
+            if (this._audioBufferSourceNodeRenderer !== null) {
+              this._audioBufferSourceNodeRenderer.start = duration === undefined ? [when, offset] : [when, offset, duration];
+            }
+
+            if (this.context.state !== 'closed') {
+              setInternalStateToActive(this);
+
+              var resetInternalStateToPassive = function resetInternalStateToPassive() {
+                _this2._nativeAudioBufferSourceNode.removeEventListener('ended', resetInternalStateToPassive);
+
+                if (isActiveAudioNode(_this2)) {
+                  setInternalStateToPassive(_this2);
+                }
+              };
+
+              this._nativeAudioBufferSourceNode.addEventListener('ended', resetInternalStateToPassive);
+            }
+          }
+        }, {
+          key: "stop",
+          value: function stop() {
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            this._nativeAudioBufferSourceNode.stop(when);
+
+            if (this._audioBufferSourceNodeRenderer !== null) {
+              this._audioBufferSourceNodeRenderer.stop = when;
+            }
+          }
+        }]);
+
+        return AudioBufferSourceNode;
+      }(audioNodeConstructor);
+    };
+
+    var createAudioBufferSourceNodeRendererFactory = function createAudioBufferSourceNodeRendererFactory(connectAudioParam, createNativeAudioBufferSourceNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeAudioBufferSourceNodes = new WeakMap();
+        var start = null;
+        var stop = null;
+
+        var createAudioBufferSourceNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeAudioBufferSourceNode, nativeAudioBufferSourceNodeIsOwnedByContext, options, _nativeAudioBufferSou;
+
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeAudioBufferSourceNode = getNativeAudioNode(proxy);
+                    /*
+                     * If the initially used nativeAudioBufferSourceNode was not constructed on the same OfflineAudioContext it needs to be created
+                     * again.
+                     */
+
+                    nativeAudioBufferSourceNodeIsOwnedByContext = isOwnedByContext(nativeAudioBufferSourceNode, nativeOfflineAudioContext);
+
+                    if (!nativeAudioBufferSourceNodeIsOwnedByContext) {
+                      options = {
+                        buffer: nativeAudioBufferSourceNode.buffer,
+                        channelCount: nativeAudioBufferSourceNode.channelCount,
+                        channelCountMode: nativeAudioBufferSourceNode.channelCountMode,
+                        channelInterpretation: nativeAudioBufferSourceNode.channelInterpretation,
+                        // Bug #149: Safari does not yet support the detune AudioParam.
+                        loop: nativeAudioBufferSourceNode.loop,
+                        loopEnd: nativeAudioBufferSourceNode.loopEnd,
+                        loopStart: nativeAudioBufferSourceNode.loopStart,
+                        playbackRate: nativeAudioBufferSourceNode.playbackRate.value
+                      };
+                      nativeAudioBufferSourceNode = createNativeAudioBufferSourceNode(nativeOfflineAudioContext, options);
+
+                      if (start !== null) {
+                        (_nativeAudioBufferSou = nativeAudioBufferSourceNode).start.apply(_nativeAudioBufferSou, _toConsumableArray__default["default"](start));
+                      }
+
+                      if (stop !== null) {
+                        nativeAudioBufferSourceNode.stop(stop);
+                      }
+                    }
+
+                    renderedNativeAudioBufferSourceNodes.set(nativeOfflineAudioContext, nativeAudioBufferSourceNode);
+
+                    if (nativeAudioBufferSourceNodeIsOwnedByContext) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.playbackRate, nativeAudioBufferSourceNode.playbackRate);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.playbackRate, nativeAudioBufferSourceNode.playbackRate);
+
+                  case 11:
+                    _context.next = 13;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeAudioBufferSourceNode);
+
+                  case 13:
+                    return _context.abrupt("return", nativeAudioBufferSourceNode);
+
+                  case 14:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createAudioBufferSourceNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          set start(value) {
+            start = value;
+          },
+
+          set stop(value) {
+            stop = value;
+          },
+
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeAudioBufferSourceNode = renderedNativeAudioBufferSourceNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeAudioBufferSourceNode !== undefined) {
+              return Promise.resolve(renderedNativeAudioBufferSourceNode);
+            }
+
+            return createAudioBufferSourceNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var isAudioBufferSourceNode = function isAudioBufferSourceNode(audioNode) {
+      return 'playbackRate' in audioNode;
+    };
+
+    var isBiquadFilterNode = function isBiquadFilterNode(audioNode) {
+      return 'frequency' in audioNode && 'gain' in audioNode;
+    };
+
+    var isConstantSourceNode = function isConstantSourceNode(audioNode) {
+      return 'offset' in audioNode;
+    };
+
+    var isGainNode = function isGainNode(audioNode) {
+      return !('frequency' in audioNode) && 'gain' in audioNode;
+    };
+
+    var isOscillatorNode = function isOscillatorNode(audioNode) {
+      return 'detune' in audioNode && 'frequency' in audioNode;
+    };
+
+    var isStereoPannerNode = function isStereoPannerNode(audioNode) {
+      return 'pan' in audioNode;
+    };
+
+    var getAudioNodeConnections = function getAudioNodeConnections(audioNode) {
+      return getValueForKey(AUDIO_NODE_CONNECTIONS_STORE, audioNode);
+    };
+
+    var getAudioParamConnections = function getAudioParamConnections(audioParam) {
+      return getValueForKey(AUDIO_PARAM_CONNECTIONS_STORE, audioParam);
+    };
+
+    function _createForOfIteratorHelper$b(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$b(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$b(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$b(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$b(o, minLen); }
+
+    function _arrayLikeToArray$b(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+    var deactivateActiveAudioNodeInputConnections = function deactivateActiveAudioNodeInputConnections(audioNode, trace) {
+      var _getAudioNodeConnecti = getAudioNodeConnections(audioNode),
+          activeInputs = _getAudioNodeConnecti.activeInputs;
+
+      activeInputs.forEach(function (connections) {
+        return connections.forEach(function (_ref) {
+          var _ref2 = _slicedToArray__default["default"](_ref, 1),
+              source = _ref2[0];
+
+          if (!trace.includes(audioNode)) {
+            deactivateActiveAudioNodeInputConnections(source, [].concat(_toConsumableArray__default["default"](trace), [audioNode]));
+          }
+        });
+      });
+      var audioParams = isAudioBufferSourceNode(audioNode) ? [// Bug #149: Safari does not yet support the detune AudioParam.
+      audioNode.playbackRate] : isAudioWorkletNode(audioNode) ? Array.from(audioNode.parameters.values()) : isBiquadFilterNode(audioNode) ? [audioNode.Q, audioNode.detune, audioNode.frequency, audioNode.gain] : isConstantSourceNode(audioNode) ? [audioNode.offset] : isGainNode(audioNode) ? [audioNode.gain] : isOscillatorNode(audioNode) ? [audioNode.detune, audioNode.frequency] : isStereoPannerNode(audioNode) ? [audioNode.pan] : [];
+
+      var _iterator = _createForOfIteratorHelper$b(audioParams),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var audioParam = _step.value;
+          var audioParamConnections = getAudioParamConnections(audioParam);
+
+          if (audioParamConnections !== undefined) {
+            audioParamConnections.activeInputs.forEach(function (_ref3) {
+              var _ref4 = _slicedToArray__default["default"](_ref3, 1),
+                  source = _ref4[0];
+
+              return deactivateActiveAudioNodeInputConnections(source, trace);
+            });
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      if (isActiveAudioNode(audioNode)) {
+        setInternalStateToPassive(audioNode);
+      }
+    };
+
+    var deactivateAudioGraph = function deactivateAudioGraph(context) {
+      deactivateActiveAudioNodeInputConnections(context.destination, []);
+    };
+
+    var isValidLatencyHint = function isValidLatencyHint(latencyHint) {
+      return latencyHint === undefined || typeof latencyHint === 'number' || typeof latencyHint === 'string' && (latencyHint === 'balanced' || latencyHint === 'interactive' || latencyHint === 'playback');
+    };
+
+    function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$p(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$p() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var createAudioContextConstructor = function createAudioContextConstructor(baseAudioContextConstructor, createInvalidStateError, createNotSupportedError, createUnknownError, mediaElementAudioSourceNodeConstructor, mediaStreamAudioDestinationNodeConstructor, mediaStreamAudioSourceNodeConstructor, mediaStreamTrackAudioSourceNodeConstructor, nativeAudioContextConstructor) {
+      return /*#__PURE__*/function (_baseAudioContextCons) {
+        _inherits__default["default"](AudioContext, _baseAudioContextCons);
+
+        var _super = _createSuper$p(AudioContext);
+
+        function AudioContext() {
+          var _this;
+
+          var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+          _classCallCheck__default["default"](this, AudioContext);
+
+          if (nativeAudioContextConstructor === null) {
+            throw new Error('Missing the native AudioContext constructor.');
+          }
+
+          var nativeAudioContext;
+
+          try {
+            nativeAudioContext = new nativeAudioContextConstructor(options);
+          } catch (err) {
+            // Bug #192 Safari does throw a SyntaxError if the sampleRate is not supported.
+            if (err.code === 12 && err.message === 'sampleRate is not in range') {
+              throw createNotSupportedError();
+            }
+
+            throw err;
+          } // Bug #131 Safari returns null when there are four other AudioContexts running already.
+
+
+          if (nativeAudioContext === null) {
+            throw createUnknownError();
+          } // Bug #51 Only Chrome, Edge and Opera throw an error if the given latencyHint is invalid.
+
+
+          if (!isValidLatencyHint(options.latencyHint)) {
+            throw new TypeError("The provided value '".concat(options.latencyHint, "' is not a valid enum value of type AudioContextLatencyCategory."));
+          } // Bug #150 Safari does not support setting the sampleRate.
+
+
+          if (options.sampleRate !== undefined && nativeAudioContext.sampleRate !== options.sampleRate) {
+            throw createNotSupportedError();
+          }
+
+          _this = _super.call(this, nativeAudioContext, 2);
+          var latencyHint = options.latencyHint;
+          var _nativeAudioContext = nativeAudioContext,
+              sampleRate = _nativeAudioContext.sampleRate; // @todo The values for 'balanced', 'interactive' and 'playback' are just copied from Chrome's implementation.
+
+          _this._baseLatency = typeof nativeAudioContext.baseLatency === 'number' ? nativeAudioContext.baseLatency : latencyHint === 'balanced' ? 512 / sampleRate : latencyHint === 'interactive' || latencyHint === undefined ? 256 / sampleRate : latencyHint === 'playback' ? 1024 / sampleRate :
+          /*
+           * @todo The min (256) and max (16384) values are taken from the allowed bufferSize values of a
+           * ScriptProcessorNode.
+           */
+          Math.max(2, Math.min(128, Math.round(latencyHint * sampleRate / 128))) * 128 / sampleRate;
+          _this._nativeAudioContext = nativeAudioContext; // Bug #188: Safari will set the context's state to 'interrupted' in case the user switches tabs.
+
+          if (nativeAudioContextConstructor.name === 'webkitAudioContext') {
+            _this._nativeGainNode = nativeAudioContext.createGain();
+            _this._nativeOscillatorNode = nativeAudioContext.createOscillator();
+            _this._nativeGainNode.gain.value = 1e-37;
+
+            _this._nativeOscillatorNode.connect(_this._nativeGainNode).connect(nativeAudioContext.destination);
+
+            _this._nativeOscillatorNode.start();
+          } else {
+            _this._nativeGainNode = null;
+            _this._nativeOscillatorNode = null;
+          }
+
+          _this._state = null;
+          /*
+           * Bug #34: Chrome, Edge and Opera pretend to be running right away, but fire an onstatechange event when the state actually
+           * changes to 'running'.
+           */
+
+          if (nativeAudioContext.state === 'running') {
+            _this._state = 'suspended';
+
+            var revokeState = function revokeState() {
+              if (_this._state === 'suspended') {
+                _this._state = null;
+              }
+
+              nativeAudioContext.removeEventListener('statechange', revokeState);
+            };
+
+            nativeAudioContext.addEventListener('statechange', revokeState);
+          }
+
+          return _this;
+        }
+
+        _createClass__default["default"](AudioContext, [{
+          key: "baseLatency",
+          get: function get() {
+            return this._baseLatency;
+          }
+        }, {
+          key: "state",
+          get: function get() {
+            return this._state !== null ? this._state : this._nativeAudioContext.state;
+          }
+        }, {
+          key: "close",
+          value: function close() {
+            var _this2 = this;
+
+            // Bug #35: Firefox does not throw an error if the AudioContext was closed before.
+            if (this.state === 'closed') {
+              return this._nativeAudioContext.close().then(function () {
+                throw createInvalidStateError();
+              });
+            } // Bug #34: If the state was set to suspended before it should be revoked now.
+
+
+            if (this._state === 'suspended') {
+              this._state = null;
+            }
+
+            return this._nativeAudioContext.close().then(function () {
+              if (_this2._nativeGainNode !== null && _this2._nativeOscillatorNode !== null) {
+                _this2._nativeOscillatorNode.stop();
+
+                _this2._nativeGainNode.disconnect();
+
+                _this2._nativeOscillatorNode.disconnect();
+              }
+
+              deactivateAudioGraph(_this2);
+            });
+          }
+        }, {
+          key: "createMediaElementSource",
+          value: function createMediaElementSource(mediaElement) {
+            return new mediaElementAudioSourceNodeConstructor(this, {
+              mediaElement: mediaElement
+            });
+          }
+        }, {
+          key: "createMediaStreamDestination",
+          value: function createMediaStreamDestination() {
+            return new mediaStreamAudioDestinationNodeConstructor(this);
+          }
+        }, {
+          key: "createMediaStreamSource",
+          value: function createMediaStreamSource(mediaStream) {
+            return new mediaStreamAudioSourceNodeConstructor(this, {
+              mediaStream: mediaStream
+            });
+          }
+        }, {
+          key: "createMediaStreamTrackSource",
+          value: function createMediaStreamTrackSource(mediaStreamTrack) {
+            return new mediaStreamTrackAudioSourceNodeConstructor(this, {
+              mediaStreamTrack: mediaStreamTrack
+            });
+          }
+        }, {
+          key: "resume",
+          value: function resume() {
+            var _this3 = this;
+
+            if (this._state === 'suspended') {
+              return new Promise(function (resolve, reject) {
+                var resolvePromise = function resolvePromise() {
+                  _this3._nativeAudioContext.removeEventListener('statechange', resolvePromise);
+
+                  if (_this3._nativeAudioContext.state === 'running') {
+                    resolve();
+                  } else {
+                    _this3.resume().then(resolve, reject);
+                  }
+                };
+
+                _this3._nativeAudioContext.addEventListener('statechange', resolvePromise);
+              });
+            }
+
+            return this._nativeAudioContext.resume()["catch"](function (err) {
+              // Bug #55: Chrome, Edge and Opera do throw an InvalidAccessError instead of an InvalidStateError.
+              // Bug #56: Safari invokes the catch handler but without an error.
+              if (err === undefined || err.code === 15) {
+                throw createInvalidStateError();
+              }
+
+              throw err;
+            });
+          }
+        }, {
+          key: "suspend",
+          value: function suspend() {
+            return this._nativeAudioContext.suspend()["catch"](function (err) {
+              // Bug #56: Safari invokes the catch handler but without an error.
+              if (err === undefined) {
+                throw createInvalidStateError();
+              }
+
+              throw err;
+            });
+          }
+        }]);
+
+        return AudioContext;
+      }(baseAudioContextConstructor);
+    };
+
+    function _createSuper$o(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$o(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$o() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var createAudioDestinationNodeConstructor = function createAudioDestinationNodeConstructor(audioNodeConstructor, createAudioDestinationNodeRenderer, createIndexSizeError, createInvalidStateError, createNativeAudioDestinationNode, getNativeContext, isNativeOfflineAudioContext, renderInputsOfAudioNode) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](AudioDestinationNode, _audioNodeConstructor);
+
+        var _super = _createSuper$o(AudioDestinationNode);
+
+        function AudioDestinationNode(context, channelCount) {
+          var _this;
+
+          _classCallCheck__default["default"](this, AudioDestinationNode);
+
+          var nativeContext = getNativeContext(context);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var nativeAudioDestinationNode = createNativeAudioDestinationNode(nativeContext, channelCount, isOffline);
+          var audioDestinationNodeRenderer = isOffline ? createAudioDestinationNodeRenderer(renderInputsOfAudioNode) : null;
+          _this = _super.call(this, context, false, nativeAudioDestinationNode, audioDestinationNodeRenderer);
+          _this._isNodeOfNativeOfflineAudioContext = isOffline;
+          _this._nativeAudioDestinationNode = nativeAudioDestinationNode;
+          return _this;
+        }
+
+        _createClass__default["default"](AudioDestinationNode, [{
+          key: "channelCount",
+          get: function get() {
+            return this._nativeAudioDestinationNode.channelCount;
+          },
+          set: function set(value) {
+            // Bug #52: Chrome, Edge, Opera & Safari do not throw an exception at all.
+            // Bug #54: Firefox does throw an IndexSizeError.
+            if (this._isNodeOfNativeOfflineAudioContext) {
+              throw createInvalidStateError();
+            } // Bug #47: The AudioDestinationNode in Safari does not initialize the maxChannelCount property correctly.
+
+
+            if (value > this._nativeAudioDestinationNode.maxChannelCount) {
+              throw createIndexSizeError();
+            }
+
+            this._nativeAudioDestinationNode.channelCount = value;
+          }
+        }, {
+          key: "channelCountMode",
+          get: function get() {
+            return this._nativeAudioDestinationNode.channelCountMode;
+          },
+          set: function set(value) {
+            // Bug #53: No browser does throw an exception yet.
+            if (this._isNodeOfNativeOfflineAudioContext) {
+              throw createInvalidStateError();
+            }
+
+            this._nativeAudioDestinationNode.channelCountMode = value;
+          }
+        }, {
+          key: "maxChannelCount",
+          get: function get() {
+            return this._nativeAudioDestinationNode.maxChannelCount;
+          }
+        }]);
+
+        return AudioDestinationNode;
+      }(audioNodeConstructor);
+    };
+
+    var createAudioDestinationNodeRenderer = function createAudioDestinationNodeRenderer(renderInputsOfAudioNode) {
+      var renderedNativeAudioDestinationNodes = new WeakMap();
+
+      var createAudioDestinationNode = /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+          var nativeAudioDestinationNode;
+          return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  nativeAudioDestinationNode = nativeOfflineAudioContext.destination;
+                  renderedNativeAudioDestinationNodes.set(nativeOfflineAudioContext, nativeAudioDestinationNode);
+                  _context.next = 4;
+                  return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeAudioDestinationNode);
+
+                case 4:
+                  return _context.abrupt("return", nativeAudioDestinationNode);
+
+                case 5:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+
+        return function createAudioDestinationNode(_x, _x2) {
+          return _ref.apply(this, arguments);
+        };
+      }();
+
+      return {
+        render: function render(proxy, nativeOfflineAudioContext) {
+          var renderedNativeAudioDestinationNode = renderedNativeAudioDestinationNodes.get(nativeOfflineAudioContext);
+
+          if (renderedNativeAudioDestinationNode !== undefined) {
+            return Promise.resolve(renderedNativeAudioDestinationNode);
+          }
+
+          return createAudioDestinationNode(proxy, nativeOfflineAudioContext);
+        }
+      };
+    };
+
+    var createAudioListenerFactory = function createAudioListenerFactory(createAudioParam, createNativeChannelMergerNode, createNativeConstantSourceNode, createNativeScriptProcessorNode, createNotSupportedError, getFirstSample, isNativeOfflineAudioContext, overwriteAccessors) {
+      return function (context, nativeContext) {
+        var nativeListener = nativeContext.listener; // Bug #117: Only Chrome, Edge & Opera support the new interface already.
+
+        var createFakeAudioParams = function createFakeAudioParams() {
+          var buffer = new Float32Array(1);
+          var channelMergerNode = createNativeChannelMergerNode(nativeContext, {
+            channelCount: 1,
+            channelCountMode: 'explicit',
+            channelInterpretation: 'speakers',
+            numberOfInputs: 9
+          });
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var isScriptProcessorNodeCreated = false;
+          var lastOrientation = [0, 0, -1, 0, 1, 0];
+          var lastPosition = [0, 0, 0];
+
+          var createScriptProcessorNode = function createScriptProcessorNode() {
+            if (isScriptProcessorNodeCreated) {
+              return;
+            }
+
+            isScriptProcessorNodeCreated = true;
+            var scriptProcessorNode = createNativeScriptProcessorNode(nativeContext, 256, 9, 0); // tslint:disable-next-line:deprecation
+
+            scriptProcessorNode.onaudioprocess = function (_ref) {
+              var inputBuffer = _ref.inputBuffer;
+              var orientation = [getFirstSample(inputBuffer, buffer, 0), getFirstSample(inputBuffer, buffer, 1), getFirstSample(inputBuffer, buffer, 2), getFirstSample(inputBuffer, buffer, 3), getFirstSample(inputBuffer, buffer, 4), getFirstSample(inputBuffer, buffer, 5)];
+
+              if (orientation.some(function (value, index) {
+                return value !== lastOrientation[index];
+              })) {
+                nativeListener.setOrientation.apply(nativeListener, orientation); // tslint:disable-line:deprecation
+
+                lastOrientation = orientation;
+              }
+
+              var positon = [getFirstSample(inputBuffer, buffer, 6), getFirstSample(inputBuffer, buffer, 7), getFirstSample(inputBuffer, buffer, 8)];
+
+              if (positon.some(function (value, index) {
+                return value !== lastPosition[index];
+              })) {
+                nativeListener.setPosition.apply(nativeListener, positon); // tslint:disable-line:deprecation
+
+                lastPosition = positon;
+              }
+            };
+
+            channelMergerNode.connect(scriptProcessorNode);
+          };
+
+          var createSetOrientation = function createSetOrientation(index) {
+            return function (value) {
+              if (value !== lastOrientation[index]) {
+                lastOrientation[index] = value;
+                nativeListener.setOrientation.apply(nativeListener, _toConsumableArray__default["default"](lastOrientation)); // tslint:disable-line:deprecation
+              }
+            };
+          };
+
+          var createSetPosition = function createSetPosition(index) {
+            return function (value) {
+              if (value !== lastPosition[index]) {
+                lastPosition[index] = value;
+                nativeListener.setPosition.apply(nativeListener, _toConsumableArray__default["default"](lastPosition)); // tslint:disable-line:deprecation
+              }
+            };
+          };
+
+          var createFakeAudioParam = function createFakeAudioParam(input, initialValue, setValue) {
+            var constantSourceNode = createNativeConstantSourceNode(nativeContext, {
+              channelCount: 1,
+              channelCountMode: 'explicit',
+              channelInterpretation: 'discrete',
+              offset: initialValue
+            });
+            constantSourceNode.connect(channelMergerNode, 0, input); // @todo This should be stopped when the context is closed.
+
+            constantSourceNode.start();
+            Object.defineProperty(constantSourceNode.offset, 'defaultValue', {
+              get: function get() {
+                return initialValue;
+              }
+            });
+            /*
+             * Bug #62 & #74: Safari does not support ConstantSourceNodes and does not export the correct values for maxValue and
+             * minValue for GainNodes.
+             */
+
+            var audioParam = createAudioParam({
+              context: context
+            }, isOffline, constantSourceNode.offset, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+            overwriteAccessors(audioParam, 'value', function (get) {
+              return function () {
+                return get.call(audioParam);
+              };
+            }, function (set) {
+              return function (value) {
+                try {
+                  set.call(audioParam, value);
+                } catch (err) {
+                  if (err.code !== 9) {
+                    throw err;
+                  }
+                }
+
+                createScriptProcessorNode();
+
+                if (isOffline) {
+                  // Bug #117: Using setOrientation() and setPosition() doesn't work with an OfflineAudioContext.
+                  setValue(value);
+                }
+              };
+            });
+
+            audioParam.cancelAndHoldAtTime = function (cancelAndHoldAtTime) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+                  args[_key] = arguments[_key];
+                }
+
+                var value = cancelAndHoldAtTime.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.cancelAndHoldAtTime);
+
+            audioParam.cancelScheduledValues = function (cancelScheduledValues) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                  args[_key2] = arguments[_key2];
+                }
+
+                var value = cancelScheduledValues.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.cancelScheduledValues);
+
+            audioParam.exponentialRampToValueAtTime = function (exponentialRampToValueAtTime) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+                  args[_key3] = arguments[_key3];
+                }
+
+                var value = exponentialRampToValueAtTime.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.exponentialRampToValueAtTime);
+
+            audioParam.linearRampToValueAtTime = function (linearRampToValueAtTime) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+                  args[_key4] = arguments[_key4];
+                }
+
+                var value = linearRampToValueAtTime.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.linearRampToValueAtTime);
+
+            audioParam.setTargetAtTime = function (setTargetAtTime) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+                  args[_key5] = arguments[_key5];
+                }
+
+                var value = setTargetAtTime.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.setTargetAtTime);
+
+            audioParam.setValueAtTime = function (setValueAtTime) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+                  args[_key6] = arguments[_key6];
+                }
+
+                var value = setValueAtTime.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.setValueAtTime);
+
+            audioParam.setValueCurveAtTime = function (setValueCurveAtTime) {
+              if (isOffline) {
+                return function () {
+                  throw createNotSupportedError();
+                };
+              }
+
+              return function () {
+                for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+                  args[_key7] = arguments[_key7];
+                }
+
+                var value = setValueCurveAtTime.apply(audioParam, args);
+                createScriptProcessorNode();
+                return value;
+              };
+            }(audioParam.setValueCurveAtTime);
+
+            return audioParam;
+          };
+
+          return {
+            forwardX: createFakeAudioParam(0, 0, createSetOrientation(0)),
+            forwardY: createFakeAudioParam(1, 0, createSetOrientation(1)),
+            forwardZ: createFakeAudioParam(2, -1, createSetOrientation(2)),
+            positionX: createFakeAudioParam(6, 0, createSetPosition(0)),
+            positionY: createFakeAudioParam(7, 0, createSetPosition(1)),
+            positionZ: createFakeAudioParam(8, 0, createSetPosition(2)),
+            upX: createFakeAudioParam(3, 0, createSetOrientation(3)),
+            upY: createFakeAudioParam(4, 1, createSetOrientation(4)),
+            upZ: createFakeAudioParam(5, 0, createSetOrientation(5))
+          };
+        };
+
+        var _ref2 = nativeListener.forwardX === undefined ? createFakeAudioParams() : nativeListener,
+            forwardX = _ref2.forwardX,
+            forwardY = _ref2.forwardY,
+            forwardZ = _ref2.forwardZ,
+            positionX = _ref2.positionX,
+            positionY = _ref2.positionY,
+            positionZ = _ref2.positionZ,
+            upX = _ref2.upX,
+            upY = _ref2.upY,
+            upZ = _ref2.upZ;
+
+        return {
+          get forwardX() {
+            return forwardX;
+          },
+
+          get forwardY() {
+            return forwardY;
+          },
+
+          get forwardZ() {
+            return forwardZ;
+          },
+
+          get positionX() {
+            return positionX;
+          },
+
+          get positionY() {
+            return positionY;
+          },
+
+          get positionZ() {
+            return positionZ;
+          },
+
+          get upX() {
+            return upX;
+          },
+
+          get upY() {
+            return upY;
+          },
+
+          get upZ() {
+            return upZ;
+          }
+
+        };
+      };
+    };
+
+    var isAudioNode = function isAudioNode(audioNodeOrAudioParam) {
+      return 'context' in audioNodeOrAudioParam;
+    };
+
+    var isAudioNodeOutputConnection = function isAudioNodeOutputConnection(outputConnection) {
+      return isAudioNode(outputConnection[0]);
+    };
+
+    function _createForOfIteratorHelper$a(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$a(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$a(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$a(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$a(o, minLen); }
+
+    function _arrayLikeToArray$a(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var insertElementInSet = function insertElementInSet(set, element, predicate, ignoreDuplicates) {
+      var _iterator = _createForOfIteratorHelper$a(set),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var lmnt = _step.value;
+
+          if (predicate(lmnt)) {
+            if (ignoreDuplicates) {
+              return false;
+            }
+
+            throw Error('The set contains at least one similar element.');
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      set.add(element);
+      return true;
+    };
+
+    var addActiveInputConnectionToAudioParam = function addActiveInputConnectionToAudioParam(activeInputs, source, _ref, ignoreDuplicates) {
+      var _ref2 = _slicedToArray__default["default"](_ref, 2),
+          output = _ref2[0],
+          eventListener = _ref2[1];
+
+      insertElementInSet(activeInputs, [source, output, eventListener], function (activeInputConnection) {
+        return activeInputConnection[0] === source && activeInputConnection[1] === output;
+      }, ignoreDuplicates);
+    };
+
+    var addPassiveInputConnectionToAudioParam = function addPassiveInputConnectionToAudioParam(passiveInputs, _ref, ignoreDuplicates) {
+      var _ref2 = _slicedToArray__default["default"](_ref, 3),
+          source = _ref2[0],
+          output = _ref2[1],
+          eventListener = _ref2[2];
+
+      var passiveInputConnections = passiveInputs.get(source);
+
+      if (passiveInputConnections === undefined) {
+        passiveInputs.set(source, new Set([[output, eventListener]]));
+      } else {
+        insertElementInSet(passiveInputConnections, [output, eventListener], function (passiveInputConnection) {
+          return passiveInputConnection[0] === output;
+        }, ignoreDuplicates);
+      }
+    };
+
+    var isNativeAudioNodeFaker = function isNativeAudioNodeFaker(nativeAudioNodeOrNativeAudioNodeFaker) {
+      return 'inputs' in nativeAudioNodeOrNativeAudioNodeFaker;
+    };
+
+    var connectNativeAudioNodeToNativeAudioNode = function connectNativeAudioNodeToNativeAudioNode(nativeSourceAudioNode, nativeDestinationAudioNode, output, input) {
+      if (isNativeAudioNodeFaker(nativeDestinationAudioNode)) {
+        var fakeNativeDestinationAudioNode = nativeDestinationAudioNode.inputs[input];
+        nativeSourceAudioNode.connect(fakeNativeDestinationAudioNode, output, 0);
+        return [fakeNativeDestinationAudioNode, output, 0];
+      }
+
+      nativeSourceAudioNode.connect(nativeDestinationAudioNode, output, input);
+      return [nativeDestinationAudioNode, output, input];
+    };
+
+    function _createForOfIteratorHelper$9(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$9(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$9(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$9(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$9(o, minLen); }
+
+    function _arrayLikeToArray$9(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var deleteActiveInputConnection = function deleteActiveInputConnection(activeInputConnections, source, output) {
+      var _iterator = _createForOfIteratorHelper$9(activeInputConnections),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var activeInputConnection = _step.value;
+
+          if (activeInputConnection[0] === source && activeInputConnection[1] === output) {
+            activeInputConnections["delete"](activeInputConnection);
+            return activeInputConnection;
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      return null;
+    };
+
+    var deleteActiveInputConnectionToAudioParam = function deleteActiveInputConnectionToAudioParam(activeInputs, source, output) {
+      return pickElementFromSet(activeInputs, function (activeInputConnection) {
+        return activeInputConnection[0] === source && activeInputConnection[1] === output;
+      });
+    };
+
+    var deleteEventListenerOfAudioNode = function deleteEventListenerOfAudioNode(audioNode, eventListener) {
+      var eventListeners = getEventListenersOfAudioNode(audioNode);
+
+      if (!eventListeners["delete"](eventListener)) {
+        throw new Error('Missing the expected event listener.');
+      }
+    };
+
+    var deletePassiveInputConnectionToAudioParam = function deletePassiveInputConnectionToAudioParam(passiveInputs, source, output) {
+      var passiveInputConnections = getValueForKey(passiveInputs, source);
+      var matchingConnection = pickElementFromSet(passiveInputConnections, function (passiveInputConnection) {
+        return passiveInputConnection[0] === output;
+      });
+
+      if (passiveInputConnections.size === 0) {
+        passiveInputs["delete"](source);
+      }
+
+      return matchingConnection;
+    };
+
+    var disconnectNativeAudioNodeFromNativeAudioNode = function disconnectNativeAudioNodeFromNativeAudioNode(nativeSourceAudioNode, nativeDestinationAudioNode, output, input) {
+      if (isNativeAudioNodeFaker(nativeDestinationAudioNode)) {
+        nativeSourceAudioNode.disconnect(nativeDestinationAudioNode.inputs[input], output, 0);
+      } else {
+        nativeSourceAudioNode.disconnect(nativeDestinationAudioNode, output, input);
+      }
+    };
+
+    var getNativeAudioNode = function getNativeAudioNode(audioNode) {
+      return getValueForKey(AUDIO_NODE_STORE, audioNode);
+    };
+
+    var getNativeAudioParam = function getNativeAudioParam(audioParam) {
+      return getValueForKey(AUDIO_PARAM_STORE, audioParam);
+    };
+
+    var isPartOfACycle = function isPartOfACycle(audioNode) {
+      return CYCLE_COUNTERS.has(audioNode);
+    };
+
+    var isPassiveAudioNode = function isPassiveAudioNode(audioNode) {
+      return !ACTIVE_AUDIO_NODE_STORE.has(audioNode);
+    };
+
+    var testAudioNodeDisconnectMethodSupport = function testAudioNodeDisconnectMethodSupport(nativeAudioContext, nativeAudioWorkletNodeConstructor) {
+      return new Promise(function (resolve) {
+        /*
+         * This bug existed in Safari up until v14.0.2. Since AudioWorklets were not supported in Safari until v14.1 the presence of the
+         * constructor for an AudioWorkletNode can be used here to skip the test.
+         */
+        if (nativeAudioWorkletNodeConstructor !== null) {
+          resolve(true);
+        } else {
+          var analyzer = nativeAudioContext.createScriptProcessor(256, 1, 1); // tslint:disable-line deprecation
+
+          var dummy = nativeAudioContext.createGain(); // Bug #95: Safari does not play one sample buffers.
+
+          var ones = nativeAudioContext.createBuffer(1, 2, 44100);
+          var channelData = ones.getChannelData(0);
+          channelData[0] = 1;
+          channelData[1] = 1;
+          var source = nativeAudioContext.createBufferSource();
+          source.buffer = ones;
+          source.loop = true;
+          source.connect(analyzer).connect(nativeAudioContext.destination);
+          source.connect(dummy);
+          source.disconnect(dummy); // tslint:disable-next-line:deprecation
+
+          analyzer.onaudioprocess = function (event) {
+            var chnnlDt = event.inputBuffer.getChannelData(0); // tslint:disable-line deprecation
+
+            if (Array.prototype.some.call(chnnlDt, function (sample) {
+              return sample === 1;
+            })) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+
+            source.stop();
+            analyzer.onaudioprocess = null; // tslint:disable-line:deprecation
+
+            source.disconnect(analyzer);
+            analyzer.disconnect(nativeAudioContext.destination);
+          };
+
+          source.start();
+        }
+      });
+    };
+
+    function _createForOfIteratorHelper$8(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$8(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$8(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$8(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$8(o, minLen); }
+
+    function _arrayLikeToArray$8(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var visitEachAudioNodeOnce = function visitEachAudioNodeOnce(cycles, visitor) {
+      var counts = new Map();
+
+      var _iterator = _createForOfIteratorHelper$8(cycles),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var cycle = _step.value;
+
+          var _iterator2 = _createForOfIteratorHelper$8(cycle),
+              _step2;
+
+          try {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var audioNode = _step2.value;
+              var count = counts.get(audioNode);
+              counts.set(audioNode, count === undefined ? 1 : count + 1);
+            }
+          } catch (err) {
+            _iterator2.e(err);
+          } finally {
+            _iterator2.f();
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      counts.forEach(function (count, audioNode) {
+        return visitor(audioNode, count);
+      });
+    };
+
+    var isNativeAudioNode$1 = function isNativeAudioNode(nativeAudioNodeOrAudioParam) {
+      return 'context' in nativeAudioNodeOrAudioParam;
+    };
+
+    function _createForOfIteratorHelper$7(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$7(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$7(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$7(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$7(o, minLen); }
+
+    function _arrayLikeToArray$7(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+    var wrapAudioNodeDisconnectMethod = function wrapAudioNodeDisconnectMethod(nativeAudioNode) {
+      var connections = new Map();
+
+      nativeAudioNode.connect = function (connect) {
+        // tslint:disable-next-line:invalid-void no-inferrable-types
+        return function (destination) {
+          var output = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+          var input = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+          var returnValue = isNativeAudioNode$1(destination) ? connect(destination, output, input) : connect(destination, output); // Save the new connection only if the calls to connect above didn't throw an error.
+
+          var connectionsToDestination = connections.get(destination);
+
+          if (connectionsToDestination === undefined) {
+            connections.set(destination, [{
+              input: input,
+              output: output
+            }]);
+          } else {
+            if (connectionsToDestination.every(function (connection) {
+              return connection.input !== input || connection.output !== output;
+            })) {
+              connectionsToDestination.push({
+                input: input,
+                output: output
+              });
+            }
+          }
+
+          return returnValue;
+        };
+      }(nativeAudioNode.connect.bind(nativeAudioNode));
+
+      nativeAudioNode.disconnect = function (disconnect) {
+        return function (destinationOrOutput, output, input) {
+          disconnect.apply(nativeAudioNode);
+
+          if (destinationOrOutput === undefined) {
+            connections.clear();
+          } else if (typeof destinationOrOutput === 'number') {
+            var _iterator = _createForOfIteratorHelper$7(connections),
+                _step;
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                var _step$value = _slicedToArray__default["default"](_step.value, 2),
+                    destination = _step$value[0],
+                    connectionsToDestination = _step$value[1];
+
+                var filteredConnections = connectionsToDestination.filter(function (connection) {
+                  return connection.output !== destinationOrOutput;
+                });
+
+                if (filteredConnections.length === 0) {
+                  connections["delete"](destination);
+                } else {
+                  connections.set(destination, filteredConnections);
+                }
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+          } else if (connections.has(destinationOrOutput)) {
+            if (output === undefined) {
+              connections["delete"](destinationOrOutput);
+            } else {
+              var _connectionsToDestination = connections.get(destinationOrOutput);
+
+              if (_connectionsToDestination !== undefined) {
+                var _filteredConnections = _connectionsToDestination.filter(function (connection) {
+                  return connection.output !== output && (connection.input !== input || input === undefined);
+                });
+
+                if (_filteredConnections.length === 0) {
+                  connections["delete"](destinationOrOutput);
+                } else {
+                  connections.set(destinationOrOutput, _filteredConnections);
+                }
+              }
+            }
+          }
+
+          var _iterator2 = _createForOfIteratorHelper$7(connections),
+              _step2;
+
+          try {
+            var _loop = function _loop() {
+              var _step2$value = _slicedToArray__default["default"](_step2.value, 2),
+                  destination = _step2$value[0],
+                  connectionsToDestination = _step2$value[1];
+
+              connectionsToDestination.forEach(function (connection) {
+                if (isNativeAudioNode$1(destination)) {
+                  nativeAudioNode.connect(destination, connection.output, connection.input);
+                } else {
+                  nativeAudioNode.connect(destination, connection.output);
+                }
+              });
+            };
+
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              _loop();
+            }
+          } catch (err) {
+            _iterator2.e(err);
+          } finally {
+            _iterator2.f();
+          }
+        };
+      }(nativeAudioNode.disconnect);
+    };
+
+    function _createSuper$n(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$n(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$n() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    function _createForOfIteratorHelper$6(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$6(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$6(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$6(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$6(o, minLen); }
+
+    function _arrayLikeToArray$6(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var addConnectionToAudioParamOfAudioContext = function addConnectionToAudioParamOfAudioContext(source, destination, output, isOffline) {
+      var _getAudioParamConnect = getAudioParamConnections(destination),
+          activeInputs = _getAudioParamConnect.activeInputs,
+          passiveInputs = _getAudioParamConnect.passiveInputs;
+
+      var _getAudioNodeConnecti = getAudioNodeConnections(source),
+          outputs = _getAudioNodeConnecti.outputs;
+
+      var eventListeners = getEventListenersOfAudioNode(source);
+
+      var eventListener = function eventListener(isActive) {
+        var nativeAudioNode = getNativeAudioNode(source);
+        var nativeAudioParam = getNativeAudioParam(destination);
+
+        if (isActive) {
+          var partialConnection = deletePassiveInputConnectionToAudioParam(passiveInputs, source, output);
+          addActiveInputConnectionToAudioParam(activeInputs, source, partialConnection, false);
+
+          if (!isOffline && !isPartOfACycle(source)) {
+            nativeAudioNode.connect(nativeAudioParam, output);
+          }
+        } else {
+          var _partialConnection = deleteActiveInputConnectionToAudioParam(activeInputs, source, output);
+
+          addPassiveInputConnectionToAudioParam(passiveInputs, _partialConnection, false);
+
+          if (!isOffline && !isPartOfACycle(source)) {
+            nativeAudioNode.disconnect(nativeAudioParam, output);
+          }
+        }
+      };
+
+      if (insertElementInSet(outputs, [destination, output], function (outputConnection) {
+        return outputConnection[0] === destination && outputConnection[1] === output;
+      }, true)) {
+        eventListeners.add(eventListener);
+
+        if (isActiveAudioNode(source)) {
+          addActiveInputConnectionToAudioParam(activeInputs, source, [output, eventListener], true);
+        } else {
+          addPassiveInputConnectionToAudioParam(passiveInputs, [source, output, eventListener], true);
+        }
+
+        return true;
+      }
+
+      return false;
+    };
+
+    var deleteInputConnectionOfAudioNode = function deleteInputConnectionOfAudioNode(source, destination, output, input) {
+      var _getAudioNodeConnecti2 = getAudioNodeConnections(destination),
+          activeInputs = _getAudioNodeConnecti2.activeInputs,
+          passiveInputs = _getAudioNodeConnecti2.passiveInputs;
+
+      var activeInputConnection = deleteActiveInputConnection(activeInputs[input], source, output);
+
+      if (activeInputConnection === null) {
+        var passiveInputConnection = deletePassiveInputConnectionToAudioNode(passiveInputs, source, output, input);
+        return [passiveInputConnection[2], false];
+      }
+
+      return [activeInputConnection[2], true];
+    };
+
+    var deleteInputConnectionOfAudioParam = function deleteInputConnectionOfAudioParam(source, destination, output) {
+      var _getAudioParamConnect2 = getAudioParamConnections(destination),
+          activeInputs = _getAudioParamConnect2.activeInputs,
+          passiveInputs = _getAudioParamConnect2.passiveInputs;
+
+      var activeInputConnection = deleteActiveInputConnection(activeInputs, source, output);
+
+      if (activeInputConnection === null) {
+        var passiveInputConnection = deletePassiveInputConnectionToAudioParam(passiveInputs, source, output);
+        return [passiveInputConnection[1], false];
+      }
+
+      return [activeInputConnection[2], true];
+    };
+
+    var deleteInputsOfAudioNode = function deleteInputsOfAudioNode(source, isOffline, destination, output, input) {
+      var _deleteInputConnectio = deleteInputConnectionOfAudioNode(source, destination, output, input),
+          _deleteInputConnectio2 = _slicedToArray__default["default"](_deleteInputConnectio, 2),
+          listener = _deleteInputConnectio2[0],
+          isActive = _deleteInputConnectio2[1];
+
+      if (listener !== null) {
+        deleteEventListenerOfAudioNode(source, listener);
+
+        if (isActive && !isOffline && !isPartOfACycle(source)) {
+          disconnectNativeAudioNodeFromNativeAudioNode(getNativeAudioNode(source), getNativeAudioNode(destination), output, input);
+        }
+      }
+
+      if (isActiveAudioNode(destination)) {
+        var _getAudioNodeConnecti3 = getAudioNodeConnections(destination),
+            activeInputs = _getAudioNodeConnecti3.activeInputs;
+
+        setInternalStateToPassiveWhenNecessary(destination, activeInputs);
+      }
+    };
+
+    var deleteInputsOfAudioParam = function deleteInputsOfAudioParam(source, isOffline, destination, output) {
+      var _deleteInputConnectio3 = deleteInputConnectionOfAudioParam(source, destination, output),
+          _deleteInputConnectio4 = _slicedToArray__default["default"](_deleteInputConnectio3, 2),
+          listener = _deleteInputConnectio4[0],
+          isActive = _deleteInputConnectio4[1];
+
+      if (listener !== null) {
+        deleteEventListenerOfAudioNode(source, listener);
+
+        if (isActive && !isOffline && !isPartOfACycle(source)) {
+          getNativeAudioNode(source).disconnect(getNativeAudioParam(destination), output);
+        }
+      }
+    };
+
+    var deleteAnyConnection = function deleteAnyConnection(source, isOffline) {
+      var audioNodeConnectionsOfSource = getAudioNodeConnections(source);
+      var destinations = [];
+
+      var _iterator = _createForOfIteratorHelper$6(audioNodeConnectionsOfSource.outputs),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var outputConnection = _step.value;
+
+          if (isAudioNodeOutputConnection(outputConnection)) {
+            deleteInputsOfAudioNode.apply(void 0, [source, isOffline].concat(_toConsumableArray__default["default"](outputConnection)));
+          } else {
+            deleteInputsOfAudioParam.apply(void 0, [source, isOffline].concat(_toConsumableArray__default["default"](outputConnection)));
+          }
+
+          destinations.push(outputConnection[0]);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      audioNodeConnectionsOfSource.outputs.clear();
+      return destinations;
+    };
+
+    var deleteConnectionAtOutput = function deleteConnectionAtOutput(source, isOffline, output) {
+      var audioNodeConnectionsOfSource = getAudioNodeConnections(source);
+      var destinations = [];
+
+      var _iterator2 = _createForOfIteratorHelper$6(audioNodeConnectionsOfSource.outputs),
+          _step2;
+
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var outputConnection = _step2.value;
+
+          if (outputConnection[1] === output) {
+            if (isAudioNodeOutputConnection(outputConnection)) {
+              deleteInputsOfAudioNode.apply(void 0, [source, isOffline].concat(_toConsumableArray__default["default"](outputConnection)));
+            } else {
+              deleteInputsOfAudioParam.apply(void 0, [source, isOffline].concat(_toConsumableArray__default["default"](outputConnection)));
+            }
+
+            destinations.push(outputConnection[0]);
+            audioNodeConnectionsOfSource.outputs["delete"](outputConnection);
+          }
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+
+      return destinations;
+    };
+
+    var deleteConnectionToDestination = function deleteConnectionToDestination(source, isOffline, destination, output, input) {
+      var audioNodeConnectionsOfSource = getAudioNodeConnections(source);
+      return Array.from(audioNodeConnectionsOfSource.outputs).filter(function (outputConnection) {
+        return outputConnection[0] === destination && (output === undefined || outputConnection[1] === output) && (input === undefined || outputConnection[2] === input);
+      }).map(function (outputConnection) {
+        if (isAudioNodeOutputConnection(outputConnection)) {
+          deleteInputsOfAudioNode.apply(void 0, [source, isOffline].concat(_toConsumableArray__default["default"](outputConnection)));
+        } else {
+          deleteInputsOfAudioParam.apply(void 0, [source, isOffline].concat(_toConsumableArray__default["default"](outputConnection)));
+        }
+
+        audioNodeConnectionsOfSource.outputs["delete"](outputConnection);
+        return outputConnection[0];
+      });
+    };
+
+    var createAudioNodeConstructor = function createAudioNodeConstructor(addAudioNodeConnections, addConnectionToAudioNode, cacheTestResult, createIncrementCycleCounter, createIndexSizeError, createInvalidAccessError, createNotSupportedError, decrementCycleCounter, detectCycles, eventTargetConstructor, getNativeContext, isNativeAudioContext, isNativeAudioNode, isNativeAudioParam, isNativeOfflineAudioContext, nativeAudioWorkletNodeConstructor) {
+      return /*#__PURE__*/function (_eventTargetConstruct) {
+        _inherits__default["default"](AudioNode, _eventTargetConstruct);
+
+        var _super = _createSuper$n(AudioNode);
+
+        function AudioNode(context, isActive, nativeAudioNode, audioNodeRenderer) {
+          var _this;
+
+          _classCallCheck__default["default"](this, AudioNode);
+
+          _this = _super.call(this, nativeAudioNode);
+          _this._context = context;
+          _this._nativeAudioNode = nativeAudioNode;
+          var nativeContext = getNativeContext(context); // Bug #12: Safari does not support to disconnect a specific destination.
+
+          if (isNativeAudioContext(nativeContext) && true !== cacheTestResult(testAudioNodeDisconnectMethodSupport, function () {
+            return testAudioNodeDisconnectMethodSupport(nativeContext, nativeAudioWorkletNodeConstructor);
+          })) {
+            wrapAudioNodeDisconnectMethod(nativeAudioNode);
+          }
+
+          AUDIO_NODE_STORE.set(_assertThisInitialized__default["default"](_this), nativeAudioNode);
+          EVENT_LISTENERS.set(_assertThisInitialized__default["default"](_this), new Set());
+
+          if (context.state !== 'closed' && isActive) {
+            setInternalStateToActive(_assertThisInitialized__default["default"](_this));
+          }
+
+          addAudioNodeConnections(_assertThisInitialized__default["default"](_this), audioNodeRenderer, nativeAudioNode);
+          return _this;
+        }
+
+        _createClass__default["default"](AudioNode, [{
+          key: "channelCount",
+          get: function get() {
+            return this._nativeAudioNode.channelCount;
+          },
+          set: function set(value) {
+            this._nativeAudioNode.channelCount = value;
+          }
+        }, {
+          key: "channelCountMode",
+          get: function get() {
+            return this._nativeAudioNode.channelCountMode;
+          },
+          set: function set(value) {
+            this._nativeAudioNode.channelCountMode = value;
+          }
+        }, {
+          key: "channelInterpretation",
+          get: function get() {
+            return this._nativeAudioNode.channelInterpretation;
+          },
+          set: function set(value) {
+            this._nativeAudioNode.channelInterpretation = value;
+          }
+        }, {
+          key: "context",
+          get: function get() {
+            return this._context;
+          }
+        }, {
+          key: "numberOfInputs",
+          get: function get() {
+            return this._nativeAudioNode.numberOfInputs;
+          }
+        }, {
+          key: "numberOfOutputs",
+          get: function get() {
+            return this._nativeAudioNode.numberOfOutputs;
+          } // tslint:disable-next-line:invalid-void
+
+        }, {
+          key: "connect",
+          value: function connect(destination) {
+            var output = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var input = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+            // Bug #174: Safari does expose a wrong numberOfOutputs for MediaStreamAudioDestinationNodes.
+            if (output < 0 || output >= this._nativeAudioNode.numberOfOutputs) {
+              throw createIndexSizeError();
+            }
+
+            var nativeContext = getNativeContext(this._context);
+            var isOffline = isNativeOfflineAudioContext(nativeContext);
+
+            if (isNativeAudioNode(destination) || isNativeAudioParam(destination)) {
+              throw createInvalidAccessError();
+            }
+
+            if (isAudioNode(destination)) {
+              var nativeDestinationAudioNode = getNativeAudioNode(destination);
+
+              try {
+                var connection = connectNativeAudioNodeToNativeAudioNode(this._nativeAudioNode, nativeDestinationAudioNode, output, input);
+                var isPassive = isPassiveAudioNode(this);
+
+                if (isOffline || isPassive) {
+                  var _this$_nativeAudioNod;
+
+                  (_this$_nativeAudioNod = this._nativeAudioNode).disconnect.apply(_this$_nativeAudioNod, _toConsumableArray__default["default"](connection));
+                }
+
+                if (this.context.state !== 'closed' && !isPassive && isPassiveAudioNode(destination)) {
+                  setInternalStateToActive(destination);
+                }
+              } catch (err) {
+                // Bug #41: Safari does not throw the correct exception so far.
+                if (err.code === 12) {
+                  throw createInvalidAccessError();
+                }
+
+                throw err;
+              }
+
+              var isNewConnectionToAudioNode = addConnectionToAudioNode(this, destination, output, input, isOffline); // Bug #164: Only Firefox detects cycles so far.
+
+              if (isNewConnectionToAudioNode) {
+                var cycles = detectCycles([this], destination);
+                visitEachAudioNodeOnce(cycles, createIncrementCycleCounter(isOffline));
+              }
+
+              return destination;
+            }
+
+            var nativeAudioParam = getNativeAudioParam(destination);
+            /*
+             * Bug #73, #147 & #153: Safari does not support to connect an input signal to the playbackRate AudioParam of an
+             * AudioBufferSourceNode. This can't be easily detected and that's why the outdated name property is used here to identify
+             * Safari. In addition to that the maxValue property is used to only detect the affected versions below v14.0.2.
+             */
+
+            if (nativeAudioParam.name === 'playbackRate' && nativeAudioParam.maxValue === 1024) {
+              throw createNotSupportedError();
+            }
+
+            try {
+              this._nativeAudioNode.connect(nativeAudioParam, output);
+
+              if (isOffline || isPassiveAudioNode(this)) {
+                this._nativeAudioNode.disconnect(nativeAudioParam, output);
+              }
+            } catch (err) {
+              // Bug #58: Safari doesn't throw an InvalidAccessError yet.
+              if (err.code === 12) {
+                throw createInvalidAccessError();
+              }
+
+              throw err;
+            }
+
+            var isNewConnectionToAudioParam = addConnectionToAudioParamOfAudioContext(this, destination, output, isOffline); // Bug #164: Only Firefox detects cycles so far.
+
+            if (isNewConnectionToAudioParam) {
+              var _cycles = detectCycles([this], destination);
+
+              visitEachAudioNodeOnce(_cycles, createIncrementCycleCounter(isOffline));
+            }
+          }
+        }, {
+          key: "disconnect",
+          value: function disconnect(destinationOrOutput, output, input) {
+            var destinations;
+            var nativeContext = getNativeContext(this._context);
+            var isOffline = isNativeOfflineAudioContext(nativeContext);
+
+            if (destinationOrOutput === undefined) {
+              destinations = deleteAnyConnection(this, isOffline);
+            } else if (typeof destinationOrOutput === 'number') {
+              if (destinationOrOutput < 0 || destinationOrOutput >= this.numberOfOutputs) {
+                throw createIndexSizeError();
+              }
+
+              destinations = deleteConnectionAtOutput(this, isOffline, destinationOrOutput);
+            } else {
+              if (output !== undefined && (output < 0 || output >= this.numberOfOutputs)) {
+                throw createIndexSizeError();
+              }
+
+              if (isAudioNode(destinationOrOutput) && input !== undefined && (input < 0 || input >= destinationOrOutput.numberOfInputs)) {
+                throw createIndexSizeError();
+              }
+
+              destinations = deleteConnectionToDestination(this, isOffline, destinationOrOutput, output, input);
+
+              if (destinations.length === 0) {
+                throw createInvalidAccessError();
+              }
+            } // Bug #164: Only Firefox detects cycles so far.
+
+
+            var _iterator3 = _createForOfIteratorHelper$6(destinations),
+                _step3;
+
+            try {
+              for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                var destination = _step3.value;
+                var cycles = detectCycles([this], destination);
+                visitEachAudioNodeOnce(cycles, decrementCycleCounter);
+              }
+            } catch (err) {
+              _iterator3.e(err);
+            } finally {
+              _iterator3.f();
+            }
+          }
+        }]);
+
+        return AudioNode;
+      }(eventTargetConstructor);
+    };
+
+    var createAudioParamFactory = function createAudioParamFactory(addAudioParamConnections, audioParamAudioNodeStore, audioParamStore, createAudioParamRenderer, createCancelAndHoldAutomationEvent, createCancelScheduledValuesAutomationEvent, createExponentialRampToValueAutomationEvent, createLinearRampToValueAutomationEvent, createSetTargetAutomationEvent, createSetValueAutomationEvent, createSetValueCurveAutomationEvent, nativeAudioContextConstructor, setValueAtTimeUntilPossible) {
+      return function (audioNode, isAudioParamOfOfflineAudioContext, nativeAudioParam) {
+        var maxValue = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+        var minValue = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+        var automationEventList = new automationEvents.AutomationEventList(nativeAudioParam.defaultValue);
+        var audioParamRenderer = isAudioParamOfOfflineAudioContext ? createAudioParamRenderer(automationEventList) : null;
+        var audioParam = {
+          get defaultValue() {
+            return nativeAudioParam.defaultValue;
+          },
+
+          get maxValue() {
+            return maxValue === null ? nativeAudioParam.maxValue : maxValue;
+          },
+
+          get minValue() {
+            return minValue === null ? nativeAudioParam.minValue : minValue;
+          },
+
+          get value() {
+            return nativeAudioParam.value;
+          },
+
+          set value(value) {
+            nativeAudioParam.value = value; // Bug #98: Firefox & Safari do not yet treat the value setter like a call to setValueAtTime().
+
+            audioParam.setValueAtTime(value, audioNode.context.currentTime);
+          },
+
+          cancelAndHoldAtTime: function cancelAndHoldAtTime(cancelTime) {
+            // Bug #28: Firefox & Safari do not yet implement cancelAndHoldAtTime().
+            if (typeof nativeAudioParam.cancelAndHoldAtTime === 'function') {
+              if (audioParamRenderer === null) {
+                automationEventList.flush(audioNode.context.currentTime);
+              }
+
+              automationEventList.add(createCancelAndHoldAutomationEvent(cancelTime));
+              nativeAudioParam.cancelAndHoldAtTime(cancelTime);
+            } else {
+              var previousLastEvent = Array.from(automationEventList).pop();
+
+              if (audioParamRenderer === null) {
+                automationEventList.flush(audioNode.context.currentTime);
+              }
+
+              automationEventList.add(createCancelAndHoldAutomationEvent(cancelTime));
+              var currentLastEvent = Array.from(automationEventList).pop();
+              nativeAudioParam.cancelScheduledValues(cancelTime);
+
+              if (previousLastEvent !== currentLastEvent && currentLastEvent !== undefined) {
+                if (currentLastEvent.type === 'exponentialRampToValue') {
+                  nativeAudioParam.exponentialRampToValueAtTime(currentLastEvent.value, currentLastEvent.endTime);
+                } else if (currentLastEvent.type === 'linearRampToValue') {
+                  nativeAudioParam.linearRampToValueAtTime(currentLastEvent.value, currentLastEvent.endTime);
+                } else if (currentLastEvent.type === 'setValue') {
+                  nativeAudioParam.setValueAtTime(currentLastEvent.value, currentLastEvent.startTime);
+                } else if (currentLastEvent.type === 'setValueCurve') {
+                  nativeAudioParam.setValueCurveAtTime(currentLastEvent.values, currentLastEvent.startTime, currentLastEvent.duration);
+                }
+              }
+            }
+
+            return audioParam;
+          },
+          cancelScheduledValues: function cancelScheduledValues(cancelTime) {
+            if (audioParamRenderer === null) {
+              automationEventList.flush(audioNode.context.currentTime);
+            }
+
+            automationEventList.add(createCancelScheduledValuesAutomationEvent(cancelTime));
+            nativeAudioParam.cancelScheduledValues(cancelTime);
+            return audioParam;
+          },
+          exponentialRampToValueAtTime: function exponentialRampToValueAtTime(value, endTime) {
+            // Bug #45: Safari does not throw an error yet.
+            if (value === 0) {
+              throw new RangeError();
+            } // Bug #187: Safari does not throw an error yet.
+
+
+            if (!Number.isFinite(endTime) || endTime < 0) {
+              throw new RangeError();
+            }
+
+            if (audioParamRenderer === null) {
+              automationEventList.flush(audioNode.context.currentTime);
+            }
+
+            automationEventList.add(createExponentialRampToValueAutomationEvent(value, endTime));
+            nativeAudioParam.exponentialRampToValueAtTime(value, endTime);
+            return audioParam;
+          },
+          linearRampToValueAtTime: function linearRampToValueAtTime(value, endTime) {
+            if (audioParamRenderer === null) {
+              automationEventList.flush(audioNode.context.currentTime);
+            }
+
+            automationEventList.add(createLinearRampToValueAutomationEvent(value, endTime));
+            nativeAudioParam.linearRampToValueAtTime(value, endTime);
+            return audioParam;
+          },
+          setTargetAtTime: function setTargetAtTime(target, startTime, timeConstant) {
+            if (audioParamRenderer === null) {
+              automationEventList.flush(audioNode.context.currentTime);
+            }
+
+            automationEventList.add(createSetTargetAutomationEvent(target, startTime, timeConstant));
+            nativeAudioParam.setTargetAtTime(target, startTime, timeConstant);
+            return audioParam;
+          },
+          setValueAtTime: function setValueAtTime(value, startTime) {
+            if (audioParamRenderer === null) {
+              automationEventList.flush(audioNode.context.currentTime);
+            }
+
+            automationEventList.add(createSetValueAutomationEvent(value, startTime));
+            nativeAudioParam.setValueAtTime(value, startTime);
+            return audioParam;
+          },
+          setValueCurveAtTime: function setValueCurveAtTime(values, startTime, duration) {
+            // Bug 183: Safari only accepts a Float32Array.
+            var convertedValues = values instanceof Float32Array ? values : new Float32Array(values);
+            /*
+             * Bug #152: Safari does not correctly interpolate the values of the curve.
+             * @todo Unfortunately there is no way to test for this behavior in a synchronous fashion which is why testing for the
+             * existence of the webkitAudioContext is used as a workaround here.
+             */
+
+            if (nativeAudioContextConstructor !== null && nativeAudioContextConstructor.name === 'webkitAudioContext') {
+              var endTime = startTime + duration;
+              var sampleRate = audioNode.context.sampleRate;
+              var firstSample = Math.ceil(startTime * sampleRate);
+              var lastSample = Math.floor(endTime * sampleRate);
+              var numberOfInterpolatedValues = lastSample - firstSample;
+              var interpolatedValues = new Float32Array(numberOfInterpolatedValues);
+
+              for (var i = 0; i < numberOfInterpolatedValues; i += 1) {
+                var theoreticIndex = (convertedValues.length - 1) / duration * ((firstSample + i) / sampleRate - startTime);
+                var lowerIndex = Math.floor(theoreticIndex);
+                var upperIndex = Math.ceil(theoreticIndex);
+                interpolatedValues[i] = lowerIndex === upperIndex ? convertedValues[lowerIndex] : (1 - (theoreticIndex - lowerIndex)) * convertedValues[lowerIndex] + (1 - (upperIndex - theoreticIndex)) * convertedValues[upperIndex];
+              }
+
+              if (audioParamRenderer === null) {
+                automationEventList.flush(audioNode.context.currentTime);
+              }
+
+              automationEventList.add(createSetValueCurveAutomationEvent(interpolatedValues, startTime, duration));
+              nativeAudioParam.setValueCurveAtTime(interpolatedValues, startTime, duration);
+              var timeOfLastSample = lastSample / sampleRate;
+
+              if (timeOfLastSample < endTime) {
+                setValueAtTimeUntilPossible(audioParam, interpolatedValues[interpolatedValues.length - 1], timeOfLastSample);
+              }
+
+              setValueAtTimeUntilPossible(audioParam, convertedValues[convertedValues.length - 1], endTime);
+            } else {
+              if (audioParamRenderer === null) {
+                automationEventList.flush(audioNode.context.currentTime);
+              }
+
+              automationEventList.add(createSetValueCurveAutomationEvent(convertedValues, startTime, duration));
+              nativeAudioParam.setValueCurveAtTime(convertedValues, startTime, duration);
+            }
+
+            return audioParam;
+          }
+        };
+        audioParamStore.set(audioParam, nativeAudioParam);
+        audioParamAudioNodeStore.set(audioParam, audioNode);
+        addAudioParamConnections(audioParam, audioParamRenderer);
+        return audioParam;
+      };
+    };
+
+    function _createForOfIteratorHelper$5(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$5(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$5(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$5(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$5(o, minLen); }
+
+    function _arrayLikeToArray$5(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var createAudioParamRenderer = function createAudioParamRenderer(automationEventList) {
+      return {
+        replay: function replay(audioParam) {
+          var _iterator = _createForOfIteratorHelper$5(automationEventList),
+              _step;
+
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var automationEvent = _step.value;
+
+              if (automationEvent.type === 'exponentialRampToValue') {
+                var endTime = automationEvent.endTime,
+                    value = automationEvent.value;
+                audioParam.exponentialRampToValueAtTime(value, endTime);
+              } else if (automationEvent.type === 'linearRampToValue') {
+                var _endTime = automationEvent.endTime,
+                    _value = automationEvent.value;
+                audioParam.linearRampToValueAtTime(_value, _endTime);
+              } else if (automationEvent.type === 'setTarget') {
+                var startTime = automationEvent.startTime,
+                    target = automationEvent.target,
+                    timeConstant = automationEvent.timeConstant;
+                audioParam.setTargetAtTime(target, startTime, timeConstant);
+              } else if (automationEvent.type === 'setValue') {
+                var _startTime = automationEvent.startTime,
+                    _value2 = automationEvent.value;
+                audioParam.setValueAtTime(_value2, _startTime);
+              } else if (automationEvent.type === 'setValueCurve') {
+                var duration = automationEvent.duration,
+                    _startTime2 = automationEvent.startTime,
+                    values = automationEvent.values;
+                audioParam.setValueCurveAtTime(values, _startTime2, duration);
+              } else {
+                throw new Error("Can't apply an unknown automation.");
+              }
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        }
+      };
+    };
+
+    var ReadOnlyMap = /*#__PURE__*/function () {
+      function ReadOnlyMap(parameters) {
+        _classCallCheck__default["default"](this, ReadOnlyMap);
+
+        this._map = new Map(parameters);
+      }
+
+      _createClass__default["default"](ReadOnlyMap, [{
+        key: "size",
+        get: function get() {
+          return this._map.size;
+        }
+      }, {
+        key: "entries",
+        value: function entries() {
+          return this._map.entries();
+        }
+      }, {
+        key: "forEach",
+        value: function forEach(callback) {
+          var _this = this;
+
+          var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+          return this._map.forEach(function (value, key) {
+            return callback.call(thisArg, value, key, _this);
+          });
+        }
+      }, {
+        key: "get",
+        value: function get(name) {
+          return this._map.get(name);
+        }
+      }, {
+        key: "has",
+        value: function has(name) {
+          return this._map.has(name);
+        }
+      }, {
+        key: "keys",
+        value: function keys() {
+          return this._map.keys();
+        }
+      }, {
+        key: "values",
+        value: function values() {
+          return this._map.values();
+        }
+      }]);
+
+      return ReadOnlyMap;
+    }();
+
+    function ownKeys$t(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$t(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$t(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$t(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$m(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$m(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$m() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$h = {
+      channelCount: 2,
+      // Bug #61: The channelCountMode should be 'max' according to the spec but is set to 'explicit' to achieve consistent behavior.
+      channelCountMode: 'explicit',
+      channelInterpretation: 'speakers',
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      parameterData: {},
+      processorOptions: {}
+    };
+    var createAudioWorkletNodeConstructor = function createAudioWorkletNodeConstructor(addUnrenderedAudioWorkletNode, audioNodeConstructor, createAudioParam, createAudioWorkletNodeRenderer, createNativeAudioWorkletNode, getAudioNodeConnections, getBackupOfflineAudioContext, getNativeContext, isNativeOfflineAudioContext, nativeAudioWorkletNodeConstructor, sanitizeAudioWorkletNodeOptions, setActiveAudioWorkletNodeInputs, testAudioWorkletNodeOptionsClonability, wrapEventListener) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](AudioWorkletNode, _audioNodeConstructor);
+
+        var _super = _createSuper$m(AudioWorkletNode);
+
+        function AudioWorkletNode(context, name, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, AudioWorkletNode);
+
+          var _a;
+
+          var nativeContext = getNativeContext(context);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var mergedOptions = sanitizeAudioWorkletNodeOptions(_objectSpread$t(_objectSpread$t({}, DEFAULT_OPTIONS$h), options)); // Bug #191: Safari doesn't throw an error if the options aren't clonable.
+
+          testAudioWorkletNodeOptionsClonability(mergedOptions);
+          var nodeNameToProcessorConstructorMap = NODE_NAME_TO_PROCESSOR_CONSTRUCTOR_MAPS.get(nativeContext);
+          var processorConstructor = nodeNameToProcessorConstructorMap === null || nodeNameToProcessorConstructorMap === void 0 ? void 0 : nodeNameToProcessorConstructorMap.get(name); // Bug #186: Chrome, Edge and Opera do not allow to create an AudioWorkletNode on a closed AudioContext.
+
+          var nativeContextOrBackupOfflineAudioContext = isOffline || nativeContext.state !== 'closed' ? nativeContext : (_a = getBackupOfflineAudioContext(nativeContext)) !== null && _a !== void 0 ? _a : nativeContext;
+          var nativeAudioWorkletNode = createNativeAudioWorkletNode(nativeContextOrBackupOfflineAudioContext, isOffline ? null : context.baseLatency, nativeAudioWorkletNodeConstructor, name, processorConstructor, mergedOptions);
+          var audioWorkletNodeRenderer = isOffline ? createAudioWorkletNodeRenderer(name, mergedOptions, processorConstructor) : null;
+          /*
+           * @todo Add a mechanism to switch an AudioWorkletNode to passive once the process() function of the AudioWorkletProcessor
+           * returns false.
+           */
+
+          _this = _super.call(this, context, true, nativeAudioWorkletNode, audioWorkletNodeRenderer);
+          var parameters = [];
+          nativeAudioWorkletNode.parameters.forEach(function (nativeAudioParam, nm) {
+            var audioParam = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeAudioParam);
+            parameters.push([nm, audioParam]);
+          });
+          _this._nativeAudioWorkletNode = nativeAudioWorkletNode;
+          _this._onprocessorerror = null;
+          _this._parameters = new ReadOnlyMap(parameters);
+          /*
+           * Bug #86 & #87: Invoking the renderer of an AudioWorkletNode might be necessary if it has no direct or indirect connection to
+           * the destination.
+           */
+
+          if (isOffline) {
+            addUnrenderedAudioWorkletNode(nativeContext, _assertThisInitialized__default["default"](_this));
+          }
+
+          var _getAudioNodeConnecti = getAudioNodeConnections(_assertThisInitialized__default["default"](_this)),
+              activeInputs = _getAudioNodeConnecti.activeInputs;
+
+          setActiveAudioWorkletNodeInputs(nativeAudioWorkletNode, activeInputs);
+          return _this;
+        }
+
+        _createClass__default["default"](AudioWorkletNode, [{
+          key: "onprocessorerror",
+          get: function get() {
+            return this._onprocessorerror;
+          },
+          set: function set(value) {
+            var wrappedListener = typeof value === 'function' ? wrapEventListener(this, value) : null;
+            this._nativeAudioWorkletNode.onprocessorerror = wrappedListener;
+            var nativeOnProcessorError = this._nativeAudioWorkletNode.onprocessorerror;
+            this._onprocessorerror = nativeOnProcessorError !== null && nativeOnProcessorError === wrappedListener ? value : nativeOnProcessorError;
+          }
+        }, {
+          key: "parameters",
+          get: function get() {
+            if (this._parameters === null) {
+              // @todo The definition that TypeScript uses of the AudioParamMap is lacking many methods.
+              return this._nativeAudioWorkletNode.parameters;
+            }
+
+            return this._parameters;
+          }
+        }, {
+          key: "port",
+          get: function get() {
+            return this._nativeAudioWorkletNode.port;
+          }
+        }]);
+
+        return AudioWorkletNode;
+      }(audioNodeConstructor);
+    };
+
+    function copyFromChannel(audioBuffer, // @todo There is currently no way to define something like { [ key: number | string ]: Float32Array }
+    parent, key, channelNumber, bufferOffset) {
+      if (typeof audioBuffer.copyFromChannel === 'function') {
+        // The byteLength will be 0 when the ArrayBuffer was transferred.
+        if (parent[key].byteLength === 0) {
+          parent[key] = new Float32Array(128);
+        }
+
+        audioBuffer.copyFromChannel(parent[key], channelNumber, bufferOffset); // Bug #5: Safari does not support copyFromChannel().
+      } else {
+        var channelData = audioBuffer.getChannelData(channelNumber); // The byteLength will be 0 when the ArrayBuffer was transferred.
+
+        if (parent[key].byteLength === 0) {
+          parent[key] = channelData.slice(bufferOffset, bufferOffset + 128);
+        } else {
+          var slicedInput = new Float32Array(channelData.buffer, bufferOffset * Float32Array.BYTES_PER_ELEMENT, 128);
+          parent[key].set(slicedInput);
+        }
+      }
+    }
+
+    var copyToChannel = function copyToChannel(audioBuffer, parent, key, channelNumber, bufferOffset) {
+      if (typeof audioBuffer.copyToChannel === 'function') {
+        // The byteLength will be 0 when the ArrayBuffer was transferred.
+        if (parent[key].byteLength !== 0) {
+          audioBuffer.copyToChannel(parent[key], channelNumber, bufferOffset);
+        } // Bug #5: Safari does not support copyToChannel().
+
+      } else {
+        // The byteLength will be 0 when the ArrayBuffer was transferred.
+        if (parent[key].byteLength !== 0) {
+          audioBuffer.getChannelData(channelNumber).set(parent[key], bufferOffset);
+        }
+      }
+    };
+
+    var createNestedArrays = function createNestedArrays(x, y) {
+      var arrays = [];
+
+      for (var i = 0; i < x; i += 1) {
+        var array = [];
+        var length = typeof y === 'number' ? y : y[i];
+
+        for (var j = 0; j < length; j += 1) {
+          array.push(new Float32Array(128));
+        }
+
+        arrays.push(array);
+      }
+
+      return arrays;
+    };
+
+    var getAudioWorkletProcessor = function getAudioWorkletProcessor(nativeOfflineAudioContext, proxy) {
+      var nodeToProcessorMap = getValueForKey(NODE_TO_PROCESSOR_MAPS, nativeOfflineAudioContext);
+      var nativeAudioWorkletNode = getNativeAudioNode(proxy);
+      return getValueForKey(nodeToProcessorMap, nativeAudioWorkletNode);
+    };
+
+    function _createForOfIteratorHelper$4(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$4(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$4(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$4(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$4(o, minLen); }
+
+    function _arrayLikeToArray$4(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    function ownKeys$s(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$s(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$s(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$s(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var processBuffer = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, renderedBuffer, nativeOfflineAudioContext, options, outputChannelCount, processorConstructor, exposeCurrentFrameAndCurrentTime) {
+        var length, numberOfInputChannels, numberOfOutputChannels, processedBuffer, audioNodeConnections, audioWorkletProcessor, inputs, outputs, parameters, _loop, i, _ret;
+
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                // Ceil the length to the next full render quantum.
+                // Bug #17: Safari does not yet expose the length.
+                length = renderedBuffer === null ? Math.ceil(proxy.context.length / 128) * 128 : renderedBuffer.length;
+                numberOfInputChannels = options.channelCount * options.numberOfInputs;
+                numberOfOutputChannels = outputChannelCount.reduce(function (sum, value) {
+                  return sum + value;
+                }, 0);
+                processedBuffer = numberOfOutputChannels === 0 ? null : nativeOfflineAudioContext.createBuffer(numberOfOutputChannels, length, nativeOfflineAudioContext.sampleRate);
+
+                if (!(processorConstructor === undefined)) {
+                  _context.next = 6;
+                  break;
+                }
+
+                throw new Error('Missing the processor constructor.');
+
+              case 6:
+                audioNodeConnections = getAudioNodeConnections(proxy);
+                _context.next = 9;
+                return getAudioWorkletProcessor(nativeOfflineAudioContext, proxy);
+
+              case 9:
+                audioWorkletProcessor = _context.sent;
+                inputs = createNestedArrays(options.numberOfInputs, options.channelCount);
+                outputs = createNestedArrays(options.numberOfOutputs, outputChannelCount);
+                parameters = Array.from(proxy.parameters.keys()).reduce(function (prmtrs, name) {
+                  return _objectSpread$s(_objectSpread$s({}, prmtrs), {}, _defineProperty__default["default"]({}, name, new Float32Array(128)));
+                }, {});
+
+                _loop = function _loop(i) {
+                  if (options.numberOfInputs > 0 && renderedBuffer !== null) {
+                    for (var j = 0; j < options.numberOfInputs; j += 1) {
+                      for (var k = 0; k < options.channelCount; k += 1) {
+                        copyFromChannel(renderedBuffer, inputs[j], k, k, i);
+                      }
+                    }
+                  }
+
+                  if (processorConstructor.parameterDescriptors !== undefined && renderedBuffer !== null) {
+                    processorConstructor.parameterDescriptors.forEach(function (_ref2, index) {
+                      var name = _ref2.name;
+                      copyFromChannel(renderedBuffer, parameters, name, numberOfInputChannels + index, i);
+                    });
+                  }
+
+                  for (var _j = 0; _j < options.numberOfInputs; _j += 1) {
+                    for (var _k = 0; _k < outputChannelCount[_j]; _k += 1) {
+                      // The byteLength will be 0 when the ArrayBuffer was transferred.
+                      if (outputs[_j][_k].byteLength === 0) {
+                        outputs[_j][_k] = new Float32Array(128);
+                      }
+                    }
+                  }
+
+                  try {
+                    var potentiallyEmptyInputs = inputs.map(function (input, index) {
+                      if (audioNodeConnections.activeInputs[index].size === 0) {
+                        return [];
+                      }
+
+                      return input;
+                    });
+                    var activeSourceFlag = exposeCurrentFrameAndCurrentTime(i / nativeOfflineAudioContext.sampleRate, nativeOfflineAudioContext.sampleRate, function () {
+                      return audioWorkletProcessor.process(potentiallyEmptyInputs, outputs, parameters);
+                    });
+
+                    if (processedBuffer !== null) {
+                      for (var _j2 = 0, outputChannelSplitterNodeOutput = 0; _j2 < options.numberOfOutputs; _j2 += 1) {
+                        for (var _k2 = 0; _k2 < outputChannelCount[_j2]; _k2 += 1) {
+                          copyToChannel(processedBuffer, outputs[_j2], _k2, outputChannelSplitterNodeOutput + _k2, i);
+                        }
+
+                        outputChannelSplitterNodeOutput += outputChannelCount[_j2];
+                      }
+                    }
+
+                    if (!activeSourceFlag) {
+                      return "break";
+                    }
+                  } catch (error) {
+                    proxy.dispatchEvent(new ErrorEvent('processorerror', {
+                      colno: error.colno,
+                      filename: error.filename,
+                      lineno: error.lineno,
+                      message: error.message
+                    }));
+                    return "break";
+                  }
+                };
+
+                i = 0;
+
+              case 15:
+                if (!(i < length)) {
+                  _context.next = 22;
+                  break;
+                }
+
+                _ret = _loop(i);
+
+                if (!(_ret === "break")) {
+                  _context.next = 19;
+                  break;
+                }
+
+                return _context.abrupt("break", 22);
+
+              case 19:
+                i += 128;
+                _context.next = 15;
+                break;
+
+              case 22:
+                return _context.abrupt("return", processedBuffer);
+
+              case 23:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function processBuffer(_x, _x2, _x3, _x4, _x5, _x6, _x7) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    var createAudioWorkletNodeRendererFactory = function createAudioWorkletNodeRendererFactory(connectAudioParam, connectMultipleOutputs, createNativeAudioBufferSourceNode, createNativeChannelMergerNode, createNativeChannelSplitterNode, createNativeConstantSourceNode, createNativeGainNode, deleteUnrenderedAudioWorkletNode, disconnectMultipleOutputs, exposeCurrentFrameAndCurrentTime, getNativeAudioNode, nativeAudioWorkletNodeConstructor, nativeOfflineAudioContextConstructor, renderAutomation, renderInputsOfAudioNode, renderNativeOfflineAudioContext) {
+      return function (name, options, processorConstructor) {
+        var renderedNativeAudioNodes = new WeakMap();
+        var processedBufferPromise = null;
+
+        var createAudioNode = /*#__PURE__*/function () {
+          var _ref3 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee4(proxy, nativeOfflineAudioContext) {
+            var nativeAudioWorkletNode, nativeOutputNodes, nativeAudioWorkletNodeIsOwnedByContext, outputChannelCount, numberOfOutputChannels, outputChannelSplitterNode, outputChannelMergerNodes, i, outputGainNode, _numberOfInputChannels, numberOfParameters, numberOfChannels, renderBuffer, _processedBuffer, audioBufferSourceNode, _nativeOutputNodes, _nativeOutputNodes2, _outputChannelSplitterNode, _outputChannelMergerNodes, _outputGainNode, _i3, outputChannelSplitterNodeOutput, outputChannelMergerNode, j, _iterator2, _step2, _step2$value, nm, audioParam, _iterator3, _step3, _step3$value, _nm, _audioParam;
+
+            return _regeneratorRuntime__default["default"].wrap(function _callee4$(_context4) {
+              while (1) {
+                switch (_context4.prev = _context4.next) {
+                  case 0:
+                    nativeAudioWorkletNode = getNativeAudioNode(proxy);
+                    nativeOutputNodes = null;
+                    nativeAudioWorkletNodeIsOwnedByContext = isOwnedByContext(nativeAudioWorkletNode, nativeOfflineAudioContext);
+                    outputChannelCount = Array.isArray(options.outputChannelCount) ? options.outputChannelCount : Array.from(options.outputChannelCount); // Bug #61: Only Chrome, Edge, Firefox & Opera have an implementation of the AudioWorkletNode yet.
+
+                    if (nativeAudioWorkletNodeConstructor === null) {
+                      numberOfOutputChannels = outputChannelCount.reduce(function (sum, value) {
+                        return sum + value;
+                      }, 0);
+                      outputChannelSplitterNode = createNativeChannelSplitterNode(nativeOfflineAudioContext, {
+                        channelCount: Math.max(1, numberOfOutputChannels),
+                        channelCountMode: 'explicit',
+                        channelInterpretation: 'discrete',
+                        numberOfOutputs: Math.max(1, numberOfOutputChannels)
+                      });
+                      outputChannelMergerNodes = [];
+
+                      for (i = 0; i < proxy.numberOfOutputs; i += 1) {
+                        outputChannelMergerNodes.push(createNativeChannelMergerNode(nativeOfflineAudioContext, {
+                          channelCount: 1,
+                          channelCountMode: 'explicit',
+                          channelInterpretation: 'speakers',
+                          numberOfInputs: outputChannelCount[i]
+                        }));
+                      }
+
+                      outputGainNode = createNativeGainNode(nativeOfflineAudioContext, {
+                        channelCount: options.channelCount,
+                        channelCountMode: options.channelCountMode,
+                        channelInterpretation: options.channelInterpretation,
+                        gain: 1
+                      });
+                      outputGainNode.connect = connectMultipleOutputs.bind(null, outputChannelMergerNodes);
+                      outputGainNode.disconnect = disconnectMultipleOutputs.bind(null, outputChannelMergerNodes);
+                      nativeOutputNodes = [outputChannelSplitterNode, outputChannelMergerNodes, outputGainNode];
+                    } else if (!nativeAudioWorkletNodeIsOwnedByContext) {
+                      nativeAudioWorkletNode = new nativeAudioWorkletNodeConstructor(nativeOfflineAudioContext, name);
+                    }
+
+                    renderedNativeAudioNodes.set(nativeOfflineAudioContext, nativeOutputNodes === null ? nativeAudioWorkletNode : nativeOutputNodes[2]);
+
+                    if (!(nativeOutputNodes !== null)) {
+                      _context4.next = 41;
+                      break;
+                    }
+
+                    if (!(processedBufferPromise === null)) {
+                      _context4.next = 32;
+                      break;
+                    }
+
+                    if (!(processorConstructor === undefined)) {
+                      _context4.next = 10;
+                      break;
+                    }
+
+                    throw new Error('Missing the processor constructor.');
+
+                  case 10:
+                    if (!(nativeOfflineAudioContextConstructor === null)) {
+                      _context4.next = 12;
+                      break;
+                    }
+
+                    throw new Error('Missing the native OfflineAudioContext constructor.');
+
+                  case 12:
+                    // Bug #47: The AudioDestinationNode in Safari gets not initialized correctly.
+                    _numberOfInputChannels = proxy.channelCount * proxy.numberOfInputs;
+                    numberOfParameters = processorConstructor.parameterDescriptors === undefined ? 0 : processorConstructor.parameterDescriptors.length;
+                    numberOfChannels = _numberOfInputChannels + numberOfParameters;
+
+                    renderBuffer = /*#__PURE__*/function () {
+                      var _ref4 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee3() {
+                        var partialOfflineAudioContext, gainNodes, inputChannelSplitterNodes, _i, constantSourceNodes, inputChannelMergerNode, _i2, j, _iterator, _step, _step$value, index, constantSourceNode;
+
+                        return _regeneratorRuntime__default["default"].wrap(function _callee3$(_context3) {
+                          while (1) {
+                            switch (_context3.prev = _context3.next) {
+                              case 0:
+                                partialOfflineAudioContext = new nativeOfflineAudioContextConstructor(numberOfChannels, // Ceil the length to the next full render quantum.
+                                // Bug #17: Safari does not yet expose the length.
+                                Math.ceil(proxy.context.length / 128) * 128, nativeOfflineAudioContext.sampleRate);
+                                gainNodes = [];
+                                inputChannelSplitterNodes = [];
+
+                                for (_i = 0; _i < options.numberOfInputs; _i += 1) {
+                                  gainNodes.push(createNativeGainNode(partialOfflineAudioContext, {
+                                    channelCount: options.channelCount,
+                                    channelCountMode: options.channelCountMode,
+                                    channelInterpretation: options.channelInterpretation,
+                                    gain: 1
+                                  }));
+                                  inputChannelSplitterNodes.push(createNativeChannelSplitterNode(partialOfflineAudioContext, {
+                                    channelCount: options.channelCount,
+                                    channelCountMode: 'explicit',
+                                    channelInterpretation: 'discrete',
+                                    numberOfOutputs: options.channelCount
+                                  }));
+                                }
+
+                                _context3.next = 6;
+                                return Promise.all(Array.from(proxy.parameters.values()).map( /*#__PURE__*/function () {
+                                  var _ref5 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(audioParam) {
+                                    var constantSourceNode;
+                                    return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+                                      while (1) {
+                                        switch (_context2.prev = _context2.next) {
+                                          case 0:
+                                            constantSourceNode = createNativeConstantSourceNode(partialOfflineAudioContext, {
+                                              channelCount: 1,
+                                              channelCountMode: 'explicit',
+                                              channelInterpretation: 'discrete',
+                                              offset: audioParam.value
+                                            });
+                                            _context2.next = 3;
+                                            return renderAutomation(partialOfflineAudioContext, audioParam, constantSourceNode.offset);
+
+                                          case 3:
+                                            return _context2.abrupt("return", constantSourceNode);
+
+                                          case 4:
+                                          case "end":
+                                            return _context2.stop();
+                                        }
+                                      }
+                                    }, _callee2);
+                                  }));
+
+                                  return function (_x10) {
+                                    return _ref5.apply(this, arguments);
+                                  };
+                                }()));
+
+                              case 6:
+                                constantSourceNodes = _context3.sent;
+                                inputChannelMergerNode = createNativeChannelMergerNode(partialOfflineAudioContext, {
+                                  channelCount: 1,
+                                  channelCountMode: 'explicit',
+                                  channelInterpretation: 'speakers',
+                                  numberOfInputs: Math.max(1, _numberOfInputChannels + numberOfParameters)
+                                });
+
+                                for (_i2 = 0; _i2 < options.numberOfInputs; _i2 += 1) {
+                                  gainNodes[_i2].connect(inputChannelSplitterNodes[_i2]);
+
+                                  for (j = 0; j < options.channelCount; j += 1) {
+                                    inputChannelSplitterNodes[_i2].connect(inputChannelMergerNode, j, _i2 * options.channelCount + j);
+                                  }
+                                }
+
+                                _iterator = _createForOfIteratorHelper$4(constantSourceNodes.entries());
+
+                                try {
+                                  for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                                    _step$value = _slicedToArray__default["default"](_step.value, 2), index = _step$value[0], constantSourceNode = _step$value[1];
+                                    constantSourceNode.connect(inputChannelMergerNode, 0, _numberOfInputChannels + index);
+                                    constantSourceNode.start(0);
+                                  }
+                                } catch (err) {
+                                  _iterator.e(err);
+                                } finally {
+                                  _iterator.f();
+                                }
+
+                                inputChannelMergerNode.connect(partialOfflineAudioContext.destination);
+                                _context3.next = 14;
+                                return Promise.all(gainNodes.map(function (gainNode) {
+                                  return renderInputsOfAudioNode(proxy, partialOfflineAudioContext, gainNode);
+                                }));
+
+                              case 14:
+                                return _context3.abrupt("return", renderNativeOfflineAudioContext(partialOfflineAudioContext));
+
+                              case 15:
+                              case "end":
+                                return _context3.stop();
+                            }
+                          }
+                        }, _callee3);
+                      }));
+
+                      return function renderBuffer() {
+                        return _ref4.apply(this, arguments);
+                      };
+                    }();
+
+                    _context4.t0 = processBuffer;
+                    _context4.t1 = proxy;
+
+                    if (!(numberOfChannels === 0)) {
+                      _context4.next = 22;
+                      break;
+                    }
+
+                    _context4.t2 = null;
+                    _context4.next = 25;
+                    break;
+
+                  case 22:
+                    _context4.next = 24;
+                    return renderBuffer();
+
+                  case 24:
+                    _context4.t2 = _context4.sent;
+
+                  case 25:
+                    _context4.t3 = _context4.t2;
+                    _context4.t4 = nativeOfflineAudioContext;
+                    _context4.t5 = options;
+                    _context4.t6 = outputChannelCount;
+                    _context4.t7 = processorConstructor;
+                    _context4.t8 = exposeCurrentFrameAndCurrentTime;
+                    processedBufferPromise = (0, _context4.t0)(_context4.t1, _context4.t3, _context4.t4, _context4.t5, _context4.t6, _context4.t7, _context4.t8);
+
+                  case 32:
+                    _context4.next = 34;
+                    return processedBufferPromise;
+
+                  case 34:
+                    _processedBuffer = _context4.sent;
+                    audioBufferSourceNode = createNativeAudioBufferSourceNode(nativeOfflineAudioContext, {
+                      buffer: null,
+                      channelCount: 2,
+                      channelCountMode: 'max',
+                      channelInterpretation: 'speakers',
+                      loop: false,
+                      loopEnd: 0,
+                      loopStart: 0,
+                      playbackRate: 1
+                    });
+                    _nativeOutputNodes = nativeOutputNodes, _nativeOutputNodes2 = _slicedToArray__default["default"](_nativeOutputNodes, 3), _outputChannelSplitterNode = _nativeOutputNodes2[0], _outputChannelMergerNodes = _nativeOutputNodes2[1], _outputGainNode = _nativeOutputNodes2[2];
+
+                    if (_processedBuffer !== null) {
+                      audioBufferSourceNode.buffer = _processedBuffer;
+                      audioBufferSourceNode.start(0);
+                    }
+
+                    audioBufferSourceNode.connect(_outputChannelSplitterNode);
+
+                    for (_i3 = 0, outputChannelSplitterNodeOutput = 0; _i3 < proxy.numberOfOutputs; _i3 += 1) {
+                      outputChannelMergerNode = _outputChannelMergerNodes[_i3];
+
+                      for (j = 0; j < outputChannelCount[_i3]; j += 1) {
+                        _outputChannelSplitterNode.connect(outputChannelMergerNode, outputChannelSplitterNodeOutput + j, j);
+                      }
+
+                      outputChannelSplitterNodeOutput += outputChannelCount[_i3];
+                    }
+
+                    return _context4.abrupt("return", _outputGainNode);
+
+                  case 41:
+                    if (nativeAudioWorkletNodeIsOwnedByContext) {
+                      _context4.next = 61;
+                      break;
+                    }
+
+                    _iterator2 = _createForOfIteratorHelper$4(proxy.parameters.entries());
+                    _context4.prev = 43;
+
+                    _iterator2.s();
+
+                  case 45:
+                    if ((_step2 = _iterator2.n()).done) {
+                      _context4.next = 51;
+                      break;
+                    }
+
+                    _step2$value = _slicedToArray__default["default"](_step2.value, 2), nm = _step2$value[0], audioParam = _step2$value[1];
+                    _context4.next = 49;
+                    return renderAutomation(nativeOfflineAudioContext, audioParam, // @todo The definition that TypeScript uses of the AudioParamMap is lacking many methods.
+                    nativeAudioWorkletNode.parameters.get(nm));
+
+                  case 49:
+                    _context4.next = 45;
+                    break;
+
+                  case 51:
+                    _context4.next = 56;
+                    break;
+
+                  case 53:
+                    _context4.prev = 53;
+                    _context4.t9 = _context4["catch"](43);
+
+                    _iterator2.e(_context4.t9);
+
+                  case 56:
+                    _context4.prev = 56;
+
+                    _iterator2.f();
+
+                    return _context4.finish(56);
+
+                  case 59:
+                    _context4.next = 78;
+                    break;
+
+                  case 61:
+                    _iterator3 = _createForOfIteratorHelper$4(proxy.parameters.entries());
+                    _context4.prev = 62;
+
+                    _iterator3.s();
+
+                  case 64:
+                    if ((_step3 = _iterator3.n()).done) {
+                      _context4.next = 70;
+                      break;
+                    }
+
+                    _step3$value = _slicedToArray__default["default"](_step3.value, 2), _nm = _step3$value[0], _audioParam = _step3$value[1];
+                    _context4.next = 68;
+                    return connectAudioParam(nativeOfflineAudioContext, _audioParam, // @todo The definition that TypeScript uses of the AudioParamMap is lacking many methods.
+                    nativeAudioWorkletNode.parameters.get(_nm));
+
+                  case 68:
+                    _context4.next = 64;
+                    break;
+
+                  case 70:
+                    _context4.next = 75;
+                    break;
+
+                  case 72:
+                    _context4.prev = 72;
+                    _context4.t10 = _context4["catch"](62);
+
+                    _iterator3.e(_context4.t10);
+
+                  case 75:
+                    _context4.prev = 75;
+
+                    _iterator3.f();
+
+                    return _context4.finish(75);
+
+                  case 78:
+                    _context4.next = 80;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeAudioWorkletNode);
+
+                  case 80:
+                    return _context4.abrupt("return", nativeAudioWorkletNode);
+
+                  case 81:
+                  case "end":
+                    return _context4.stop();
+                }
+              }
+            }, _callee4, null, [[43, 53, 56, 59], [62, 72, 75, 78]]);
+          }));
+
+          return function createAudioNode(_x8, _x9) {
+            return _ref3.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            deleteUnrenderedAudioWorkletNode(nativeOfflineAudioContext, proxy);
+            var renderedNativeAudioWorkletNodeOrGainNode = renderedNativeAudioNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeAudioWorkletNodeOrGainNode !== undefined) {
+              return Promise.resolve(renderedNativeAudioWorkletNodeOrGainNode);
+            }
+
+            return createAudioNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    function ownKeys$r(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$r(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$r(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$r(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$l(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$l(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$l() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var createBaseAudioContextConstructor = function createBaseAudioContextConstructor(addAudioWorkletModule, analyserNodeConstructor, audioBufferConstructor, audioBufferSourceNodeConstructor, biquadFilterNodeConstructor, channelMergerNodeConstructor, channelSplitterNodeConstructor, constantSourceNodeConstructor, convolverNodeConstructor, _decodeAudioData, delayNodeConstructor, dynamicsCompressorNodeConstructor, gainNodeConstructor, iIRFilterNodeConstructor, minimalBaseAudioContextConstructor, oscillatorNodeConstructor, pannerNodeConstructor, periodicWaveConstructor, stereoPannerNodeConstructor, waveShaperNodeConstructor) {
+      return /*#__PURE__*/function (_minimalBaseAudioCont) {
+        _inherits__default["default"](BaseAudioContext, _minimalBaseAudioCont);
+
+        var _super = _createSuper$l(BaseAudioContext);
+
+        function BaseAudioContext(_nativeContext, numberOfChannels) {
+          var _this;
+
+          _classCallCheck__default["default"](this, BaseAudioContext);
+
+          _this = _super.call(this, _nativeContext, numberOfChannels);
+          _this._nativeContext = _nativeContext;
+          _this._audioWorklet = addAudioWorkletModule === undefined ? undefined : {
+            addModule: function addModule(moduleURL, options) {
+              return addAudioWorkletModule(_assertThisInitialized__default["default"](_this), moduleURL, options);
+            }
+          };
+          return _this;
+        }
+
+        _createClass__default["default"](BaseAudioContext, [{
+          key: "audioWorklet",
+          get: function get() {
+            return this._audioWorklet;
+          }
+        }, {
+          key: "createAnalyser",
+          value: function createAnalyser() {
+            return new analyserNodeConstructor(this);
+          }
+        }, {
+          key: "createBiquadFilter",
+          value: function createBiquadFilter() {
+            return new biquadFilterNodeConstructor(this);
+          }
+        }, {
+          key: "createBuffer",
+          value: function createBuffer(numberOfChannels, length, sampleRate) {
+            return new audioBufferConstructor({
+              length: length,
+              numberOfChannels: numberOfChannels,
+              sampleRate: sampleRate
+            });
+          }
+        }, {
+          key: "createBufferSource",
+          value: function createBufferSource() {
+            return new audioBufferSourceNodeConstructor(this);
+          }
+        }, {
+          key: "createChannelMerger",
+          value: function createChannelMerger() {
+            var numberOfInputs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 6;
+            return new channelMergerNodeConstructor(this, {
+              numberOfInputs: numberOfInputs
+            });
+          }
+        }, {
+          key: "createChannelSplitter",
+          value: function createChannelSplitter() {
+            var numberOfOutputs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 6;
+            return new channelSplitterNodeConstructor(this, {
+              numberOfOutputs: numberOfOutputs
+            });
+          }
+        }, {
+          key: "createConstantSource",
+          value: function createConstantSource() {
+            return new constantSourceNodeConstructor(this);
+          }
+        }, {
+          key: "createConvolver",
+          value: function createConvolver() {
+            return new convolverNodeConstructor(this);
+          }
+        }, {
+          key: "createDelay",
+          value: function createDelay() {
+            var maxDelayTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+            return new delayNodeConstructor(this, {
+              maxDelayTime: maxDelayTime
+            });
+          }
+        }, {
+          key: "createDynamicsCompressor",
+          value: function createDynamicsCompressor() {
+            return new dynamicsCompressorNodeConstructor(this);
+          }
+        }, {
+          key: "createGain",
+          value: function createGain() {
+            return new gainNodeConstructor(this);
+          }
+        }, {
+          key: "createIIRFilter",
+          value: function createIIRFilter(feedforward, feedback) {
+            return new iIRFilterNodeConstructor(this, {
+              feedback: feedback,
+              feedforward: feedforward
+            });
+          }
+        }, {
+          key: "createOscillator",
+          value: function createOscillator() {
+            return new oscillatorNodeConstructor(this);
+          }
+        }, {
+          key: "createPanner",
+          value: function createPanner() {
+            return new pannerNodeConstructor(this);
+          }
+        }, {
+          key: "createPeriodicWave",
+          value: function createPeriodicWave(real, imag) {
+            var constraints = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+              disableNormalization: false
+            };
+            return new periodicWaveConstructor(this, _objectSpread$r(_objectSpread$r({}, constraints), {}, {
+              imag: imag,
+              real: real
+            }));
+          }
+        }, {
+          key: "createStereoPanner",
+          value: function createStereoPanner() {
+            return new stereoPannerNodeConstructor(this);
+          }
+        }, {
+          key: "createWaveShaper",
+          value: function createWaveShaper() {
+            return new waveShaperNodeConstructor(this);
+          }
+        }, {
+          key: "decodeAudioData",
+          value: function decodeAudioData(audioData, successCallback, errorCallback) {
+            return _decodeAudioData(this._nativeContext, audioData).then(function (audioBuffer) {
+              if (typeof successCallback === 'function') {
+                successCallback(audioBuffer);
+              }
+
+              return audioBuffer;
+            }, function (err) {
+              if (typeof errorCallback === 'function') {
+                errorCallback(err);
+              }
+
+              throw err;
+            });
+          }
+        }]);
+
+        return BaseAudioContext;
+      }(minimalBaseAudioContextConstructor);
+    };
+
+    function ownKeys$q(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$q(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$q(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$q(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$k(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$k(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$k() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$g = {
+      Q: 1,
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      detune: 0,
+      frequency: 350,
+      gain: 0,
+      type: 'lowpass'
+    };
+    var createBiquadFilterNodeConstructor = function createBiquadFilterNodeConstructor(audioNodeConstructor, createAudioParam, createBiquadFilterNodeRenderer, createInvalidAccessError, createNativeBiquadFilterNode, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](BiquadFilterNode, _audioNodeConstructor);
+
+        var _super = _createSuper$k(BiquadFilterNode);
+
+        function BiquadFilterNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, BiquadFilterNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$q(_objectSpread$q({}, DEFAULT_OPTIONS$g), options);
+
+          var nativeBiquadFilterNode = createNativeBiquadFilterNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var biquadFilterNodeRenderer = isOffline ? createBiquadFilterNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeBiquadFilterNode, biquadFilterNodeRenderer); // Bug #80: Safari does not export the correct values for maxValue and minValue.
+
+          _this._Q = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeBiquadFilterNode.Q, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT); // Bug #78: Firefox & Safari do not export the correct values for maxValue and minValue.
+
+          _this._detune = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeBiquadFilterNode.detune, 1200 * Math.log2(MOST_POSITIVE_SINGLE_FLOAT), -1200 * Math.log2(MOST_POSITIVE_SINGLE_FLOAT)); // Bug #77: Firefox & Safari do not export the correct value for minValue.
+
+          _this._frequency = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeBiquadFilterNode.frequency, context.sampleRate / 2, 0); // Bug #79: Firefox & Safari do not export the correct values for maxValue and minValue.
+
+          _this._gain = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeBiquadFilterNode.gain, 40 * Math.log10(MOST_POSITIVE_SINGLE_FLOAT), MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._nativeBiquadFilterNode = nativeBiquadFilterNode; // @todo Determine a meaningful tail-time instead of just using one second.
+
+          setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), 1);
+          return _this;
+        }
+
+        _createClass__default["default"](BiquadFilterNode, [{
+          key: "detune",
+          get: function get() {
+            return this._detune;
+          }
+        }, {
+          key: "frequency",
+          get: function get() {
+            return this._frequency;
+          }
+        }, {
+          key: "gain",
+          get: function get() {
+            return this._gain;
+          }
+        }, {
+          key: "Q",
+          get: function get() {
+            return this._Q;
+          }
+        }, {
+          key: "type",
+          get: function get() {
+            return this._nativeBiquadFilterNode.type;
+          },
+          set: function set(value) {
+            this._nativeBiquadFilterNode.type = value;
+          }
+        }, {
+          key: "getFrequencyResponse",
+          value: function getFrequencyResponse(frequencyHz, magResponse, phaseResponse) {
+            // Bug #189: Safari does throw an InvalidStateError.
+            try {
+              this._nativeBiquadFilterNode.getFrequencyResponse(frequencyHz, magResponse, phaseResponse);
+            } catch (err) {
+              if (err.code === 11) {
+                throw createInvalidAccessError();
+              }
+
+              throw err;
+            } // Bug #68: Safari does not throw an error if the parameters differ in their length.
+
+
+            if (frequencyHz.length !== magResponse.length || magResponse.length !== phaseResponse.length) {
+              throw createInvalidAccessError();
+            }
+          }
+        }]);
+
+        return BiquadFilterNode;
+      }(audioNodeConstructor);
+    };
+
+    var createBiquadFilterNodeRendererFactory = function createBiquadFilterNodeRendererFactory(connectAudioParam, createNativeBiquadFilterNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeBiquadFilterNodes = new WeakMap();
+
+        var createBiquadFilterNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeBiquadFilterNode, nativeBiquadFilterNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeBiquadFilterNode = getNativeAudioNode(proxy);
+                    /*
+                     * If the initially used nativeBiquadFilterNode was not constructed on the same OfflineAudioContext it needs to be created
+                     * again.
+                     */
+
+                    nativeBiquadFilterNodeIsOwnedByContext = isOwnedByContext(nativeBiquadFilterNode, nativeOfflineAudioContext);
+
+                    if (!nativeBiquadFilterNodeIsOwnedByContext) {
+                      options = {
+                        Q: nativeBiquadFilterNode.Q.value,
+                        channelCount: nativeBiquadFilterNode.channelCount,
+                        channelCountMode: nativeBiquadFilterNode.channelCountMode,
+                        channelInterpretation: nativeBiquadFilterNode.channelInterpretation,
+                        detune: nativeBiquadFilterNode.detune.value,
+                        frequency: nativeBiquadFilterNode.frequency.value,
+                        gain: nativeBiquadFilterNode.gain.value,
+                        type: nativeBiquadFilterNode.type
+                      };
+                      nativeBiquadFilterNode = createNativeBiquadFilterNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeBiquadFilterNodes.set(nativeOfflineAudioContext, nativeBiquadFilterNode);
+
+                    if (nativeBiquadFilterNodeIsOwnedByContext) {
+                      _context.next = 15;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.Q, nativeBiquadFilterNode.Q);
+
+                  case 7:
+                    _context.next = 9;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.detune, nativeBiquadFilterNode.detune);
+
+                  case 9:
+                    _context.next = 11;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.frequency, nativeBiquadFilterNode.frequency);
+
+                  case 11:
+                    _context.next = 13;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.gain, nativeBiquadFilterNode.gain);
+
+                  case 13:
+                    _context.next = 23;
+                    break;
+
+                  case 15:
+                    _context.next = 17;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.Q, nativeBiquadFilterNode.Q);
+
+                  case 17:
+                    _context.next = 19;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.detune, nativeBiquadFilterNode.detune);
+
+                  case 19:
+                    _context.next = 21;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.frequency, nativeBiquadFilterNode.frequency);
+
+                  case 21:
+                    _context.next = 23;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.gain, nativeBiquadFilterNode.gain);
+
+                  case 23:
+                    _context.next = 25;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeBiquadFilterNode);
+
+                  case 25:
+                    return _context.abrupt("return", nativeBiquadFilterNode);
+
+                  case 26:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createBiquadFilterNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeBiquadFilterNode = renderedNativeBiquadFilterNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeBiquadFilterNode !== undefined) {
+              return Promise.resolve(renderedNativeBiquadFilterNode);
+            }
+
+            return createBiquadFilterNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createCacheTestResult = function createCacheTestResult(ongoingTests, testResults) {
+      return function (tester, test) {
+        var cachedTestResult = testResults.get(tester);
+
+        if (cachedTestResult !== undefined) {
+          return cachedTestResult;
+        }
+
+        var ongoingTest = ongoingTests.get(tester);
+
+        if (ongoingTest !== undefined) {
+          return ongoingTest;
+        }
+
+        try {
+          var synchronousTestResult = test();
+
+          if (synchronousTestResult instanceof Promise) {
+            ongoingTests.set(tester, synchronousTestResult);
+            return synchronousTestResult["catch"](function () {
+              return false;
+            }).then(function (finalTestResult) {
+              ongoingTests["delete"](tester);
+              testResults.set(tester, finalTestResult);
+              return finalTestResult;
+            });
+          }
+
+          testResults.set(tester, synchronousTestResult);
+          return synchronousTestResult;
+        } catch (_unused) {
+          testResults.set(tester, false);
+          return false;
+        }
+      };
+    };
+
+    function ownKeys$p(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$p(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$p(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$p(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$j(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$j(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$j() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$f = {
+      channelCount: 1,
+      channelCountMode: 'explicit',
+      channelInterpretation: 'speakers',
+      numberOfInputs: 6
+    };
+    var createChannelMergerNodeConstructor = function createChannelMergerNodeConstructor(audioNodeConstructor, createChannelMergerNodeRenderer, createNativeChannelMergerNode, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](ChannelMergerNode, _audioNodeConstructor);
+
+        var _super = _createSuper$j(ChannelMergerNode);
+
+        function ChannelMergerNode(context, options) {
+          _classCallCheck__default["default"](this, ChannelMergerNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$p(_objectSpread$p({}, DEFAULT_OPTIONS$f), options);
+
+          var nativeChannelMergerNode = createNativeChannelMergerNode(nativeContext, mergedOptions);
+          var channelMergerNodeRenderer = isNativeOfflineAudioContext(nativeContext) ? createChannelMergerNodeRenderer() : null;
+          return _super.call(this, context, false, nativeChannelMergerNode, channelMergerNodeRenderer);
+        }
+
+        return _createClass__default["default"](ChannelMergerNode);
+      }(audioNodeConstructor);
+    };
+
+    var createChannelMergerNodeRendererFactory = function createChannelMergerNodeRendererFactory(createNativeChannelMergerNode, getNativeAudioNode, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeAudioNodes = new WeakMap();
+
+        var createAudioNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeAudioNode, nativeAudioNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeAudioNode = getNativeAudioNode(proxy); // If the initially used nativeAudioNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeAudioNodeIsOwnedByContext = isOwnedByContext(nativeAudioNode, nativeOfflineAudioContext);
+
+                    if (!nativeAudioNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeAudioNode.channelCount,
+                        channelCountMode: nativeAudioNode.channelCountMode,
+                        channelInterpretation: nativeAudioNode.channelInterpretation,
+                        numberOfInputs: nativeAudioNode.numberOfInputs
+                      };
+                      nativeAudioNode = createNativeChannelMergerNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeAudioNodes.set(nativeOfflineAudioContext, nativeAudioNode);
+                    _context.next = 6;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeAudioNode);
+
+                  case 6:
+                    return _context.abrupt("return", nativeAudioNode);
+
+                  case 7:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createAudioNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeAudioNode = renderedNativeAudioNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeAudioNode !== undefined) {
+              return Promise.resolve(renderedNativeAudioNode);
+            }
+
+            return createAudioNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    function ownKeys$o(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$o(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$o(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$o(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$i(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$i(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$i() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$e = {
+      channelCount: 6,
+      channelCountMode: 'explicit',
+      channelInterpretation: 'discrete',
+      numberOfOutputs: 6
+    };
+    var createChannelSplitterNodeConstructor = function createChannelSplitterNodeConstructor(audioNodeConstructor, createChannelSplitterNodeRenderer, createNativeChannelSplitterNode, getNativeContext, isNativeOfflineAudioContext, sanitizeChannelSplitterOptions) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](ChannelSplitterNode, _audioNodeConstructor);
+
+        var _super = _createSuper$i(ChannelSplitterNode);
+
+        function ChannelSplitterNode(context, options) {
+          _classCallCheck__default["default"](this, ChannelSplitterNode);
+
+          var nativeContext = getNativeContext(context);
+          var mergedOptions = sanitizeChannelSplitterOptions(_objectSpread$o(_objectSpread$o({}, DEFAULT_OPTIONS$e), options));
+          var nativeChannelSplitterNode = createNativeChannelSplitterNode(nativeContext, mergedOptions);
+          var channelSplitterNodeRenderer = isNativeOfflineAudioContext(nativeContext) ? createChannelSplitterNodeRenderer() : null;
+          return _super.call(this, context, false, nativeChannelSplitterNode, channelSplitterNodeRenderer);
+        }
+
+        return _createClass__default["default"](ChannelSplitterNode);
+      }(audioNodeConstructor);
+    };
+
+    var createChannelSplitterNodeRendererFactory = function createChannelSplitterNodeRendererFactory(createNativeChannelSplitterNode, getNativeAudioNode, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeAudioNodes = new WeakMap();
+
+        var createAudioNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeAudioNode, nativeAudioNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeAudioNode = getNativeAudioNode(proxy); // If the initially used nativeAudioNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeAudioNodeIsOwnedByContext = isOwnedByContext(nativeAudioNode, nativeOfflineAudioContext);
+
+                    if (!nativeAudioNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeAudioNode.channelCount,
+                        channelCountMode: nativeAudioNode.channelCountMode,
+                        channelInterpretation: nativeAudioNode.channelInterpretation,
+                        numberOfOutputs: nativeAudioNode.numberOfOutputs
+                      };
+                      nativeAudioNode = createNativeChannelSplitterNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeAudioNodes.set(nativeOfflineAudioContext, nativeAudioNode);
+                    _context.next = 6;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeAudioNode);
+
+                  case 6:
+                    return _context.abrupt("return", nativeAudioNode);
+
+                  case 7:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createAudioNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeAudioNode = renderedNativeAudioNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeAudioNode !== undefined) {
+              return Promise.resolve(renderedNativeAudioNode);
+            }
+
+            return createAudioNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createConnectAudioParam = function createConnectAudioParam(renderInputsOfAudioParam) {
+      return function (nativeOfflineAudioContext, audioParam, nativeAudioParam) {
+        return renderInputsOfAudioParam(audioParam, nativeOfflineAudioContext, nativeAudioParam);
+      };
+    };
+
+    var createConnectMultipleOutputs = function createConnectMultipleOutputs(createIndexSizeError) {
+      return function (outputAudioNodes, destination) {
+        var output = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+        var input = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+        var outputAudioNode = outputAudioNodes[output];
+
+        if (outputAudioNode === undefined) {
+          throw createIndexSizeError();
+        }
+
+        if (isNativeAudioNode$1(destination)) {
+          return outputAudioNode.connect(destination, 0, input);
+        }
+
+        return outputAudioNode.connect(destination, 0);
+      };
+    };
+
+    var createConnectedNativeAudioBufferSourceNodeFactory = function createConnectedNativeAudioBufferSourceNodeFactory(createNativeAudioBufferSourceNode) {
+      return function (nativeContext, nativeAudioNode) {
+        var nativeAudioBufferSourceNode = createNativeAudioBufferSourceNode(nativeContext, {
+          buffer: null,
+          channelCount: 2,
+          channelCountMode: 'max',
+          channelInterpretation: 'speakers',
+          loop: false,
+          loopEnd: 0,
+          loopStart: 0,
+          playbackRate: 1
+        });
+        var nativeAudioBuffer = nativeContext.createBuffer(1, 2, 44100);
+        nativeAudioBufferSourceNode.buffer = nativeAudioBuffer;
+        nativeAudioBufferSourceNode.loop = true;
+        nativeAudioBufferSourceNode.connect(nativeAudioNode);
+        nativeAudioBufferSourceNode.start();
+        return function () {
+          nativeAudioBufferSourceNode.stop();
+          nativeAudioBufferSourceNode.disconnect(nativeAudioNode);
+        };
+      };
+    };
+
+    function ownKeys$n(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$n(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$n(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$n(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$h(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$h(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$h() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$d = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      offset: 1
+    };
+    var createConstantSourceNodeConstructor = function createConstantSourceNodeConstructor(audioNodeConstructor, createAudioParam, createConstantSourceNodeRendererFactory, createNativeConstantSourceNode, getNativeContext, isNativeOfflineAudioContext, wrapEventListener) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](ConstantSourceNode, _audioNodeConstructor);
+
+        var _super = _createSuper$h(ConstantSourceNode);
+
+        function ConstantSourceNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, ConstantSourceNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$n(_objectSpread$n({}, DEFAULT_OPTIONS$d), options);
+
+          var nativeConstantSourceNode = createNativeConstantSourceNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var constantSourceNodeRenderer = isOffline ? createConstantSourceNodeRendererFactory() : null;
+          _this = _super.call(this, context, false, nativeConstantSourceNode, constantSourceNodeRenderer);
+          _this._constantSourceNodeRenderer = constantSourceNodeRenderer;
+          _this._nativeConstantSourceNode = nativeConstantSourceNode;
+          /*
+           * Bug #62 & #74: Safari does not support ConstantSourceNodes and does not export the correct values for maxValue and minValue
+           * for GainNodes.
+           */
+
+          _this._offset = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeConstantSourceNode.offset, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._onended = null;
+          return _this;
+        }
+
+        _createClass__default["default"](ConstantSourceNode, [{
+          key: "offset",
+          get: function get() {
+            return this._offset;
+          }
+        }, {
+          key: "onended",
+          get: function get() {
+            return this._onended;
+          },
+          set: function set(value) {
+            var wrappedListener = typeof value === 'function' ? wrapEventListener(this, value) : null;
+            this._nativeConstantSourceNode.onended = wrappedListener;
+            var nativeOnEnded = this._nativeConstantSourceNode.onended;
+            this._onended = nativeOnEnded !== null && nativeOnEnded === wrappedListener ? value : nativeOnEnded;
+          }
+        }, {
+          key: "start",
+          value: function start() {
+            var _this2 = this;
+
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            this._nativeConstantSourceNode.start(when);
+
+            if (this._constantSourceNodeRenderer !== null) {
+              this._constantSourceNodeRenderer.start = when;
+            }
+
+            if (this.context.state !== 'closed') {
+              setInternalStateToActive(this);
+
+              var resetInternalStateToPassive = function resetInternalStateToPassive() {
+                _this2._nativeConstantSourceNode.removeEventListener('ended', resetInternalStateToPassive);
+
+                if (isActiveAudioNode(_this2)) {
+                  setInternalStateToPassive(_this2);
+                }
+              };
+
+              this._nativeConstantSourceNode.addEventListener('ended', resetInternalStateToPassive);
+            }
+          }
+        }, {
+          key: "stop",
+          value: function stop() {
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            this._nativeConstantSourceNode.stop(when);
+
+            if (this._constantSourceNodeRenderer !== null) {
+              this._constantSourceNodeRenderer.stop = when;
+            }
+          }
+        }]);
+
+        return ConstantSourceNode;
+      }(audioNodeConstructor);
+    };
+
+    var createConstantSourceNodeRendererFactory = function createConstantSourceNodeRendererFactory(connectAudioParam, createNativeConstantSourceNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeConstantSourceNodes = new WeakMap();
+        var start = null;
+        var stop = null;
+
+        var createConstantSourceNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeConstantSourceNode, nativeConstantSourceNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeConstantSourceNode = getNativeAudioNode(proxy);
+                    /*
+                     * If the initially used nativeConstantSourceNode was not constructed on the same OfflineAudioContext it needs to be created
+                     * again.
+                     */
+
+                    nativeConstantSourceNodeIsOwnedByContext = isOwnedByContext(nativeConstantSourceNode, nativeOfflineAudioContext);
+
+                    if (!nativeConstantSourceNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeConstantSourceNode.channelCount,
+                        channelCountMode: nativeConstantSourceNode.channelCountMode,
+                        channelInterpretation: nativeConstantSourceNode.channelInterpretation,
+                        offset: nativeConstantSourceNode.offset.value
+                      };
+                      nativeConstantSourceNode = createNativeConstantSourceNode(nativeOfflineAudioContext, options);
+
+                      if (start !== null) {
+                        nativeConstantSourceNode.start(start);
+                      }
+
+                      if (stop !== null) {
+                        nativeConstantSourceNode.stop(stop);
+                      }
+                    }
+
+                    renderedNativeConstantSourceNodes.set(nativeOfflineAudioContext, nativeConstantSourceNode);
+
+                    if (nativeConstantSourceNodeIsOwnedByContext) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.offset, nativeConstantSourceNode.offset);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.offset, nativeConstantSourceNode.offset);
+
+                  case 11:
+                    _context.next = 13;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeConstantSourceNode);
+
+                  case 13:
+                    return _context.abrupt("return", nativeConstantSourceNode);
+
+                  case 14:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createConstantSourceNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          set start(value) {
+            start = value;
+          },
+
+          set stop(value) {
+            stop = value;
+          },
+
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeConstantSourceNode = renderedNativeConstantSourceNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeConstantSourceNode !== undefined) {
+              return Promise.resolve(renderedNativeConstantSourceNode);
+            }
+
+            return createConstantSourceNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createConvertNumberToUnsignedLong = function createConvertNumberToUnsignedLong(unit32Array) {
+      return function (value) {
+        unit32Array[0] = value;
+        return unit32Array[0];
+      };
+    };
+
+    function ownKeys$m(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$m(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$m(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$m(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$g(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$g(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$g() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$c = {
+      buffer: null,
+      channelCount: 2,
+      channelCountMode: 'clamped-max',
+      channelInterpretation: 'speakers',
+      disableNormalization: false
+    };
+    var createConvolverNodeConstructor = function createConvolverNodeConstructor(audioNodeConstructor, createConvolverNodeRenderer, createNativeConvolverNode, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](ConvolverNode, _audioNodeConstructor);
+
+        var _super = _createSuper$g(ConvolverNode);
+
+        function ConvolverNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, ConvolverNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$m(_objectSpread$m({}, DEFAULT_OPTIONS$c), options);
+
+          var nativeConvolverNode = createNativeConvolverNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var convolverNodeRenderer = isOffline ? createConvolverNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeConvolverNode, convolverNodeRenderer);
+          _this._isBufferNullified = false;
+          _this._nativeConvolverNode = nativeConvolverNode;
+
+          if (mergedOptions.buffer !== null) {
+            setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), mergedOptions.buffer.duration);
+          }
+
+          return _this;
+        }
+
+        _createClass__default["default"](ConvolverNode, [{
+          key: "buffer",
+          get: function get() {
+            if (this._isBufferNullified) {
+              return null;
+            }
+
+            return this._nativeConvolverNode.buffer;
+          },
+          set: function set(value) {
+            this._nativeConvolverNode.buffer = value; // Bug #115: Safari does not allow to set the buffer to null.
+
+            if (value === null && this._nativeConvolverNode.buffer !== null) {
+              var nativeContext = this._nativeConvolverNode.context;
+              this._nativeConvolverNode.buffer = nativeContext.createBuffer(1, 1, 44100);
+              this._isBufferNullified = true;
+              setAudioNodeTailTime(this, 0);
+            } else {
+              this._isBufferNullified = false;
+              setAudioNodeTailTime(this, this._nativeConvolverNode.buffer === null ? 0 : this._nativeConvolverNode.buffer.duration);
+            }
+          }
+        }, {
+          key: "normalize",
+          get: function get() {
+            return this._nativeConvolverNode.normalize;
+          },
+          set: function set(value) {
+            this._nativeConvolverNode.normalize = value;
+          }
+        }]);
+
+        return ConvolverNode;
+      }(audioNodeConstructor);
+    };
+
+    var createConvolverNodeRendererFactory = function createConvolverNodeRendererFactory(createNativeConvolverNode, getNativeAudioNode, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeConvolverNodes = new WeakMap();
+
+        var createConvolverNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeConvolverNode, nativeConvolverNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeConvolverNode = getNativeAudioNode(proxy); // If the initially used nativeConvolverNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeConvolverNodeIsOwnedByContext = isOwnedByContext(nativeConvolverNode, nativeOfflineAudioContext);
+
+                    if (!nativeConvolverNodeIsOwnedByContext) {
+                      options = {
+                        buffer: nativeConvolverNode.buffer,
+                        channelCount: nativeConvolverNode.channelCount,
+                        channelCountMode: nativeConvolverNode.channelCountMode,
+                        channelInterpretation: nativeConvolverNode.channelInterpretation,
+                        disableNormalization: !nativeConvolverNode.normalize
+                      };
+                      nativeConvolverNode = createNativeConvolverNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeConvolverNodes.set(nativeOfflineAudioContext, nativeConvolverNode);
+
+                    if (!isNativeAudioNodeFaker(nativeConvolverNode)) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeConvolverNode.inputs[0]);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeConvolverNode);
+
+                  case 11:
+                    return _context.abrupt("return", nativeConvolverNode);
+
+                  case 12:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createConvolverNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeConvolverNode = renderedNativeConvolverNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeConvolverNode !== undefined) {
+              return Promise.resolve(renderedNativeConvolverNode);
+            }
+
+            return createConvolverNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createCreateNativeOfflineAudioContext = function createCreateNativeOfflineAudioContext(createNotSupportedError, nativeOfflineAudioContextConstructor) {
+      return function (numberOfChannels, length, sampleRate) {
+        if (nativeOfflineAudioContextConstructor === null) {
+          throw new Error('Missing the native OfflineAudioContext constructor.');
+        }
+
+        try {
+          return new nativeOfflineAudioContextConstructor(numberOfChannels, length, sampleRate);
+        } catch (err) {
+          // Bug #143, #144 & #146: Safari throws a SyntaxError when numberOfChannels, length or sampleRate are invalid.
+          if (err.name === 'SyntaxError') {
+            throw createNotSupportedError();
+          }
+
+          throw err;
+        }
+      };
+    };
+
+    var createDataCloneError = function createDataCloneError() {
+      return new DOMException('', 'DataCloneError');
+    };
+
+    var detachArrayBuffer = function detachArrayBuffer(arrayBuffer) {
+      var _MessageChannel = new MessageChannel(),
+          port1 = _MessageChannel.port1,
+          port2 = _MessageChannel.port2;
+
+      return new Promise(function (resolve) {
+        var closeAndResolve = function closeAndResolve() {
+          port2.onmessage = null;
+          port1.close();
+          port2.close();
+          resolve();
+        };
+
+        port2.onmessage = function () {
+          return closeAndResolve();
+        };
+
+        try {
+          port1.postMessage(arrayBuffer, [arrayBuffer]);
+        } finally {
+          closeAndResolve();
+        }
+      });
+    };
+
+    var createDecodeAudioData = function createDecodeAudioData(audioBufferStore, cacheTestResult, createDataCloneError, createEncodingError, detachedArrayBuffers, getNativeContext, isNativeContext, testAudioBufferCopyChannelMethodsOutOfBoundsSupport, testPromiseSupport, wrapAudioBufferCopyChannelMethods, wrapAudioBufferCopyChannelMethodsOutOfBounds) {
+      return function (anyContext, audioData) {
+        var nativeContext = isNativeContext(anyContext) ? anyContext : getNativeContext(anyContext); // Bug #43: Only Chrome, Edge and Opera do throw a DataCloneError.
+
+        if (detachedArrayBuffers.has(audioData)) {
+          var err = createDataCloneError();
+          return Promise.reject(err);
+        } // The audioData parameter maybe of a type which can't be added to a WeakSet.
+
+
+        try {
+          detachedArrayBuffers.add(audioData);
+        } catch (_unused) {// Ignore errors.
+        } // Bug #21: Safari does not support promises yet.
+
+
+        if (cacheTestResult(testPromiseSupport, function () {
+          return testPromiseSupport(nativeContext);
+        })) {
+          return nativeContext.decodeAudioData(audioData).then(function (audioBuffer) {
+            // Bug #133: Safari does neuter the ArrayBuffer.
+            detachArrayBuffer(audioData)["catch"](function () {// Ignore errors.
+            }); // Bug #157: Firefox does not allow the bufferOffset to be out-of-bounds.
+
+            if (!cacheTestResult(testAudioBufferCopyChannelMethodsOutOfBoundsSupport, function () {
+              return testAudioBufferCopyChannelMethodsOutOfBoundsSupport(audioBuffer);
+            })) {
+              wrapAudioBufferCopyChannelMethodsOutOfBounds(audioBuffer);
+            }
+
+            audioBufferStore.add(audioBuffer);
+            return audioBuffer;
+          });
+        } // Bug #21: Safari does not return a Promise yet.
+
+
+        return new Promise(function (resolve, reject) {
+          var complete = /*#__PURE__*/function () {
+            var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+              return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.prev = 0;
+                      _context.next = 3;
+                      return detachArrayBuffer(audioData);
+
+                    case 3:
+                      _context.next = 7;
+                      break;
+
+                    case 5:
+                      _context.prev = 5;
+                      _context.t0 = _context["catch"](0);
+
+                    case 7:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee, null, [[0, 5]]);
+            }));
+
+            return function complete() {
+              return _ref.apply(this, arguments);
+            };
+          }();
+
+          var fail = function fail(err) {
+            reject(err);
+            complete();
+          }; // Bug #26: Safari throws a synchronous error.
+
+
+          try {
+            // Bug #1: Safari requires a successCallback.
+            nativeContext.decodeAudioData(audioData, function (audioBuffer) {
+              // Bug #5: Safari does not support copyFromChannel() and copyToChannel().
+              // Bug #100: Safari does throw a wrong error when calling getChannelData() with an out-of-bounds value.
+              if (typeof audioBuffer.copyFromChannel !== 'function') {
+                wrapAudioBufferCopyChannelMethods(audioBuffer);
+                wrapAudioBufferGetChannelDataMethod(audioBuffer);
+              }
+
+              audioBufferStore.add(audioBuffer);
+              complete().then(function () {
+                return resolve(audioBuffer);
+              });
+            }, function (err) {
+              // Bug #4: Safari returns null instead of an error.
+              if (err === null) {
+                fail(createEncodingError());
+              } else {
+                fail(err);
+              }
+            });
+          } catch (err) {
+            fail(err);
+          }
+        });
+      };
+    };
+
+    function _createForOfIteratorHelper$3(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$3(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$3(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$3(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$3(o, minLen); }
+
+    function _arrayLikeToArray$3(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+    var createDecrementCycleCounter = function createDecrementCycleCounter(connectNativeAudioNodeToNativeAudioNode, cycleCounters, getAudioNodeConnections, getNativeAudioNode, getNativeAudioParam, getNativeContext, isActiveAudioNode, isNativeOfflineAudioContext) {
+      return function (audioNode, count) {
+        var cycleCounter = cycleCounters.get(audioNode);
+
+        if (cycleCounter === undefined) {
+          throw new Error('Missing the expected cycle count.');
+        }
+
+        var nativeContext = getNativeContext(audioNode.context);
+        var isOffline = isNativeOfflineAudioContext(nativeContext);
+
+        if (cycleCounter === count) {
+          cycleCounters["delete"](audioNode);
+
+          if (!isOffline && isActiveAudioNode(audioNode)) {
+            var nativeSourceAudioNode = getNativeAudioNode(audioNode);
+
+            var _getAudioNodeConnecti = getAudioNodeConnections(audioNode),
+                outputs = _getAudioNodeConnecti.outputs;
+
+            var _iterator = _createForOfIteratorHelper$3(outputs),
+                _step;
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                var output = _step.value;
+
+                if (isAudioNodeOutputConnection(output)) {
+                  var nativeDestinationAudioNode = getNativeAudioNode(output[0]);
+                  connectNativeAudioNodeToNativeAudioNode(nativeSourceAudioNode, nativeDestinationAudioNode, output[1], output[2]);
+                } else {
+                  var nativeDestinationAudioParam = getNativeAudioParam(output[0]);
+                  nativeSourceAudioNode.connect(nativeDestinationAudioParam, output[1]);
+                }
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+          }
+        } else {
+          cycleCounters.set(audioNode, cycleCounter - count);
+        }
+      };
+    };
+
+    function ownKeys$l(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$l(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$l(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$l(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$f(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$f(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$f() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$b = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      delayTime: 0,
+      maxDelayTime: 1
+    };
+    var createDelayNodeConstructor = function createDelayNodeConstructor(audioNodeConstructor, createAudioParam, createDelayNodeRenderer, createNativeDelayNode, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](DelayNode, _audioNodeConstructor);
+
+        var _super = _createSuper$f(DelayNode);
+
+        function DelayNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, DelayNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$l(_objectSpread$l({}, DEFAULT_OPTIONS$b), options);
+
+          var nativeDelayNode = createNativeDelayNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var delayNodeRenderer = isOffline ? createDelayNodeRenderer(mergedOptions.maxDelayTime) : null;
+          _this = _super.call(this, context, false, nativeDelayNode, delayNodeRenderer);
+          _this._delayTime = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeDelayNode.delayTime);
+          setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), mergedOptions.maxDelayTime);
+          return _this;
+        }
+
+        _createClass__default["default"](DelayNode, [{
+          key: "delayTime",
+          get: function get() {
+            return this._delayTime;
+          }
+        }]);
+
+        return DelayNode;
+      }(audioNodeConstructor);
+    };
+
+    var createDelayNodeRendererFactory = function createDelayNodeRendererFactory(connectAudioParam, createNativeDelayNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function (maxDelayTime) {
+        var renderedNativeDelayNodes = new WeakMap();
+
+        var createDelayNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeDelayNode, nativeDelayNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeDelayNode = getNativeAudioNode(proxy); // If the initially used nativeDelayNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeDelayNodeIsOwnedByContext = isOwnedByContext(nativeDelayNode, nativeOfflineAudioContext);
+
+                    if (!nativeDelayNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeDelayNode.channelCount,
+                        channelCountMode: nativeDelayNode.channelCountMode,
+                        channelInterpretation: nativeDelayNode.channelInterpretation,
+                        delayTime: nativeDelayNode.delayTime.value,
+                        maxDelayTime: maxDelayTime
+                      };
+                      nativeDelayNode = createNativeDelayNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeDelayNodes.set(nativeOfflineAudioContext, nativeDelayNode);
+
+                    if (nativeDelayNodeIsOwnedByContext) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.delayTime, nativeDelayNode.delayTime);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.delayTime, nativeDelayNode.delayTime);
+
+                  case 11:
+                    _context.next = 13;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeDelayNode);
+
+                  case 13:
+                    return _context.abrupt("return", nativeDelayNode);
+
+                  case 14:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createDelayNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeDelayNode = renderedNativeDelayNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeDelayNode !== undefined) {
+              return Promise.resolve(renderedNativeDelayNode);
+            }
+
+            return createDelayNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createDeleteActiveInputConnectionToAudioNode = function createDeleteActiveInputConnectionToAudioNode(pickElementFromSet) {
+      return function (activeInputs, source, output, input) {
+        return pickElementFromSet(activeInputs[input], function (activeInputConnection) {
+          return activeInputConnection[0] === source && activeInputConnection[1] === output;
+        });
+      };
+    };
+
+    var createDeleteUnrenderedAudioWorkletNode = function createDeleteUnrenderedAudioWorkletNode(getUnrenderedAudioWorkletNodes) {
+      return function (nativeContext, audioWorkletNode) {
+        getUnrenderedAudioWorkletNodes(nativeContext)["delete"](audioWorkletNode);
+      };
+    };
+
+    var isDelayNode = function isDelayNode(audioNode) {
+      return 'delayTime' in audioNode;
+    };
+
+    var createDetectCycles = function createDetectCycles(audioParamAudioNodeStore, getAudioNodeConnections, getValueForKey) {
+      return function detectCycles(chain, nextLink) {
+        var audioNode = isAudioNode(nextLink) ? nextLink : getValueForKey(audioParamAudioNodeStore, nextLink);
+
+        if (isDelayNode(audioNode)) {
+          return [];
+        }
+
+        if (chain[0] === audioNode) {
+          return [chain];
+        }
+
+        if (chain.includes(audioNode)) {
+          return [];
+        }
+
+        var _getAudioNodeConnecti = getAudioNodeConnections(audioNode),
+            outputs = _getAudioNodeConnecti.outputs;
+
+        return Array.from(outputs).map(function (outputConnection) {
+          return detectCycles([].concat(_toConsumableArray__default["default"](chain), [audioNode]), outputConnection[0]);
+        }).reduce(function (mergedCycles, nestedCycles) {
+          return mergedCycles.concat(nestedCycles);
+        }, []);
+      };
+    };
+
+    var getOutputAudioNodeAtIndex = function getOutputAudioNodeAtIndex(createIndexSizeError, outputAudioNodes, output) {
+      var outputAudioNode = outputAudioNodes[output];
+
+      if (outputAudioNode === undefined) {
+        throw createIndexSizeError();
+      }
+
+      return outputAudioNode;
+    };
+
+    var createDisconnectMultipleOutputs = function createDisconnectMultipleOutputs(createIndexSizeError) {
+      return function (outputAudioNodes) {
+        var destinationOrOutput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+        var output = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+        var input = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+        if (destinationOrOutput === undefined) {
+          return outputAudioNodes.forEach(function (outputAudioNode) {
+            return outputAudioNode.disconnect();
+          });
+        }
+
+        if (typeof destinationOrOutput === 'number') {
+          return getOutputAudioNodeAtIndex(createIndexSizeError, outputAudioNodes, destinationOrOutput).disconnect();
+        }
+
+        if (isNativeAudioNode$1(destinationOrOutput)) {
+          if (output === undefined) {
+            return outputAudioNodes.forEach(function (outputAudioNode) {
+              return outputAudioNode.disconnect(destinationOrOutput);
+            });
+          }
+
+          if (input === undefined) {
+            return getOutputAudioNodeAtIndex(createIndexSizeError, outputAudioNodes, output).disconnect(destinationOrOutput, 0);
+          }
+
+          return getOutputAudioNodeAtIndex(createIndexSizeError, outputAudioNodes, output).disconnect(destinationOrOutput, 0, input);
+        }
+
+        if (output === undefined) {
+          return outputAudioNodes.forEach(function (outputAudioNode) {
+            return outputAudioNode.disconnect(destinationOrOutput);
+          });
+        }
+
+        return getOutputAudioNodeAtIndex(createIndexSizeError, outputAudioNodes, output).disconnect(destinationOrOutput, 0);
+      };
+    };
+
+    function ownKeys$k(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$k(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$k(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$k(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$e(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$e(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$e() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$a = {
+      attack: 0.003,
+      channelCount: 2,
+      channelCountMode: 'clamped-max',
+      channelInterpretation: 'speakers',
+      knee: 30,
+      ratio: 12,
+      release: 0.25,
+      threshold: -24
+    };
+    var createDynamicsCompressorNodeConstructor = function createDynamicsCompressorNodeConstructor(audioNodeConstructor, createAudioParam, createDynamicsCompressorNodeRenderer, createNativeDynamicsCompressorNode, createNotSupportedError, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](DynamicsCompressorNode, _audioNodeConstructor);
+
+        var _super = _createSuper$e(DynamicsCompressorNode);
+
+        function DynamicsCompressorNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, DynamicsCompressorNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$k(_objectSpread$k({}, DEFAULT_OPTIONS$a), options);
+
+          var nativeDynamicsCompressorNode = createNativeDynamicsCompressorNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var dynamicsCompressorNodeRenderer = isOffline ? createDynamicsCompressorNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeDynamicsCompressorNode, dynamicsCompressorNodeRenderer);
+          _this._attack = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeDynamicsCompressorNode.attack);
+          _this._knee = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeDynamicsCompressorNode.knee);
+          _this._nativeDynamicsCompressorNode = nativeDynamicsCompressorNode;
+          _this._ratio = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeDynamicsCompressorNode.ratio);
+          _this._release = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeDynamicsCompressorNode.release);
+          _this._threshold = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeDynamicsCompressorNode.threshold);
+          setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), 0.006);
+          return _this;
+        }
+
+        _createClass__default["default"](DynamicsCompressorNode, [{
+          key: "attack",
+          get: function get() {
+            return this._attack;
+          } // Bug #108: Safari allows a channelCount of three and above which is why the getter and setter needs to be overwritten here.
+
+        }, {
+          key: "channelCount",
+          get: function get() {
+            return this._nativeDynamicsCompressorNode.channelCount;
+          },
+          set: function set(value) {
+            var previousChannelCount = this._nativeDynamicsCompressorNode.channelCount;
+            this._nativeDynamicsCompressorNode.channelCount = value;
+
+            if (value > 2) {
+              this._nativeDynamicsCompressorNode.channelCount = previousChannelCount;
+              throw createNotSupportedError();
+            }
+          }
+          /*
+           * Bug #109: Only Chrome, Firefox and Opera disallow a channelCountMode of 'max' yet which is why the getter and setter needs to be
+           * overwritten here.
+           */
+
+        }, {
+          key: "channelCountMode",
+          get: function get() {
+            return this._nativeDynamicsCompressorNode.channelCountMode;
+          },
+          set: function set(value) {
+            var previousChannelCount = this._nativeDynamicsCompressorNode.channelCountMode;
+            this._nativeDynamicsCompressorNode.channelCountMode = value;
+
+            if (value === 'max') {
+              this._nativeDynamicsCompressorNode.channelCountMode = previousChannelCount;
+              throw createNotSupportedError();
+            }
+          }
+        }, {
+          key: "knee",
+          get: function get() {
+            return this._knee;
+          }
+        }, {
+          key: "ratio",
+          get: function get() {
+            return this._ratio;
+          }
+        }, {
+          key: "reduction",
+          get: function get() {
+            // Bug #111: Safari returns an AudioParam instead of a number.
+            if (typeof this._nativeDynamicsCompressorNode.reduction.value === 'number') {
+              return this._nativeDynamicsCompressorNode.reduction.value;
+            }
+
+            return this._nativeDynamicsCompressorNode.reduction;
+          }
+        }, {
+          key: "release",
+          get: function get() {
+            return this._release;
+          }
+        }, {
+          key: "threshold",
+          get: function get() {
+            return this._threshold;
+          }
+        }]);
+
+        return DynamicsCompressorNode;
+      }(audioNodeConstructor);
+    };
+
+    var createDynamicsCompressorNodeRendererFactory = function createDynamicsCompressorNodeRendererFactory(connectAudioParam, createNativeDynamicsCompressorNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeDynamicsCompressorNodes = new WeakMap();
+
+        var createDynamicsCompressorNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeDynamicsCompressorNode, nativeDynamicsCompressorNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeDynamicsCompressorNode = getNativeAudioNode(proxy);
+                    /*
+                     * If the initially used nativeDynamicsCompressorNode was not constructed on the same OfflineAudioContext it needs to be
+                     * created again.
+                     */
+
+                    nativeDynamicsCompressorNodeIsOwnedByContext = isOwnedByContext(nativeDynamicsCompressorNode, nativeOfflineAudioContext);
+
+                    if (!nativeDynamicsCompressorNodeIsOwnedByContext) {
+                      options = {
+                        attack: nativeDynamicsCompressorNode.attack.value,
+                        channelCount: nativeDynamicsCompressorNode.channelCount,
+                        channelCountMode: nativeDynamicsCompressorNode.channelCountMode,
+                        channelInterpretation: nativeDynamicsCompressorNode.channelInterpretation,
+                        knee: nativeDynamicsCompressorNode.knee.value,
+                        ratio: nativeDynamicsCompressorNode.ratio.value,
+                        release: nativeDynamicsCompressorNode.release.value,
+                        threshold: nativeDynamicsCompressorNode.threshold.value
+                      };
+                      nativeDynamicsCompressorNode = createNativeDynamicsCompressorNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeDynamicsCompressorNodes.set(nativeOfflineAudioContext, nativeDynamicsCompressorNode);
+
+                    if (nativeDynamicsCompressorNodeIsOwnedByContext) {
+                      _context.next = 17;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.attack, nativeDynamicsCompressorNode.attack);
+
+                  case 7:
+                    _context.next = 9;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.knee, nativeDynamicsCompressorNode.knee);
+
+                  case 9:
+                    _context.next = 11;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.ratio, nativeDynamicsCompressorNode.ratio);
+
+                  case 11:
+                    _context.next = 13;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.release, nativeDynamicsCompressorNode.release);
+
+                  case 13:
+                    _context.next = 15;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.threshold, nativeDynamicsCompressorNode.threshold);
+
+                  case 15:
+                    _context.next = 27;
+                    break;
+
+                  case 17:
+                    _context.next = 19;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.attack, nativeDynamicsCompressorNode.attack);
+
+                  case 19:
+                    _context.next = 21;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.knee, nativeDynamicsCompressorNode.knee);
+
+                  case 21:
+                    _context.next = 23;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.ratio, nativeDynamicsCompressorNode.ratio);
+
+                  case 23:
+                    _context.next = 25;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.release, nativeDynamicsCompressorNode.release);
+
+                  case 25:
+                    _context.next = 27;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.threshold, nativeDynamicsCompressorNode.threshold);
+
+                  case 27:
+                    _context.next = 29;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeDynamicsCompressorNode);
+
+                  case 29:
+                    return _context.abrupt("return", nativeDynamicsCompressorNode);
+
+                  case 30:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createDynamicsCompressorNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeDynamicsCompressorNode = renderedNativeDynamicsCompressorNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeDynamicsCompressorNode !== undefined) {
+              return Promise.resolve(renderedNativeDynamicsCompressorNode);
+            }
+
+            return createDynamicsCompressorNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createEncodingError = function createEncodingError() {
+      return new DOMException('', 'EncodingError');
+    };
+
+    var createEvaluateSource = function createEvaluateSource(window) {
+      return function (source) {
+        return new Promise(function (resolve, reject) {
+          if (window === null) {
+            // Bug #182 Chrome, Edge and Opera do throw an instance of a SyntaxError instead of a DOMException.
+            reject(new SyntaxError());
+            return;
+          }
+
+          var head = window.document.head;
+
+          if (head === null) {
+            // Bug #182 Chrome, Edge and Opera do throw an instance of a SyntaxError instead of a DOMException.
+            reject(new SyntaxError());
+          } else {
+            var script = window.document.createElement('script'); // @todo Safari doesn't like URLs with a type of 'application/javascript; charset=utf-8'.
+
+            var blob = new Blob([source], {
+              type: 'application/javascript'
+            });
+            var url = URL.createObjectURL(blob);
+            var originalOnErrorHandler = window.onerror;
+
+            var removeErrorEventListenerAndRevokeUrl = function removeErrorEventListenerAndRevokeUrl() {
+              window.onerror = originalOnErrorHandler;
+              URL.revokeObjectURL(url);
+            };
+
+            window.onerror = function (message, src, lineno, colno, error) {
+              // @todo Edge thinks the source is the one of the html document.
+              if (src === url || src === window.location.href && lineno === 1 && colno === 1) {
+                removeErrorEventListenerAndRevokeUrl();
+                reject(error);
+                return false;
+              }
+
+              if (originalOnErrorHandler !== null) {
+                return originalOnErrorHandler(message, src, lineno, colno, error);
+              }
+            };
+
+            script.onerror = function () {
+              removeErrorEventListenerAndRevokeUrl(); // Bug #182 Chrome, Edge and Opera do throw an instance of a SyntaxError instead of a DOMException.
+
+              reject(new SyntaxError());
+            };
+
+            script.onload = function () {
+              removeErrorEventListenerAndRevokeUrl();
+              resolve();
+            };
+
+            script.src = url;
+            script.type = 'module';
+            head.appendChild(script);
+          }
+        });
+      };
+    };
+
+    var createEventTargetConstructor = function createEventTargetConstructor(wrapEventListener) {
+      return /*#__PURE__*/function () {
+        function EventTarget(_nativeEventTarget) {
+          _classCallCheck__default["default"](this, EventTarget);
+
+          this._nativeEventTarget = _nativeEventTarget;
+          this._listeners = new WeakMap();
+        }
+
+        _createClass__default["default"](EventTarget, [{
+          key: "addEventListener",
+          value: function addEventListener(type, listener, options) {
+            if (listener !== null) {
+              var wrappedEventListener = this._listeners.get(listener);
+
+              if (wrappedEventListener === undefined) {
+                wrappedEventListener = wrapEventListener(this, listener);
+
+                if (typeof listener === 'function') {
+                  this._listeners.set(listener, wrappedEventListener);
+                }
+              }
+
+              this._nativeEventTarget.addEventListener(type, wrappedEventListener, options);
+            }
+          }
+        }, {
+          key: "dispatchEvent",
+          value: function dispatchEvent(event) {
+            return this._nativeEventTarget.dispatchEvent(event);
+          }
+        }, {
+          key: "removeEventListener",
+          value: function removeEventListener(type, listener, options) {
+            var wrappedEventListener = listener === null ? undefined : this._listeners.get(listener);
+
+            this._nativeEventTarget.removeEventListener(type, wrappedEventListener === undefined ? null : wrappedEventListener, options);
+          }
+        }]);
+
+        return EventTarget;
+      }();
+    };
+
+    var createExposeCurrentFrameAndCurrentTime = function createExposeCurrentFrameAndCurrentTime(window) {
+      return function (currentTime, sampleRate, fn) {
+        Object.defineProperties(window, {
+          currentFrame: {
+            configurable: true,
+            get: function get() {
+              return Math.round(currentTime * sampleRate);
+            }
+          },
+          currentTime: {
+            configurable: true,
+            get: function get() {
+              return currentTime;
+            }
+          }
+        });
+
+        try {
+          return fn();
+        } finally {
+          if (window !== null) {
+            delete window.currentFrame;
+            delete window.currentTime;
+          }
+        }
+      };
+    };
+
+    var createFetchSource = function createFetchSource(createAbortError) {
+      return /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(url) {
+          var response;
+          return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.prev = 0;
+                  _context.next = 3;
+                  return fetch(url);
+
+                case 3:
+                  response = _context.sent;
+
+                  if (!response.ok) {
+                    _context.next = 10;
+                    break;
+                  }
+
+                  _context.next = 7;
+                  return response.text();
+
+                case 7:
+                  _context.t0 = _context.sent;
+                  _context.t1 = response.url;
+                  return _context.abrupt("return", [_context.t0, _context.t1]);
+
+                case 10:
+                  _context.next = 14;
+                  break;
+
+                case 12:
+                  _context.prev = 12;
+                  _context.t2 = _context["catch"](0);
+
+                case 14:
+                  throw createAbortError();
+
+                case 15:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, null, [[0, 12]]);
+        }));
+
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }();
+    };
+
+    function ownKeys$j(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$j(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$j(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$j(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$d(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$d(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$d() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$9 = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      gain: 1
+    };
+    var createGainNodeConstructor = function createGainNodeConstructor(audioNodeConstructor, createAudioParam, createGainNodeRenderer, createNativeGainNode, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](GainNode, _audioNodeConstructor);
+
+        var _super = _createSuper$d(GainNode);
+
+        function GainNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, GainNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$j(_objectSpread$j({}, DEFAULT_OPTIONS$9), options);
+
+          var nativeGainNode = createNativeGainNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var gainNodeRenderer = isOffline ? createGainNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeGainNode, gainNodeRenderer); // Bug #74: Safari does not export the correct values for maxValue and minValue.
+
+          _this._gain = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeGainNode.gain, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          return _this;
+        }
+
+        _createClass__default["default"](GainNode, [{
+          key: "gain",
+          get: function get() {
+            return this._gain;
+          }
+        }]);
+
+        return GainNode;
+      }(audioNodeConstructor);
+    };
+
+    var createGainNodeRendererFactory = function createGainNodeRendererFactory(connectAudioParam, createNativeGainNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeGainNodes = new WeakMap();
+
+        var createGainNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeGainNode, nativeGainNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeGainNode = getNativeAudioNode(proxy); // If the initially used nativeGainNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeGainNodeIsOwnedByContext = isOwnedByContext(nativeGainNode, nativeOfflineAudioContext);
+
+                    if (!nativeGainNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeGainNode.channelCount,
+                        channelCountMode: nativeGainNode.channelCountMode,
+                        channelInterpretation: nativeGainNode.channelInterpretation,
+                        gain: nativeGainNode.gain.value
+                      };
+                      nativeGainNode = createNativeGainNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeGainNodes.set(nativeOfflineAudioContext, nativeGainNode);
+
+                    if (nativeGainNodeIsOwnedByContext) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.gain, nativeGainNode.gain);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.gain, nativeGainNode.gain);
+
+                  case 11:
+                    _context.next = 13;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeGainNode);
+
+                  case 13:
+                    return _context.abrupt("return", nativeGainNode);
+
+                  case 14:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createGainNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeGainNode = renderedNativeGainNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeGainNode !== undefined) {
+              return Promise.resolve(renderedNativeGainNode);
+            }
+
+            return createGainNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createGetActiveAudioWorkletNodeInputs = function createGetActiveAudioWorkletNodeInputs(activeAudioWorkletNodeInputsStore, getValueForKey) {
+      return function (nativeAudioWorkletNode) {
+        return getValueForKey(activeAudioWorkletNodeInputsStore, nativeAudioWorkletNode);
+      };
+    };
+
+    var createGetAudioNodeRenderer = function createGetAudioNodeRenderer(getAudioNodeConnections) {
+      return function (audioNode) {
+        var audioNodeConnections = getAudioNodeConnections(audioNode);
+
+        if (audioNodeConnections.renderer === null) {
+          throw new Error('Missing the renderer of the given AudioNode in the audio graph.');
+        }
+
+        return audioNodeConnections.renderer;
+      };
+    };
+
+    var createGetAudioNodeTailTime = function createGetAudioNodeTailTime(audioNodeTailTimeStore) {
+      return function (audioNode) {
+        var _a;
+
+        return (_a = audioNodeTailTimeStore.get(audioNode)) !== null && _a !== void 0 ? _a : 0;
+      };
+    };
+
+    var createGetAudioParamRenderer = function createGetAudioParamRenderer(getAudioParamConnections) {
+      return function (audioParam) {
+        var audioParamConnections = getAudioParamConnections(audioParam);
+
+        if (audioParamConnections.renderer === null) {
+          throw new Error('Missing the renderer of the given AudioParam in the audio graph.');
+        }
+
+        return audioParamConnections.renderer;
+      };
+    };
+
+    var createGetBackupOfflineAudioContext = function createGetBackupOfflineAudioContext(backupOfflineAudioContextStore) {
+      return function (nativeContext) {
+        return backupOfflineAudioContextStore.get(nativeContext);
+      };
+    };
+
+    var createInvalidStateError = function createInvalidStateError() {
+      return new DOMException('', 'InvalidStateError');
+    };
+
+    var createGetNativeContext = function createGetNativeContext(contextStore) {
+      return function (context) {
+        var nativeContext = contextStore.get(context);
+
+        if (nativeContext === undefined) {
+          throw createInvalidStateError();
+        }
+
+        return nativeContext;
+      };
+    };
+
+    var createGetOrCreateBackupOfflineAudioContext = function createGetOrCreateBackupOfflineAudioContext(backupOfflineAudioContextStore, nativeOfflineAudioContextConstructor) {
+      return function (nativeContext) {
+        var backupOfflineAudioContext = backupOfflineAudioContextStore.get(nativeContext);
+
+        if (backupOfflineAudioContext !== undefined) {
+          return backupOfflineAudioContext;
+        }
+
+        if (nativeOfflineAudioContextConstructor === null) {
+          throw new Error('Missing the native OfflineAudioContext constructor.');
+        } // Bug #141: Safari does not support creating an OfflineAudioContext with less than 44100 Hz.
+
+
+        backupOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        backupOfflineAudioContextStore.set(nativeContext, backupOfflineAudioContext);
+        return backupOfflineAudioContext;
+      };
+    };
+
+    var createGetUnrenderedAudioWorkletNodes = function createGetUnrenderedAudioWorkletNodes(unrenderedAudioWorkletNodeStore) {
+      return function (nativeContext) {
+        var unrenderedAudioWorkletNodes = unrenderedAudioWorkletNodeStore.get(nativeContext);
+
+        if (unrenderedAudioWorkletNodes === undefined) {
+          throw new Error('The context has no set of AudioWorkletNodes.');
+        }
+
+        return unrenderedAudioWorkletNodes;
+      };
+    };
+
+    var createInvalidAccessError = function createInvalidAccessError() {
+      return new DOMException('', 'InvalidAccessError');
+    };
+
+    var wrapIIRFilterNodeGetFrequencyResponseMethod = function wrapIIRFilterNodeGetFrequencyResponseMethod(nativeIIRFilterNode) {
+      nativeIIRFilterNode.getFrequencyResponse = function (getFrequencyResponse) {
+        return function (frequencyHz, magResponse, phaseResponse) {
+          if (frequencyHz.length !== magResponse.length || magResponse.length !== phaseResponse.length) {
+            throw createInvalidAccessError();
+          }
+
+          return getFrequencyResponse.call(nativeIIRFilterNode, frequencyHz, magResponse, phaseResponse);
+        };
+      }(nativeIIRFilterNode.getFrequencyResponse);
+    };
+
+    function ownKeys$i(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$i(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$i(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$i(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$c(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$c(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$c() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$8 = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers'
+    };
+    var createIIRFilterNodeConstructor = function createIIRFilterNodeConstructor(audioNodeConstructor, createNativeIIRFilterNode, createIIRFilterNodeRenderer, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](IIRFilterNode, _audioNodeConstructor);
+
+        var _super = _createSuper$c(IIRFilterNode);
+
+        function IIRFilterNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, IIRFilterNode);
+
+          var nativeContext = getNativeContext(context);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+
+          var mergedOptions = _objectSpread$i(_objectSpread$i({}, DEFAULT_OPTIONS$8), options);
+
+          var nativeIIRFilterNode = createNativeIIRFilterNode(nativeContext, isOffline ? null : context.baseLatency, mergedOptions);
+          var iirFilterNodeRenderer = isOffline ? createIIRFilterNodeRenderer(mergedOptions.feedback, mergedOptions.feedforward) : null;
+          _this = _super.call(this, context, false, nativeIIRFilterNode, iirFilterNodeRenderer); // Bug #23 & #24: FirefoxDeveloper does not throw an InvalidAccessError.
+          // @todo Write a test which allows other browsers to remain unpatched.
+
+          wrapIIRFilterNodeGetFrequencyResponseMethod(nativeIIRFilterNode);
+          _this._nativeIIRFilterNode = nativeIIRFilterNode; // @todo Determine a meaningful tail-time instead of just using one second.
+
+          setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), 1);
+          return _this;
+        }
+
+        _createClass__default["default"](IIRFilterNode, [{
+          key: "getFrequencyResponse",
+          value: function getFrequencyResponse(frequencyHz, magResponse, phaseResponse) {
+            return this._nativeIIRFilterNode.getFrequencyResponse(frequencyHz, magResponse, phaseResponse);
+          }
+        }]);
+
+        return IIRFilterNode;
+      }(audioNodeConstructor);
+    };
+
+    // This implementation as shamelessly inspired by source code of
+    // tslint:disable-next-line:max-line-length
+    // {@link https://chromium.googlesource.com/chromium/src.git/+/master/third_party/WebKit/Source/platform/audio/IIRFilter.cpp|Chromium's IIRFilter}.
+    var filterBuffer = function filterBuffer(feedback, feedbackLength, feedforward, feedforwardLength, minLength, xBuffer, yBuffer, bufferIndex, bufferLength, input, output) {
+      var inputLength = input.length;
+      var i = bufferIndex;
+
+      for (var j = 0; j < inputLength; j += 1) {
+        var y = feedforward[0] * input[j];
+
+        for (var k = 1; k < minLength; k += 1) {
+          var x = i - k & bufferLength - 1; // tslint:disable-line:no-bitwise
+
+          y += feedforward[k] * xBuffer[x];
+          y -= feedback[k] * yBuffer[x];
+        }
+
+        for (var _k = minLength; _k < feedforwardLength; _k += 1) {
+          y += feedforward[_k] * xBuffer[i - _k & bufferLength - 1]; // tslint:disable-line:no-bitwise
+        }
+
+        for (var _k2 = minLength; _k2 < feedbackLength; _k2 += 1) {
+          y -= feedback[_k2] * yBuffer[i - _k2 & bufferLength - 1]; // tslint:disable-line:no-bitwise
+        }
+
+        xBuffer[i] = input[j];
+        yBuffer[i] = y;
+        i = i + 1 & bufferLength - 1; // tslint:disable-line:no-bitwise
+
+        output[j] = y;
+      }
+
+      return i;
+    };
+
+    var filterFullBuffer = function filterFullBuffer(renderedBuffer, nativeOfflineAudioContext, feedback, feedforward) {
+      var convertedFeedback = feedback instanceof Float64Array ? feedback : new Float64Array(feedback);
+      var convertedFeedforward = feedforward instanceof Float64Array ? feedforward : new Float64Array(feedforward);
+      var feedbackLength = convertedFeedback.length;
+      var feedforwardLength = convertedFeedforward.length;
+      var minLength = Math.min(feedbackLength, feedforwardLength);
+
+      if (convertedFeedback[0] !== 1) {
+        for (var i = 0; i < feedbackLength; i += 1) {
+          convertedFeedforward[i] /= convertedFeedback[0];
+        }
+
+        for (var _i = 1; _i < feedforwardLength; _i += 1) {
+          convertedFeedback[_i] /= convertedFeedback[0];
+        }
+      }
+
+      var bufferLength = 32;
+      var xBuffer = new Float32Array(bufferLength);
+      var yBuffer = new Float32Array(bufferLength);
+      var filteredBuffer = nativeOfflineAudioContext.createBuffer(renderedBuffer.numberOfChannels, renderedBuffer.length, renderedBuffer.sampleRate);
+      var numberOfChannels = renderedBuffer.numberOfChannels;
+
+      for (var _i2 = 0; _i2 < numberOfChannels; _i2 += 1) {
+        var input = renderedBuffer.getChannelData(_i2);
+        var output = filteredBuffer.getChannelData(_i2);
+        xBuffer.fill(0);
+        yBuffer.fill(0);
+        filterBuffer(convertedFeedback, feedbackLength, convertedFeedforward, feedforwardLength, minLength, xBuffer, yBuffer, 0, bufferLength, input, output);
+      }
+
+      return filteredBuffer;
+    };
+
+    var createIIRFilterNodeRendererFactory = function createIIRFilterNodeRendererFactory(createNativeAudioBufferSourceNode, getNativeAudioNode, nativeOfflineAudioContextConstructor, renderInputsOfAudioNode, renderNativeOfflineAudioContext) {
+      return function (feedback, feedforward) {
+        var renderedNativeAudioNodes = new WeakMap();
+        var filteredBufferPromise = null;
+
+        var createAudioNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(proxy, nativeOfflineAudioContext) {
+            var nativeAudioBufferSourceNode, nativeIIRFilterNode, nativeIIRFilterNodeIsOwnedByContext, partialOfflineAudioContext, filteredBuffer;
+            return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+              while (1) {
+                switch (_context2.prev = _context2.next) {
+                  case 0:
+                    nativeAudioBufferSourceNode = null;
+                    nativeIIRFilterNode = getNativeAudioNode(proxy); // If the initially used nativeIIRFilterNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeIIRFilterNodeIsOwnedByContext = isOwnedByContext(nativeIIRFilterNode, nativeOfflineAudioContext); // Bug #9: Safari does not support IIRFilterNodes.
+
+                    if (nativeOfflineAudioContext.createIIRFilter === undefined) {
+                      nativeAudioBufferSourceNode = createNativeAudioBufferSourceNode(nativeOfflineAudioContext, {
+                        buffer: null,
+                        channelCount: 2,
+                        channelCountMode: 'max',
+                        channelInterpretation: 'speakers',
+                        loop: false,
+                        loopEnd: 0,
+                        loopStart: 0,
+                        playbackRate: 1
+                      });
+                    } else if (!nativeIIRFilterNodeIsOwnedByContext) {
+                      // @todo TypeScript defines the parameters of createIIRFilter() as arrays of numbers.
+                      nativeIIRFilterNode = nativeOfflineAudioContext.createIIRFilter(feedforward, feedback);
+                    }
+
+                    renderedNativeAudioNodes.set(nativeOfflineAudioContext, nativeAudioBufferSourceNode === null ? nativeIIRFilterNode : nativeAudioBufferSourceNode);
+
+                    if (!(nativeAudioBufferSourceNode !== null)) {
+                      _context2.next = 17;
+                      break;
+                    }
+
+                    if (!(filteredBufferPromise === null)) {
+                      _context2.next = 11;
+                      break;
+                    }
+
+                    if (!(nativeOfflineAudioContextConstructor === null)) {
+                      _context2.next = 9;
+                      break;
+                    }
+
+                    throw new Error('Missing the native OfflineAudioContext constructor.');
+
+                  case 9:
+                    partialOfflineAudioContext = new nativeOfflineAudioContextConstructor( // Bug #47: The AudioDestinationNode in Safari gets not initialized correctly.
+                    proxy.context.destination.channelCount, // Bug #17: Safari does not yet expose the length.
+                    proxy.context.length, nativeOfflineAudioContext.sampleRate);
+                    filteredBufferPromise = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+                      var renderedBuffer;
+                      return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+                        while (1) {
+                          switch (_context.prev = _context.next) {
+                            case 0:
+                              _context.next = 2;
+                              return renderInputsOfAudioNode(proxy, partialOfflineAudioContext, partialOfflineAudioContext.destination);
+
+                            case 2:
+                              _context.next = 4;
+                              return renderNativeOfflineAudioContext(partialOfflineAudioContext);
+
+                            case 4:
+                              renderedBuffer = _context.sent;
+                              return _context.abrupt("return", filterFullBuffer(renderedBuffer, nativeOfflineAudioContext, feedback, feedforward));
+
+                            case 6:
+                            case "end":
+                              return _context.stop();
+                          }
+                        }
+                      }, _callee);
+                    }))();
+
+                  case 11:
+                    _context2.next = 13;
+                    return filteredBufferPromise;
+
+                  case 13:
+                    filteredBuffer = _context2.sent;
+                    nativeAudioBufferSourceNode.buffer = filteredBuffer;
+                    nativeAudioBufferSourceNode.start(0);
+                    return _context2.abrupt("return", nativeAudioBufferSourceNode);
+
+                  case 17:
+                    _context2.next = 19;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeIIRFilterNode);
+
+                  case 19:
+                    return _context2.abrupt("return", nativeIIRFilterNode);
+
+                  case 20:
+                  case "end":
+                    return _context2.stop();
+                }
+              }
+            }, _callee2);
+          }));
+
+          return function createAudioNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeAudioNode = renderedNativeAudioNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeAudioNode !== undefined) {
+              return Promise.resolve(renderedNativeAudioNode);
+            }
+
+            return createAudioNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    function _createForOfIteratorHelper$2(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$2(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$2(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$2(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$2(o, minLen); }
+
+    function _arrayLikeToArray$2(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+    var createIncrementCycleCounterFactory = function createIncrementCycleCounterFactory(cycleCounters, disconnectNativeAudioNodeFromNativeAudioNode, getAudioNodeConnections, getNativeAudioNode, getNativeAudioParam, isActiveAudioNode) {
+      return function (isOffline) {
+        return function (audioNode, count) {
+          var cycleCounter = cycleCounters.get(audioNode);
+
+          if (cycleCounter === undefined) {
+            if (!isOffline && isActiveAudioNode(audioNode)) {
+              var nativeSourceAudioNode = getNativeAudioNode(audioNode);
+
+              var _getAudioNodeConnecti = getAudioNodeConnections(audioNode),
+                  outputs = _getAudioNodeConnecti.outputs;
+
+              var _iterator = _createForOfIteratorHelper$2(outputs),
+                  _step;
+
+              try {
+                for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                  var output = _step.value;
+
+                  if (isAudioNodeOutputConnection(output)) {
+                    var nativeDestinationAudioNode = getNativeAudioNode(output[0]);
+                    disconnectNativeAudioNodeFromNativeAudioNode(nativeSourceAudioNode, nativeDestinationAudioNode, output[1], output[2]);
+                  } else {
+                    var nativeDestinationAudioParam = getNativeAudioParam(output[0]);
+                    nativeSourceAudioNode.disconnect(nativeDestinationAudioParam, output[1]);
+                  }
+                }
+              } catch (err) {
+                _iterator.e(err);
+              } finally {
+                _iterator.f();
+              }
+            }
+
+            cycleCounters.set(audioNode, count);
+          } else {
+            cycleCounters.set(audioNode, cycleCounter + count);
+          }
+        };
+      };
+    };
+
+    var createIsAnyAudioContext = function createIsAnyAudioContext(contextStore, isNativeAudioContext) {
+      return function (anything) {
+        var nativeContext = contextStore.get(anything);
+        return isNativeAudioContext(nativeContext) || isNativeAudioContext(anything);
+      };
+    };
+
+    var createIsAnyAudioNode = function createIsAnyAudioNode(audioNodeStore, isNativeAudioNode) {
+      return function (anything) {
+        return audioNodeStore.has(anything) || isNativeAudioNode(anything);
+      };
+    };
+
+    var createIsAnyAudioParam = function createIsAnyAudioParam(audioParamStore, isNativeAudioParam) {
+      return function (anything) {
+        return audioParamStore.has(anything) || isNativeAudioParam(anything);
+      };
+    };
+
+    var createIsAnyOfflineAudioContext = function createIsAnyOfflineAudioContext(contextStore, isNativeOfflineAudioContext) {
+      return function (anything) {
+        var nativeContext = contextStore.get(anything);
+        return isNativeOfflineAudioContext(nativeContext) || isNativeOfflineAudioContext(anything);
+      };
+    };
+
+    var createIsNativeAudioContext = function createIsNativeAudioContext(nativeAudioContextConstructor) {
+      return function (anything) {
+        return nativeAudioContextConstructor !== null && anything instanceof nativeAudioContextConstructor;
+      };
+    };
+
+    var createIsNativeAudioNode = function createIsNativeAudioNode(window) {
+      return function (anything) {
+        return window !== null && typeof window.AudioNode === 'function' && anything instanceof window.AudioNode;
+      };
+    };
+
+    var createIsNativeAudioParam = function createIsNativeAudioParam(window) {
+      return function (anything) {
+        return window !== null && typeof window.AudioParam === 'function' && anything instanceof window.AudioParam;
+      };
+    };
+
+    var createIsNativeContext = function createIsNativeContext(isNativeAudioContext, isNativeOfflineAudioContext) {
+      return function (anything) {
+        return isNativeAudioContext(anything) || isNativeOfflineAudioContext(anything);
+      };
+    };
+
+    var createIsNativeOfflineAudioContext = function createIsNativeOfflineAudioContext(nativeOfflineAudioContextConstructor) {
+      return function (anything) {
+        return nativeOfflineAudioContextConstructor !== null && anything instanceof nativeOfflineAudioContextConstructor;
+      };
+    };
+
+    var createIsSecureContext = function createIsSecureContext(window) {
+      return window !== null && window.isSecureContext;
+    };
+
+    var createIsSupportedPromise = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(cacheTestResult, testAudioBufferCopyChannelMethodsSubarraySupport, testAudioContextCloseMethodSupport, testAudioContextDecodeAudioDataMethodTypeErrorSupport, testAudioContextOptionsSupport, testAudioNodeConnectMethodSupport, testAudioWorkletProcessorNoOutputsSupport, testChannelMergerNodeChannelCountSupport, testConstantSourceNodeAccurateSchedulingSupport, testConvolverNodeBufferReassignabilitySupport, testConvolverNodeChannelCountSupport, testDomExceptionContrucorSupport, testIsSecureContextSupport, testMediaStreamAudioSourceNodeMediaStreamWithoutAudioTrackSupport, testStereoPannerNodeDefaultValueSupport, testTransferablesSupport) {
+        var results;
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(cacheTestResult(testAudioBufferCopyChannelMethodsSubarraySupport, testAudioBufferCopyChannelMethodsSubarraySupport) && cacheTestResult(testAudioContextCloseMethodSupport, testAudioContextCloseMethodSupport) && cacheTestResult(testAudioContextOptionsSupport, testAudioContextOptionsSupport) && cacheTestResult(testAudioNodeConnectMethodSupport, testAudioNodeConnectMethodSupport) && cacheTestResult(testChannelMergerNodeChannelCountSupport, testChannelMergerNodeChannelCountSupport) && cacheTestResult(testConstantSourceNodeAccurateSchedulingSupport, testConstantSourceNodeAccurateSchedulingSupport) && cacheTestResult(testConvolverNodeBufferReassignabilitySupport, testConvolverNodeBufferReassignabilitySupport) && cacheTestResult(testConvolverNodeChannelCountSupport, testConvolverNodeChannelCountSupport) && cacheTestResult(testDomExceptionContrucorSupport, testDomExceptionContrucorSupport) && cacheTestResult(testIsSecureContextSupport, testIsSecureContextSupport) && cacheTestResult(testMediaStreamAudioSourceNodeMediaStreamWithoutAudioTrackSupport, testMediaStreamAudioSourceNodeMediaStreamWithoutAudioTrackSupport))) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 3;
+                return Promise.all([cacheTestResult(testAudioContextDecodeAudioDataMethodTypeErrorSupport, testAudioContextDecodeAudioDataMethodTypeErrorSupport), cacheTestResult(testAudioWorkletProcessorNoOutputsSupport, testAudioWorkletProcessorNoOutputsSupport), cacheTestResult(testStereoPannerNodeDefaultValueSupport, testStereoPannerNodeDefaultValueSupport), cacheTestResult(testTransferablesSupport, testTransferablesSupport)]);
+
+              case 3:
+                results = _context.sent;
+                return _context.abrupt("return", results.every(function (result) {
+                  return result;
+                }));
+
+              case 5:
+                return _context.abrupt("return", false);
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function createIsSupportedPromise(_x, _x2, _x3, _x4, _x5, _x6, _x7, _x8, _x9, _x10, _x11, _x12, _x13, _x14, _x15, _x16) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    function _createSuper$b(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$b(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$b() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var createMediaElementAudioSourceNodeConstructor = function createMediaElementAudioSourceNodeConstructor(audioNodeConstructor, createNativeMediaElementAudioSourceNode, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](MediaElementAudioSourceNode, _audioNodeConstructor);
+
+        var _super = _createSuper$b(MediaElementAudioSourceNode);
+
+        function MediaElementAudioSourceNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, MediaElementAudioSourceNode);
+
+          var nativeContext = getNativeContext(context);
+          var nativeMediaElementAudioSourceNode = createNativeMediaElementAudioSourceNode(nativeContext, options); // Bug #171: Safari allows to create a MediaElementAudioSourceNode with an OfflineAudioContext.
+
+          if (isNativeOfflineAudioContext(nativeContext)) {
+            throw TypeError();
+          }
+
+          _this = _super.call(this, context, true, nativeMediaElementAudioSourceNode, null);
+          _this._nativeMediaElementAudioSourceNode = nativeMediaElementAudioSourceNode;
+          return _this;
+        }
+
+        _createClass__default["default"](MediaElementAudioSourceNode, [{
+          key: "mediaElement",
+          get: function get() {
+            return this._nativeMediaElementAudioSourceNode.mediaElement;
+          }
+        }]);
+
+        return MediaElementAudioSourceNode;
+      }(audioNodeConstructor);
+    };
+
+    function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$h(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$a(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$a(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$a() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$7 = {
+      channelCount: 2,
+      channelCountMode: 'explicit',
+      channelInterpretation: 'speakers'
+    };
+    var createMediaStreamAudioDestinationNodeConstructor = function createMediaStreamAudioDestinationNodeConstructor(audioNodeConstructor, createNativeMediaStreamAudioDestinationNode, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](MediaStreamAudioDestinationNode, _audioNodeConstructor);
+
+        var _super = _createSuper$a(MediaStreamAudioDestinationNode);
+
+        function MediaStreamAudioDestinationNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, MediaStreamAudioDestinationNode);
+
+          var nativeContext = getNativeContext(context); // Bug #173: Safari allows to create a MediaStreamAudioDestinationNode with an OfflineAudioContext.
+
+          if (isNativeOfflineAudioContext(nativeContext)) {
+            throw new TypeError();
+          }
+
+          var mergedOptions = _objectSpread$h(_objectSpread$h({}, DEFAULT_OPTIONS$7), options);
+
+          var nativeMediaStreamAudioDestinationNode = createNativeMediaStreamAudioDestinationNode(nativeContext, mergedOptions);
+          _this = _super.call(this, context, false, nativeMediaStreamAudioDestinationNode, null);
+          _this._nativeMediaStreamAudioDestinationNode = nativeMediaStreamAudioDestinationNode;
+          return _this;
+        }
+
+        _createClass__default["default"](MediaStreamAudioDestinationNode, [{
+          key: "stream",
+          get: function get() {
+            return this._nativeMediaStreamAudioDestinationNode.stream;
+          }
+        }]);
+
+        return MediaStreamAudioDestinationNode;
+      }(audioNodeConstructor);
+    };
+
+    function _createSuper$9(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$9(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$9() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var createMediaStreamAudioSourceNodeConstructor = function createMediaStreamAudioSourceNodeConstructor(audioNodeConstructor, createNativeMediaStreamAudioSourceNode, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](MediaStreamAudioSourceNode, _audioNodeConstructor);
+
+        var _super = _createSuper$9(MediaStreamAudioSourceNode);
+
+        function MediaStreamAudioSourceNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, MediaStreamAudioSourceNode);
+
+          var nativeContext = getNativeContext(context);
+          var nativeMediaStreamAudioSourceNode = createNativeMediaStreamAudioSourceNode(nativeContext, options); // Bug #172: Safari allows to create a MediaStreamAudioSourceNode with an OfflineAudioContext.
+
+          if (isNativeOfflineAudioContext(nativeContext)) {
+            throw new TypeError();
+          }
+
+          _this = _super.call(this, context, true, nativeMediaStreamAudioSourceNode, null);
+          _this._nativeMediaStreamAudioSourceNode = nativeMediaStreamAudioSourceNode;
+          return _this;
+        }
+
+        _createClass__default["default"](MediaStreamAudioSourceNode, [{
+          key: "mediaStream",
+          get: function get() {
+            return this._nativeMediaStreamAudioSourceNode.mediaStream;
+          }
+        }]);
+
+        return MediaStreamAudioSourceNode;
+      }(audioNodeConstructor);
+    };
+
+    function _createSuper$8(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$8(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$8() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var createMediaStreamTrackAudioSourceNodeConstructor = function createMediaStreamTrackAudioSourceNodeConstructor(audioNodeConstructor, createNativeMediaStreamTrackAudioSourceNode, getNativeContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](MediaStreamTrackAudioSourceNode, _audioNodeConstructor);
+
+        var _super = _createSuper$8(MediaStreamTrackAudioSourceNode);
+
+        function MediaStreamTrackAudioSourceNode(context, options) {
+          _classCallCheck__default["default"](this, MediaStreamTrackAudioSourceNode);
+
+          var nativeContext = getNativeContext(context);
+          var nativeMediaStreamTrackAudioSourceNode = createNativeMediaStreamTrackAudioSourceNode(nativeContext, options);
+          return _super.call(this, context, true, nativeMediaStreamTrackAudioSourceNode, null);
+        }
+
+        return _createClass__default["default"](MediaStreamTrackAudioSourceNode);
+      }(audioNodeConstructor);
+    };
+
+    function _createSuper$7(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$7(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$7() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var createMinimalAudioContextConstructor = function createMinimalAudioContextConstructor(createInvalidStateError, createNotSupportedError, createUnknownError, minimalBaseAudioContextConstructor, nativeAudioContextConstructor) {
+      return /*#__PURE__*/function (_minimalBaseAudioCont) {
+        _inherits__default["default"](MinimalAudioContext, _minimalBaseAudioCont);
+
+        var _super = _createSuper$7(MinimalAudioContext);
+
+        function MinimalAudioContext() {
+          var _this;
+
+          var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+          _classCallCheck__default["default"](this, MinimalAudioContext);
+
+          if (nativeAudioContextConstructor === null) {
+            throw new Error('Missing the native AudioContext constructor.');
+          }
+
+          var nativeAudioContext;
+
+          try {
+            nativeAudioContext = new nativeAudioContextConstructor(options);
+          } catch (err) {
+            // Bug #192 Safari does throw a SyntaxError if the sampleRate is not supported.
+            if (err.code === 12 && err.message === 'sampleRate is not in range') {
+              throw createNotSupportedError();
+            }
+
+            throw err;
+          } // Bug #131 Safari returns null when there are four other AudioContexts running already.
+
+
+          if (nativeAudioContext === null) {
+            throw createUnknownError();
+          } // Bug #51 Only Chrome Edge, and Opera throw an error if the given latencyHint is invalid.
+
+
+          if (!isValidLatencyHint(options.latencyHint)) {
+            throw new TypeError("The provided value '".concat(options.latencyHint, "' is not a valid enum value of type AudioContextLatencyCategory."));
+          } // Bug #150 Safari does not support setting the sampleRate.
+
+
+          if (options.sampleRate !== undefined && nativeAudioContext.sampleRate !== options.sampleRate) {
+            throw createNotSupportedError();
+          }
+
+          _this = _super.call(this, nativeAudioContext, 2);
+          var latencyHint = options.latencyHint;
+          var _nativeAudioContext = nativeAudioContext,
+              sampleRate = _nativeAudioContext.sampleRate; // @todo The values for 'balanced', 'interactive' and 'playback' are just copied from Chrome's implementation.
+
+          _this._baseLatency = typeof nativeAudioContext.baseLatency === 'number' ? nativeAudioContext.baseLatency : latencyHint === 'balanced' ? 512 / sampleRate : latencyHint === 'interactive' || latencyHint === undefined ? 256 / sampleRate : latencyHint === 'playback' ? 1024 / sampleRate :
+          /*
+           * @todo The min (256) and max (16384) values are taken from the allowed bufferSize values of a
+           * ScriptProcessorNode.
+           */
+          Math.max(2, Math.min(128, Math.round(latencyHint * sampleRate / 128))) * 128 / sampleRate;
+          _this._nativeAudioContext = nativeAudioContext; // Bug #188: Safari will set the context's state to 'interrupted' in case the user switches tabs.
+
+          if (nativeAudioContextConstructor.name === 'webkitAudioContext') {
+            _this._nativeGainNode = nativeAudioContext.createGain();
+            _this._nativeOscillatorNode = nativeAudioContext.createOscillator();
+            _this._nativeGainNode.gain.value = 1e-37;
+
+            _this._nativeOscillatorNode.connect(_this._nativeGainNode).connect(nativeAudioContext.destination);
+
+            _this._nativeOscillatorNode.start();
+          } else {
+            _this._nativeGainNode = null;
+            _this._nativeOscillatorNode = null;
+          }
+
+          _this._state = null;
+          /*
+           * Bug #34: Chrome, Edge and Opera pretend to be running right away, but fire an onstatechange event when the state actually
+           * changes to 'running'.
+           */
+
+          if (nativeAudioContext.state === 'running') {
+            _this._state = 'suspended';
+
+            var revokeState = function revokeState() {
+              if (_this._state === 'suspended') {
+                _this._state = null;
+              }
+
+              nativeAudioContext.removeEventListener('statechange', revokeState);
+            };
+
+            nativeAudioContext.addEventListener('statechange', revokeState);
+          }
+
+          return _this;
+        }
+
+        _createClass__default["default"](MinimalAudioContext, [{
+          key: "baseLatency",
+          get: function get() {
+            return this._baseLatency;
+          }
+        }, {
+          key: "state",
+          get: function get() {
+            return this._state !== null ? this._state : this._nativeAudioContext.state;
+          }
+        }, {
+          key: "close",
+          value: function close() {
+            var _this2 = this;
+
+            // Bug #35: Firefox does not throw an error if the AudioContext was closed before.
+            if (this.state === 'closed') {
+              return this._nativeAudioContext.close().then(function () {
+                throw createInvalidStateError();
+              });
+            } // Bug #34: If the state was set to suspended before it should be revoked now.
+
+
+            if (this._state === 'suspended') {
+              this._state = null;
+            }
+
+            return this._nativeAudioContext.close().then(function () {
+              if (_this2._nativeGainNode !== null && _this2._nativeOscillatorNode !== null) {
+                _this2._nativeOscillatorNode.stop();
+
+                _this2._nativeGainNode.disconnect();
+
+                _this2._nativeOscillatorNode.disconnect();
+              }
+
+              deactivateAudioGraph(_this2);
+            });
+          }
+        }, {
+          key: "resume",
+          value: function resume() {
+            var _this3 = this;
+
+            if (this._state === 'suspended') {
+              return new Promise(function (resolve, reject) {
+                var resolvePromise = function resolvePromise() {
+                  _this3._nativeAudioContext.removeEventListener('statechange', resolvePromise);
+
+                  if (_this3._nativeAudioContext.state === 'running') {
+                    resolve();
+                  } else {
+                    _this3.resume().then(resolve, reject);
+                  }
+                };
+
+                _this3._nativeAudioContext.addEventListener('statechange', resolvePromise);
+              });
+            }
+
+            return this._nativeAudioContext.resume()["catch"](function (err) {
+              // Bug #55: Chrome, Edge and Opera do throw an InvalidAccessError instead of an InvalidStateError.
+              // Bug #56: Safari invokes the catch handler but without an error.
+              if (err === undefined || err.code === 15) {
+                throw createInvalidStateError();
+              }
+
+              throw err;
+            });
+          }
+        }, {
+          key: "suspend",
+          value: function suspend() {
+            return this._nativeAudioContext.suspend()["catch"](function (err) {
+              // Bug #56: Safari invokes the catch handler but without an error.
+              if (err === undefined) {
+                throw createInvalidStateError();
+              }
+
+              throw err;
+            });
+          }
+        }]);
+
+        return MinimalAudioContext;
+      }(minimalBaseAudioContextConstructor);
+    };
+
+    function _createSuper$6(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$6(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$6() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var createMinimalBaseAudioContextConstructor = function createMinimalBaseAudioContextConstructor(audioDestinationNodeConstructor, createAudioListener, eventTargetConstructor, isNativeOfflineAudioContext, unrenderedAudioWorkletNodeStore, wrapEventListener) {
+      return /*#__PURE__*/function (_eventTargetConstruct) {
+        _inherits__default["default"](MinimalBaseAudioContext, _eventTargetConstruct);
+
+        var _super = _createSuper$6(MinimalBaseAudioContext);
+
+        function MinimalBaseAudioContext(_nativeContext, numberOfChannels) {
+          var _this;
+
+          _classCallCheck__default["default"](this, MinimalBaseAudioContext);
+
+          _this = _super.call(this, _nativeContext);
+          _this._nativeContext = _nativeContext;
+          CONTEXT_STORE.set(_assertThisInitialized__default["default"](_this), _nativeContext);
+
+          if (isNativeOfflineAudioContext(_nativeContext)) {
+            unrenderedAudioWorkletNodeStore.set(_nativeContext, new Set());
+          }
+
+          _this._destination = new audioDestinationNodeConstructor(_assertThisInitialized__default["default"](_this), numberOfChannels);
+          _this._listener = createAudioListener(_assertThisInitialized__default["default"](_this), _nativeContext);
+          _this._onstatechange = null;
+          return _this;
+        }
+
+        _createClass__default["default"](MinimalBaseAudioContext, [{
+          key: "currentTime",
+          get: function get() {
+            return this._nativeContext.currentTime;
+          }
+        }, {
+          key: "destination",
+          get: function get() {
+            return this._destination;
+          }
+        }, {
+          key: "listener",
+          get: function get() {
+            return this._listener;
+          }
+        }, {
+          key: "onstatechange",
+          get: function get() {
+            return this._onstatechange;
+          },
+          set: function set(value) {
+            var wrappedListener = typeof value === 'function' ? wrapEventListener(this, value) : null;
+            this._nativeContext.onstatechange = wrappedListener;
+            var nativeOnStateChange = this._nativeContext.onstatechange;
+            this._onstatechange = nativeOnStateChange !== null && nativeOnStateChange === wrappedListener ? value : nativeOnStateChange;
+          }
+        }, {
+          key: "sampleRate",
+          get: function get() {
+            return this._nativeContext.sampleRate;
+          }
+        }, {
+          key: "state",
+          get: function get() {
+            return this._nativeContext.state;
+          }
+        }]);
+
+        return MinimalBaseAudioContext;
+      }(eventTargetConstructor);
+    };
+
+    var testPromiseSupport = function testPromiseSupport(nativeContext) {
+      // This 12 numbers represent the 48 bytes of an empty WAVE file with a single sample.
+      var uint32Array = new Uint32Array([1179011410, 40, 1163280727, 544501094, 16, 131073, 44100, 176400, 1048580, 1635017060, 4, 0]);
+
+      try {
+        // Bug #1: Safari requires a successCallback.
+        var promise = nativeContext.decodeAudioData(uint32Array.buffer, function () {// Ignore the success callback.
+        });
+
+        if (promise === undefined) {
+          return false;
+        }
+
+        promise["catch"](function () {// Ignore rejected errors.
+        });
+        return true;
+      } catch (_unused) {// Ignore errors.
+      }
+
+      return false;
+    };
+
+    function ownKeys$g(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$g(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$g(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$g(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$5(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$5(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$5() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$6 = {
+      numberOfChannels: 1
+    };
+    var createMinimalOfflineAudioContextConstructor = function createMinimalOfflineAudioContextConstructor(cacheTestResult, createInvalidStateError, createNativeOfflineAudioContext, minimalBaseAudioContextConstructor, _startRendering) {
+      return /*#__PURE__*/function (_minimalBaseAudioCont) {
+        _inherits__default["default"](MinimalOfflineAudioContext, _minimalBaseAudioCont);
+
+        var _super = _createSuper$5(MinimalOfflineAudioContext);
+
+        function MinimalOfflineAudioContext(options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, MinimalOfflineAudioContext);
+
+          var _DEFAULT_OPTIONS$opti = _objectSpread$g(_objectSpread$g({}, DEFAULT_OPTIONS$6), options),
+              length = _DEFAULT_OPTIONS$opti.length,
+              numberOfChannels = _DEFAULT_OPTIONS$opti.numberOfChannels,
+              sampleRate = _DEFAULT_OPTIONS$opti.sampleRate;
+
+          var nativeOfflineAudioContext = createNativeOfflineAudioContext(numberOfChannels, length, sampleRate); // #21 Safari does not support promises and therefore would fire the statechange event before the promise can be resolved.
+
+          if (!cacheTestResult(testPromiseSupport, function () {
+            return testPromiseSupport(nativeOfflineAudioContext);
+          })) {
+            nativeOfflineAudioContext.addEventListener('statechange', function () {
+              var i = 0;
+
+              var delayStateChangeEvent = function delayStateChangeEvent(event) {
+                if (_this._state === 'running') {
+                  if (i > 0) {
+                    nativeOfflineAudioContext.removeEventListener('statechange', delayStateChangeEvent);
+                    event.stopImmediatePropagation();
+
+                    _this._waitForThePromiseToSettle(event);
+                  } else {
+                    i += 1;
+                  }
+                }
+              };
+
+              return delayStateChangeEvent;
+            }());
+          }
+
+          _this = _super.call(this, nativeOfflineAudioContext, numberOfChannels);
+          _this._length = length;
+          _this._nativeOfflineAudioContext = nativeOfflineAudioContext;
+          _this._state = null;
+          return _this;
+        }
+
+        _createClass__default["default"](MinimalOfflineAudioContext, [{
+          key: "length",
+          get: function get() {
+            // Bug #17: Safari does not yet expose the length.
+            if (this._nativeOfflineAudioContext.length === undefined) {
+              return this._length;
+            }
+
+            return this._nativeOfflineAudioContext.length;
+          }
+        }, {
+          key: "state",
+          get: function get() {
+            return this._state === null ? this._nativeOfflineAudioContext.state : this._state;
+          }
+        }, {
+          key: "startRendering",
+          value: function startRendering() {
+            var _this2 = this;
+
+            /*
+             * Bug #9 & #59: It is theoretically possible that startRendering() will first render a partialOfflineAudioContext. Therefore
+             * the state of the nativeOfflineAudioContext might no transition to running immediately.
+             */
+            if (this._state === 'running') {
+              return Promise.reject(createInvalidStateError());
+            }
+
+            this._state = 'running';
+            return _startRendering(this.destination, this._nativeOfflineAudioContext)["finally"](function () {
+              _this2._state = null;
+              deactivateAudioGraph(_this2);
+            });
+          }
+        }, {
+          key: "_waitForThePromiseToSettle",
+          value: function _waitForThePromiseToSettle(event) {
+            var _this3 = this;
+
+            if (this._state === null) {
+              this._nativeOfflineAudioContext.dispatchEvent(event);
+            } else {
+              setTimeout(function () {
+                return _this3._waitForThePromiseToSettle(event);
+              });
+            }
+          }
+        }]);
+
+        return MinimalOfflineAudioContext;
+      }(minimalBaseAudioContextConstructor);
+    };
+
+    function _createForOfIteratorHelper$1(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$1(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray$1(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$1(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen); }
+
+    function _arrayLikeToArray$1(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+    var createMonitorConnections = function createMonitorConnections(insertElementInSet, isNativeAudioNode) {
+      return function (nativeAudioNode, whenConnected, whenDisconnected) {
+        var connections = new Set();
+
+        nativeAudioNode.connect = function (connect) {
+          // tslint:disable-next-line:invalid-void no-inferrable-types
+          return function (destination) {
+            var output = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var input = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+            var wasDisconnected = connections.size === 0;
+
+            if (isNativeAudioNode(destination)) {
+              // @todo TypeScript cannot infer the overloaded signature with 3 arguments yet.
+              connect.call(nativeAudioNode, destination, output, input);
+              insertElementInSet(connections, [destination, output, input], function (connection) {
+                return connection[0] === destination && connection[1] === output && connection[2] === input;
+              }, true);
+
+              if (wasDisconnected) {
+                whenConnected();
+              }
+
+              return destination;
+            }
+
+            connect.call(nativeAudioNode, destination, output);
+            insertElementInSet(connections, [destination, output], function (connection) {
+              return connection[0] === destination && connection[1] === output;
+            }, true);
+
+            if (wasDisconnected) {
+              whenConnected();
+            }
+
+            return;
+          };
+        }(nativeAudioNode.connect);
+
+        nativeAudioNode.disconnect = function (disconnect) {
+          return function (destinationOrOutput, output, input) {
+            var wasConnected = connections.size > 0;
+
+            if (destinationOrOutput === undefined) {
+              disconnect.apply(nativeAudioNode);
+              connections.clear();
+            } else if (typeof destinationOrOutput === 'number') {
+              // @todo TypeScript cannot infer the overloaded signature with 1 argument yet.
+              disconnect.call(nativeAudioNode, destinationOrOutput);
+
+              var _iterator = _createForOfIteratorHelper$1(connections),
+                  _step;
+
+              try {
+                for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                  var connection = _step.value;
+
+                  if (connection[1] === destinationOrOutput) {
+                    connections["delete"](connection);
+                  }
+                }
+              } catch (err) {
+                _iterator.e(err);
+              } finally {
+                _iterator.f();
+              }
+            } else {
+              if (isNativeAudioNode(destinationOrOutput)) {
+                // @todo TypeScript cannot infer the overloaded signature with 3 arguments yet.
+                disconnect.call(nativeAudioNode, destinationOrOutput, output, input);
+              } else {
+                // @todo TypeScript cannot infer the overloaded signature with 2 arguments yet.
+                disconnect.call(nativeAudioNode, destinationOrOutput, output);
+              }
+
+              var _iterator2 = _createForOfIteratorHelper$1(connections),
+                  _step2;
+
+              try {
+                for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                  var _connection = _step2.value;
+
+                  if (_connection[0] === destinationOrOutput && (output === undefined || _connection[1] === output) && (input === undefined || _connection[2] === input)) {
+                    connections["delete"](_connection);
+                  }
+                }
+              } catch (err) {
+                _iterator2.e(err);
+              } finally {
+                _iterator2.f();
+              }
+            }
+
+            var isDisconnected = connections.size === 0;
+
+            if (wasConnected && isDisconnected) {
+              whenDisconnected();
+            }
+          };
+        }(nativeAudioNode.disconnect);
+
+        return nativeAudioNode;
+      };
+    };
+
+    var assignNativeAudioNodeOption = function assignNativeAudioNodeOption(nativeAudioNode, options, option) {
+      var value = options[option];
+
+      if (value !== undefined && value !== nativeAudioNode[option]) {
+        nativeAudioNode[option] = value;
+      }
+    };
+
+    var assignNativeAudioNodeOptions = function assignNativeAudioNodeOptions(nativeAudioNode, options) {
+      assignNativeAudioNodeOption(nativeAudioNode, options, 'channelCount');
+      assignNativeAudioNodeOption(nativeAudioNode, options, 'channelCountMode');
+      assignNativeAudioNodeOption(nativeAudioNode, options, 'channelInterpretation');
+    };
+
+    var testAnalyserNodeGetFloatTimeDomainDataMethodSupport = function testAnalyserNodeGetFloatTimeDomainDataMethodSupport(nativeAnalyserNode) {
+      return typeof nativeAnalyserNode.getFloatTimeDomainData === 'function';
+    };
+
+    var wrapAnalyserNodeGetFloatTimeDomainDataMethod = function wrapAnalyserNodeGetFloatTimeDomainDataMethod(nativeAnalyserNode) {
+      nativeAnalyserNode.getFloatTimeDomainData = function (array) {
+        var byteTimeDomainData = new Uint8Array(array.length);
+        nativeAnalyserNode.getByteTimeDomainData(byteTimeDomainData);
+        var length = Math.max(byteTimeDomainData.length, nativeAnalyserNode.fftSize);
+
+        for (var i = 0; i < length; i += 1) {
+          array[i] = (byteTimeDomainData[i] - 128) * 0.0078125;
+        }
+
+        return array;
+      };
+    };
+
+    var createNativeAnalyserNodeFactory = function createNativeAnalyserNodeFactory(cacheTestResult, createIndexSizeError) {
+      return function (nativeContext, options) {
+        var nativeAnalyserNode = nativeContext.createAnalyser(); // Bug #37: Firefox does not create an AnalyserNode with the default properties.
+
+        assignNativeAudioNodeOptions(nativeAnalyserNode, options); // Bug #118: Safari does not throw an error if maxDecibels is not more than minDecibels.
+
+        if (!(options.maxDecibels > options.minDecibels)) {
+          throw createIndexSizeError();
+        }
+
+        assignNativeAudioNodeOption(nativeAnalyserNode, options, 'fftSize');
+        assignNativeAudioNodeOption(nativeAnalyserNode, options, 'maxDecibels');
+        assignNativeAudioNodeOption(nativeAnalyserNode, options, 'minDecibels');
+        assignNativeAudioNodeOption(nativeAnalyserNode, options, 'smoothingTimeConstant'); // Bug #36: Safari does not support getFloatTimeDomainData() yet.
+
+        if (!cacheTestResult(testAnalyserNodeGetFloatTimeDomainDataMethodSupport, function () {
+          return testAnalyserNodeGetFloatTimeDomainDataMethodSupport(nativeAnalyserNode);
+        })) {
+          wrapAnalyserNodeGetFloatTimeDomainDataMethod(nativeAnalyserNode);
+        }
+
+        return nativeAnalyserNode;
+      };
+    };
+
+    var createNativeAudioBufferConstructor = function createNativeAudioBufferConstructor(window) {
+      if (window === null) {
+        return null;
+      }
+
+      if (window.hasOwnProperty('AudioBuffer')) {
+        return window.AudioBuffer;
+      }
+
+      return null;
+    };
+
+    var assignNativeAudioNodeAudioParamValue = function assignNativeAudioNodeAudioParamValue(nativeAudioNode, options, audioParam) {
+      var value = options[audioParam];
+
+      if (value !== undefined && value !== nativeAudioNode[audioParam].value) {
+        nativeAudioNode[audioParam].value = value;
+      }
+    };
+
+    var wrapAudioBufferSourceNodeStartMethodConsecutiveCalls = function wrapAudioBufferSourceNodeStartMethodConsecutiveCalls(nativeAudioBufferSourceNode) {
+      nativeAudioBufferSourceNode.start = function (start) {
+        var isScheduled = false;
+        return function () {
+          var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+          var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+          var duration = arguments.length > 2 ? arguments[2] : undefined;
+
+          if (isScheduled) {
+            throw createInvalidStateError();
+          }
+
+          start.call(nativeAudioBufferSourceNode, when, offset, duration);
+          isScheduled = true;
+        };
+      }(nativeAudioBufferSourceNode.start);
+    };
+
+    var wrapAudioScheduledSourceNodeStartMethodNegativeParameters = function wrapAudioScheduledSourceNodeStartMethodNegativeParameters(nativeAudioScheduledSourceNode) {
+      nativeAudioScheduledSourceNode.start = function (start) {
+        return function () {
+          var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+          var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+          var duration = arguments.length > 2 ? arguments[2] : undefined;
+
+          if (typeof duration === 'number' && duration < 0 || offset < 0 || when < 0) {
+            throw new RangeError("The parameters can't be negative.");
+          } // @todo TypeScript cannot infer the overloaded signature with 3 arguments yet.
+
+
+          start.call(nativeAudioScheduledSourceNode, when, offset, duration);
+        };
+      }(nativeAudioScheduledSourceNode.start);
+    };
+
+    var wrapAudioScheduledSourceNodeStopMethodNegativeParameters = function wrapAudioScheduledSourceNodeStopMethodNegativeParameters(nativeAudioScheduledSourceNode) {
+      nativeAudioScheduledSourceNode.stop = function (stop) {
+        return function () {
+          var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+          if (when < 0) {
+            throw new RangeError("The parameter can't be negative.");
+          }
+
+          stop.call(nativeAudioScheduledSourceNode, when);
+        };
+      }(nativeAudioScheduledSourceNode.stop);
+    };
+
+    var createNativeAudioBufferSourceNodeFactory = function createNativeAudioBufferSourceNodeFactory(addSilentConnection, cacheTestResult, testAudioBufferSourceNodeStartMethodConsecutiveCallsSupport, testAudioBufferSourceNodeStartMethodOffsetClampingSupport, testAudioBufferSourceNodeStopMethodNullifiedBufferSupport, testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport, testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, wrapAudioBufferSourceNodeStartMethodOffsetClampling, wrapAudioBufferSourceNodeStopMethodNullifiedBuffer, wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls) {
+      return function (nativeContext, options) {
+        var nativeAudioBufferSourceNode = nativeContext.createBufferSource();
+        assignNativeAudioNodeOptions(nativeAudioBufferSourceNode, options);
+        assignNativeAudioNodeAudioParamValue(nativeAudioBufferSourceNode, options, 'playbackRate');
+        assignNativeAudioNodeOption(nativeAudioBufferSourceNode, options, 'buffer'); // Bug #149: Safari does not yet support the detune AudioParam.
+
+        assignNativeAudioNodeOption(nativeAudioBufferSourceNode, options, 'loop');
+        assignNativeAudioNodeOption(nativeAudioBufferSourceNode, options, 'loopEnd');
+        assignNativeAudioNodeOption(nativeAudioBufferSourceNode, options, 'loopStart'); // Bug #69: Safari does allow calls to start() of an already scheduled AudioBufferSourceNode.
+
+        if (!cacheTestResult(testAudioBufferSourceNodeStartMethodConsecutiveCallsSupport, function () {
+          return testAudioBufferSourceNodeStartMethodConsecutiveCallsSupport(nativeContext);
+        })) {
+          wrapAudioBufferSourceNodeStartMethodConsecutiveCalls(nativeAudioBufferSourceNode);
+        } // Bug #154 & #155: Safari does not handle offsets which are equal to or greater than the duration of the buffer.
+
+
+        if (!cacheTestResult(testAudioBufferSourceNodeStartMethodOffsetClampingSupport, function () {
+          return testAudioBufferSourceNodeStartMethodOffsetClampingSupport(nativeContext);
+        })) {
+          wrapAudioBufferSourceNodeStartMethodOffsetClampling(nativeAudioBufferSourceNode);
+        } // Bug #162: Safari does throw an error when stop() is called on an AudioBufferSourceNode which has no buffer assigned to it.
+
+
+        if (!cacheTestResult(testAudioBufferSourceNodeStopMethodNullifiedBufferSupport, function () {
+          return testAudioBufferSourceNodeStopMethodNullifiedBufferSupport(nativeContext);
+        })) {
+          wrapAudioBufferSourceNodeStopMethodNullifiedBuffer(nativeAudioBufferSourceNode, nativeContext);
+        } // Bug #44: Safari does not throw a RangeError yet.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, function () {
+          return testAudioScheduledSourceNodeStartMethodNegativeParametersSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStartMethodNegativeParameters(nativeAudioBufferSourceNode);
+        } // Bug #19: Safari does not ignore calls to stop() of an already stopped AudioBufferSourceNode.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport, function () {
+          return testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls(nativeAudioBufferSourceNode, nativeContext);
+        } // Bug #44: Only Firefox does not throw a RangeError yet.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, function () {
+          return testAudioScheduledSourceNodeStopMethodNegativeParametersSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStopMethodNegativeParameters(nativeAudioBufferSourceNode);
+        } // Bug #175: Safari will not fire an ended event if the AudioBufferSourceNode is unconnected.
+
+
+        addSilentConnection(nativeContext, nativeAudioBufferSourceNode);
+        return nativeAudioBufferSourceNode;
+      };
+    };
+
+    var createNativeAudioContextConstructor = function createNativeAudioContextConstructor(window) {
+      if (window === null) {
+        return null;
+      }
+
+      if (window.hasOwnProperty('AudioContext')) {
+        return window.AudioContext;
+      }
+
+      return window.hasOwnProperty('webkitAudioContext') ? window.webkitAudioContext : null;
+    };
+
+    var createNativeAudioDestinationNodeFactory = function createNativeAudioDestinationNodeFactory(createNativeGainNode, overwriteAccessors) {
+      return function (nativeContext, channelCount, isNodeOfNativeOfflineAudioContext) {
+        var nativeAudioDestinationNode = nativeContext.destination; // Bug #132: Safari does not have the correct channelCount.
+
+        if (nativeAudioDestinationNode.channelCount !== channelCount) {
+          try {
+            nativeAudioDestinationNode.channelCount = channelCount;
+          } catch (_unused) {// Bug #169: Safari throws an error on each attempt to change the channelCount.
+          }
+        } // Bug #83: Safari does not have the correct channelCountMode.
+
+
+        if (isNodeOfNativeOfflineAudioContext && nativeAudioDestinationNode.channelCountMode !== 'explicit') {
+          nativeAudioDestinationNode.channelCountMode = 'explicit';
+        } // Bug #47: The AudioDestinationNode in Safari does not initialize the maxChannelCount property correctly.
+
+
+        if (nativeAudioDestinationNode.maxChannelCount === 0) {
+          Object.defineProperty(nativeAudioDestinationNode, 'maxChannelCount', {
+            value: channelCount
+          });
+        } // Bug #168: No browser does yet have an AudioDestinationNode with an output.
+
+
+        var gainNode = createNativeGainNode(nativeContext, {
+          channelCount: channelCount,
+          channelCountMode: nativeAudioDestinationNode.channelCountMode,
+          channelInterpretation: nativeAudioDestinationNode.channelInterpretation,
+          gain: 1
+        });
+        overwriteAccessors(gainNode, 'channelCount', function (get) {
+          return function () {
+            return get.call(gainNode);
+          };
+        }, function (set) {
+          return function (value) {
+            set.call(gainNode, value);
+
+            try {
+              nativeAudioDestinationNode.channelCount = value;
+            } catch (err) {
+              // Bug #169: Safari throws an error on each attempt to change the channelCount.
+              if (value > nativeAudioDestinationNode.maxChannelCount) {
+                throw err;
+              }
+            }
+          };
+        });
+        overwriteAccessors(gainNode, 'channelCountMode', function (get) {
+          return function () {
+            return get.call(gainNode);
+          };
+        }, function (set) {
+          return function (value) {
+            set.call(gainNode, value);
+            nativeAudioDestinationNode.channelCountMode = value;
+          };
+        });
+        overwriteAccessors(gainNode, 'channelInterpretation', function (get) {
+          return function () {
+            return get.call(gainNode);
+          };
+        }, function (set) {
+          return function (value) {
+            set.call(gainNode, value);
+            nativeAudioDestinationNode.channelInterpretation = value;
+          };
+        });
+        Object.defineProperty(gainNode, 'maxChannelCount', {
+          get: function get() {
+            return nativeAudioDestinationNode.maxChannelCount;
+          }
+        }); // @todo This should be disconnected when the context is closed.
+
+        gainNode.connect(nativeAudioDestinationNode);
+        return gainNode;
+      };
+    };
+
+    var createNativeAudioWorkletNodeConstructor = function createNativeAudioWorkletNodeConstructor(window) {
+      if (window === null) {
+        return null;
+      }
+
+      return window.hasOwnProperty('AudioWorkletNode') ? window.AudioWorkletNode : null;
+    };
+
+    var testClonabilityOfAudioWorkletNodeOptions = function testClonabilityOfAudioWorkletNodeOptions(audioWorkletNodeOptions) {
+      var _MessageChannel = new MessageChannel(),
+          port1 = _MessageChannel.port1;
+
+      try {
+        // This will throw an error if the audioWorkletNodeOptions are not clonable.
+        port1.postMessage(audioWorkletNodeOptions);
+      } finally {
+        port1.close();
+      }
+    };
+
+    function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$f(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var createNativeAudioWorkletNodeFactory = function createNativeAudioWorkletNodeFactory(createInvalidStateError, createNativeAudioWorkletNodeFaker, createNativeGainNode, createNotSupportedError, monitorConnections) {
+      return function (nativeContext, baseLatency, nativeAudioWorkletNodeConstructor, name, processorConstructor, options) {
+        if (nativeAudioWorkletNodeConstructor !== null) {
+          try {
+            var nativeAudioWorkletNode = new nativeAudioWorkletNodeConstructor(nativeContext, name, options);
+            var patchedEventListeners = new Map();
+            var onprocessorerror = null;
+            Object.defineProperties(nativeAudioWorkletNode, {
+              /*
+               * Bug #61: Overwriting the property accessors for channelCount and channelCountMode is necessary as long as some
+               * browsers have no native implementation to achieve a consistent behavior.
+               */
+              channelCount: {
+                get: function get() {
+                  return options.channelCount;
+                },
+                set: function set() {
+                  throw createInvalidStateError();
+                }
+              },
+              channelCountMode: {
+                get: function get() {
+                  return 'explicit';
+                },
+                set: function set() {
+                  throw createInvalidStateError();
+                }
+              },
+              // Bug #156: Chrome and Edge do not yet fire an ErrorEvent.
+              onprocessorerror: {
+                get: function get() {
+                  return onprocessorerror;
+                },
+                set: function set(value) {
+                  if (typeof onprocessorerror === 'function') {
+                    nativeAudioWorkletNode.removeEventListener('processorerror', onprocessorerror);
+                  }
+
+                  onprocessorerror = typeof value === 'function' ? value : null;
+
+                  if (typeof onprocessorerror === 'function') {
+                    nativeAudioWorkletNode.addEventListener('processorerror', onprocessorerror);
+                  }
+                }
+              }
+            });
+
+            nativeAudioWorkletNode.addEventListener = function (addEventListener) {
+              return function () {
+                for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+                  args[_key] = arguments[_key];
+                }
+
+                if (args[0] === 'processorerror') {
+                  var unpatchedEventListener = typeof args[1] === 'function' ? args[1] : _typeof__default["default"](args[1]) === 'object' && args[1] !== null && typeof args[1].handleEvent === 'function' ? args[1].handleEvent : null;
+
+                  if (unpatchedEventListener !== null) {
+                    var patchedEventListener = patchedEventListeners.get(args[1]);
+
+                    if (patchedEventListener !== undefined) {
+                      args[1] = patchedEventListener;
+                    } else {
+                      args[1] = function (event) {
+                        // Bug #178: Chrome, Edge and Opera do fire an event of type error.
+                        if (event.type === 'error') {
+                          Object.defineProperties(event, {
+                            type: {
+                              value: 'processorerror'
+                            }
+                          });
+                          unpatchedEventListener(event);
+                        } else {
+                          unpatchedEventListener(new ErrorEvent(args[0], _objectSpread$f({}, event)));
+                        }
+                      };
+
+                      patchedEventListeners.set(unpatchedEventListener, args[1]);
+                    }
+                  }
+                } // Bug #178: Chrome, Edge and Opera do fire an event of type error.
+
+
+                addEventListener.call(nativeAudioWorkletNode, 'error', args[1], args[2]);
+                return addEventListener.call.apply(addEventListener, [nativeAudioWorkletNode].concat(args));
+              };
+            }(nativeAudioWorkletNode.addEventListener);
+
+            nativeAudioWorkletNode.removeEventListener = function (removeEventListener) {
+              return function () {
+                for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                  args[_key2] = arguments[_key2];
+                }
+
+                if (args[0] === 'processorerror') {
+                  var patchedEventListener = patchedEventListeners.get(args[1]);
+
+                  if (patchedEventListener !== undefined) {
+                    patchedEventListeners["delete"](args[1]);
+                    args[1] = patchedEventListener;
+                  }
+                } // Bug #178: Chrome, Edge and Opera do fire an event of type error.
+
+
+                removeEventListener.call(nativeAudioWorkletNode, 'error', args[1], args[2]);
+                return removeEventListener.call(nativeAudioWorkletNode, args[0], args[1], args[2]);
+              };
+            }(nativeAudioWorkletNode.removeEventListener);
+            /*
+             * Bug #86: Chrome and Edge do not invoke the process() function if the corresponding AudioWorkletNode is unconnected but
+             * has an output.
+             */
+
+
+            if (options.numberOfOutputs !== 0) {
+              var nativeGainNode = createNativeGainNode(nativeContext, {
+                channelCount: 1,
+                channelCountMode: 'explicit',
+                channelInterpretation: 'discrete',
+                gain: 0
+              });
+              nativeAudioWorkletNode.connect(nativeGainNode).connect(nativeContext.destination);
+
+              var whenConnected = function whenConnected() {
+                return nativeGainNode.disconnect();
+              };
+
+              var whenDisconnected = function whenDisconnected() {
+                return nativeGainNode.connect(nativeContext.destination);
+              }; // @todo Disconnect the connection when the process() function of the AudioWorkletNode returns false.
+
+
+              return monitorConnections(nativeAudioWorkletNode, whenConnected, whenDisconnected);
+            }
+
+            return nativeAudioWorkletNode;
+          } catch (err) {
+            // Bug #60: Chrome, Edge & Opera throw an InvalidStateError instead of a NotSupportedError.
+            if (err.code === 11) {
+              throw createNotSupportedError();
+            }
+
+            throw err;
+          }
+        } // Bug #61: Only Chrome & Opera have an implementation of the AudioWorkletNode yet.
+
+
+        if (processorConstructor === undefined) {
+          throw createNotSupportedError();
+        }
+
+        testClonabilityOfAudioWorkletNodeOptions(options);
+        return createNativeAudioWorkletNodeFaker(nativeContext, baseLatency, processorConstructor, options);
+      };
+    };
+
+    var computeBufferSize = function computeBufferSize(baseLatency, sampleRate) {
+      if (baseLatency === null) {
+        return 512;
+      }
+
+      return Math.max(512, Math.min(16384, Math.pow(2, Math.round(Math.log2(baseLatency * sampleRate)))));
+    };
+
+    var cloneAudioWorkletNodeOptions = function cloneAudioWorkletNodeOptions(audioWorkletNodeOptions) {
+      return new Promise(function (resolve, reject) {
+        var _MessageChannel = new MessageChannel(),
+            port1 = _MessageChannel.port1,
+            port2 = _MessageChannel.port2;
+
+        port1.onmessage = function (_ref) {
+          var data = _ref.data;
+          port1.close();
+          port2.close();
+          resolve(data);
+        };
+
+        port1.onmessageerror = function (_ref2) {
+          var data = _ref2.data;
+          port1.close();
+          port2.close();
+          reject(data);
+        }; // This will throw an error if the audioWorkletNodeOptions are not clonable.
+
+
+        port2.postMessage(audioWorkletNodeOptions);
+      });
+    };
+
+    var createAudioWorkletProcessorPromise = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(processorConstructor, audioWorkletNodeOptions) {
+        var clonedAudioWorkletNodeOptions;
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return cloneAudioWorkletNodeOptions(audioWorkletNodeOptions);
+
+              case 2:
+                clonedAudioWorkletNodeOptions = _context.sent;
+                return _context.abrupt("return", new processorConstructor(clonedAudioWorkletNodeOptions));
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function createAudioWorkletProcessorPromise(_x, _x2) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    var createAudioWorkletProcessor = function createAudioWorkletProcessor(nativeContext, nativeAudioWorkletNode, processorConstructor, audioWorkletNodeOptions) {
+      var nodeToProcessorMap = NODE_TO_PROCESSOR_MAPS.get(nativeContext);
+
+      if (nodeToProcessorMap === undefined) {
+        nodeToProcessorMap = new WeakMap();
+        NODE_TO_PROCESSOR_MAPS.set(nativeContext, nodeToProcessorMap);
+      }
+
+      var audioWorkletProcessorPromise = createAudioWorkletProcessorPromise(processorConstructor, audioWorkletNodeOptions);
+      nodeToProcessorMap.set(nativeAudioWorkletNode, audioWorkletProcessorPromise);
+      return audioWorkletProcessorPromise;
+    };
+
+    function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$e(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+    function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+    function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+    var createNativeAudioWorkletNodeFakerFactory = function createNativeAudioWorkletNodeFakerFactory(connectMultipleOutputs, createIndexSizeError, createInvalidStateError, createNativeChannelMergerNode, createNativeChannelSplitterNode, createNativeConstantSourceNode, createNativeGainNode, createNativeScriptProcessorNode, createNotSupportedError, disconnectMultipleOutputs, exposeCurrentFrameAndCurrentTime, getActiveAudioWorkletNodeInputs, monitorConnections) {
+      return function (nativeContext, baseLatency, processorConstructor, options) {
+        if (options.numberOfInputs === 0 && options.numberOfOutputs === 0) {
+          throw createNotSupportedError();
+        }
+
+        var outputChannelCount = Array.isArray(options.outputChannelCount) ? options.outputChannelCount : Array.from(options.outputChannelCount); // @todo Check if any of the channelCount values is greater than the implementation's maximum number of channels.
+
+        if (outputChannelCount.some(function (channelCount) {
+          return channelCount < 1;
+        })) {
+          throw createNotSupportedError();
+        }
+
+        if (outputChannelCount.length !== options.numberOfOutputs) {
+          throw createIndexSizeError();
+        } // Bug #61: This is not part of the standard but required for the faker to work.
+
+
+        if (options.channelCountMode !== 'explicit') {
+          throw createNotSupportedError();
+        }
+
+        var numberOfInputChannels = options.channelCount * options.numberOfInputs;
+        var numberOfOutputChannels = outputChannelCount.reduce(function (sum, value) {
+          return sum + value;
+        }, 0);
+        var numberOfParameters = processorConstructor.parameterDescriptors === undefined ? 0 : processorConstructor.parameterDescriptors.length; // Bug #61: This is not part of the standard but required for the faker to work.
+
+        if (numberOfInputChannels + numberOfParameters > 6 || numberOfOutputChannels > 6) {
+          throw createNotSupportedError();
+        }
+
+        var messageChannel = new MessageChannel();
+        var gainNodes = [];
+        var inputChannelSplitterNodes = [];
+
+        for (var i = 0; i < options.numberOfInputs; i += 1) {
+          gainNodes.push(createNativeGainNode(nativeContext, {
+            channelCount: options.channelCount,
+            channelCountMode: options.channelCountMode,
+            channelInterpretation: options.channelInterpretation,
+            gain: 1
+          }));
+          inputChannelSplitterNodes.push(createNativeChannelSplitterNode(nativeContext, {
+            channelCount: options.channelCount,
+            channelCountMode: 'explicit',
+            channelInterpretation: 'discrete',
+            numberOfOutputs: options.channelCount
+          }));
+        }
+
+        var constantSourceNodes = [];
+
+        if (processorConstructor.parameterDescriptors !== undefined) {
+          var _iterator = _createForOfIteratorHelper(processorConstructor.parameterDescriptors),
+              _step;
+
+          try {
+            var _loop = function _loop() {
+              var _step$value = _step.value,
+                  defaultValue = _step$value.defaultValue,
+                  maxValue = _step$value.maxValue,
+                  minValue = _step$value.minValue,
+                  name = _step$value.name;
+              var constantSourceNode = createNativeConstantSourceNode(nativeContext, {
+                channelCount: 1,
+                channelCountMode: 'explicit',
+                channelInterpretation: 'discrete',
+                offset: options.parameterData[name] !== undefined ? options.parameterData[name] : defaultValue === undefined ? 0 : defaultValue
+              });
+              Object.defineProperties(constantSourceNode.offset, {
+                defaultValue: {
+                  get: function get() {
+                    return defaultValue === undefined ? 0 : defaultValue;
+                  }
+                },
+                maxValue: {
+                  get: function get() {
+                    return maxValue === undefined ? MOST_POSITIVE_SINGLE_FLOAT : maxValue;
+                  }
+                },
+                minValue: {
+                  get: function get() {
+                    return minValue === undefined ? MOST_NEGATIVE_SINGLE_FLOAT : minValue;
+                  }
+                }
+              });
+              constantSourceNodes.push(constantSourceNode);
+            };
+
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              _loop();
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        }
+
+        var inputChannelMergerNode = createNativeChannelMergerNode(nativeContext, {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'speakers',
+          numberOfInputs: Math.max(1, numberOfInputChannels + numberOfParameters)
+        });
+        var bufferSize = computeBufferSize(baseLatency, nativeContext.sampleRate);
+        var scriptProcessorNode = createNativeScriptProcessorNode(nativeContext, bufferSize, numberOfInputChannels + numberOfParameters, // Bug #87: Only Firefox will fire an AudioProcessingEvent if there is no connected output.
+        Math.max(1, numberOfOutputChannels));
+        var outputChannelSplitterNode = createNativeChannelSplitterNode(nativeContext, {
+          channelCount: Math.max(1, numberOfOutputChannels),
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete',
+          numberOfOutputs: Math.max(1, numberOfOutputChannels)
+        });
+        var outputChannelMergerNodes = [];
+
+        for (var _i = 0; _i < options.numberOfOutputs; _i += 1) {
+          outputChannelMergerNodes.push(createNativeChannelMergerNode(nativeContext, {
+            channelCount: 1,
+            channelCountMode: 'explicit',
+            channelInterpretation: 'speakers',
+            numberOfInputs: outputChannelCount[_i]
+          }));
+        }
+
+        for (var _i2 = 0; _i2 < options.numberOfInputs; _i2 += 1) {
+          gainNodes[_i2].connect(inputChannelSplitterNodes[_i2]);
+
+          for (var j = 0; j < options.channelCount; j += 1) {
+            inputChannelSplitterNodes[_i2].connect(inputChannelMergerNode, j, _i2 * options.channelCount + j);
+          }
+        }
+
+        var parameterMap = new ReadOnlyMap(processorConstructor.parameterDescriptors === undefined ? [] : processorConstructor.parameterDescriptors.map(function (_ref, index) {
+          var name = _ref.name;
+          var constantSourceNode = constantSourceNodes[index];
+          constantSourceNode.connect(inputChannelMergerNode, 0, numberOfInputChannels + index);
+          constantSourceNode.start(0);
+          return [name, constantSourceNode.offset];
+        }));
+        inputChannelMergerNode.connect(scriptProcessorNode);
+        var channelInterpretation = options.channelInterpretation;
+        var onprocessorerror = null; // Bug #87: Expose at least one output to make this node connectable.
+
+        var outputAudioNodes = options.numberOfOutputs === 0 ? [scriptProcessorNode] : outputChannelMergerNodes;
+        var nativeAudioWorkletNodeFaker = {
+          get bufferSize() {
+            return bufferSize;
+          },
+
+          get channelCount() {
+            return options.channelCount;
+          },
+
+          set channelCount(_) {
+            // Bug #61: This is not part of the standard but required for the faker to work.
+            throw createInvalidStateError();
+          },
+
+          get channelCountMode() {
+            return options.channelCountMode;
+          },
+
+          set channelCountMode(_) {
+            // Bug #61: This is not part of the standard but required for the faker to work.
+            throw createInvalidStateError();
+          },
+
+          get channelInterpretation() {
+            return channelInterpretation;
+          },
+
+          set channelInterpretation(value) {
+            var _iterator2 = _createForOfIteratorHelper(gainNodes),
+                _step2;
+
+            try {
+              for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                var gainNode = _step2.value;
+                gainNode.channelInterpretation = value;
+              }
+            } catch (err) {
+              _iterator2.e(err);
+            } finally {
+              _iterator2.f();
+            }
+
+            channelInterpretation = value;
+          },
+
+          get context() {
+            return scriptProcessorNode.context;
+          },
+
+          get inputs() {
+            return gainNodes;
+          },
+
+          get numberOfInputs() {
+            return options.numberOfInputs;
+          },
+
+          get numberOfOutputs() {
+            return options.numberOfOutputs;
+          },
+
+          get onprocessorerror() {
+            return onprocessorerror;
+          },
+
+          set onprocessorerror(value) {
+            if (typeof onprocessorerror === 'function') {
+              nativeAudioWorkletNodeFaker.removeEventListener('processorerror', onprocessorerror);
+            }
+
+            onprocessorerror = typeof value === 'function' ? value : null;
+
+            if (typeof onprocessorerror === 'function') {
+              nativeAudioWorkletNodeFaker.addEventListener('processorerror', onprocessorerror);
+            }
+          },
+
+          get parameters() {
+            return parameterMap;
+          },
+
+          get port() {
+            return messageChannel.port2;
+          },
+
+          addEventListener: function addEventListener() {
+            return scriptProcessorNode.addEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          connect: connectMultipleOutputs.bind(null, outputAudioNodes),
+          disconnect: disconnectMultipleOutputs.bind(null, outputAudioNodes),
+          dispatchEvent: function dispatchEvent() {
+            return scriptProcessorNode.dispatchEvent(arguments.length <= 0 ? undefined : arguments[0]);
+          },
+          removeEventListener: function removeEventListener() {
+            return scriptProcessorNode.removeEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          }
+        };
+        var patchedEventListeners = new Map();
+
+        messageChannel.port1.addEventListener = function (addEventListener) {
+          return function () {
+            for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+              args[_key] = arguments[_key];
+            }
+
+            if (args[0] === 'message') {
+              var unpatchedEventListener = typeof args[1] === 'function' ? args[1] : _typeof__default["default"](args[1]) === 'object' && args[1] !== null && typeof args[1].handleEvent === 'function' ? args[1].handleEvent : null;
+
+              if (unpatchedEventListener !== null) {
+                var patchedEventListener = patchedEventListeners.get(args[1]);
+
+                if (patchedEventListener !== undefined) {
+                  args[1] = patchedEventListener;
+                } else {
+                  args[1] = function (event) {
+                    exposeCurrentFrameAndCurrentTime(nativeContext.currentTime, nativeContext.sampleRate, function () {
+                      return unpatchedEventListener(event);
+                    });
+                  };
+
+                  patchedEventListeners.set(unpatchedEventListener, args[1]);
+                }
+              }
+            }
+
+            return addEventListener.call(messageChannel.port1, args[0], args[1], args[2]);
+          };
+        }(messageChannel.port1.addEventListener);
+
+        messageChannel.port1.removeEventListener = function (removeEventListener) {
+          return function () {
+            for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+              args[_key2] = arguments[_key2];
+            }
+
+            if (args[0] === 'message') {
+              var patchedEventListener = patchedEventListeners.get(args[1]);
+
+              if (patchedEventListener !== undefined) {
+                patchedEventListeners["delete"](args[1]);
+                args[1] = patchedEventListener;
+              }
+            }
+
+            return removeEventListener.call(messageChannel.port1, args[0], args[1], args[2]);
+          };
+        }(messageChannel.port1.removeEventListener);
+
+        var onmessage = null;
+        Object.defineProperty(messageChannel.port1, 'onmessage', {
+          get: function get() {
+            return onmessage;
+          },
+          set: function set(value) {
+            if (typeof onmessage === 'function') {
+              messageChannel.port1.removeEventListener('message', onmessage);
+            }
+
+            onmessage = typeof value === 'function' ? value : null;
+
+            if (typeof onmessage === 'function') {
+              messageChannel.port1.addEventListener('message', onmessage);
+              messageChannel.port1.start();
+            }
+          }
+        });
+        processorConstructor.prototype.port = messageChannel.port1;
+        var audioWorkletProcessor = null;
+        var audioWorkletProcessorPromise = createAudioWorkletProcessor(nativeContext, nativeAudioWorkletNodeFaker, processorConstructor, options);
+        audioWorkletProcessorPromise.then(function (dWrkltPrcssr) {
+          return audioWorkletProcessor = dWrkltPrcssr;
+        });
+        var inputs = createNestedArrays(options.numberOfInputs, options.channelCount);
+        var outputs = createNestedArrays(options.numberOfOutputs, outputChannelCount);
+        var parameters = processorConstructor.parameterDescriptors === undefined ? [] : processorConstructor.parameterDescriptors.reduce(function (prmtrs, _ref2) {
+          var name = _ref2.name;
+          return _objectSpread$e(_objectSpread$e({}, prmtrs), {}, _defineProperty__default["default"]({}, name, new Float32Array(128)));
+        }, {});
+        var isActive = true;
+
+        var disconnectOutputsGraph = function disconnectOutputsGraph() {
+          if (options.numberOfOutputs > 0) {
+            scriptProcessorNode.disconnect(outputChannelSplitterNode);
+          }
+
+          for (var _i3 = 0, outputChannelSplitterNodeOutput = 0; _i3 < options.numberOfOutputs; _i3 += 1) {
+            var outputChannelMergerNode = outputChannelMergerNodes[_i3];
+
+            for (var _j = 0; _j < outputChannelCount[_i3]; _j += 1) {
+              outputChannelSplitterNode.disconnect(outputChannelMergerNode, outputChannelSplitterNodeOutput + _j, _j);
+            }
+
+            outputChannelSplitterNodeOutput += outputChannelCount[_i3];
+          }
+        };
+
+        var activeInputIndexes = new Map(); // tslint:disable-next-line:deprecation
+
+        scriptProcessorNode.onaudioprocess = function (_ref3) {
+          var inputBuffer = _ref3.inputBuffer,
+              outputBuffer = _ref3.outputBuffer;
+
+          if (audioWorkletProcessor !== null) {
+            (function () {
+              var activeInputs = getActiveAudioWorkletNodeInputs(nativeAudioWorkletNodeFaker);
+
+              var _loop2 = function _loop2(_i4) {
+                for (var _j2 = 0; _j2 < options.numberOfInputs; _j2 += 1) {
+                  for (var k = 0; k < options.channelCount; k += 1) {
+                    copyFromChannel(inputBuffer, inputs[_j2], k, k, _i4);
+                  }
+                }
+
+                if (processorConstructor.parameterDescriptors !== undefined) {
+                  processorConstructor.parameterDescriptors.forEach(function (_ref4, index) {
+                    var name = _ref4.name;
+                    copyFromChannel(inputBuffer, parameters, name, numberOfInputChannels + index, _i4);
+                  });
+                }
+
+                for (var _j3 = 0; _j3 < options.numberOfInputs; _j3 += 1) {
+                  for (var _k = 0; _k < outputChannelCount[_j3]; _k += 1) {
+                    // The byteLength will be 0 when the ArrayBuffer was transferred.
+                    if (outputs[_j3][_k].byteLength === 0) {
+                      outputs[_j3][_k] = new Float32Array(128);
+                    }
+                  }
+                }
+
+                try {
+                  var potentiallyEmptyInputs = inputs.map(function (input, index) {
+                    var activeInput = activeInputs[index];
+
+                    if (activeInput.size > 0) {
+                      activeInputIndexes.set(index, bufferSize / 128);
+                      return input;
+                    }
+
+                    var count = activeInputIndexes.get(index);
+
+                    if (count === undefined) {
+                      return [];
+                    }
+
+                    if (input.every(function (channelData) {
+                      return channelData.every(function (sample) {
+                        return sample === 0;
+                      });
+                    })) {
+                      if (count === 1) {
+                        activeInputIndexes["delete"](index);
+                      } else {
+                        activeInputIndexes.set(index, count - 1);
+                      }
+                    }
+
+                    return input;
+                  });
+                  var activeSourceFlag = exposeCurrentFrameAndCurrentTime(nativeContext.currentTime + _i4 / nativeContext.sampleRate, nativeContext.sampleRate, function () {
+                    return audioWorkletProcessor.process(potentiallyEmptyInputs, outputs, parameters);
+                  });
+                  isActive = activeSourceFlag;
+
+                  for (var _j4 = 0, outputChannelSplitterNodeOutput = 0; _j4 < options.numberOfOutputs; _j4 += 1) {
+                    for (var _k2 = 0; _k2 < outputChannelCount[_j4]; _k2 += 1) {
+                      copyToChannel(outputBuffer, outputs[_j4], _k2, outputChannelSplitterNodeOutput + _k2, _i4);
+                    }
+
+                    outputChannelSplitterNodeOutput += outputChannelCount[_j4];
+                  }
+                } catch (error) {
+                  isActive = false;
+                  nativeAudioWorkletNodeFaker.dispatchEvent(new ErrorEvent('processorerror', {
+                    colno: error.colno,
+                    filename: error.filename,
+                    lineno: error.lineno,
+                    message: error.message
+                  }));
+                }
+
+                if (!isActive) {
+                  for (var _j5 = 0; _j5 < options.numberOfInputs; _j5 += 1) {
+                    gainNodes[_j5].disconnect(inputChannelSplitterNodes[_j5]);
+
+                    for (var _k3 = 0; _k3 < options.channelCount; _k3 += 1) {
+                      inputChannelSplitterNodes[_i4].disconnect(inputChannelMergerNode, _k3, _j5 * options.channelCount + _k3);
+                    }
+                  }
+
+                  if (processorConstructor.parameterDescriptors !== undefined) {
+                    var length = processorConstructor.parameterDescriptors.length;
+
+                    for (var _j6 = 0; _j6 < length; _j6 += 1) {
+                      var constantSourceNode = constantSourceNodes[_j6];
+                      constantSourceNode.disconnect(inputChannelMergerNode, 0, numberOfInputChannels + _j6);
+                      constantSourceNode.stop();
+                    }
+                  }
+
+                  inputChannelMergerNode.disconnect(scriptProcessorNode);
+                  scriptProcessorNode.onaudioprocess = null; // tslint:disable-line:deprecation
+
+                  if (isConnected) {
+                    disconnectOutputsGraph();
+                  } else {
+                    disconnectFakeGraph();
+                  }
+
+                  return "break";
+                }
+              };
+
+              for (var _i4 = 0; _i4 < bufferSize; _i4 += 128) {
+                var _ret = _loop2(_i4);
+
+                if (_ret === "break") break;
+              }
+            })();
+          }
+        };
+
+        var isConnected = false; // Bug #87: Only Firefox will fire an AudioProcessingEvent if there is no connected output.
+
+        var nativeGainNode = createNativeGainNode(nativeContext, {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete',
+          gain: 0
+        });
+
+        var connectFakeGraph = function connectFakeGraph() {
+          return scriptProcessorNode.connect(nativeGainNode).connect(nativeContext.destination);
+        };
+
+        var disconnectFakeGraph = function disconnectFakeGraph() {
+          scriptProcessorNode.disconnect(nativeGainNode);
+          nativeGainNode.disconnect();
+        };
+
+        var whenConnected = function whenConnected() {
+          if (isActive) {
+            disconnectFakeGraph();
+
+            if (options.numberOfOutputs > 0) {
+              scriptProcessorNode.connect(outputChannelSplitterNode);
+            }
+
+            for (var _i5 = 0, outputChannelSplitterNodeOutput = 0; _i5 < options.numberOfOutputs; _i5 += 1) {
+              var outputChannelMergerNode = outputChannelMergerNodes[_i5];
+
+              for (var _j7 = 0; _j7 < outputChannelCount[_i5]; _j7 += 1) {
+                outputChannelSplitterNode.connect(outputChannelMergerNode, outputChannelSplitterNodeOutput + _j7, _j7);
+              }
+
+              outputChannelSplitterNodeOutput += outputChannelCount[_i5];
+            }
+          }
+
+          isConnected = true;
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          if (isActive) {
+            connectFakeGraph();
+            disconnectOutputsGraph();
+          }
+
+          isConnected = false;
+        };
+
+        connectFakeGraph();
+        return monitorConnections(nativeAudioWorkletNodeFaker, whenConnected, whenDisconnected);
+      };
+    };
+
+    var createNativeBiquadFilterNode = function createNativeBiquadFilterNode(nativeContext, options) {
+      var nativeBiquadFilterNode = nativeContext.createBiquadFilter();
+      assignNativeAudioNodeOptions(nativeBiquadFilterNode, options);
+      assignNativeAudioNodeAudioParamValue(nativeBiquadFilterNode, options, 'Q');
+      assignNativeAudioNodeAudioParamValue(nativeBiquadFilterNode, options, 'detune');
+      assignNativeAudioNodeAudioParamValue(nativeBiquadFilterNode, options, 'frequency');
+      assignNativeAudioNodeAudioParamValue(nativeBiquadFilterNode, options, 'gain');
+      assignNativeAudioNodeOption(nativeBiquadFilterNode, options, 'type');
+      return nativeBiquadFilterNode;
+    };
+
+    var createNativeChannelMergerNodeFactory = function createNativeChannelMergerNodeFactory(nativeAudioContextConstructor, wrapChannelMergerNode) {
+      return function (nativeContext, options) {
+        var nativeChannelMergerNode = nativeContext.createChannelMerger(options.numberOfInputs);
+        /*
+         * Bug #20: Safari requires a connection of any kind to treat the input signal correctly.
+         * @todo Unfortunately there is no way to test for this behavior in a synchronous fashion which is why testing for the existence of
+         * the webkitAudioContext is used as a workaround here.
+         */
+
+        if (nativeAudioContextConstructor !== null && nativeAudioContextConstructor.name === 'webkitAudioContext') {
+          wrapChannelMergerNode(nativeContext, nativeChannelMergerNode);
+        }
+
+        assignNativeAudioNodeOptions(nativeChannelMergerNode, options);
+        return nativeChannelMergerNode;
+      };
+    };
+
+    var wrapChannelSplitterNode = function wrapChannelSplitterNode(channelSplitterNode) {
+      var channelCount = channelSplitterNode.numberOfOutputs; // Bug #97: Safari does not throw an error when attempting to change the channelCount to something other than its initial value.
+
+      Object.defineProperty(channelSplitterNode, 'channelCount', {
+        get: function get() {
+          return channelCount;
+        },
+        set: function set(value) {
+          if (value !== channelCount) {
+            throw createInvalidStateError();
+          }
+        }
+      }); // Bug #30: Safari does not throw an error when attempting to change the channelCountMode to something other than explicit.
+
+      Object.defineProperty(channelSplitterNode, 'channelCountMode', {
+        get: function get() {
+          return 'explicit';
+        },
+        set: function set(value) {
+          if (value !== 'explicit') {
+            throw createInvalidStateError();
+          }
+        }
+      }); // Bug #32: Safari does not throw an error when attempting to change the channelInterpretation to something other than discrete.
+
+      Object.defineProperty(channelSplitterNode, 'channelInterpretation', {
+        get: function get() {
+          return 'discrete';
+        },
+        set: function set(value) {
+          if (value !== 'discrete') {
+            throw createInvalidStateError();
+          }
+        }
+      });
+    };
+
+    var createNativeChannelSplitterNode = function createNativeChannelSplitterNode(nativeContext, options) {
+      var nativeChannelSplitterNode = nativeContext.createChannelSplitter(options.numberOfOutputs); // Bug #96: Safari does not have the correct channelCount.
+      // Bug #29: Safari does not have the correct channelCountMode.
+      // Bug #31: Safari does not have the correct channelInterpretation.
+
+      assignNativeAudioNodeOptions(nativeChannelSplitterNode, options); // Bug #29, #30, #31, #32, #96 & #97: Only Chrome, Edge, Firefox & Opera partially support the spec yet.
+
+      wrapChannelSplitterNode(nativeChannelSplitterNode);
+      return nativeChannelSplitterNode;
+    };
+
+    var createNativeConstantSourceNodeFactory = function createNativeConstantSourceNodeFactory(addSilentConnection, cacheTestResult, createNativeConstantSourceNodeFaker, testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, testAudioScheduledSourceNodeStopMethodNegativeParametersSupport) {
+      return function (nativeContext, options) {
+        // Bug #62: Safari does not support ConstantSourceNodes.
+        if (nativeContext.createConstantSource === undefined) {
+          return createNativeConstantSourceNodeFaker(nativeContext, options);
+        }
+
+        var nativeConstantSourceNode = nativeContext.createConstantSource();
+        assignNativeAudioNodeOptions(nativeConstantSourceNode, options);
+        assignNativeAudioNodeAudioParamValue(nativeConstantSourceNode, options, 'offset'); // Bug #44: Safari does not throw a RangeError yet.
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, function () {
+          return testAudioScheduledSourceNodeStartMethodNegativeParametersSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStartMethodNegativeParameters(nativeConstantSourceNode);
+        } // Bug #44: Only Firefox does not throw a RangeError yet.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, function () {
+          return testAudioScheduledSourceNodeStopMethodNegativeParametersSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStopMethodNegativeParameters(nativeConstantSourceNode);
+        } // Bug #175: Safari will not fire an ended event if the ConstantSourceNode is unconnected.
+
+
+        addSilentConnection(nativeContext, nativeConstantSourceNode);
+        return nativeConstantSourceNode;
+      };
+    };
+
+    var interceptConnections = function interceptConnections(original, interceptor) {
+      original.connect = interceptor.connect.bind(interceptor);
+      original.disconnect = interceptor.disconnect.bind(interceptor);
+      return original;
+    };
+
+    var _excluded$3 = ["offset"];
+
+    function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$d(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var createNativeConstantSourceNodeFakerFactory = function createNativeConstantSourceNodeFakerFactory(addSilentConnection, createNativeAudioBufferSourceNode, createNativeGainNode, monitorConnections) {
+      return function (nativeContext, _ref) {
+        var offset = _ref.offset,
+            audioNodeOptions = _objectWithoutProperties__default["default"](_ref, _excluded$3);
+
+        var audioBuffer = nativeContext.createBuffer(1, 2, 44100);
+        var audioBufferSourceNode = createNativeAudioBufferSourceNode(nativeContext, {
+          buffer: null,
+          channelCount: 2,
+          channelCountMode: 'max',
+          channelInterpretation: 'speakers',
+          loop: false,
+          loopEnd: 0,
+          loopStart: 0,
+          playbackRate: 1
+        });
+        var gainNode = createNativeGainNode(nativeContext, _objectSpread$d(_objectSpread$d({}, audioNodeOptions), {}, {
+          gain: offset
+        })); // Bug #5: Safari does not support copyFromChannel() and copyToChannel().
+
+        var channelData = audioBuffer.getChannelData(0); // Bug #95: Safari does not play or loop one sample buffers.
+
+        channelData[0] = 1;
+        channelData[1] = 1;
+        audioBufferSourceNode.buffer = audioBuffer;
+        audioBufferSourceNode.loop = true;
+        var nativeConstantSourceNodeFaker = {
+          get bufferSize() {
+            return undefined;
+          },
+
+          get channelCount() {
+            return gainNode.channelCount;
+          },
+
+          set channelCount(value) {
+            gainNode.channelCount = value;
+          },
+
+          get channelCountMode() {
+            return gainNode.channelCountMode;
+          },
+
+          set channelCountMode(value) {
+            gainNode.channelCountMode = value;
+          },
+
+          get channelInterpretation() {
+            return gainNode.channelInterpretation;
+          },
+
+          set channelInterpretation(value) {
+            gainNode.channelInterpretation = value;
+          },
+
+          get context() {
+            return gainNode.context;
+          },
+
+          get inputs() {
+            return [];
+          },
+
+          get numberOfInputs() {
+            return audioBufferSourceNode.numberOfInputs;
+          },
+
+          get numberOfOutputs() {
+            return gainNode.numberOfOutputs;
+          },
+
+          get offset() {
+            return gainNode.gain;
+          },
+
+          get onended() {
+            return audioBufferSourceNode.onended;
+          },
+
+          set onended(value) {
+            audioBufferSourceNode.onended = value;
+          },
+
+          addEventListener: function addEventListener() {
+            return audioBufferSourceNode.addEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          dispatchEvent: function dispatchEvent() {
+            return audioBufferSourceNode.dispatchEvent(arguments.length <= 0 ? undefined : arguments[0]);
+          },
+          removeEventListener: function removeEventListener() {
+            return audioBufferSourceNode.removeEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          start: function start() {
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            audioBufferSourceNode.start.call(audioBufferSourceNode, when);
+          },
+          stop: function stop() {
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            audioBufferSourceNode.stop.call(audioBufferSourceNode, when);
+          }
+        };
+
+        var whenConnected = function whenConnected() {
+          return audioBufferSourceNode.connect(gainNode);
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          return audioBufferSourceNode.disconnect(gainNode);
+        }; // Bug #175: Safari will not fire an ended event if the AudioBufferSourceNode is unconnected.
+
+
+        addSilentConnection(nativeContext, audioBufferSourceNode);
+        return monitorConnections(interceptConnections(nativeConstantSourceNodeFaker, gainNode), whenConnected, whenDisconnected);
+      };
+    };
+
+    var createNativeConvolverNodeFactory = function createNativeConvolverNodeFactory(createNotSupportedError, overwriteAccessors) {
+      return function (nativeContext, options) {
+        var nativeConvolverNode = nativeContext.createConvolver();
+        assignNativeAudioNodeOptions(nativeConvolverNode, options); // The normalize property needs to be set before setting the buffer.
+
+        if (options.disableNormalization === nativeConvolverNode.normalize) {
+          nativeConvolverNode.normalize = !options.disableNormalization;
+        }
+
+        assignNativeAudioNodeOption(nativeConvolverNode, options, 'buffer'); // Bug #113: Safari does allow to set the channelCount to a value larger than 2.
+
+        if (options.channelCount > 2) {
+          throw createNotSupportedError();
+        }
+
+        overwriteAccessors(nativeConvolverNode, 'channelCount', function (get) {
+          return function () {
+            return get.call(nativeConvolverNode);
+          };
+        }, function (set) {
+          return function (value) {
+            if (value > 2) {
+              throw createNotSupportedError();
+            }
+
+            return set.call(nativeConvolverNode, value);
+          };
+        }); // Bug #114: Safari allows to set the channelCountMode to 'max'.
+
+        if (options.channelCountMode === 'max') {
+          throw createNotSupportedError();
+        }
+
+        overwriteAccessors(nativeConvolverNode, 'channelCountMode', function (get) {
+          return function () {
+            return get.call(nativeConvolverNode);
+          };
+        }, function (set) {
+          return function (value) {
+            if (value === 'max') {
+              throw createNotSupportedError();
+            }
+
+            return set.call(nativeConvolverNode, value);
+          };
+        });
+        return nativeConvolverNode;
+      };
+    };
+
+    var createNativeDelayNode = function createNativeDelayNode(nativeContext, options) {
+      var nativeDelayNode = nativeContext.createDelay(options.maxDelayTime);
+      assignNativeAudioNodeOptions(nativeDelayNode, options);
+      assignNativeAudioNodeAudioParamValue(nativeDelayNode, options, 'delayTime');
+      return nativeDelayNode;
+    };
+
+    var createNativeDynamicsCompressorNodeFactory = function createNativeDynamicsCompressorNodeFactory(createNotSupportedError) {
+      return function (nativeContext, options) {
+        var nativeDynamicsCompressorNode = nativeContext.createDynamicsCompressor();
+        assignNativeAudioNodeOptions(nativeDynamicsCompressorNode, options); // Bug #108: Safari allows a channelCount of three and above.
+
+        if (options.channelCount > 2) {
+          throw createNotSupportedError();
+        } // Bug #109: Only Chrome, Firefox and Opera disallow a channelCountMode of 'max'.
+
+
+        if (options.channelCountMode === 'max') {
+          throw createNotSupportedError();
+        }
+
+        assignNativeAudioNodeAudioParamValue(nativeDynamicsCompressorNode, options, 'attack');
+        assignNativeAudioNodeAudioParamValue(nativeDynamicsCompressorNode, options, 'knee');
+        assignNativeAudioNodeAudioParamValue(nativeDynamicsCompressorNode, options, 'ratio');
+        assignNativeAudioNodeAudioParamValue(nativeDynamicsCompressorNode, options, 'release');
+        assignNativeAudioNodeAudioParamValue(nativeDynamicsCompressorNode, options, 'threshold');
+        return nativeDynamicsCompressorNode;
+      };
+    };
+
+    var createNativeGainNode = function createNativeGainNode(nativeContext, options) {
+      var nativeGainNode = nativeContext.createGain();
+      assignNativeAudioNodeOptions(nativeGainNode, options);
+      assignNativeAudioNodeAudioParamValue(nativeGainNode, options, 'gain');
+      return nativeGainNode;
+    };
+
+    var createNativeIIRFilterNodeFactory = function createNativeIIRFilterNodeFactory(createNativeIIRFilterNodeFaker) {
+      return function (nativeContext, baseLatency, options) {
+        // Bug #9: Safari does not support IIRFilterNodes.
+        if (nativeContext.createIIRFilter === undefined) {
+          return createNativeIIRFilterNodeFaker(nativeContext, baseLatency, options);
+        } // @todo TypeScript defines the parameters of createIIRFilter() as arrays of numbers.
+
+
+        var nativeIIRFilterNode = nativeContext.createIIRFilter(options.feedforward, options.feedback);
+        assignNativeAudioNodeOptions(nativeIIRFilterNode, options);
+        return nativeIIRFilterNode;
+      };
+    };
+
+    function divide(a, b) {
+      var denominator = b[0] * b[0] + b[1] * b[1];
+      return [(a[0] * b[0] + a[1] * b[1]) / denominator, (a[1] * b[0] - a[0] * b[1]) / denominator];
+    }
+
+    function multiply(a, b) {
+      return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
+    }
+
+    function evaluatePolynomial(coefficient, z) {
+      var result = [0, 0];
+
+      for (var i = coefficient.length - 1; i >= 0; i -= 1) {
+        result = multiply(result, z);
+        result[0] += coefficient[i];
+      }
+
+      return result;
+    }
+
+    var createNativeIIRFilterNodeFakerFactory = function createNativeIIRFilterNodeFakerFactory(createInvalidAccessError, createInvalidStateError, createNativeScriptProcessorNode, createNotSupportedError) {
+      return function (nativeContext, baseLatency, _ref) {
+        var channelCount = _ref.channelCount,
+            channelCountMode = _ref.channelCountMode,
+            channelInterpretation = _ref.channelInterpretation,
+            feedback = _ref.feedback,
+            feedforward = _ref.feedforward;
+        var bufferSize = computeBufferSize(baseLatency, nativeContext.sampleRate);
+        var convertedFeedback = feedback instanceof Float64Array ? feedback : new Float64Array(feedback);
+        var convertedFeedforward = feedforward instanceof Float64Array ? feedforward : new Float64Array(feedforward);
+        var feedbackLength = convertedFeedback.length;
+        var feedforwardLength = convertedFeedforward.length;
+        var minLength = Math.min(feedbackLength, feedforwardLength);
+
+        if (feedbackLength === 0 || feedbackLength > 20) {
+          throw createNotSupportedError();
+        }
+
+        if (convertedFeedback[0] === 0) {
+          throw createInvalidStateError();
+        }
+
+        if (feedforwardLength === 0 || feedforwardLength > 20) {
+          throw createNotSupportedError();
+        }
+
+        if (convertedFeedforward[0] === 0) {
+          throw createInvalidStateError();
+        }
+
+        if (convertedFeedback[0] !== 1) {
+          for (var i = 0; i < feedforwardLength; i += 1) {
+            convertedFeedforward[i] /= convertedFeedback[0];
+          }
+
+          for (var _i = 1; _i < feedbackLength; _i += 1) {
+            convertedFeedback[_i] /= convertedFeedback[0];
+          }
+        }
+
+        var scriptProcessorNode = createNativeScriptProcessorNode(nativeContext, bufferSize, channelCount, channelCount);
+        scriptProcessorNode.channelCount = channelCount;
+        scriptProcessorNode.channelCountMode = channelCountMode;
+        scriptProcessorNode.channelInterpretation = channelInterpretation;
+        var bufferLength = 32;
+        var bufferIndexes = [];
+        var xBuffers = [];
+        var yBuffers = [];
+
+        for (var _i2 = 0; _i2 < channelCount; _i2 += 1) {
+          bufferIndexes.push(0);
+          var xBuffer = new Float32Array(bufferLength);
+          var yBuffer = new Float32Array(bufferLength);
+          xBuffer.fill(0);
+          yBuffer.fill(0);
+          xBuffers.push(xBuffer);
+          yBuffers.push(yBuffer);
+        } // tslint:disable-next-line:deprecation
+
+
+        scriptProcessorNode.onaudioprocess = function (event) {
+          var inputBuffer = event.inputBuffer;
+          var outputBuffer = event.outputBuffer;
+          var numberOfChannels = inputBuffer.numberOfChannels;
+
+          for (var _i3 = 0; _i3 < numberOfChannels; _i3 += 1) {
+            var input = inputBuffer.getChannelData(_i3);
+            var output = outputBuffer.getChannelData(_i3);
+            bufferIndexes[_i3] = filterBuffer(convertedFeedback, feedbackLength, convertedFeedforward, feedforwardLength, minLength, xBuffers[_i3], yBuffers[_i3], bufferIndexes[_i3], bufferLength, input, output);
+          }
+        };
+
+        var nyquist = nativeContext.sampleRate / 2;
+        var nativeIIRFilterNodeFaker = {
+          get bufferSize() {
+            return bufferSize;
+          },
+
+          get channelCount() {
+            return scriptProcessorNode.channelCount;
+          },
+
+          set channelCount(value) {
+            scriptProcessorNode.channelCount = value;
+          },
+
+          get channelCountMode() {
+            return scriptProcessorNode.channelCountMode;
+          },
+
+          set channelCountMode(value) {
+            scriptProcessorNode.channelCountMode = value;
+          },
+
+          get channelInterpretation() {
+            return scriptProcessorNode.channelInterpretation;
+          },
+
+          set channelInterpretation(value) {
+            scriptProcessorNode.channelInterpretation = value;
+          },
+
+          get context() {
+            return scriptProcessorNode.context;
+          },
+
+          get inputs() {
+            return [scriptProcessorNode];
+          },
+
+          get numberOfInputs() {
+            return scriptProcessorNode.numberOfInputs;
+          },
+
+          get numberOfOutputs() {
+            return scriptProcessorNode.numberOfOutputs;
+          },
+
+          addEventListener: function addEventListener() {
+            // @todo Dissallow adding an audioprocess listener.
+            return scriptProcessorNode.addEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          dispatchEvent: function dispatchEvent() {
+            return scriptProcessorNode.dispatchEvent(arguments.length <= 0 ? undefined : arguments[0]);
+          },
+          getFrequencyResponse: function getFrequencyResponse(frequencyHz, magResponse, phaseResponse) {
+            if (frequencyHz.length !== magResponse.length || magResponse.length !== phaseResponse.length) {
+              throw createInvalidAccessError();
+            }
+
+            var length = frequencyHz.length;
+
+            for (var _i4 = 0; _i4 < length; _i4 += 1) {
+              var omega = -Math.PI * (frequencyHz[_i4] / nyquist);
+              var z = [Math.cos(omega), Math.sin(omega)];
+              var numerator = evaluatePolynomial(convertedFeedforward, z);
+              var denominator = evaluatePolynomial(convertedFeedback, z);
+              var response = divide(numerator, denominator);
+              magResponse[_i4] = Math.sqrt(response[0] * response[0] + response[1] * response[1]);
+              phaseResponse[_i4] = Math.atan2(response[1], response[0]);
+            }
+          },
+          removeEventListener: function removeEventListener() {
+            return scriptProcessorNode.removeEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          }
+        };
+        return interceptConnections(nativeIIRFilterNodeFaker, scriptProcessorNode);
+      };
+    };
+
+    var createNativeMediaElementAudioSourceNode = function createNativeMediaElementAudioSourceNode(nativeAudioContext, options) {
+      return nativeAudioContext.createMediaElementSource(options.mediaElement);
+    };
+
+    var createNativeMediaStreamAudioDestinationNode = function createNativeMediaStreamAudioDestinationNode(nativeAudioContext, options) {
+      var nativeMediaStreamAudioDestinationNode = nativeAudioContext.createMediaStreamDestination();
+      assignNativeAudioNodeOptions(nativeMediaStreamAudioDestinationNode, options); // Bug #174: Safari does expose a wrong numberOfOutputs.
+
+      if (nativeMediaStreamAudioDestinationNode.numberOfOutputs === 1) {
+        Object.defineProperty(nativeMediaStreamAudioDestinationNode, 'numberOfOutputs', {
+          get: function get() {
+            return 0;
+          }
+        });
+      }
+
+      return nativeMediaStreamAudioDestinationNode;
+    };
+
+    var createNativeMediaStreamAudioSourceNode = function createNativeMediaStreamAudioSourceNode(nativeAudioContext, _ref) {
+      var mediaStream = _ref.mediaStream;
+      var audioStreamTracks = mediaStream.getAudioTracks();
+      /*
+       * Bug #151: Safari does not use the audio track as input anymore if it gets removed from the mediaStream after construction.
+       * Bug #159: Safari picks the first audio track if the MediaStream has more than one audio track.
+       */
+
+      audioStreamTracks.sort(function (a, b) {
+        return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+      });
+      var filteredAudioStreamTracks = audioStreamTracks.slice(0, 1);
+      var nativeMediaStreamAudioSourceNode = nativeAudioContext.createMediaStreamSource(new MediaStream(filteredAudioStreamTracks));
+      /*
+       * Bug #151 & #159: The given mediaStream gets reconstructed before it gets passed to the native node which is why the accessor needs
+       * to be overwritten as it would otherwise expose the reconstructed version.
+       */
+
+      Object.defineProperty(nativeMediaStreamAudioSourceNode, 'mediaStream', {
+        value: mediaStream
+      });
+      return nativeMediaStreamAudioSourceNode;
+    };
+
+    var createNativeMediaStreamTrackAudioSourceNodeFactory = function createNativeMediaStreamTrackAudioSourceNodeFactory(createInvalidStateError, isNativeOfflineAudioContext) {
+      return function (nativeAudioContext, _ref) {
+        var mediaStreamTrack = _ref.mediaStreamTrack;
+
+        // Bug #121: Only Firefox does yet support the MediaStreamTrackAudioSourceNode.
+        if (typeof nativeAudioContext.createMediaStreamTrackSource === 'function') {
+          return nativeAudioContext.createMediaStreamTrackSource(mediaStreamTrack);
+        }
+
+        var mediaStream = new MediaStream([mediaStreamTrack]);
+        var nativeMediaStreamAudioSourceNode = nativeAudioContext.createMediaStreamSource(mediaStream); // Bug #120: Firefox does not throw an error if the mediaStream has no audio track.
+
+        if (mediaStreamTrack.kind !== 'audio') {
+          throw createInvalidStateError();
+        } // Bug #172: Safari allows to create a MediaStreamAudioSourceNode with an OfflineAudioContext.
+
+
+        if (isNativeOfflineAudioContext(nativeAudioContext)) {
+          throw new TypeError();
+        }
+
+        return nativeMediaStreamAudioSourceNode;
+      };
+    };
+
+    var createNativeOfflineAudioContextConstructor = function createNativeOfflineAudioContextConstructor(window) {
+      if (window === null) {
+        return null;
+      }
+
+      if (window.hasOwnProperty('OfflineAudioContext')) {
+        return window.OfflineAudioContext;
+      }
+
+      return window.hasOwnProperty('webkitOfflineAudioContext') ? window.webkitOfflineAudioContext : null;
+    };
+
+    var createNativeOscillatorNodeFactory = function createNativeOscillatorNodeFactory(addSilentConnection, cacheTestResult, testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport, testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls) {
+      return function (nativeContext, options) {
+        var nativeOscillatorNode = nativeContext.createOscillator();
+        assignNativeAudioNodeOptions(nativeOscillatorNode, options);
+        assignNativeAudioNodeAudioParamValue(nativeOscillatorNode, options, 'detune');
+        assignNativeAudioNodeAudioParamValue(nativeOscillatorNode, options, 'frequency');
+
+        if (options.periodicWave !== undefined) {
+          nativeOscillatorNode.setPeriodicWave(options.periodicWave);
+        } else {
+          assignNativeAudioNodeOption(nativeOscillatorNode, options, 'type');
+        } // Bug #44: Only Chrome, Edge & Opera throw a RangeError yet.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, function () {
+          return testAudioScheduledSourceNodeStartMethodNegativeParametersSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStartMethodNegativeParameters(nativeOscillatorNode);
+        } // Bug #19: Safari does not ignore calls to stop() of an already stopped AudioBufferSourceNode.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport, function () {
+          return testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls(nativeOscillatorNode, nativeContext);
+        } // Bug #44: Only Firefox does not throw a RangeError yet.
+
+
+        if (!cacheTestResult(testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, function () {
+          return testAudioScheduledSourceNodeStopMethodNegativeParametersSupport(nativeContext);
+        })) {
+          wrapAudioScheduledSourceNodeStopMethodNegativeParameters(nativeOscillatorNode);
+        } // Bug #175: Safari will not fire an ended event if the OscillatorNode is unconnected.
+
+
+        addSilentConnection(nativeContext, nativeOscillatorNode);
+        return nativeOscillatorNode;
+      };
+    };
+
+    var createNativePannerNodeFactory = function createNativePannerNodeFactory(createNativePannerNodeFaker) {
+      return function (nativeContext, options) {
+        var nativePannerNode = nativeContext.createPanner(); // Bug #124: Safari does not support modifying the orientation and the position with AudioParams.
+
+        if (nativePannerNode.orientationX === undefined) {
+          return createNativePannerNodeFaker(nativeContext, options);
+        }
+
+        assignNativeAudioNodeOptions(nativePannerNode, options);
+        assignNativeAudioNodeAudioParamValue(nativePannerNode, options, 'orientationX');
+        assignNativeAudioNodeAudioParamValue(nativePannerNode, options, 'orientationY');
+        assignNativeAudioNodeAudioParamValue(nativePannerNode, options, 'orientationZ');
+        assignNativeAudioNodeAudioParamValue(nativePannerNode, options, 'positionX');
+        assignNativeAudioNodeAudioParamValue(nativePannerNode, options, 'positionY');
+        assignNativeAudioNodeAudioParamValue(nativePannerNode, options, 'positionZ');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'coneInnerAngle');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'coneOuterAngle');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'coneOuterGain');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'distanceModel');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'maxDistance');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'panningModel');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'refDistance');
+        assignNativeAudioNodeOption(nativePannerNode, options, 'rolloffFactor');
+        return nativePannerNode;
+      };
+    };
+
+    var _excluded$2 = ["coneInnerAngle", "coneOuterAngle", "coneOuterGain", "distanceModel", "maxDistance", "orientationX", "orientationY", "orientationZ", "panningModel", "positionX", "positionY", "positionZ", "refDistance", "rolloffFactor"];
+
+    function ownKeys$c(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$c(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var createNativePannerNodeFakerFactory = function createNativePannerNodeFakerFactory(connectNativeAudioNodeToNativeAudioNode, createInvalidStateError, createNativeChannelMergerNode, createNativeGainNode, createNativeScriptProcessorNode, createNativeWaveShaperNode, createNotSupportedError, disconnectNativeAudioNodeFromNativeAudioNode, getFirstSample, monitorConnections) {
+      return function (nativeContext, _ref) {
+        var coneInnerAngle = _ref.coneInnerAngle,
+            coneOuterAngle = _ref.coneOuterAngle,
+            coneOuterGain = _ref.coneOuterGain,
+            distanceModel = _ref.distanceModel,
+            maxDistance = _ref.maxDistance,
+            orientationX = _ref.orientationX,
+            orientationY = _ref.orientationY,
+            orientationZ = _ref.orientationZ,
+            panningModel = _ref.panningModel,
+            positionX = _ref.positionX,
+            positionY = _ref.positionY,
+            positionZ = _ref.positionZ,
+            refDistance = _ref.refDistance,
+            rolloffFactor = _ref.rolloffFactor,
+            audioNodeOptions = _objectWithoutProperties__default["default"](_ref, _excluded$2);
+
+        var pannerNode = nativeContext.createPanner(); // Bug #125: Safari does not throw an error yet.
+
+        if (audioNodeOptions.channelCount > 2) {
+          throw createNotSupportedError();
+        } // Bug #126: Safari does not throw an error yet.
+
+
+        if (audioNodeOptions.channelCountMode === 'max') {
+          throw createNotSupportedError();
+        }
+
+        assignNativeAudioNodeOptions(pannerNode, audioNodeOptions);
+        var SINGLE_CHANNEL_OPTIONS = {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete'
+        };
+        var channelMergerNode = createNativeChannelMergerNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          channelInterpretation: 'speakers',
+          numberOfInputs: 6
+        }));
+        var inputGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, audioNodeOptions), {}, {
+          gain: 1
+        }));
+        var orientationXGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 1
+        }));
+        var orientationYGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        }));
+        var orientationZGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        }));
+        var positionXGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        }));
+        var positionYGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        }));
+        var positionZGainNode = createNativeGainNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        }));
+        var scriptProcessorNode = createNativeScriptProcessorNode(nativeContext, 256, 6, 1);
+        var waveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$c(_objectSpread$c({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          curve: new Float32Array([1, 1]),
+          oversample: 'none'
+        }));
+        var lastOrientation = [orientationX, orientationY, orientationZ];
+        var lastPosition = [positionX, positionY, positionZ];
+        var buffer = new Float32Array(1); // tslint:disable-next-line:deprecation
+
+        scriptProcessorNode.onaudioprocess = function (_ref2) {
+          var inputBuffer = _ref2.inputBuffer;
+          var orientation = [getFirstSample(inputBuffer, buffer, 0), getFirstSample(inputBuffer, buffer, 1), getFirstSample(inputBuffer, buffer, 2)];
+
+          if (orientation.some(function (value, index) {
+            return value !== lastOrientation[index];
+          })) {
+            pannerNode.setOrientation.apply(pannerNode, orientation); // tslint:disable-line:deprecation
+
+            lastOrientation = orientation;
+          }
+
+          var positon = [getFirstSample(inputBuffer, buffer, 3), getFirstSample(inputBuffer, buffer, 4), getFirstSample(inputBuffer, buffer, 5)];
+
+          if (positon.some(function (value, index) {
+            return value !== lastPosition[index];
+          })) {
+            pannerNode.setPosition.apply(pannerNode, positon); // tslint:disable-line:deprecation
+
+            lastPosition = positon;
+          }
+        };
+
+        Object.defineProperty(orientationYGainNode.gain, 'defaultValue', {
+          get: function get() {
+            return 0;
+          }
+        });
+        Object.defineProperty(orientationZGainNode.gain, 'defaultValue', {
+          get: function get() {
+            return 0;
+          }
+        });
+        Object.defineProperty(positionXGainNode.gain, 'defaultValue', {
+          get: function get() {
+            return 0;
+          }
+        });
+        Object.defineProperty(positionYGainNode.gain, 'defaultValue', {
+          get: function get() {
+            return 0;
+          }
+        });
+        Object.defineProperty(positionZGainNode.gain, 'defaultValue', {
+          get: function get() {
+            return 0;
+          }
+        });
+        var nativePannerNodeFaker = {
+          get bufferSize() {
+            return undefined;
+          },
+
+          get channelCount() {
+            return pannerNode.channelCount;
+          },
+
+          set channelCount(value) {
+            // Bug #125: Safari does not throw an error yet.
+            if (value > 2) {
+              throw createNotSupportedError();
+            }
+
+            inputGainNode.channelCount = value;
+            pannerNode.channelCount = value;
+          },
+
+          get channelCountMode() {
+            return pannerNode.channelCountMode;
+          },
+
+          set channelCountMode(value) {
+            // Bug #126: Safari does not throw an error yet.
+            if (value === 'max') {
+              throw createNotSupportedError();
+            }
+
+            inputGainNode.channelCountMode = value;
+            pannerNode.channelCountMode = value;
+          },
+
+          get channelInterpretation() {
+            return pannerNode.channelInterpretation;
+          },
+
+          set channelInterpretation(value) {
+            inputGainNode.channelInterpretation = value;
+            pannerNode.channelInterpretation = value;
+          },
+
+          get coneInnerAngle() {
+            return pannerNode.coneInnerAngle;
+          },
+
+          set coneInnerAngle(value) {
+            pannerNode.coneInnerAngle = value;
+          },
+
+          get coneOuterAngle() {
+            return pannerNode.coneOuterAngle;
+          },
+
+          set coneOuterAngle(value) {
+            pannerNode.coneOuterAngle = value;
+          },
+
+          get coneOuterGain() {
+            return pannerNode.coneOuterGain;
+          },
+
+          set coneOuterGain(value) {
+            // Bug #127: Safari does not throw an InvalidStateError yet.
+            if (value < 0 || value > 1) {
+              throw createInvalidStateError();
+            }
+
+            pannerNode.coneOuterGain = value;
+          },
+
+          get context() {
+            return pannerNode.context;
+          },
+
+          get distanceModel() {
+            return pannerNode.distanceModel;
+          },
+
+          set distanceModel(value) {
+            pannerNode.distanceModel = value;
+          },
+
+          get inputs() {
+            return [inputGainNode];
+          },
+
+          get maxDistance() {
+            return pannerNode.maxDistance;
+          },
+
+          set maxDistance(value) {
+            // Bug #128: Safari does not throw an error yet.
+            if (value < 0) {
+              throw new RangeError();
+            }
+
+            pannerNode.maxDistance = value;
+          },
+
+          get numberOfInputs() {
+            return pannerNode.numberOfInputs;
+          },
+
+          get numberOfOutputs() {
+            return pannerNode.numberOfOutputs;
+          },
+
+          get orientationX() {
+            return orientationXGainNode.gain;
+          },
+
+          get orientationY() {
+            return orientationYGainNode.gain;
+          },
+
+          get orientationZ() {
+            return orientationZGainNode.gain;
+          },
+
+          get panningModel() {
+            return pannerNode.panningModel;
+          },
+
+          set panningModel(value) {
+            pannerNode.panningModel = value;
+          },
+
+          get positionX() {
+            return positionXGainNode.gain;
+          },
+
+          get positionY() {
+            return positionYGainNode.gain;
+          },
+
+          get positionZ() {
+            return positionZGainNode.gain;
+          },
+
+          get refDistance() {
+            return pannerNode.refDistance;
+          },
+
+          set refDistance(value) {
+            // Bug #129: Safari does not throw an error yet.
+            if (value < 0) {
+              throw new RangeError();
+            }
+
+            pannerNode.refDistance = value;
+          },
+
+          get rolloffFactor() {
+            return pannerNode.rolloffFactor;
+          },
+
+          set rolloffFactor(value) {
+            // Bug #130: Safari does not throw an error yet.
+            if (value < 0) {
+              throw new RangeError();
+            }
+
+            pannerNode.rolloffFactor = value;
+          },
+
+          addEventListener: function addEventListener() {
+            return inputGainNode.addEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          dispatchEvent: function dispatchEvent() {
+            return inputGainNode.dispatchEvent(arguments.length <= 0 ? undefined : arguments[0]);
+          },
+          removeEventListener: function removeEventListener() {
+            return inputGainNode.removeEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          }
+        };
+
+        if (coneInnerAngle !== nativePannerNodeFaker.coneInnerAngle) {
+          nativePannerNodeFaker.coneInnerAngle = coneInnerAngle;
+        }
+
+        if (coneOuterAngle !== nativePannerNodeFaker.coneOuterAngle) {
+          nativePannerNodeFaker.coneOuterAngle = coneOuterAngle;
+        }
+
+        if (coneOuterGain !== nativePannerNodeFaker.coneOuterGain) {
+          nativePannerNodeFaker.coneOuterGain = coneOuterGain;
+        }
+
+        if (distanceModel !== nativePannerNodeFaker.distanceModel) {
+          nativePannerNodeFaker.distanceModel = distanceModel;
+        }
+
+        if (maxDistance !== nativePannerNodeFaker.maxDistance) {
+          nativePannerNodeFaker.maxDistance = maxDistance;
+        }
+
+        if (orientationX !== nativePannerNodeFaker.orientationX.value) {
+          nativePannerNodeFaker.orientationX.value = orientationX;
+        }
+
+        if (orientationY !== nativePannerNodeFaker.orientationY.value) {
+          nativePannerNodeFaker.orientationY.value = orientationY;
+        }
+
+        if (orientationZ !== nativePannerNodeFaker.orientationZ.value) {
+          nativePannerNodeFaker.orientationZ.value = orientationZ;
+        }
+
+        if (panningModel !== nativePannerNodeFaker.panningModel) {
+          nativePannerNodeFaker.panningModel = panningModel;
+        }
+
+        if (positionX !== nativePannerNodeFaker.positionX.value) {
+          nativePannerNodeFaker.positionX.value = positionX;
+        }
+
+        if (positionY !== nativePannerNodeFaker.positionY.value) {
+          nativePannerNodeFaker.positionY.value = positionY;
+        }
+
+        if (positionZ !== nativePannerNodeFaker.positionZ.value) {
+          nativePannerNodeFaker.positionZ.value = positionZ;
+        }
+
+        if (refDistance !== nativePannerNodeFaker.refDistance) {
+          nativePannerNodeFaker.refDistance = refDistance;
+        }
+
+        if (rolloffFactor !== nativePannerNodeFaker.rolloffFactor) {
+          nativePannerNodeFaker.rolloffFactor = rolloffFactor;
+        }
+
+        if (lastOrientation[0] !== 1 || lastOrientation[1] !== 0 || lastOrientation[2] !== 0) {
+          pannerNode.setOrientation.apply(pannerNode, _toConsumableArray__default["default"](lastOrientation)); // tslint:disable-line:deprecation
+        }
+
+        if (lastPosition[0] !== 0 || lastPosition[1] !== 0 || lastPosition[2] !== 0) {
+          pannerNode.setPosition.apply(pannerNode, _toConsumableArray__default["default"](lastPosition)); // tslint:disable-line:deprecation
+        }
+
+        var whenConnected = function whenConnected() {
+          inputGainNode.connect(pannerNode); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+          connectNativeAudioNodeToNativeAudioNode(inputGainNode, waveShaperNode, 0, 0);
+          waveShaperNode.connect(orientationXGainNode).connect(channelMergerNode, 0, 0);
+          waveShaperNode.connect(orientationYGainNode).connect(channelMergerNode, 0, 1);
+          waveShaperNode.connect(orientationZGainNode).connect(channelMergerNode, 0, 2);
+          waveShaperNode.connect(positionXGainNode).connect(channelMergerNode, 0, 3);
+          waveShaperNode.connect(positionYGainNode).connect(channelMergerNode, 0, 4);
+          waveShaperNode.connect(positionZGainNode).connect(channelMergerNode, 0, 5);
+          channelMergerNode.connect(scriptProcessorNode).connect(nativeContext.destination);
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          inputGainNode.disconnect(pannerNode); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+          disconnectNativeAudioNodeFromNativeAudioNode(inputGainNode, waveShaperNode, 0, 0);
+          waveShaperNode.disconnect(orientationXGainNode);
+          orientationXGainNode.disconnect(channelMergerNode);
+          waveShaperNode.disconnect(orientationYGainNode);
+          orientationYGainNode.disconnect(channelMergerNode);
+          waveShaperNode.disconnect(orientationZGainNode);
+          orientationZGainNode.disconnect(channelMergerNode);
+          waveShaperNode.disconnect(positionXGainNode);
+          positionXGainNode.disconnect(channelMergerNode);
+          waveShaperNode.disconnect(positionYGainNode);
+          positionYGainNode.disconnect(channelMergerNode);
+          waveShaperNode.disconnect(positionZGainNode);
+          positionZGainNode.disconnect(channelMergerNode);
+          channelMergerNode.disconnect(scriptProcessorNode);
+          scriptProcessorNode.disconnect(nativeContext.destination);
+        };
+
+        return monitorConnections(interceptConnections(nativePannerNodeFaker, pannerNode), whenConnected, whenDisconnected);
+      };
+    };
+
+    var createNativePeriodicWaveFactory = function createNativePeriodicWaveFactory(createIndexSizeError) {
+      return function (nativeContext, _ref) {
+        var disableNormalization = _ref.disableNormalization,
+            imag = _ref.imag,
+            real = _ref.real;
+        // Bug #180: Safari does not allow to use ordinary arrays.
+        var convertedImag = imag instanceof Float32Array ? imag : new Float32Array(imag);
+        var convertedReal = real instanceof Float32Array ? real : new Float32Array(real);
+        var nativePeriodicWave = nativeContext.createPeriodicWave(convertedReal, convertedImag, {
+          disableNormalization: disableNormalization
+        }); // Bug #181: Safari does not throw an IndexSizeError so far if the given arrays have less than two values.
+
+        if (Array.from(imag).length < 2) {
+          throw createIndexSizeError();
+        }
+
+        return nativePeriodicWave;
+      };
+    };
+
+    var createNativeScriptProcessorNode = function createNativeScriptProcessorNode(nativeContext, bufferSize, numberOfInputChannels, numberOfOutputChannels) {
+      return nativeContext.createScriptProcessor(bufferSize, numberOfInputChannels, numberOfOutputChannels); // tslint:disable-line deprecation
+    };
+
+    var createNativeStereoPannerNodeFactory = function createNativeStereoPannerNodeFactory(createNativeStereoPannerNodeFaker, createNotSupportedError) {
+      return function (nativeContext, options) {
+        var channelCountMode = options.channelCountMode;
+        /*
+         * Bug #105: The channelCountMode of 'clamped-max' should be supported. However it is not possible to write a polyfill for Safari
+         * which supports it and therefore it can't be supported at all.
+         */
+
+        if (channelCountMode === 'clamped-max') {
+          throw createNotSupportedError();
+        } // Bug #105: Safari does not support the StereoPannerNode.
+
+
+        if (nativeContext.createStereoPanner === undefined) {
+          return createNativeStereoPannerNodeFaker(nativeContext, options);
+        }
+
+        var nativeStereoPannerNode = nativeContext.createStereoPanner();
+        assignNativeAudioNodeOptions(nativeStereoPannerNode, options);
+        assignNativeAudioNodeAudioParamValue(nativeStereoPannerNode, options, 'pan');
+        /*
+         * Bug #105: The channelCountMode of 'clamped-max' should be supported. However it is not possible to write a polyfill for Safari
+         * which supports it and therefore it can't be supported at all.
+         */
+
+        Object.defineProperty(nativeStereoPannerNode, 'channelCountMode', {
+          get: function get() {
+            return channelCountMode;
+          },
+          set: function set(value) {
+            if (value !== channelCountMode) {
+              throw createNotSupportedError();
+            }
+          }
+        });
+        return nativeStereoPannerNode;
+      };
+    };
+
+    var _excluded$1 = ["channelCount", "channelCountMode", "pan"];
+
+    function ownKeys$b(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$b(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$b(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$b(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var createNativeStereoPannerNodeFakerFactory = function createNativeStereoPannerNodeFakerFactory(createNativeChannelMergerNode, createNativeChannelSplitterNode, createNativeGainNode, createNativeWaveShaperNode, createNotSupportedError, monitorConnections) {
+      // The curve has a size of 14bit plus 1 value to have an exact representation for zero. This value has been determined experimentally.
+      var CURVE_SIZE = 16385;
+      var DC_CURVE = new Float32Array([1, 1]);
+      var HALF_PI = Math.PI / 2;
+      var SINGLE_CHANNEL_OPTIONS = {
+        channelCount: 1,
+        channelCountMode: 'explicit',
+        channelInterpretation: 'discrete'
+      };
+
+      var SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS = _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+        oversample: 'none'
+      });
+
+      var buildInternalGraphForMono = function buildInternalGraphForMono(nativeContext, inputGainNode, panGainNode, channelMergerNode) {
+        var leftWaveShaperCurve = new Float32Array(CURVE_SIZE);
+        var rightWaveShaperCurve = new Float32Array(CURVE_SIZE);
+
+        for (var i = 0; i < CURVE_SIZE; i += 1) {
+          var x = i / (CURVE_SIZE - 1) * HALF_PI;
+          leftWaveShaperCurve[i] = Math.cos(x);
+          rightWaveShaperCurve[i] = Math.sin(x);
+        }
+
+        var leftGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var leftWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: leftWaveShaperCurve
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var panWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: DC_CURVE
+        }));
+        var rightGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var rightWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: rightWaveShaperCurve
+        }));
+        return {
+          connectGraph: function connectGraph() {
+            inputGainNode.connect(leftGainNode);
+            inputGainNode.connect(panWaveShaperNode.inputs === undefined ? panWaveShaperNode : panWaveShaperNode.inputs[0]);
+            inputGainNode.connect(rightGainNode);
+            panWaveShaperNode.connect(panGainNode);
+            panGainNode.connect(leftWaveShaperNode.inputs === undefined ? leftWaveShaperNode : leftWaveShaperNode.inputs[0]);
+            panGainNode.connect(rightWaveShaperNode.inputs === undefined ? rightWaveShaperNode : rightWaveShaperNode.inputs[0]);
+            leftWaveShaperNode.connect(leftGainNode.gain);
+            rightWaveShaperNode.connect(rightGainNode.gain);
+            leftGainNode.connect(channelMergerNode, 0, 0);
+            rightGainNode.connect(channelMergerNode, 0, 1);
+          },
+          disconnectGraph: function disconnectGraph() {
+            inputGainNode.disconnect(leftGainNode);
+            inputGainNode.disconnect(panWaveShaperNode.inputs === undefined ? panWaveShaperNode : panWaveShaperNode.inputs[0]);
+            inputGainNode.disconnect(rightGainNode);
+            panWaveShaperNode.disconnect(panGainNode);
+            panGainNode.disconnect(leftWaveShaperNode.inputs === undefined ? leftWaveShaperNode : leftWaveShaperNode.inputs[0]);
+            panGainNode.disconnect(rightWaveShaperNode.inputs === undefined ? rightWaveShaperNode : rightWaveShaperNode.inputs[0]);
+            leftWaveShaperNode.disconnect(leftGainNode.gain);
+            rightWaveShaperNode.disconnect(rightGainNode.gain);
+            leftGainNode.disconnect(channelMergerNode, 0, 0);
+            rightGainNode.disconnect(channelMergerNode, 0, 1);
+          }
+        };
+      };
+
+      var buildInternalGraphForStereo = function buildInternalGraphForStereo(nativeContext, inputGainNode, panGainNode, channelMergerNode) {
+        var leftInputForLeftOutputWaveShaperCurve = new Float32Array(CURVE_SIZE);
+        var leftInputForRightOutputWaveShaperCurve = new Float32Array(CURVE_SIZE);
+        var rightInputForLeftOutputWaveShaperCurve = new Float32Array(CURVE_SIZE);
+        var rightInputForRightOutputWaveShaperCurve = new Float32Array(CURVE_SIZE);
+        var centerIndex = Math.floor(CURVE_SIZE / 2);
+
+        for (var i = 0; i < CURVE_SIZE; i += 1) {
+          if (i > centerIndex) {
+            var x = (i - centerIndex) / (CURVE_SIZE - 1 - centerIndex) * HALF_PI;
+            leftInputForLeftOutputWaveShaperCurve[i] = Math.cos(x);
+            leftInputForRightOutputWaveShaperCurve[i] = Math.sin(x);
+            rightInputForLeftOutputWaveShaperCurve[i] = 0;
+            rightInputForRightOutputWaveShaperCurve[i] = 1;
+          } else {
+            var _x = i / (CURVE_SIZE - 1 - centerIndex) * HALF_PI;
+
+            leftInputForLeftOutputWaveShaperCurve[i] = 1;
+            leftInputForRightOutputWaveShaperCurve[i] = 0;
+            rightInputForLeftOutputWaveShaperCurve[i] = Math.cos(_x);
+            rightInputForRightOutputWaveShaperCurve[i] = Math.sin(_x);
+          }
+        }
+
+        var channelSplitterNode = createNativeChannelSplitterNode(nativeContext, {
+          channelCount: 2,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete',
+          numberOfOutputs: 2
+        });
+        var leftInputForLeftOutputGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var leftInputForLeftOutputWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: leftInputForLeftOutputWaveShaperCurve
+        }));
+        var leftInputForRightOutputGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var leftInputForRightOutputWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: leftInputForRightOutputWaveShaperCurve
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var panWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: DC_CURVE
+        }));
+        var rightInputForLeftOutputGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var rightInputForLeftOutputWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: rightInputForLeftOutputWaveShaperCurve
+        }));
+        var rightInputForRightOutputGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_OPTIONS), {}, {
+          gain: 0
+        })); // Bug #119: Safari does not fully support the WaveShaperNode.
+
+        var rightInputForRightOutputWaveShaperNode = createNativeWaveShaperNode(nativeContext, _objectSpread$b(_objectSpread$b({}, SINGLE_CHANNEL_WAVE_SHAPER_OPTIONS), {}, {
+          curve: rightInputForRightOutputWaveShaperCurve
+        }));
+        return {
+          connectGraph: function connectGraph() {
+            inputGainNode.connect(channelSplitterNode);
+            inputGainNode.connect(panWaveShaperNode.inputs === undefined ? panWaveShaperNode : panWaveShaperNode.inputs[0]);
+            channelSplitterNode.connect(leftInputForLeftOutputGainNode, 0);
+            channelSplitterNode.connect(leftInputForRightOutputGainNode, 0);
+            channelSplitterNode.connect(rightInputForLeftOutputGainNode, 1);
+            channelSplitterNode.connect(rightInputForRightOutputGainNode, 1);
+            panWaveShaperNode.connect(panGainNode);
+            panGainNode.connect(leftInputForLeftOutputWaveShaperNode.inputs === undefined ? leftInputForLeftOutputWaveShaperNode : leftInputForLeftOutputWaveShaperNode.inputs[0]);
+            panGainNode.connect(leftInputForRightOutputWaveShaperNode.inputs === undefined ? leftInputForRightOutputWaveShaperNode : leftInputForRightOutputWaveShaperNode.inputs[0]);
+            panGainNode.connect(rightInputForLeftOutputWaveShaperNode.inputs === undefined ? rightInputForLeftOutputWaveShaperNode : rightInputForLeftOutputWaveShaperNode.inputs[0]);
+            panGainNode.connect(rightInputForRightOutputWaveShaperNode.inputs === undefined ? rightInputForRightOutputWaveShaperNode : rightInputForRightOutputWaveShaperNode.inputs[0]);
+            leftInputForLeftOutputWaveShaperNode.connect(leftInputForLeftOutputGainNode.gain);
+            leftInputForRightOutputWaveShaperNode.connect(leftInputForRightOutputGainNode.gain);
+            rightInputForLeftOutputWaveShaperNode.connect(rightInputForLeftOutputGainNode.gain);
+            rightInputForRightOutputWaveShaperNode.connect(rightInputForRightOutputGainNode.gain);
+            leftInputForLeftOutputGainNode.connect(channelMergerNode, 0, 0);
+            rightInputForLeftOutputGainNode.connect(channelMergerNode, 0, 0);
+            leftInputForRightOutputGainNode.connect(channelMergerNode, 0, 1);
+            rightInputForRightOutputGainNode.connect(channelMergerNode, 0, 1);
+          },
+          disconnectGraph: function disconnectGraph() {
+            inputGainNode.disconnect(channelSplitterNode);
+            inputGainNode.disconnect(panWaveShaperNode.inputs === undefined ? panWaveShaperNode : panWaveShaperNode.inputs[0]);
+            channelSplitterNode.disconnect(leftInputForLeftOutputGainNode, 0);
+            channelSplitterNode.disconnect(leftInputForRightOutputGainNode, 0);
+            channelSplitterNode.disconnect(rightInputForLeftOutputGainNode, 1);
+            channelSplitterNode.disconnect(rightInputForRightOutputGainNode, 1);
+            panWaveShaperNode.disconnect(panGainNode);
+            panGainNode.disconnect(leftInputForLeftOutputWaveShaperNode.inputs === undefined ? leftInputForLeftOutputWaveShaperNode : leftInputForLeftOutputWaveShaperNode.inputs[0]);
+            panGainNode.disconnect(leftInputForRightOutputWaveShaperNode.inputs === undefined ? leftInputForRightOutputWaveShaperNode : leftInputForRightOutputWaveShaperNode.inputs[0]);
+            panGainNode.disconnect(rightInputForLeftOutputWaveShaperNode.inputs === undefined ? rightInputForLeftOutputWaveShaperNode : rightInputForLeftOutputWaveShaperNode.inputs[0]);
+            panGainNode.disconnect(rightInputForRightOutputWaveShaperNode.inputs === undefined ? rightInputForRightOutputWaveShaperNode : rightInputForRightOutputWaveShaperNode.inputs[0]);
+            leftInputForLeftOutputWaveShaperNode.disconnect(leftInputForLeftOutputGainNode.gain);
+            leftInputForRightOutputWaveShaperNode.disconnect(leftInputForRightOutputGainNode.gain);
+            rightInputForLeftOutputWaveShaperNode.disconnect(rightInputForLeftOutputGainNode.gain);
+            rightInputForRightOutputWaveShaperNode.disconnect(rightInputForRightOutputGainNode.gain);
+            leftInputForLeftOutputGainNode.disconnect(channelMergerNode, 0, 0);
+            rightInputForLeftOutputGainNode.disconnect(channelMergerNode, 0, 0);
+            leftInputForRightOutputGainNode.disconnect(channelMergerNode, 0, 1);
+            rightInputForRightOutputGainNode.disconnect(channelMergerNode, 0, 1);
+          }
+        };
+      };
+
+      var buildInternalGraph = function buildInternalGraph(nativeContext, channelCount, inputGainNode, panGainNode, channelMergerNode) {
+        if (channelCount === 1) {
+          return buildInternalGraphForMono(nativeContext, inputGainNode, panGainNode, channelMergerNode);
+        }
+
+        if (channelCount === 2) {
+          return buildInternalGraphForStereo(nativeContext, inputGainNode, panGainNode, channelMergerNode);
+        }
+
+        throw createNotSupportedError();
+      };
+
+      return function (nativeContext, _ref) {
+        var channelCount = _ref.channelCount,
+            channelCountMode = _ref.channelCountMode,
+            pan = _ref.pan,
+            audioNodeOptions = _objectWithoutProperties__default["default"](_ref, _excluded$1);
+
+        if (channelCountMode === 'max') {
+          throw createNotSupportedError();
+        }
+
+        var channelMergerNode = createNativeChannelMergerNode(nativeContext, _objectSpread$b(_objectSpread$b({}, audioNodeOptions), {}, {
+          channelCount: 1,
+          channelCountMode: channelCountMode,
+          numberOfInputs: 2
+        }));
+        var inputGainNode = createNativeGainNode(nativeContext, _objectSpread$b(_objectSpread$b({}, audioNodeOptions), {}, {
+          channelCount: channelCount,
+          channelCountMode: channelCountMode,
+          gain: 1
+        }));
+        var panGainNode = createNativeGainNode(nativeContext, {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete',
+          gain: pan
+        });
+
+        var _buildInternalGraph = buildInternalGraph(nativeContext, channelCount, inputGainNode, panGainNode, channelMergerNode),
+            connectGraph = _buildInternalGraph.connectGraph,
+            disconnectGraph = _buildInternalGraph.disconnectGraph;
+
+        Object.defineProperty(panGainNode.gain, 'defaultValue', {
+          get: function get() {
+            return 0;
+          }
+        });
+        Object.defineProperty(panGainNode.gain, 'maxValue', {
+          get: function get() {
+            return 1;
+          }
+        });
+        Object.defineProperty(panGainNode.gain, 'minValue', {
+          get: function get() {
+            return -1;
+          }
+        });
+        var nativeStereoPannerNodeFakerFactory = {
+          get bufferSize() {
+            return undefined;
+          },
+
+          get channelCount() {
+            return inputGainNode.channelCount;
+          },
+
+          set channelCount(value) {
+            if (inputGainNode.channelCount !== value) {
+              if (isConnected) {
+                disconnectGraph();
+              }
+
+              var _buildInternalGraph2 = buildInternalGraph(nativeContext, value, inputGainNode, panGainNode, channelMergerNode);
+
+              connectGraph = _buildInternalGraph2.connectGraph;
+              disconnectGraph = _buildInternalGraph2.disconnectGraph;
+
+              if (isConnected) {
+                connectGraph();
+              }
+            }
+
+            inputGainNode.channelCount = value;
+          },
+
+          get channelCountMode() {
+            return inputGainNode.channelCountMode;
+          },
+
+          set channelCountMode(value) {
+            if (value === 'clamped-max' || value === 'max') {
+              throw createNotSupportedError();
+            }
+
+            inputGainNode.channelCountMode = value;
+          },
+
+          get channelInterpretation() {
+            return inputGainNode.channelInterpretation;
+          },
+
+          set channelInterpretation(value) {
+            inputGainNode.channelInterpretation = value;
+          },
+
+          get context() {
+            return inputGainNode.context;
+          },
+
+          get inputs() {
+            return [inputGainNode];
+          },
+
+          get numberOfInputs() {
+            return inputGainNode.numberOfInputs;
+          },
+
+          get numberOfOutputs() {
+            return inputGainNode.numberOfOutputs;
+          },
+
+          get pan() {
+            return panGainNode.gain;
+          },
+
+          addEventListener: function addEventListener() {
+            return inputGainNode.addEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          dispatchEvent: function dispatchEvent() {
+            return inputGainNode.dispatchEvent(arguments.length <= 0 ? undefined : arguments[0]);
+          },
+          removeEventListener: function removeEventListener() {
+            return inputGainNode.removeEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          }
+        };
+        var isConnected = false;
+
+        var whenConnected = function whenConnected() {
+          connectGraph();
+          isConnected = true;
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          disconnectGraph();
+          isConnected = false;
+        };
+
+        return monitorConnections(interceptConnections(nativeStereoPannerNodeFakerFactory, channelMergerNode), whenConnected, whenDisconnected);
+      };
+    };
+
+    var createNativeWaveShaperNodeFactory = function createNativeWaveShaperNodeFactory(createConnectedNativeAudioBufferSourceNode, createInvalidStateError, createNativeWaveShaperNodeFaker, isDCCurve, monitorConnections, nativeAudioContextConstructor, overwriteAccessors) {
+      return function (nativeContext, options) {
+        var nativeWaveShaperNode = nativeContext.createWaveShaper();
+        /*
+         * Bug #119: Safari does not correctly map the values.
+         * @todo Unfortunately there is no way to test for this behavior in a synchronous fashion which is why testing for the existence of
+         * the webkitAudioContext is used as a workaround here. Testing for the automationRate property is necessary because this workaround
+         * isn't necessary anymore since v14.0.2 of Safari.
+         */
+
+        if (nativeAudioContextConstructor !== null && nativeAudioContextConstructor.name === 'webkitAudioContext' && nativeContext.createGain().gain.automationRate === undefined) {
+          return createNativeWaveShaperNodeFaker(nativeContext, options);
+        }
+
+        assignNativeAudioNodeOptions(nativeWaveShaperNode, options);
+        var curve = options.curve === null || options.curve instanceof Float32Array ? options.curve : new Float32Array(options.curve); // Bug #104: Chrome, Edge and Opera will throw an InvalidAccessError when the curve has less than two samples.
+
+        if (curve !== null && curve.length < 2) {
+          throw createInvalidStateError();
+        } // Only values of type Float32Array can be assigned to the curve property.
+
+
+        assignNativeAudioNodeOption(nativeWaveShaperNode, {
+          curve: curve
+        }, 'curve');
+        assignNativeAudioNodeOption(nativeWaveShaperNode, options, 'oversample');
+        var disconnectNativeAudioBufferSourceNode = null;
+        var isConnected = false;
+        overwriteAccessors(nativeWaveShaperNode, 'curve', function (get) {
+          return function () {
+            return get.call(nativeWaveShaperNode);
+          };
+        }, function (set) {
+          return function (value) {
+            set.call(nativeWaveShaperNode, value);
+
+            if (isConnected) {
+              if (isDCCurve(value) && disconnectNativeAudioBufferSourceNode === null) {
+                disconnectNativeAudioBufferSourceNode = createConnectedNativeAudioBufferSourceNode(nativeContext, nativeWaveShaperNode);
+              } else if (!isDCCurve(value) && disconnectNativeAudioBufferSourceNode !== null) {
+                disconnectNativeAudioBufferSourceNode();
+                disconnectNativeAudioBufferSourceNode = null;
+              }
+            }
+
+            return value;
+          };
+        });
+
+        var whenConnected = function whenConnected() {
+          isConnected = true;
+
+          if (isDCCurve(nativeWaveShaperNode.curve)) {
+            disconnectNativeAudioBufferSourceNode = createConnectedNativeAudioBufferSourceNode(nativeContext, nativeWaveShaperNode);
+          }
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          isConnected = false;
+
+          if (disconnectNativeAudioBufferSourceNode !== null) {
+            disconnectNativeAudioBufferSourceNode();
+            disconnectNativeAudioBufferSourceNode = null;
+          }
+        };
+
+        return monitorConnections(nativeWaveShaperNode, whenConnected, whenDisconnected);
+      };
+    };
+
+    var _excluded = ["curve", "oversample"];
+
+    function ownKeys$a(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$a(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$a(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$a(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var createNativeWaveShaperNodeFakerFactory = function createNativeWaveShaperNodeFakerFactory(createConnectedNativeAudioBufferSourceNode, createInvalidStateError, createNativeGainNode, isDCCurve, monitorConnections) {
+      return function (nativeContext, _ref) {
+        var curve = _ref.curve,
+            oversample = _ref.oversample,
+            audioNodeOptions = _objectWithoutProperties__default["default"](_ref, _excluded);
+
+        var negativeWaveShaperNode = nativeContext.createWaveShaper();
+        var positiveWaveShaperNode = nativeContext.createWaveShaper();
+        assignNativeAudioNodeOptions(negativeWaveShaperNode, audioNodeOptions);
+        assignNativeAudioNodeOptions(positiveWaveShaperNode, audioNodeOptions);
+        var inputGainNode = createNativeGainNode(nativeContext, _objectSpread$a(_objectSpread$a({}, audioNodeOptions), {}, {
+          gain: 1
+        }));
+        var invertGainNode = createNativeGainNode(nativeContext, _objectSpread$a(_objectSpread$a({}, audioNodeOptions), {}, {
+          gain: -1
+        }));
+        var outputGainNode = createNativeGainNode(nativeContext, _objectSpread$a(_objectSpread$a({}, audioNodeOptions), {}, {
+          gain: 1
+        }));
+        var revertGainNode = createNativeGainNode(nativeContext, _objectSpread$a(_objectSpread$a({}, audioNodeOptions), {}, {
+          gain: -1
+        }));
+        var disconnectNativeAudioBufferSourceNode = null;
+        var isConnected = false;
+        var unmodifiedCurve = null;
+        var nativeWaveShaperNodeFaker = {
+          get bufferSize() {
+            return undefined;
+          },
+
+          get channelCount() {
+            return negativeWaveShaperNode.channelCount;
+          },
+
+          set channelCount(value) {
+            inputGainNode.channelCount = value;
+            invertGainNode.channelCount = value;
+            negativeWaveShaperNode.channelCount = value;
+            outputGainNode.channelCount = value;
+            positiveWaveShaperNode.channelCount = value;
+            revertGainNode.channelCount = value;
+          },
+
+          get channelCountMode() {
+            return negativeWaveShaperNode.channelCountMode;
+          },
+
+          set channelCountMode(value) {
+            inputGainNode.channelCountMode = value;
+            invertGainNode.channelCountMode = value;
+            negativeWaveShaperNode.channelCountMode = value;
+            outputGainNode.channelCountMode = value;
+            positiveWaveShaperNode.channelCountMode = value;
+            revertGainNode.channelCountMode = value;
+          },
+
+          get channelInterpretation() {
+            return negativeWaveShaperNode.channelInterpretation;
+          },
+
+          set channelInterpretation(value) {
+            inputGainNode.channelInterpretation = value;
+            invertGainNode.channelInterpretation = value;
+            negativeWaveShaperNode.channelInterpretation = value;
+            outputGainNode.channelInterpretation = value;
+            positiveWaveShaperNode.channelInterpretation = value;
+            revertGainNode.channelInterpretation = value;
+          },
+
+          get context() {
+            return negativeWaveShaperNode.context;
+          },
+
+          get curve() {
+            return unmodifiedCurve;
+          },
+
+          set curve(value) {
+            // Bug #102: Safari does not throw an InvalidStateError when the curve has less than two samples.
+            if (value !== null && value.length < 2) {
+              throw createInvalidStateError();
+            }
+
+            if (value === null) {
+              negativeWaveShaperNode.curve = value;
+              positiveWaveShaperNode.curve = value;
+            } else {
+              var curveLength = value.length;
+              var negativeCurve = new Float32Array(curveLength + 2 - curveLength % 2);
+              var positiveCurve = new Float32Array(curveLength + 2 - curveLength % 2);
+              negativeCurve[0] = value[0];
+              positiveCurve[0] = -value[curveLength - 1];
+              var length = Math.ceil((curveLength + 1) / 2);
+              var centerIndex = (curveLength + 1) / 2 - 1;
+
+              for (var i = 1; i < length; i += 1) {
+                var theoreticIndex = i / length * centerIndex;
+                var lowerIndex = Math.floor(theoreticIndex);
+                var upperIndex = Math.ceil(theoreticIndex);
+                negativeCurve[i] = lowerIndex === upperIndex ? value[lowerIndex] : (1 - (theoreticIndex - lowerIndex)) * value[lowerIndex] + (1 - (upperIndex - theoreticIndex)) * value[upperIndex];
+                positiveCurve[i] = lowerIndex === upperIndex ? -value[curveLength - 1 - lowerIndex] : -((1 - (theoreticIndex - lowerIndex)) * value[curveLength - 1 - lowerIndex]) - (1 - (upperIndex - theoreticIndex)) * value[curveLength - 1 - upperIndex];
+              }
+
+              negativeCurve[length] = curveLength % 2 === 1 ? value[length - 1] : (value[length - 2] + value[length - 1]) / 2;
+              negativeWaveShaperNode.curve = negativeCurve;
+              positiveWaveShaperNode.curve = positiveCurve;
+            }
+
+            unmodifiedCurve = value;
+
+            if (isConnected) {
+              if (isDCCurve(unmodifiedCurve) && disconnectNativeAudioBufferSourceNode === null) {
+                disconnectNativeAudioBufferSourceNode = createConnectedNativeAudioBufferSourceNode(nativeContext, inputGainNode);
+              } else if (disconnectNativeAudioBufferSourceNode !== null) {
+                disconnectNativeAudioBufferSourceNode();
+                disconnectNativeAudioBufferSourceNode = null;
+              }
+            }
+          },
+
+          get inputs() {
+            return [inputGainNode];
+          },
+
+          get numberOfInputs() {
+            return negativeWaveShaperNode.numberOfInputs;
+          },
+
+          get numberOfOutputs() {
+            return negativeWaveShaperNode.numberOfOutputs;
+          },
+
+          get oversample() {
+            return negativeWaveShaperNode.oversample;
+          },
+
+          set oversample(value) {
+            negativeWaveShaperNode.oversample = value;
+            positiveWaveShaperNode.oversample = value;
+          },
+
+          addEventListener: function addEventListener() {
+            return inputGainNode.addEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          },
+          dispatchEvent: function dispatchEvent() {
+            return inputGainNode.dispatchEvent(arguments.length <= 0 ? undefined : arguments[0]);
+          },
+          removeEventListener: function removeEventListener() {
+            return inputGainNode.removeEventListener(arguments.length <= 0 ? undefined : arguments[0], arguments.length <= 1 ? undefined : arguments[1], arguments.length <= 2 ? undefined : arguments[2]);
+          }
+        };
+
+        if (curve !== null) {
+          // Only values of type Float32Array can be assigned to the curve property.
+          nativeWaveShaperNodeFaker.curve = curve instanceof Float32Array ? curve : new Float32Array(curve);
+        }
+
+        if (oversample !== nativeWaveShaperNodeFaker.oversample) {
+          nativeWaveShaperNodeFaker.oversample = oversample;
+        }
+
+        var whenConnected = function whenConnected() {
+          inputGainNode.connect(negativeWaveShaperNode).connect(outputGainNode);
+          inputGainNode.connect(invertGainNode).connect(positiveWaveShaperNode).connect(revertGainNode).connect(outputGainNode);
+          isConnected = true;
+
+          if (isDCCurve(unmodifiedCurve)) {
+            disconnectNativeAudioBufferSourceNode = createConnectedNativeAudioBufferSourceNode(nativeContext, inputGainNode);
+          }
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          inputGainNode.disconnect(negativeWaveShaperNode);
+          negativeWaveShaperNode.disconnect(outputGainNode);
+          inputGainNode.disconnect(invertGainNode);
+          invertGainNode.disconnect(positiveWaveShaperNode);
+          positiveWaveShaperNode.disconnect(revertGainNode);
+          revertGainNode.disconnect(outputGainNode);
+          isConnected = false;
+
+          if (disconnectNativeAudioBufferSourceNode !== null) {
+            disconnectNativeAudioBufferSourceNode();
+            disconnectNativeAudioBufferSourceNode = null;
+          }
+        };
+
+        return monitorConnections(interceptConnections(nativeWaveShaperNodeFaker, outputGainNode), whenConnected, whenDisconnected);
+      };
+    };
+
+    var createNotSupportedError = function createNotSupportedError() {
+      return new DOMException('', 'NotSupportedError');
+    };
+
+    function ownKeys$9(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$9(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$9(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$9(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$4(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$4(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$4() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$5 = {
+      numberOfChannels: 1
+    };
+    var createOfflineAudioContextConstructor = function createOfflineAudioContextConstructor(baseAudioContextConstructor, cacheTestResult, createInvalidStateError, createNativeOfflineAudioContext, _startRendering) {
+      return /*#__PURE__*/function (_baseAudioContextCons) {
+        _inherits__default["default"](OfflineAudioContext, _baseAudioContextCons);
+
+        var _super = _createSuper$4(OfflineAudioContext);
+
+        function OfflineAudioContext(a, b, c) {
+          var _this;
+
+          _classCallCheck__default["default"](this, OfflineAudioContext);
+
+          var options;
+
+          if (typeof a === 'number' && b !== undefined && c !== undefined) {
+            options = {
+              length: b,
+              numberOfChannels: a,
+              sampleRate: c
+            };
+          } else if (_typeof__default["default"](a) === 'object') {
+            options = a;
+          } else {
+            throw new Error('The given parameters are not valid.');
+          }
+
+          var _DEFAULT_OPTIONS$opti = _objectSpread$9(_objectSpread$9({}, DEFAULT_OPTIONS$5), options),
+              length = _DEFAULT_OPTIONS$opti.length,
+              numberOfChannels = _DEFAULT_OPTIONS$opti.numberOfChannels,
+              sampleRate = _DEFAULT_OPTIONS$opti.sampleRate;
+
+          var nativeOfflineAudioContext = createNativeOfflineAudioContext(numberOfChannels, length, sampleRate); // #21 Safari does not support promises and therefore would fire the statechange event before the promise can be resolved.
+
+          if (!cacheTestResult(testPromiseSupport, function () {
+            return testPromiseSupport(nativeOfflineAudioContext);
+          })) {
+            nativeOfflineAudioContext.addEventListener('statechange', function () {
+              var i = 0;
+
+              var delayStateChangeEvent = function delayStateChangeEvent(event) {
+                if (_this._state === 'running') {
+                  if (i > 0) {
+                    nativeOfflineAudioContext.removeEventListener('statechange', delayStateChangeEvent);
+                    event.stopImmediatePropagation();
+
+                    _this._waitForThePromiseToSettle(event);
+                  } else {
+                    i += 1;
+                  }
+                }
+              };
+
+              return delayStateChangeEvent;
+            }());
+          }
+
+          _this = _super.call(this, nativeOfflineAudioContext, numberOfChannels);
+          _this._length = length;
+          _this._nativeOfflineAudioContext = nativeOfflineAudioContext;
+          _this._state = null;
+          return _this;
+        }
+
+        _createClass__default["default"](OfflineAudioContext, [{
+          key: "length",
+          get: function get() {
+            // Bug #17: Safari does not yet expose the length.
+            if (this._nativeOfflineAudioContext.length === undefined) {
+              return this._length;
+            }
+
+            return this._nativeOfflineAudioContext.length;
+          }
+        }, {
+          key: "state",
+          get: function get() {
+            return this._state === null ? this._nativeOfflineAudioContext.state : this._state;
+          }
+        }, {
+          key: "startRendering",
+          value: function startRendering() {
+            var _this2 = this;
+
+            /*
+             * Bug #9 & #59: It is theoretically possible that startRendering() will first render a partialOfflineAudioContext. Therefore
+             * the state of the nativeOfflineAudioContext might no transition to running immediately.
+             */
+            if (this._state === 'running') {
+              return Promise.reject(createInvalidStateError());
+            }
+
+            this._state = 'running';
+            return _startRendering(this.destination, this._nativeOfflineAudioContext)["finally"](function () {
+              _this2._state = null;
+              deactivateAudioGraph(_this2);
+            });
+          }
+        }, {
+          key: "_waitForThePromiseToSettle",
+          value: function _waitForThePromiseToSettle(event) {
+            var _this3 = this;
+
+            if (this._state === null) {
+              this._nativeOfflineAudioContext.dispatchEvent(event);
+            } else {
+              setTimeout(function () {
+                return _this3._waitForThePromiseToSettle(event);
+              });
+            }
+          }
+        }]);
+
+        return OfflineAudioContext;
+      }(baseAudioContextConstructor);
+    };
+
+    function ownKeys$8(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$8(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$3(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$3(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$3() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$4 = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      detune: 0,
+      frequency: 440,
+      periodicWave: undefined,
+      type: 'sine'
+    };
+    var createOscillatorNodeConstructor = function createOscillatorNodeConstructor(audioNodeConstructor, createAudioParam, createNativeOscillatorNode, createOscillatorNodeRenderer, getNativeContext, isNativeOfflineAudioContext, wrapEventListener) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](OscillatorNode, _audioNodeConstructor);
+
+        var _super = _createSuper$3(OscillatorNode);
+
+        function OscillatorNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, OscillatorNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$8(_objectSpread$8({}, DEFAULT_OPTIONS$4), options);
+
+          var nativeOscillatorNode = createNativeOscillatorNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var oscillatorNodeRenderer = isOffline ? createOscillatorNodeRenderer() : null;
+          var nyquist = context.sampleRate / 2;
+          _this = _super.call(this, context, false, nativeOscillatorNode, oscillatorNodeRenderer); // Bug #81: Firefox & Safari do not export the correct values for maxValue and minValue.
+
+          _this._detune = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeOscillatorNode.detune, 153600, -153600); // Bug #76: Safari does not export the correct values for maxValue and minValue.
+
+          _this._frequency = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeOscillatorNode.frequency, nyquist, -nyquist);
+          _this._nativeOscillatorNode = nativeOscillatorNode;
+          _this._onended = null;
+          _this._oscillatorNodeRenderer = oscillatorNodeRenderer;
+
+          if (_this._oscillatorNodeRenderer !== null && mergedOptions.periodicWave !== undefined) {
+            _this._oscillatorNodeRenderer.periodicWave = mergedOptions.periodicWave;
+          }
+
+          return _this;
+        }
+
+        _createClass__default["default"](OscillatorNode, [{
+          key: "detune",
+          get: function get() {
+            return this._detune;
+          }
+        }, {
+          key: "frequency",
+          get: function get() {
+            return this._frequency;
+          }
+        }, {
+          key: "onended",
+          get: function get() {
+            return this._onended;
+          },
+          set: function set(value) {
+            var wrappedListener = typeof value === 'function' ? wrapEventListener(this, value) : null;
+            this._nativeOscillatorNode.onended = wrappedListener;
+            var nativeOnEnded = this._nativeOscillatorNode.onended;
+            this._onended = nativeOnEnded !== null && nativeOnEnded === wrappedListener ? value : nativeOnEnded;
+          }
+        }, {
+          key: "type",
+          get: function get() {
+            return this._nativeOscillatorNode.type;
+          },
+          set: function set(value) {
+            this._nativeOscillatorNode.type = value;
+
+            if (this._oscillatorNodeRenderer !== null) {
+              this._oscillatorNodeRenderer.periodicWave = null;
+            }
+          }
+        }, {
+          key: "setPeriodicWave",
+          value: function setPeriodicWave(periodicWave) {
+            this._nativeOscillatorNode.setPeriodicWave(periodicWave);
+
+            if (this._oscillatorNodeRenderer !== null) {
+              this._oscillatorNodeRenderer.periodicWave = periodicWave;
+            }
+          }
+        }, {
+          key: "start",
+          value: function start() {
+            var _this2 = this;
+
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            this._nativeOscillatorNode.start(when);
+
+            if (this._oscillatorNodeRenderer !== null) {
+              this._oscillatorNodeRenderer.start = when;
+            }
+
+            if (this.context.state !== 'closed') {
+              setInternalStateToActive(this);
+
+              var resetInternalStateToPassive = function resetInternalStateToPassive() {
+                _this2._nativeOscillatorNode.removeEventListener('ended', resetInternalStateToPassive);
+
+                if (isActiveAudioNode(_this2)) {
+                  setInternalStateToPassive(_this2);
+                }
+              };
+
+              this._nativeOscillatorNode.addEventListener('ended', resetInternalStateToPassive);
+            }
+          }
+        }, {
+          key: "stop",
+          value: function stop() {
+            var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            this._nativeOscillatorNode.stop(when);
+
+            if (this._oscillatorNodeRenderer !== null) {
+              this._oscillatorNodeRenderer.stop = when;
+            }
+          }
+        }]);
+
+        return OscillatorNode;
+      }(audioNodeConstructor);
+    };
+
+    var createOscillatorNodeRendererFactory = function createOscillatorNodeRendererFactory(connectAudioParam, createNativeOscillatorNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeOscillatorNodes = new WeakMap();
+        var periodicWave = null;
+        var start = null;
+        var stop = null;
+
+        var createOscillatorNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeOscillatorNode, nativeOscillatorNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeOscillatorNode = getNativeAudioNode(proxy); // If the initially used nativeOscillatorNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeOscillatorNodeIsOwnedByContext = isOwnedByContext(nativeOscillatorNode, nativeOfflineAudioContext);
+
+                    if (!nativeOscillatorNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeOscillatorNode.channelCount,
+                        channelCountMode: nativeOscillatorNode.channelCountMode,
+                        channelInterpretation: nativeOscillatorNode.channelInterpretation,
+                        detune: nativeOscillatorNode.detune.value,
+                        frequency: nativeOscillatorNode.frequency.value,
+                        periodicWave: periodicWave === null ? undefined : periodicWave,
+                        type: nativeOscillatorNode.type
+                      };
+                      nativeOscillatorNode = createNativeOscillatorNode(nativeOfflineAudioContext, options);
+
+                      if (start !== null) {
+                        nativeOscillatorNode.start(start);
+                      }
+
+                      if (stop !== null) {
+                        nativeOscillatorNode.stop(stop);
+                      }
+                    }
+
+                    renderedNativeOscillatorNodes.set(nativeOfflineAudioContext, nativeOscillatorNode);
+
+                    if (nativeOscillatorNodeIsOwnedByContext) {
+                      _context.next = 11;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.detune, nativeOscillatorNode.detune);
+
+                  case 7:
+                    _context.next = 9;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.frequency, nativeOscillatorNode.frequency);
+
+                  case 9:
+                    _context.next = 15;
+                    break;
+
+                  case 11:
+                    _context.next = 13;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.detune, nativeOscillatorNode.detune);
+
+                  case 13:
+                    _context.next = 15;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.frequency, nativeOscillatorNode.frequency);
+
+                  case 15:
+                    _context.next = 17;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeOscillatorNode);
+
+                  case 17:
+                    return _context.abrupt("return", nativeOscillatorNode);
+
+                  case 18:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createOscillatorNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          set periodicWave(value) {
+            periodicWave = value;
+          },
+
+          set start(value) {
+            start = value;
+          },
+
+          set stop(value) {
+            stop = value;
+          },
+
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeOscillatorNode = renderedNativeOscillatorNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeOscillatorNode !== undefined) {
+              return Promise.resolve(renderedNativeOscillatorNode);
+            }
+
+            return createOscillatorNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$7(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$2(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$2(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$2() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+    var DEFAULT_OPTIONS$3 = {
+      channelCount: 2,
+      channelCountMode: 'clamped-max',
+      channelInterpretation: 'speakers',
+      coneInnerAngle: 360,
+      coneOuterAngle: 360,
+      coneOuterGain: 0,
+      distanceModel: 'inverse',
+      maxDistance: 10000,
+      orientationX: 1,
+      orientationY: 0,
+      orientationZ: 0,
+      panningModel: 'equalpower',
+      positionX: 0,
+      positionY: 0,
+      positionZ: 0,
+      refDistance: 1,
+      rolloffFactor: 1
+    };
+    var createPannerNodeConstructor = function createPannerNodeConstructor(audioNodeConstructor, createAudioParam, createNativePannerNode, createPannerNodeRenderer, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](PannerNode, _audioNodeConstructor);
+
+        var _super = _createSuper$2(PannerNode);
+
+        function PannerNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, PannerNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$7(_objectSpread$7({}, DEFAULT_OPTIONS$3), options);
+
+          var nativePannerNode = createNativePannerNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var pannerNodeRenderer = isOffline ? createPannerNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativePannerNode, pannerNodeRenderer);
+          _this._nativePannerNode = nativePannerNode; // Bug #74: Safari does not export the correct values for maxValue and minValue.
+
+          _this._orientationX = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativePannerNode.orientationX, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._orientationY = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativePannerNode.orientationY, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._orientationZ = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativePannerNode.orientationZ, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._positionX = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativePannerNode.positionX, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._positionY = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativePannerNode.positionY, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT);
+          _this._positionZ = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativePannerNode.positionZ, MOST_POSITIVE_SINGLE_FLOAT, MOST_NEGATIVE_SINGLE_FLOAT); // @todo Determine a meaningful tail-time instead of just using one second.
+
+          setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), 1);
+          return _this;
+        }
+
+        _createClass__default["default"](PannerNode, [{
+          key: "coneInnerAngle",
+          get: function get() {
+            return this._nativePannerNode.coneInnerAngle;
+          },
+          set: function set(value) {
+            this._nativePannerNode.coneInnerAngle = value;
+          }
+        }, {
+          key: "coneOuterAngle",
+          get: function get() {
+            return this._nativePannerNode.coneOuterAngle;
+          },
+          set: function set(value) {
+            this._nativePannerNode.coneOuterAngle = value;
+          }
+        }, {
+          key: "coneOuterGain",
+          get: function get() {
+            return this._nativePannerNode.coneOuterGain;
+          },
+          set: function set(value) {
+            this._nativePannerNode.coneOuterGain = value;
+          }
+        }, {
+          key: "distanceModel",
+          get: function get() {
+            return this._nativePannerNode.distanceModel;
+          },
+          set: function set(value) {
+            this._nativePannerNode.distanceModel = value;
+          }
+        }, {
+          key: "maxDistance",
+          get: function get() {
+            return this._nativePannerNode.maxDistance;
+          },
+          set: function set(value) {
+            this._nativePannerNode.maxDistance = value;
+          }
+        }, {
+          key: "orientationX",
+          get: function get() {
+            return this._orientationX;
+          }
+        }, {
+          key: "orientationY",
+          get: function get() {
+            return this._orientationY;
+          }
+        }, {
+          key: "orientationZ",
+          get: function get() {
+            return this._orientationZ;
+          }
+        }, {
+          key: "panningModel",
+          get: function get() {
+            return this._nativePannerNode.panningModel;
+          },
+          set: function set(value) {
+            this._nativePannerNode.panningModel = value;
+          }
+        }, {
+          key: "positionX",
+          get: function get() {
+            return this._positionX;
+          }
+        }, {
+          key: "positionY",
+          get: function get() {
+            return this._positionY;
+          }
+        }, {
+          key: "positionZ",
+          get: function get() {
+            return this._positionZ;
+          }
+        }, {
+          key: "refDistance",
+          get: function get() {
+            return this._nativePannerNode.refDistance;
+          },
+          set: function set(value) {
+            this._nativePannerNode.refDistance = value;
+          }
+        }, {
+          key: "rolloffFactor",
+          get: function get() {
+            return this._nativePannerNode.rolloffFactor;
+          },
+          set: function set(value) {
+            this._nativePannerNode.rolloffFactor = value;
+          }
+        }]);
+
+        return PannerNode;
+      }(audioNodeConstructor);
+    };
+
+    function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$6(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var createPannerNodeRendererFactory = function createPannerNodeRendererFactory(connectAudioParam, createNativeChannelMergerNode, createNativeConstantSourceNode, createNativeGainNode, createNativePannerNode, getNativeAudioNode, nativeOfflineAudioContextConstructor, renderAutomation, renderInputsOfAudioNode, renderNativeOfflineAudioContext) {
+      return function () {
+        var renderedNativeAudioNodes = new WeakMap();
+        var renderedBufferPromise = null;
+
+        var createAudioNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee4(proxy, nativeOfflineAudioContext) {
+            var nativeGainNode, nativePannerNode, commonAudioNodeOptions, commonNativePannerNodeOptions, nativePannerNodeIsOwnedByContext, options, _ret;
+
+            return _regeneratorRuntime__default["default"].wrap(function _callee4$(_context4) {
+              while (1) {
+                switch (_context4.prev = _context4.next) {
+                  case 0:
+                    nativeGainNode = null;
+                    nativePannerNode = getNativeAudioNode(proxy);
+                    commonAudioNodeOptions = {
+                      channelCount: nativePannerNode.channelCount,
+                      channelCountMode: nativePannerNode.channelCountMode,
+                      channelInterpretation: nativePannerNode.channelInterpretation
+                    };
+                    commonNativePannerNodeOptions = _objectSpread$6(_objectSpread$6({}, commonAudioNodeOptions), {}, {
+                      coneInnerAngle: nativePannerNode.coneInnerAngle,
+                      coneOuterAngle: nativePannerNode.coneOuterAngle,
+                      coneOuterGain: nativePannerNode.coneOuterGain,
+                      distanceModel: nativePannerNode.distanceModel,
+                      maxDistance: nativePannerNode.maxDistance,
+                      panningModel: nativePannerNode.panningModel,
+                      refDistance: nativePannerNode.refDistance,
+                      rolloffFactor: nativePannerNode.rolloffFactor
+                    }); // If the initially used nativePannerNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativePannerNodeIsOwnedByContext = isOwnedByContext(nativePannerNode, nativeOfflineAudioContext); // Bug #124: Safari does not support modifying the orientation and the position with AudioParams.
+
+                    if ('bufferSize' in nativePannerNode) {
+                      nativeGainNode = createNativeGainNode(nativeOfflineAudioContext, _objectSpread$6(_objectSpread$6({}, commonAudioNodeOptions), {}, {
+                        gain: 1
+                      }));
+                    } else if (!nativePannerNodeIsOwnedByContext) {
+                      options = _objectSpread$6(_objectSpread$6({}, commonNativePannerNodeOptions), {}, {
+                        orientationX: nativePannerNode.orientationX.value,
+                        orientationY: nativePannerNode.orientationY.value,
+                        orientationZ: nativePannerNode.orientationZ.value,
+                        positionX: nativePannerNode.positionX.value,
+                        positionY: nativePannerNode.positionY.value,
+                        positionZ: nativePannerNode.positionZ.value
+                      });
+                      nativePannerNode = createNativePannerNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeAudioNodes.set(nativeOfflineAudioContext, nativeGainNode === null ? nativePannerNode : nativeGainNode);
+
+                    if (!(nativeGainNode !== null)) {
+                      _context4.next = 12;
+                      break;
+                    }
+
+                    return _context4.delegateYield( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee3() {
+                      var partialOfflineAudioContext, nativeChannelMergerNode, renderedBuffer, inputGainNode, channelDatas, i, lastOrientation, lastPosition, gateGainNode, partialPannerNode, _i, orientation, positon, currentTime;
+
+                      return _regeneratorRuntime__default["default"].wrap(function _callee3$(_context3) {
+                        while (1) {
+                          switch (_context3.prev = _context3.next) {
+                            case 0:
+                              if (!(renderedBufferPromise === null)) {
+                                _context3.next = 7;
+                                break;
+                              }
+
+                              if (!(nativeOfflineAudioContextConstructor === null)) {
+                                _context3.next = 3;
+                                break;
+                              }
+
+                              throw new Error('Missing the native OfflineAudioContext constructor.');
+
+                            case 3:
+                              partialOfflineAudioContext = new nativeOfflineAudioContextConstructor(6, // Bug #17: Safari does not yet expose the length.
+                              proxy.context.length, nativeOfflineAudioContext.sampleRate);
+                              nativeChannelMergerNode = createNativeChannelMergerNode(partialOfflineAudioContext, {
+                                channelCount: 1,
+                                channelCountMode: 'explicit',
+                                channelInterpretation: 'speakers',
+                                numberOfInputs: 6
+                              });
+                              nativeChannelMergerNode.connect(partialOfflineAudioContext.destination);
+                              renderedBufferPromise = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2() {
+                                var nativeConstantSourceNodes, i;
+                                return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+                                  while (1) {
+                                    switch (_context2.prev = _context2.next) {
+                                      case 0:
+                                        _context2.next = 2;
+                                        return Promise.all([proxy.orientationX, proxy.orientationY, proxy.orientationZ, proxy.positionX, proxy.positionY, proxy.positionZ].map( /*#__PURE__*/function () {
+                                          var _ref3 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(audioParam, index) {
+                                            var nativeConstantSourceNode;
+                                            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+                                              while (1) {
+                                                switch (_context.prev = _context.next) {
+                                                  case 0:
+                                                    nativeConstantSourceNode = createNativeConstantSourceNode(partialOfflineAudioContext, {
+                                                      channelCount: 1,
+                                                      channelCountMode: 'explicit',
+                                                      channelInterpretation: 'discrete',
+                                                      offset: index === 0 ? 1 : 0
+                                                    });
+                                                    _context.next = 3;
+                                                    return renderAutomation(partialOfflineAudioContext, audioParam, nativeConstantSourceNode.offset);
+
+                                                  case 3:
+                                                    return _context.abrupt("return", nativeConstantSourceNode);
+
+                                                  case 4:
+                                                  case "end":
+                                                    return _context.stop();
+                                                }
+                                              }
+                                            }, _callee);
+                                          }));
+
+                                          return function (_x3, _x4) {
+                                            return _ref3.apply(this, arguments);
+                                          };
+                                        }()));
+
+                                      case 2:
+                                        nativeConstantSourceNodes = _context2.sent;
+
+                                        for (i = 0; i < 6; i += 1) {
+                                          nativeConstantSourceNodes[i].connect(nativeChannelMergerNode, 0, i);
+                                          nativeConstantSourceNodes[i].start(0);
+                                        }
+
+                                        return _context2.abrupt("return", renderNativeOfflineAudioContext(partialOfflineAudioContext));
+
+                                      case 5:
+                                      case "end":
+                                        return _context2.stop();
+                                    }
+                                  }
+                                }, _callee2);
+                              }))();
+
+                            case 7:
+                              _context3.next = 9;
+                              return renderedBufferPromise;
+
+                            case 9:
+                              renderedBuffer = _context3.sent;
+                              inputGainNode = createNativeGainNode(nativeOfflineAudioContext, _objectSpread$6(_objectSpread$6({}, commonAudioNodeOptions), {}, {
+                                gain: 1
+                              }));
+                              _context3.next = 13;
+                              return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, inputGainNode);
+
+                            case 13:
+                              channelDatas = [];
+
+                              for (i = 0; i < renderedBuffer.numberOfChannels; i += 1) {
+                                channelDatas.push(renderedBuffer.getChannelData(i));
+                              }
+
+                              lastOrientation = [channelDatas[0][0], channelDatas[1][0], channelDatas[2][0]];
+                              lastPosition = [channelDatas[3][0], channelDatas[4][0], channelDatas[5][0]];
+                              gateGainNode = createNativeGainNode(nativeOfflineAudioContext, _objectSpread$6(_objectSpread$6({}, commonAudioNodeOptions), {}, {
+                                gain: 1
+                              }));
+                              partialPannerNode = createNativePannerNode(nativeOfflineAudioContext, _objectSpread$6(_objectSpread$6({}, commonNativePannerNodeOptions), {}, {
+                                orientationX: lastOrientation[0],
+                                orientationY: lastOrientation[1],
+                                orientationZ: lastOrientation[2],
+                                positionX: lastPosition[0],
+                                positionY: lastPosition[1],
+                                positionZ: lastPosition[2]
+                              }));
+                              inputGainNode.connect(gateGainNode).connect(partialPannerNode.inputs[0]);
+                              partialPannerNode.connect(nativeGainNode);
+
+                              for (_i = 128; _i < renderedBuffer.length; _i += 128) {
+                                orientation = [channelDatas[0][_i], channelDatas[1][_i], channelDatas[2][_i]];
+                                positon = [channelDatas[3][_i], channelDatas[4][_i], channelDatas[5][_i]];
+
+                                if (orientation.some(function (value, index) {
+                                  return value !== lastOrientation[index];
+                                }) || positon.some(function (value, index) {
+                                  return value !== lastPosition[index];
+                                })) {
+                                  lastOrientation = orientation;
+                                  lastPosition = positon;
+                                  currentTime = _i / nativeOfflineAudioContext.sampleRate;
+                                  gateGainNode.gain.setValueAtTime(0, currentTime);
+                                  gateGainNode = createNativeGainNode(nativeOfflineAudioContext, _objectSpread$6(_objectSpread$6({}, commonAudioNodeOptions), {}, {
+                                    gain: 0
+                                  }));
+                                  partialPannerNode = createNativePannerNode(nativeOfflineAudioContext, _objectSpread$6(_objectSpread$6({}, commonNativePannerNodeOptions), {}, {
+                                    orientationX: lastOrientation[0],
+                                    orientationY: lastOrientation[1],
+                                    orientationZ: lastOrientation[2],
+                                    positionX: lastPosition[0],
+                                    positionY: lastPosition[1],
+                                    positionZ: lastPosition[2]
+                                  }));
+                                  gateGainNode.gain.setValueAtTime(1, currentTime);
+                                  inputGainNode.connect(gateGainNode).connect(partialPannerNode.inputs[0]);
+                                  partialPannerNode.connect(nativeGainNode);
+                                }
+                              }
+
+                              return _context3.abrupt("return", {
+                                v: nativeGainNode
+                              });
+
+                            case 23:
+                            case "end":
+                              return _context3.stop();
+                          }
+                        }
+                      }, _callee3);
+                    })(), "t0", 9);
+
+                  case 9:
+                    _ret = _context4.t0;
+
+                    if (!(_typeof__default["default"](_ret) === "object")) {
+                      _context4.next = 12;
+                      break;
+                    }
+
+                    return _context4.abrupt("return", _ret.v);
+
+                  case 12:
+                    if (nativePannerNodeIsOwnedByContext) {
+                      _context4.next = 27;
+                      break;
+                    }
+
+                    _context4.next = 15;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.orientationX, nativePannerNode.orientationX);
+
+                  case 15:
+                    _context4.next = 17;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.orientationY, nativePannerNode.orientationY);
+
+                  case 17:
+                    _context4.next = 19;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.orientationZ, nativePannerNode.orientationZ);
+
+                  case 19:
+                    _context4.next = 21;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.positionX, nativePannerNode.positionX);
+
+                  case 21:
+                    _context4.next = 23;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.positionY, nativePannerNode.positionY);
+
+                  case 23:
+                    _context4.next = 25;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.positionZ, nativePannerNode.positionZ);
+
+                  case 25:
+                    _context4.next = 39;
+                    break;
+
+                  case 27:
+                    _context4.next = 29;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.orientationX, nativePannerNode.orientationX);
+
+                  case 29:
+                    _context4.next = 31;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.orientationY, nativePannerNode.orientationY);
+
+                  case 31:
+                    _context4.next = 33;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.orientationZ, nativePannerNode.orientationZ);
+
+                  case 33:
+                    _context4.next = 35;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.positionX, nativePannerNode.positionX);
+
+                  case 35:
+                    _context4.next = 37;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.positionY, nativePannerNode.positionY);
+
+                  case 37:
+                    _context4.next = 39;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.positionZ, nativePannerNode.positionZ);
+
+                  case 39:
+                    if (!isNativeAudioNodeFaker(nativePannerNode)) {
+                      _context4.next = 44;
+                      break;
+                    }
+
+                    _context4.next = 42;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativePannerNode.inputs[0]);
+
+                  case 42:
+                    _context4.next = 46;
+                    break;
+
+                  case 44:
+                    _context4.next = 46;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativePannerNode);
+
+                  case 46:
+                    return _context4.abrupt("return", nativePannerNode);
+
+                  case 47:
+                  case "end":
+                    return _context4.stop();
+                }
+              }
+            }, _callee4);
+          }));
+
+          return function createAudioNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeGainNodeOrNativePannerNode = renderedNativeAudioNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeGainNodeOrNativePannerNode !== undefined) {
+              return Promise.resolve(renderedNativeGainNodeOrNativePannerNode);
+            }
+
+            return createAudioNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$5(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var DEFAULT_OPTIONS$2 = {
+      disableNormalization: false
+    };
+    var createPeriodicWaveConstructor = function createPeriodicWaveConstructor(createNativePeriodicWave, getNativeContext, periodicWaveStore, sanitizePeriodicWaveOptions) {
+      return /*#__PURE__*/function (_Symbol$hasInstance) {
+        function PeriodicWave(context, options) {
+          _classCallCheck__default["default"](this, PeriodicWave);
+
+          var nativeContext = getNativeContext(context);
+          var mergedOptions = sanitizePeriodicWaveOptions(_objectSpread$5(_objectSpread$5({}, DEFAULT_OPTIONS$2), options));
+          var periodicWave = createNativePeriodicWave(nativeContext, mergedOptions);
+          periodicWaveStore.add(periodicWave); // This does violate all good pratices but it is used here to simplify the handling of periodic waves.
+
+          return periodicWave;
+        }
+
+        _createClass__default["default"](PeriodicWave, null, [{
+          key: _Symbol$hasInstance,
+          value: function value(instance) {
+            return instance !== null && _typeof__default["default"](instance) === 'object' && Object.getPrototypeOf(instance) === PeriodicWave.prototype || periodicWaveStore.has(instance);
+          }
+        }]);
+
+        return PeriodicWave;
+      }(Symbol.hasInstance);
+    };
+
+    var createRenderAutomation = function createRenderAutomation(getAudioParamRenderer, renderInputsOfAudioParam) {
+      return function (nativeOfflineAudioContext, audioParam, nativeAudioParam) {
+        var audioParamRenderer = getAudioParamRenderer(audioParam);
+        audioParamRenderer.replay(nativeAudioParam);
+        return renderInputsOfAudioParam(audioParam, nativeOfflineAudioContext, nativeAudioParam);
+      };
+    };
+
+    var createRenderInputsOfAudioNode = function createRenderInputsOfAudioNode(getAudioNodeConnections, getAudioNodeRenderer, isPartOfACycle) {
+      return /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(audioNode, nativeOfflineAudioContext, nativeAudioNode) {
+          var audioNodeConnections;
+          return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  audioNodeConnections = getAudioNodeConnections(audioNode);
+                  _context2.next = 3;
+                  return Promise.all(audioNodeConnections.activeInputs.map(function (connections, input) {
+                    return Array.from(connections).map( /*#__PURE__*/function () {
+                      var _ref3 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(_ref2) {
+                        var _ref4, source, output, audioNodeRenderer, renderedNativeAudioNode, destination;
+
+                        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+                          while (1) {
+                            switch (_context.prev = _context.next) {
+                              case 0:
+                                _ref4 = _slicedToArray__default["default"](_ref2, 2), source = _ref4[0], output = _ref4[1];
+                                audioNodeRenderer = getAudioNodeRenderer(source);
+                                _context.next = 4;
+                                return audioNodeRenderer.render(source, nativeOfflineAudioContext);
+
+                              case 4:
+                                renderedNativeAudioNode = _context.sent;
+                                destination = audioNode.context.destination;
+
+                                if (!isPartOfACycle(source) && (audioNode !== destination || !isPartOfACycle(audioNode))) {
+                                  renderedNativeAudioNode.connect(nativeAudioNode, output, input);
+                                }
+
+                              case 7:
+                              case "end":
+                                return _context.stop();
+                            }
+                          }
+                        }, _callee);
+                      }));
+
+                      return function (_x4) {
+                        return _ref3.apply(this, arguments);
+                      };
+                    }());
+                  }).reduce(function (allRenderingPromises, renderingPromises) {
+                    return [].concat(_toConsumableArray__default["default"](allRenderingPromises), _toConsumableArray__default["default"](renderingPromises));
+                  }, []));
+
+                case 3:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2);
+        }));
+
+        return function (_x, _x2, _x3) {
+          return _ref.apply(this, arguments);
+        };
+      }();
+    };
+
+    var createRenderInputsOfAudioParam = function createRenderInputsOfAudioParam(getAudioNodeRenderer, getAudioParamConnections, isPartOfACycle) {
+      return /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee2(audioParam, nativeOfflineAudioContext, nativeAudioParam) {
+          var audioParamConnections;
+          return _regeneratorRuntime__default["default"].wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  audioParamConnections = getAudioParamConnections(audioParam);
+                  _context2.next = 3;
+                  return Promise.all(Array.from(audioParamConnections.activeInputs).map( /*#__PURE__*/function () {
+                    var _ref3 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(_ref2) {
+                      var _ref4, source, output, audioNodeRenderer, renderedNativeAudioNode;
+
+                      return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+                        while (1) {
+                          switch (_context.prev = _context.next) {
+                            case 0:
+                              _ref4 = _slicedToArray__default["default"](_ref2, 2), source = _ref4[0], output = _ref4[1];
+                              audioNodeRenderer = getAudioNodeRenderer(source);
+                              _context.next = 4;
+                              return audioNodeRenderer.render(source, nativeOfflineAudioContext);
+
+                            case 4:
+                              renderedNativeAudioNode = _context.sent;
+
+                              if (!isPartOfACycle(source)) {
+                                renderedNativeAudioNode.connect(nativeAudioParam, output);
+                              }
+
+                            case 6:
+                            case "end":
+                              return _context.stop();
+                          }
+                        }
+                      }, _callee);
+                    }));
+
+                    return function (_x4) {
+                      return _ref3.apply(this, arguments);
+                    };
+                  }()));
+
+                case 3:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2);
+        }));
+
+        return function (_x, _x2, _x3) {
+          return _ref.apply(this, arguments);
+        };
+      }();
+    };
+
+    var createRenderNativeOfflineAudioContext = function createRenderNativeOfflineAudioContext(cacheTestResult, createNativeGainNode, createNativeScriptProcessorNode, testOfflineAudioContextCurrentTimeSupport) {
+      return function (nativeOfflineAudioContext) {
+        // Bug #21: Safari does not support promises yet.
+        if (cacheTestResult(testPromiseSupport, function () {
+          return testPromiseSupport(nativeOfflineAudioContext);
+        })) {
+          // Bug #158: Chrome and Edge do not advance currentTime if it is not accessed while rendering the audio.
+          return Promise.resolve(cacheTestResult(testOfflineAudioContextCurrentTimeSupport, testOfflineAudioContextCurrentTimeSupport)).then(function (isOfflineAudioContextCurrentTimeSupported) {
+            if (!isOfflineAudioContextCurrentTimeSupported) {
+              var scriptProcessorNode = createNativeScriptProcessorNode(nativeOfflineAudioContext, 512, 0, 1);
+
+              nativeOfflineAudioContext.oncomplete = function () {
+                scriptProcessorNode.onaudioprocess = null; // tslint:disable-line:deprecation
+
+                scriptProcessorNode.disconnect();
+              };
+
+              scriptProcessorNode.onaudioprocess = function () {
+                return nativeOfflineAudioContext.currentTime;
+              }; // tslint:disable-line:deprecation
+
+
+              scriptProcessorNode.connect(nativeOfflineAudioContext.destination);
+            }
+
+            return nativeOfflineAudioContext.startRendering();
+          });
+        }
+
+        return new Promise(function (resolve) {
+          // Bug #48: Safari does not render an OfflineAudioContext without any connected node.
+          var gainNode = createNativeGainNode(nativeOfflineAudioContext, {
+            channelCount: 1,
+            channelCountMode: 'explicit',
+            channelInterpretation: 'discrete',
+            gain: 0
+          });
+
+          nativeOfflineAudioContext.oncomplete = function (event) {
+            gainNode.disconnect();
+            resolve(event.renderedBuffer);
+          };
+
+          gainNode.connect(nativeOfflineAudioContext.destination);
+          nativeOfflineAudioContext.startRendering();
+        });
+      };
+    };
+
+    var createSetActiveAudioWorkletNodeInputs = function createSetActiveAudioWorkletNodeInputs(activeAudioWorkletNodeInputsStore) {
+      return function (nativeAudioWorkletNode, activeInputs) {
+        activeAudioWorkletNodeInputsStore.set(nativeAudioWorkletNode, activeInputs);
+      };
+    };
+
+    var createSetAudioNodeTailTime = function createSetAudioNodeTailTime(audioNodeTailTimeStore) {
+      return function (audioNode, tailTime) {
+        return audioNodeTailTimeStore.set(audioNode, tailTime);
+      };
+    };
+
+    var createStartRendering = function createStartRendering(audioBufferStore, cacheTestResult, getAudioNodeRenderer, getUnrenderedAudioWorkletNodes, renderNativeOfflineAudioContext, testAudioBufferCopyChannelMethodsOutOfBoundsSupport, wrapAudioBufferCopyChannelMethods, wrapAudioBufferCopyChannelMethodsOutOfBounds) {
+      return function (destination, nativeOfflineAudioContext) {
+        return getAudioNodeRenderer(destination).render(destination, nativeOfflineAudioContext)
+        /*
+         * Bug #86 & #87: Invoking the renderer of an AudioWorkletNode might be necessary if it has no direct or indirect connection to the
+         * destination.
+         */
+        .then(function () {
+          return Promise.all(Array.from(getUnrenderedAudioWorkletNodes(nativeOfflineAudioContext)).map(function (audioWorkletNode) {
+            return getAudioNodeRenderer(audioWorkletNode).render(audioWorkletNode, nativeOfflineAudioContext);
+          }));
+        }).then(function () {
+          return renderNativeOfflineAudioContext(nativeOfflineAudioContext);
+        }).then(function (audioBuffer) {
+          // Bug #5: Safari does not support copyFromChannel() and copyToChannel().
+          // Bug #100: Safari does throw a wrong error when calling getChannelData() with an out-of-bounds value.
+          if (typeof audioBuffer.copyFromChannel !== 'function') {
+            wrapAudioBufferCopyChannelMethods(audioBuffer);
+            wrapAudioBufferGetChannelDataMethod(audioBuffer); // Bug #157: Firefox does not allow the bufferOffset to be out-of-bounds.
+          } else if (!cacheTestResult(testAudioBufferCopyChannelMethodsOutOfBoundsSupport, function () {
+            return testAudioBufferCopyChannelMethodsOutOfBoundsSupport(audioBuffer);
+          })) {
+            wrapAudioBufferCopyChannelMethodsOutOfBounds(audioBuffer);
+          }
+
+          audioBufferStore.add(audioBuffer);
+          return audioBuffer;
+        });
+      };
+    };
+
+    function ownKeys$4(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$4(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$4(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$4(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper$1(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$1(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS$1 = {
+      channelCount: 2,
+
+      /*
+       * Bug #105: The channelCountMode should be 'clamped-max' according to the spec but is set to 'explicit' to achieve consistent
+       * behavior.
+       */
+      channelCountMode: 'explicit',
+      channelInterpretation: 'speakers',
+      pan: 0
+    };
+    var createStereoPannerNodeConstructor = function createStereoPannerNodeConstructor(audioNodeConstructor, createAudioParam, createNativeStereoPannerNode, createStereoPannerNodeRenderer, getNativeContext, isNativeOfflineAudioContext) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](StereoPannerNode, _audioNodeConstructor);
+
+        var _super = _createSuper$1(StereoPannerNode);
+
+        function StereoPannerNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, StereoPannerNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$4(_objectSpread$4({}, DEFAULT_OPTIONS$1), options);
+
+          var nativeStereoPannerNode = createNativeStereoPannerNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var stereoPannerNodeRenderer = isOffline ? createStereoPannerNodeRenderer() : null;
+          _this = _super.call(this, context, false, nativeStereoPannerNode, stereoPannerNodeRenderer);
+          _this._pan = createAudioParam(_assertThisInitialized__default["default"](_this), isOffline, nativeStereoPannerNode.pan);
+          return _this;
+        }
+
+        _createClass__default["default"](StereoPannerNode, [{
+          key: "pan",
+          get: function get() {
+            return this._pan;
+          }
+        }]);
+
+        return StereoPannerNode;
+      }(audioNodeConstructor);
+    };
+
+    var createStereoPannerNodeRendererFactory = function createStereoPannerNodeRendererFactory(connectAudioParam, createNativeStereoPannerNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeStereoPannerNodes = new WeakMap();
+
+        var createStereoPannerNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeStereoPannerNode, nativeStereoPannerNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeStereoPannerNode = getNativeAudioNode(proxy);
+                    /*
+                     * If the initially used nativeStereoPannerNode was not constructed on the same OfflineAudioContext it needs to be created
+                     * again.
+                     */
+
+                    nativeStereoPannerNodeIsOwnedByContext = isOwnedByContext(nativeStereoPannerNode, nativeOfflineAudioContext);
+
+                    if (!nativeStereoPannerNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeStereoPannerNode.channelCount,
+                        channelCountMode: nativeStereoPannerNode.channelCountMode,
+                        channelInterpretation: nativeStereoPannerNode.channelInterpretation,
+                        pan: nativeStereoPannerNode.pan.value
+                      };
+                      nativeStereoPannerNode = createNativeStereoPannerNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeStereoPannerNodes.set(nativeOfflineAudioContext, nativeStereoPannerNode);
+
+                    if (nativeStereoPannerNodeIsOwnedByContext) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderAutomation(nativeOfflineAudioContext, proxy.pan, nativeStereoPannerNode.pan);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return connectAudioParam(nativeOfflineAudioContext, proxy.pan, nativeStereoPannerNode.pan);
+
+                  case 11:
+                    if (!isNativeAudioNodeFaker(nativeStereoPannerNode)) {
+                      _context.next = 16;
+                      break;
+                    }
+
+                    _context.next = 14;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeStereoPannerNode.inputs[0]);
+
+                  case 14:
+                    _context.next = 18;
+                    break;
+
+                  case 16:
+                    _context.next = 18;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeStereoPannerNode);
+
+                  case 18:
+                    return _context.abrupt("return", nativeStereoPannerNode);
+
+                  case 19:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createStereoPannerNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeStereoPannerNode = renderedNativeStereoPannerNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeStereoPannerNode !== undefined) {
+              return Promise.resolve(renderedNativeStereoPannerNode);
+            }
+
+            return createStereoPannerNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    // Bug #33: Safari exposes an AudioBuffer but it can't be used as a constructor.
+    var createTestAudioBufferConstructorSupport = function createTestAudioBufferConstructorSupport(nativeAudioBufferConstructor) {
+      return function () {
+        if (nativeAudioBufferConstructor === null) {
+          return false;
+        }
+
+        try {
+          new nativeAudioBufferConstructor({
+            length: 1,
+            sampleRate: 44100
+          }); // tslint:disable-line:no-unused-expression
+        } catch (_unused) {
+          return false;
+        }
+
+        return true;
+      };
+    };
+
+    /*
+     * Firefox up to version 67 didn't fully support the copyFromChannel() and copyToChannel() methods. Therefore testing one of those methods
+     * is enough to know if the other one is supported as well.
+     */
+    var createTestAudioBufferCopyChannelMethodsSubarraySupport = function createTestAudioBufferCopyChannelMethodsSubarraySupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return false;
+        }
+
+        var nativeOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        var nativeAudioBuffer = nativeOfflineAudioContext.createBuffer(1, 1, 44100); // Bug #5: Safari does not support copyFromChannel() and copyToChannel().
+
+        if (nativeAudioBuffer.copyToChannel === undefined) {
+          return true;
+        }
+
+        var source = new Float32Array(2);
+
+        try {
+          nativeAudioBuffer.copyFromChannel(source, 0, 0);
+        } catch (_unused) {
+          return false;
+        }
+
+        return true;
+      };
+    };
+
+    var createTestAudioContextCloseMethodSupport = function createTestAudioContextCloseMethodSupport(nativeAudioContextConstructor) {
+      return function () {
+        if (nativeAudioContextConstructor === null) {
+          return false;
+        } // Try to check the prototype before constructing the AudioContext.
+
+
+        if (nativeAudioContextConstructor.prototype !== undefined && nativeAudioContextConstructor.prototype.close !== undefined) {
+          return true;
+        }
+
+        var audioContext = new nativeAudioContextConstructor();
+        var isAudioContextClosable = audioContext.close !== undefined;
+
+        try {
+          audioContext.close();
+        } catch (_unused) {// Ignore errors.
+        }
+
+        return isAudioContextClosable;
+      };
+    };
+
+    /**
+     * Edge up to version 14, Firefox up to version 52, Safari up to version 9 and maybe other browsers
+     * did not refuse to decode invalid parameters with a TypeError.
+     */
+    var createTestAudioContextDecodeAudioDataMethodTypeErrorSupport = function createTestAudioContextDecodeAudioDataMethodTypeErrorSupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return Promise.resolve(false);
+        }
+
+        var offlineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100); // Bug #21: Safari does not support promises yet.
+
+        return new Promise(function (resolve) {
+          var isPending = true;
+
+          var resolvePromise = function resolvePromise(err) {
+            if (isPending) {
+              isPending = false;
+              offlineAudioContext.startRendering();
+              resolve(err instanceof TypeError);
+            }
+          };
+
+          var promise; // Bug #26: Safari throws a synchronous error.
+
+          try {
+            promise = offlineAudioContext // Bug #1: Safari requires a successCallback.
+            .decodeAudioData(null, function () {// Ignore the success callback.
+            }, resolvePromise);
+          } catch (err) {
+            resolvePromise(err);
+          } // Bug #21: Safari does not support promises yet.
+
+
+          if (promise !== undefined) {
+            // Bug #6: Chrome, Edge, Firefox and Opera do not call the errorCallback.
+            promise["catch"](resolvePromise);
+          }
+        });
+      };
+    };
+
+    var createTestAudioContextOptionsSupport = function createTestAudioContextOptionsSupport(nativeAudioContextConstructor) {
+      return function () {
+        if (nativeAudioContextConstructor === null) {
+          return false;
+        }
+
+        var audioContext;
+
+        try {
+          audioContext = new nativeAudioContextConstructor({
+            latencyHint: 'balanced'
+          });
+        } catch (_unused) {
+          return false;
+        }
+
+        audioContext.close();
+        return true;
+      };
+    };
+
+    // Safari up to version 12.0 (but not v12.1) didn't return the destination in case it was an AudioNode.
+    var createTestAudioNodeConnectMethodSupport = function createTestAudioNodeConnectMethodSupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return false;
+        }
+
+        var nativeOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        var nativeGainNode = nativeOfflineAudioContext.createGain();
+        var isSupported = nativeGainNode.connect(nativeGainNode) === nativeGainNode;
+        nativeGainNode.disconnect(nativeGainNode);
+        return isSupported;
+      };
+    };
+
+    /**
+     * Chrome version 66 and 67 did not call the process() function of an AudioWorkletProcessor if it had no outputs. AudioWorklet support was
+     * enabled by default in version 66.
+     */
+    var createTestAudioWorkletProcessorNoOutputsSupport = function createTestAudioWorkletProcessorNoOutputsSupport(nativeAudioWorkletNodeConstructor, nativeOfflineAudioContextConstructor) {
+      return /*#__PURE__*/_asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+        var blob, messageChannel, offlineAudioContext, url, isCallingProcess, audioWorkletNode, oscillator;
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(nativeAudioWorkletNodeConstructor === null)) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt("return", true);
+
+              case 2:
+                if (!(nativeOfflineAudioContextConstructor === null)) {
+                  _context.next = 4;
+                  break;
+                }
+
+                return _context.abrupt("return", false);
+
+              case 4:
+                blob = new Blob(['let c,p;class A extends AudioWorkletProcessor{constructor(){super();this.port.onmessage=(e)=>{p=e.data;p.onmessage=()=>{p.postMessage(c);p.close()};this.port.postMessage(0)}}process(){c=1}}registerProcessor("a",A)'], {
+                  type: 'application/javascript; charset=utf-8'
+                });
+                messageChannel = new MessageChannel(); // Bug #141: Safari does not support creating an OfflineAudioContext with less than 44100 Hz.
+
+                offlineAudioContext = new nativeOfflineAudioContextConstructor(1, 128, 44100);
+                url = URL.createObjectURL(blob);
+                isCallingProcess = false;
+                _context.prev = 9;
+                _context.next = 12;
+                return offlineAudioContext.audioWorklet.addModule(url);
+
+              case 12:
+                audioWorkletNode = new nativeAudioWorkletNodeConstructor(offlineAudioContext, 'a', {
+                  numberOfOutputs: 0
+                });
+                oscillator = offlineAudioContext.createOscillator();
+                _context.next = 16;
+                return new Promise(function (resolve) {
+                  audioWorkletNode.port.onmessage = function () {
+                    return resolve();
+                  };
+
+                  audioWorkletNode.port.postMessage(messageChannel.port2, [messageChannel.port2]);
+                });
+
+              case 16:
+                audioWorkletNode.port.onmessage = function () {
+                  return isCallingProcess = true;
+                };
+
+                oscillator.connect(audioWorkletNode);
+                oscillator.start(0);
+                _context.next = 21;
+                return offlineAudioContext.startRendering();
+
+              case 21:
+                _context.next = 23;
+                return new Promise(function (resolve) {
+                  messageChannel.port1.onmessage = function (_ref2) {
+                    var data = _ref2.data;
+                    return resolve(data === 1);
+                  };
+
+                  messageChannel.port1.postMessage(0);
+                });
+
+              case 23:
+                isCallingProcess = _context.sent;
+                _context.next = 28;
+                break;
+
+              case 26:
+                _context.prev = 26;
+                _context.t0 = _context["catch"](9);
+
+              case 28:
+                _context.prev = 28;
+                messageChannel.port1.close();
+                URL.revokeObjectURL(url);
+                return _context.finish(28);
+
+              case 32:
+                return _context.abrupt("return", isCallingProcess);
+
+              case 33:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[9, 26, 28, 32]]);
+      }));
+    };
+
+    // Bug #179: Firefox does not allow to transfer any buffer which has been passed to the process() method as an argument.
+    var createTestAudioWorkletProcessorPostMessageSupport = function createTestAudioWorkletProcessorPostMessageSupport(nativeAudioWorkletNodeConstructor, nativeOfflineAudioContextConstructor) {
+      return /*#__PURE__*/_asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+        var blob, offlineAudioContext, url, isEmittingMessageEvents, isEmittingProcessorErrorEvents, audioWorkletNode, oscillator;
+        return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(nativeAudioWorkletNodeConstructor === null)) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt("return", true);
+
+              case 2:
+                if (!(nativeOfflineAudioContextConstructor === null)) {
+                  _context.next = 4;
+                  break;
+                }
+
+                return _context.abrupt("return", false);
+
+              case 4:
+                blob = new Blob(['class A extends AudioWorkletProcessor{process(i){this.port.postMessage(i,[i[0][0].buffer])}}registerProcessor("a",A)'], {
+                  type: 'application/javascript; charset=utf-8'
+                }); // Bug #141: Safari does not support creating an OfflineAudioContext with less than 44100 Hz.
+
+                offlineAudioContext = new nativeOfflineAudioContextConstructor(1, 128, 44100);
+                url = URL.createObjectURL(blob);
+                isEmittingMessageEvents = false;
+                isEmittingProcessorErrorEvents = false;
+                _context.prev = 9;
+                _context.next = 12;
+                return offlineAudioContext.audioWorklet.addModule(url);
+
+              case 12:
+                audioWorkletNode = new nativeAudioWorkletNodeConstructor(offlineAudioContext, 'a', {
+                  numberOfOutputs: 0
+                });
+                oscillator = offlineAudioContext.createOscillator();
+
+                audioWorkletNode.port.onmessage = function () {
+                  return isEmittingMessageEvents = true;
+                };
+
+                audioWorkletNode.onprocessorerror = function () {
+                  return isEmittingProcessorErrorEvents = true;
+                };
+
+                oscillator.connect(audioWorkletNode);
+                oscillator.start(0);
+                _context.next = 20;
+                return offlineAudioContext.startRendering();
+
+              case 20:
+                _context.next = 24;
+                break;
+
+              case 22:
+                _context.prev = 22;
+                _context.t0 = _context["catch"](9);
+
+              case 24:
+                _context.prev = 24;
+                URL.revokeObjectURL(url);
+                return _context.finish(24);
+
+              case 27:
+                return _context.abrupt("return", isEmittingMessageEvents && !isEmittingProcessorErrorEvents);
+
+              case 28:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[9, 22, 24, 27]]);
+      }));
+    };
+
+    /**
+     * Firefox up to version 69 did not throw an error when setting a different channelCount or channelCountMode.
+     */
+    var createTestChannelMergerNodeChannelCountSupport = function createTestChannelMergerNodeChannelCountSupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return false;
+        }
+
+        var offlineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        var nativeChannelMergerNode = offlineAudioContext.createChannelMerger();
+        /**
+         * Bug #15: Safari does not return the default properties. It still needs to be patched. This test is supposed to test the support
+         * in other browsers.
+         */
+
+        if (nativeChannelMergerNode.channelCountMode === 'max') {
+          return true;
+        }
+
+        try {
+          nativeChannelMergerNode.channelCount = 2;
+        } catch (_unused) {
+          return true;
+        }
+
+        return false;
+      };
+    };
+
+    var createTestConstantSourceNodeAccurateSchedulingSupport = function createTestConstantSourceNodeAccurateSchedulingSupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return false;
+        }
+
+        var nativeOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100); // Bug #62: Safari does not support ConstantSourceNodes.
+
+        if (nativeOfflineAudioContext.createConstantSource === undefined) {
+          return true;
+        }
+
+        var nativeConstantSourceNode = nativeOfflineAudioContext.createConstantSource();
+        /*
+         * @todo This is using bug #75 to detect bug #70. That works because both bugs were unique to
+         * the implementation of Firefox right now, but it could probably be done in a better way.
+         */
+
+        return nativeConstantSourceNode.offset.maxValue !== Number.POSITIVE_INFINITY;
+      };
+    };
+
+    // Opera up to version 57 did not allow to reassign the buffer of a ConvolverNode.
+    var createTestConvolverNodeBufferReassignabilitySupport = function createTestConvolverNodeBufferReassignabilitySupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return false;
+        }
+
+        var offlineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        var nativeConvolverNode = offlineAudioContext.createConvolver();
+        nativeConvolverNode.buffer = offlineAudioContext.createBuffer(1, 1, offlineAudioContext.sampleRate);
+
+        try {
+          nativeConvolverNode.buffer = offlineAudioContext.createBuffer(1, 1, offlineAudioContext.sampleRate);
+        } catch (_unused) {
+          return false;
+        }
+
+        return true;
+      };
+    };
+
+    // Chrome up to version v80, Edge up to version v80 and Opera up to version v67 did not allow to set the channelCount property of a ConvolverNode to 1. They also did not allow to set the channelCountMode to 'explicit'.
+    var createTestConvolverNodeChannelCountSupport = function createTestConvolverNodeChannelCountSupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return false;
+        }
+
+        var offlineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        var nativeConvolverNode = offlineAudioContext.createConvolver();
+
+        try {
+          nativeConvolverNode.channelCount = 1;
+        } catch (_unused) {
+          return false;
+        }
+
+        return true;
+      };
+    };
+
+    var createTestIsSecureContextSupport = function createTestIsSecureContextSupport(window) {
+      return function () {
+        return window !== null && window.hasOwnProperty('isSecureContext');
+      };
+    };
+
+    // Firefox up to version 68 did not throw an error when creating a MediaStreamAudioSourceNode with a mediaStream that had no audio track.
+    var createTestMediaStreamAudioSourceNodeMediaStreamWithoutAudioTrackSupport = function createTestMediaStreamAudioSourceNodeMediaStreamWithoutAudioTrackSupport(nativeAudioContextConstructor) {
+      return function () {
+        if (nativeAudioContextConstructor === null) {
+          return false;
+        }
+
+        var audioContext = new nativeAudioContextConstructor();
+
+        try {
+          audioContext.createMediaStreamSource(new MediaStream());
+          return false;
+        } catch (err) {
+          return true;
+        } finally {
+          audioContext.close();
+        }
+      };
+    };
+
+    var createTestOfflineAudioContextCurrentTimeSupport = function createTestOfflineAudioContextCurrentTimeSupport(createNativeGainNode, nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return Promise.resolve(false);
+        }
+
+        var nativeOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100); // Bug #48: Safari does not render an OfflineAudioContext without any connected node.
+
+        var gainNode = createNativeGainNode(nativeOfflineAudioContext, {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+          channelInterpretation: 'discrete',
+          gain: 0
+        }); // Bug #21: Safari does not support promises yet.
+
+        return new Promise(function (resolve) {
+          nativeOfflineAudioContext.oncomplete = function () {
+            gainNode.disconnect();
+            resolve(nativeOfflineAudioContext.currentTime !== 0);
+          };
+
+          nativeOfflineAudioContext.startRendering();
+        });
+      };
+    };
+
+    /**
+     * Firefox up to version 62 did not kick off the processing of the StereoPannerNode if the value of pan was zero.
+     */
+    var createTestStereoPannerNodeDefaultValueSupport = function createTestStereoPannerNodeDefaultValueSupport(nativeOfflineAudioContextConstructor) {
+      return function () {
+        if (nativeOfflineAudioContextConstructor === null) {
+          return Promise.resolve(false);
+        }
+
+        var nativeOfflineAudioContext = new nativeOfflineAudioContextConstructor(1, 1, 44100);
+        /*
+         * Bug #105: Safari does not support the StereoPannerNode. Therefore the returned value should normally be false but the faker does
+         * support the tested behaviour.
+         */
+
+        if (nativeOfflineAudioContext.createStereoPanner === undefined) {
+          return Promise.resolve(true);
+        } // Bug #62: Safari does not support ConstantSourceNodes.
+
+
+        if (nativeOfflineAudioContext.createConstantSource === undefined) {
+          return Promise.resolve(true);
+        }
+
+        var constantSourceNode = nativeOfflineAudioContext.createConstantSource();
+        var stereoPanner = nativeOfflineAudioContext.createStereoPanner();
+        constantSourceNode.channelCount = 1;
+        constantSourceNode.offset.value = 1;
+        stereoPanner.channelCount = 1;
+        constantSourceNode.start();
+        constantSourceNode.connect(stereoPanner).connect(nativeOfflineAudioContext.destination);
+        return nativeOfflineAudioContext.startRendering().then(function (buffer) {
+          return buffer.getChannelData(0)[0] !== 1;
+        });
+      };
+    };
+
+    var createUnknownError = function createUnknownError() {
+      return new DOMException('', 'UnknownError');
+    };
+
+    function ownKeys$3(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$3(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$3(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$3(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf__default["default"](Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf__default["default"](this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn__default["default"](this, result); }; }
+
+    function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+    var DEFAULT_OPTIONS = {
+      channelCount: 2,
+      channelCountMode: 'max',
+      channelInterpretation: 'speakers',
+      curve: null,
+      oversample: 'none'
+    };
+    var createWaveShaperNodeConstructor = function createWaveShaperNodeConstructor(audioNodeConstructor, createInvalidStateError, createNativeWaveShaperNode, createWaveShaperNodeRenderer, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime) {
+      return /*#__PURE__*/function (_audioNodeConstructor) {
+        _inherits__default["default"](WaveShaperNode, _audioNodeConstructor);
+
+        var _super = _createSuper(WaveShaperNode);
+
+        function WaveShaperNode(context, options) {
+          var _this;
+
+          _classCallCheck__default["default"](this, WaveShaperNode);
+
+          var nativeContext = getNativeContext(context);
+
+          var mergedOptions = _objectSpread$3(_objectSpread$3({}, DEFAULT_OPTIONS), options);
+
+          var nativeWaveShaperNode = createNativeWaveShaperNode(nativeContext, mergedOptions);
+          var isOffline = isNativeOfflineAudioContext(nativeContext);
+          var waveShaperNodeRenderer = isOffline ? createWaveShaperNodeRenderer() : null; // @todo Add a mechanism to only switch a WaveShaperNode to active while it is connected.
+
+          _this = _super.call(this, context, true, nativeWaveShaperNode, waveShaperNodeRenderer);
+          _this._isCurveNullified = false;
+          _this._nativeWaveShaperNode = nativeWaveShaperNode; // @todo Determine a meaningful tail-time instead of just using one second.
+
+          setAudioNodeTailTime(_assertThisInitialized__default["default"](_this), 1);
+          return _this;
+        }
+
+        _createClass__default["default"](WaveShaperNode, [{
+          key: "curve",
+          get: function get() {
+            if (this._isCurveNullified) {
+              return null;
+            }
+
+            return this._nativeWaveShaperNode.curve;
+          },
+          set: function set(value) {
+            // Bug #103: Safari does not allow to set the curve to null.
+            if (value === null) {
+              this._isCurveNullified = true;
+              this._nativeWaveShaperNode.curve = new Float32Array([0, 0]);
+            } else {
+              // Bug #102: Safari does not throw an InvalidStateError when the curve has less than two samples.
+              // Bug #104: Chrome, Edge and Opera will throw an InvalidAccessError when the curve has less than two samples.
+              if (value.length < 2) {
+                throw createInvalidStateError();
+              }
+
+              this._isCurveNullified = false;
+              this._nativeWaveShaperNode.curve = value;
+            }
+          }
+        }, {
+          key: "oversample",
+          get: function get() {
+            return this._nativeWaveShaperNode.oversample;
+          },
+          set: function set(value) {
+            this._nativeWaveShaperNode.oversample = value;
+          }
+        }]);
+
+        return WaveShaperNode;
+      }(audioNodeConstructor);
+    };
+
+    var createWaveShaperNodeRendererFactory = function createWaveShaperNodeRendererFactory(createNativeWaveShaperNode, getNativeAudioNode, renderInputsOfAudioNode) {
+      return function () {
+        var renderedNativeWaveShaperNodes = new WeakMap();
+
+        var createWaveShaperNode = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(proxy, nativeOfflineAudioContext) {
+            var nativeWaveShaperNode, nativeWaveShaperNodeIsOwnedByContext, options;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    nativeWaveShaperNode = getNativeAudioNode(proxy); // If the initially used nativeWaveShaperNode was not constructed on the same OfflineAudioContext it needs to be created again.
+
+                    nativeWaveShaperNodeIsOwnedByContext = isOwnedByContext(nativeWaveShaperNode, nativeOfflineAudioContext);
+
+                    if (!nativeWaveShaperNodeIsOwnedByContext) {
+                      options = {
+                        channelCount: nativeWaveShaperNode.channelCount,
+                        channelCountMode: nativeWaveShaperNode.channelCountMode,
+                        channelInterpretation: nativeWaveShaperNode.channelInterpretation,
+                        curve: nativeWaveShaperNode.curve,
+                        oversample: nativeWaveShaperNode.oversample
+                      };
+                      nativeWaveShaperNode = createNativeWaveShaperNode(nativeOfflineAudioContext, options);
+                    }
+
+                    renderedNativeWaveShaperNodes.set(nativeOfflineAudioContext, nativeWaveShaperNode);
+
+                    if (!isNativeAudioNodeFaker(nativeWaveShaperNode)) {
+                      _context.next = 9;
+                      break;
+                    }
+
+                    _context.next = 7;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeWaveShaperNode.inputs[0]);
+
+                  case 7:
+                    _context.next = 11;
+                    break;
+
+                  case 9:
+                    _context.next = 11;
+                    return renderInputsOfAudioNode(proxy, nativeOfflineAudioContext, nativeWaveShaperNode);
+
+                  case 11:
+                    return _context.abrupt("return", nativeWaveShaperNode);
+
+                  case 12:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function createWaveShaperNode(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+
+        return {
+          render: function render(proxy, nativeOfflineAudioContext) {
+            var renderedNativeWaveShaperNode = renderedNativeWaveShaperNodes.get(nativeOfflineAudioContext);
+
+            if (renderedNativeWaveShaperNode !== undefined) {
+              return Promise.resolve(renderedNativeWaveShaperNode);
+            }
+
+            return createWaveShaperNode(proxy, nativeOfflineAudioContext);
+          }
+        };
+      };
+    };
+
+    var createWindow = function createWindow() {
+      return typeof window === 'undefined' ? null : window;
+    };
+
+    var createWrapAudioBufferCopyChannelMethods = function createWrapAudioBufferCopyChannelMethods(convertNumberToUnsignedLong, createIndexSizeError) {
+      return function (audioBuffer) {
+        audioBuffer.copyFromChannel = function (destination, channelNumberAsNumber) {
+          var bufferOffsetAsNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+          var bufferOffset = convertNumberToUnsignedLong(bufferOffsetAsNumber);
+          var channelNumber = convertNumberToUnsignedLong(channelNumberAsNumber);
+
+          if (channelNumber >= audioBuffer.numberOfChannels) {
+            throw createIndexSizeError();
+          }
+
+          var audioBufferLength = audioBuffer.length;
+          var channelData = audioBuffer.getChannelData(channelNumber);
+          var destinationLength = destination.length;
+
+          for (var i = bufferOffset < 0 ? -bufferOffset : 0; i + bufferOffset < audioBufferLength && i < destinationLength; i += 1) {
+            destination[i] = channelData[i + bufferOffset];
+          }
+        };
+
+        audioBuffer.copyToChannel = function (source, channelNumberAsNumber) {
+          var bufferOffsetAsNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+          var bufferOffset = convertNumberToUnsignedLong(bufferOffsetAsNumber);
+          var channelNumber = convertNumberToUnsignedLong(channelNumberAsNumber);
+
+          if (channelNumber >= audioBuffer.numberOfChannels) {
+            throw createIndexSizeError();
+          }
+
+          var audioBufferLength = audioBuffer.length;
+          var channelData = audioBuffer.getChannelData(channelNumber);
+          var sourceLength = source.length;
+
+          for (var i = bufferOffset < 0 ? -bufferOffset : 0; i + bufferOffset < audioBufferLength && i < sourceLength; i += 1) {
+            channelData[i + bufferOffset] = source[i];
+          }
+        };
+      };
+    };
+
+    var createWrapAudioBufferCopyChannelMethodsOutOfBounds = function createWrapAudioBufferCopyChannelMethodsOutOfBounds(convertNumberToUnsignedLong) {
+      return function (audioBuffer) {
+        audioBuffer.copyFromChannel = function (copyFromChannel) {
+          return function (destination, channelNumberAsNumber) {
+            var bufferOffsetAsNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+            var bufferOffset = convertNumberToUnsignedLong(bufferOffsetAsNumber);
+            var channelNumber = convertNumberToUnsignedLong(channelNumberAsNumber);
+
+            if (bufferOffset < audioBuffer.length) {
+              return copyFromChannel.call(audioBuffer, destination, channelNumber, bufferOffset);
+            }
+          };
+        }(audioBuffer.copyFromChannel);
+
+        audioBuffer.copyToChannel = function (copyToChannel) {
+          return function (source, channelNumberAsNumber) {
+            var bufferOffsetAsNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+            var bufferOffset = convertNumberToUnsignedLong(bufferOffsetAsNumber);
+            var channelNumber = convertNumberToUnsignedLong(channelNumberAsNumber);
+
+            if (bufferOffset < audioBuffer.length) {
+              return copyToChannel.call(audioBuffer, source, channelNumber, bufferOffset);
+            }
+          };
+        }(audioBuffer.copyToChannel);
+      };
+    };
+
+    var createWrapAudioBufferSourceNodeStopMethodNullifiedBuffer = function createWrapAudioBufferSourceNodeStopMethodNullifiedBuffer(overwriteAccessors) {
+      return function (nativeAudioBufferSourceNode, nativeContext) {
+        var nullifiedBuffer = nativeContext.createBuffer(1, 1, 44100);
+
+        if (nativeAudioBufferSourceNode.buffer === null) {
+          nativeAudioBufferSourceNode.buffer = nullifiedBuffer;
+        }
+
+        overwriteAccessors(nativeAudioBufferSourceNode, 'buffer', function (get) {
+          return function () {
+            var value = get.call(nativeAudioBufferSourceNode);
+            return value === nullifiedBuffer ? null : value;
+          };
+        }, function (set) {
+          return function (value) {
+            return set.call(nativeAudioBufferSourceNode, value === null ? nullifiedBuffer : value);
+          };
+        });
+      };
+    };
+
+    var createWrapChannelMergerNode = function createWrapChannelMergerNode(createInvalidStateError, monitorConnections) {
+      return function (nativeContext, channelMergerNode) {
+        // Bug #15: Safari does not return the default properties.
+        channelMergerNode.channelCount = 1;
+        channelMergerNode.channelCountMode = 'explicit'; // Bug #16: Safari does not throw an error when setting a different channelCount or channelCountMode.
+
+        Object.defineProperty(channelMergerNode, 'channelCount', {
+          get: function get() {
+            return 1;
+          },
+          set: function set() {
+            throw createInvalidStateError();
+          }
+        });
+        Object.defineProperty(channelMergerNode, 'channelCountMode', {
+          get: function get() {
+            return 'explicit';
+          },
+          set: function set() {
+            throw createInvalidStateError();
+          }
+        }); // Bug #20: Safari requires a connection of any kind to treat the input signal correctly.
+
+        var audioBufferSourceNode = nativeContext.createBufferSource();
+
+        var whenConnected = function whenConnected() {
+          var length = channelMergerNode.numberOfInputs;
+
+          for (var i = 0; i < length; i += 1) {
+            audioBufferSourceNode.connect(channelMergerNode, 0, i);
+          }
+        };
+
+        var whenDisconnected = function whenDisconnected() {
+          return audioBufferSourceNode.disconnect(channelMergerNode);
+        };
+
+        monitorConnections(channelMergerNode, whenConnected, whenDisconnected);
+      };
+    };
+
+    var getFirstSample = function getFirstSample(audioBuffer, buffer, channelNumber) {
+      // Bug #5: Safari does not support copyFromChannel() and copyToChannel().
+      if (audioBuffer.copyFromChannel === undefined) {
+        return audioBuffer.getChannelData(channelNumber)[0];
+      }
+
+      audioBuffer.copyFromChannel(buffer, channelNumber);
+      return buffer[0];
+    };
+
+    var isDCCurve = function isDCCurve(curve) {
+      if (curve === null) {
+        return false;
+      }
+
+      var length = curve.length;
+
+      if (length % 2 !== 0) {
+        return curve[Math.floor(length / 2)] !== 0;
+      }
+
+      return curve[length / 2 - 1] + curve[length / 2] !== 0;
+    };
+
+    var overwriteAccessors = function overwriteAccessors(object, property, createGetter, createSetter) {
+      var prototype = object;
+
+      while (!prototype.hasOwnProperty(property)) {
+        prototype = Object.getPrototypeOf(prototype);
+      }
+
+      var _Object$getOwnPropert = Object.getOwnPropertyDescriptor(prototype, property),
+          get = _Object$getOwnPropert.get,
+          set = _Object$getOwnPropert.set;
+
+      Object.defineProperty(object, property, {
+        get: createGetter(get),
+        set: createSetter(set)
+      });
+    };
+
+    function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$2(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var sanitizeAudioWorkletNodeOptions = function sanitizeAudioWorkletNodeOptions(options) {
+      return _objectSpread$2(_objectSpread$2({}, options), {}, {
+        outputChannelCount: options.outputChannelCount !== undefined ? options.outputChannelCount : options.numberOfInputs === 1 && options.numberOfOutputs === 1 ?
+        /*
+         * Bug #61: This should be the computedNumberOfChannels, but unfortunately that is almost impossible to fake. That's why
+         * the channelCountMode is required to be 'explicit' as long as there is not a native implementation in every browser. That
+         * makes sure the computedNumberOfChannels is equivilant to the channelCount which makes it much easier to compute.
+         */
+        [options.channelCount] : Array.from({
+          length: options.numberOfOutputs
+        }, function () {
+          return 1;
+        })
+      });
+    };
+
+    function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var sanitizeChannelSplitterOptions = function sanitizeChannelSplitterOptions(options) {
+      return _objectSpread$1(_objectSpread$1({}, options), {}, {
+        channelCount: options.numberOfOutputs
+      });
+    };
+
+    function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var sanitizePeriodicWaveOptions = function sanitizePeriodicWaveOptions(options) {
+      var imag = options.imag,
+          real = options.real;
+
+      if (imag === undefined) {
+        if (real === undefined) {
+          return _objectSpread(_objectSpread({}, options), {}, {
+            imag: [0, 0],
+            real: [0, 0]
+          });
+        }
+
+        return _objectSpread(_objectSpread({}, options), {}, {
+          imag: Array.from(real, function () {
+            return 0;
+          }),
+          real: real
+        });
+      }
+
+      if (real === undefined) {
+        return _objectSpread(_objectSpread({}, options), {}, {
+          imag: imag,
+          real: Array.from(imag, function () {
+            return 0;
+          })
+        });
+      }
+
+      return _objectSpread(_objectSpread({}, options), {}, {
+        imag: imag,
+        real: real
+      });
+    };
+
+    var setValueAtTimeUntilPossible = function setValueAtTimeUntilPossible(audioParam, value, startTime) {
+      try {
+        audioParam.setValueAtTime(value, startTime);
+      } catch (err) {
+        if (err.code !== 9) {
+          throw err;
+        }
+
+        setValueAtTimeUntilPossible(audioParam, value, startTime + 1e-7);
+      }
+    };
+
+    var testAudioBufferSourceNodeStartMethodConsecutiveCallsSupport = function testAudioBufferSourceNodeStartMethodConsecutiveCallsSupport(nativeContext) {
+      var nativeAudioBufferSourceNode = nativeContext.createBufferSource();
+      nativeAudioBufferSourceNode.start();
+
+      try {
+        nativeAudioBufferSourceNode.start();
+      } catch (_unused) {
+        return true;
+      }
+
+      return false;
+    };
+
+    var testAudioBufferSourceNodeStartMethodOffsetClampingSupport = function testAudioBufferSourceNodeStartMethodOffsetClampingSupport(nativeContext) {
+      var nativeAudioBufferSourceNode = nativeContext.createBufferSource();
+      var nativeAudioBuffer = nativeContext.createBuffer(1, 1, 44100);
+      nativeAudioBufferSourceNode.buffer = nativeAudioBuffer;
+
+      try {
+        nativeAudioBufferSourceNode.start(0, 1);
+      } catch (_unused) {
+        return false;
+      }
+
+      return true;
+    };
+
+    var testAudioBufferSourceNodeStopMethodNullifiedBufferSupport = function testAudioBufferSourceNodeStopMethodNullifiedBufferSupport(nativeContext) {
+      var nativeAudioBufferSourceNode = nativeContext.createBufferSource();
+      nativeAudioBufferSourceNode.start();
+
+      try {
+        nativeAudioBufferSourceNode.stop();
+      } catch (_unused) {
+        return false;
+      }
+
+      return true;
+    };
+
+    var testAudioScheduledSourceNodeStartMethodNegativeParametersSupport = function testAudioScheduledSourceNodeStartMethodNegativeParametersSupport(nativeContext) {
+      var nativeAudioBufferSourceNode = nativeContext.createOscillator();
+
+      try {
+        nativeAudioBufferSourceNode.start(-1);
+      } catch (err) {
+        return err instanceof RangeError;
+      }
+
+      return false;
+    };
+
+    var testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport = function testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport(nativeContext) {
+      var nativeAudioBuffer = nativeContext.createBuffer(1, 1, 44100);
+      var nativeAudioBufferSourceNode = nativeContext.createBufferSource();
+      nativeAudioBufferSourceNode.buffer = nativeAudioBuffer;
+      nativeAudioBufferSourceNode.start();
+      nativeAudioBufferSourceNode.stop();
+
+      try {
+        nativeAudioBufferSourceNode.stop();
+        return true;
+      } catch (_unused) {
+        return false;
+      }
+    };
+
+    var testAudioScheduledSourceNodeStopMethodNegativeParametersSupport = function testAudioScheduledSourceNodeStopMethodNegativeParametersSupport(nativeContext) {
+      var nativeAudioBufferSourceNode = nativeContext.createOscillator();
+
+      try {
+        nativeAudioBufferSourceNode.stop(-1);
+      } catch (err) {
+        return err instanceof RangeError;
+      }
+
+      return false;
+    };
+
+    var testAudioWorkletNodeOptionsClonability = function testAudioWorkletNodeOptionsClonability(audioWorkletNodeOptions) {
+      var _MessageChannel = new MessageChannel(),
+          port1 = _MessageChannel.port1,
+          port2 = _MessageChannel.port2;
+
+      try {
+        // This will throw an error if the audioWorkletNodeOptions are not clonable.
+        port1.postMessage(audioWorkletNodeOptions);
+      } finally {
+        port1.close();
+        port2.close();
+      }
+    };
+
+    /*
+     * Bug #122: Edge up to version v18 did not allow to construct a DOMException'. It also had a couple more bugs but since this is easy to
+     * test it's used here as a placeholder.
+     *
+     * Bug #27: Edge up to version v18 did reject an invalid arrayBuffer passed to decodeAudioData() with a DOMException.
+     *
+     * Bug #50: Edge up to version v18 did not allow to create AudioNodes on a closed context.
+     *
+     * Bug #57: Edge up to version v18 did not throw an error when assigning the type of an OscillatorNode to 'custom'.
+     *
+     * Bug #63: Edge up to version v18 did not expose the mediaElement property of a MediaElementAudioSourceNode.
+     *
+     * Bug #64: Edge up to version v18 did not support the MediaStreamAudioDestinationNode.
+     *
+     * Bug #71: Edge up to version v18 did not allow to set the buffer of an AudioBufferSourceNode to null.
+     *
+     * Bug #93: Edge up to version v18 did set the sampleRate of an AudioContext to zero when it was closed.
+     *
+     * Bug #101: Edge up to version v18 refused to execute decodeAudioData() on a closed context.
+     *
+     * Bug #106: Edge up to version v18 did not expose the maxValue and minValue properties of the pan AudioParam of a StereoPannerNode.
+     *
+     * Bug #110: Edge up to version v18 did not expose the maxValue and minValue properties of the attack, knee, ratio, release and threshold AudioParams of a DynamicsCompressorNode.
+     *
+     * Bug #123: Edge up to version v18 did not support HRTF as the panningModel for a PannerNode.
+     *
+     * Bug #145: Edge up to version v18 did throw an IndexSizeError when an OfflineAudioContext was created with a sampleRate of zero.
+     *
+     * Bug #161: Edge up to version v18 did not expose the maxValue and minValue properties of the delayTime AudioParam of a DelayNode.
+     */
+    var testDomExceptionConstructorSupport = function testDomExceptionConstructorSupport() {
+      try {
+        new DOMException(); // tslint:disable-line:no-unused-expression
+      } catch (_unused) {
+        return false;
+      }
+
+      return true;
+    };
+
+    // Safari at version 11 did not support transferables.
+    var testTransferablesSupport = function testTransferablesSupport() {
+      return new Promise(function (resolve) {
+        var arrayBuffer = new ArrayBuffer(0);
+
+        var _MessageChannel = new MessageChannel(),
+            port1 = _MessageChannel.port1,
+            port2 = _MessageChannel.port2;
+
+        port1.onmessage = function (_ref) {
+          var data = _ref.data;
+          return resolve(data !== null);
+        };
+
+        port2.postMessage(arrayBuffer, [arrayBuffer]);
+      });
+    };
+
+    var wrapAudioBufferSourceNodeStartMethodOffsetClamping = function wrapAudioBufferSourceNodeStartMethodOffsetClamping(nativeAudioBufferSourceNode) {
+      nativeAudioBufferSourceNode.start = function (start) {
+        return function () {
+          var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+          var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+          var duration = arguments.length > 2 ? arguments[2] : undefined;
+          var buffer = nativeAudioBufferSourceNode.buffer; // Bug #154: Safari does not clamp the offset if it is equal to or greater than the duration of the buffer.
+
+          var clampedOffset = buffer === null ? offset : Math.min(buffer.duration, offset); // Bug #155: Safari does not handle the offset correctly if it would cause the buffer to be not be played at all.
+
+          if (buffer !== null && clampedOffset > buffer.duration - 0.5 / nativeAudioBufferSourceNode.context.sampleRate) {
+            start.call(nativeAudioBufferSourceNode, when, 0, 0);
+          } else {
+            start.call(nativeAudioBufferSourceNode, when, clampedOffset, duration);
+          }
+        };
+      }(nativeAudioBufferSourceNode.start);
+    };
+
+    var wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls = function wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls(nativeAudioScheduledSourceNode, nativeContext) {
+      var nativeGainNode = nativeContext.createGain();
+      nativeAudioScheduledSourceNode.connect(nativeGainNode);
+
+      var disconnectGainNode = function (disconnect) {
+        return function () {
+          // @todo TypeScript cannot infer the overloaded signature with 1 argument yet.
+          disconnect.call(nativeAudioScheduledSourceNode, nativeGainNode);
+          nativeAudioScheduledSourceNode.removeEventListener('ended', disconnectGainNode);
+        };
+      }(nativeAudioScheduledSourceNode.disconnect);
+
+      nativeAudioScheduledSourceNode.addEventListener('ended', disconnectGainNode);
+      interceptConnections(nativeAudioScheduledSourceNode, nativeGainNode);
+
+      nativeAudioScheduledSourceNode.stop = function (stop) {
+        var isStopped = false;
+        return function () {
+          var when = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+          if (isStopped) {
+            try {
+              stop.call(nativeAudioScheduledSourceNode, when);
+            } catch (_unused) {
+              nativeGainNode.gain.setValueAtTime(0, when);
+            }
+          } else {
+            stop.call(nativeAudioScheduledSourceNode, when);
+            isStopped = true;
+          }
+        };
+      }(nativeAudioScheduledSourceNode.stop);
+    };
+
+    var wrapEventListener = function wrapEventListener(target, eventListener) {
+      return function (event) {
+        var descriptor = {
+          value: target
+        };
+        Object.defineProperties(event, {
+          currentTarget: descriptor,
+          target: descriptor
+        });
+
+        if (typeof eventListener === 'function') {
+          return eventListener.call(target, event);
+        }
+
+        return eventListener.handleEvent.call(target, event);
+      };
+    };
+
+    var addActiveInputConnectionToAudioNode = createAddActiveInputConnectionToAudioNode(insertElementInSet);
+    var addPassiveInputConnectionToAudioNode = createAddPassiveInputConnectionToAudioNode(insertElementInSet);
+    var deleteActiveInputConnectionToAudioNode = createDeleteActiveInputConnectionToAudioNode(pickElementFromSet);
+    var audioNodeTailTimeStore = new WeakMap();
+    var getAudioNodeTailTime = createGetAudioNodeTailTime(audioNodeTailTimeStore);
+    var cacheTestResult = createCacheTestResult(new Map(), new WeakMap());
+    var window$1 = createWindow();
+    var createNativeAnalyserNode = createNativeAnalyserNodeFactory(cacheTestResult, createIndexSizeError);
+    var getAudioNodeRenderer = createGetAudioNodeRenderer(getAudioNodeConnections);
+    var renderInputsOfAudioNode = createRenderInputsOfAudioNode(getAudioNodeConnections, getAudioNodeRenderer, isPartOfACycle);
+    var createAnalyserNodeRenderer = createAnalyserNodeRendererFactory(createNativeAnalyserNode, getNativeAudioNode, renderInputsOfAudioNode);
+    var getNativeContext = createGetNativeContext(CONTEXT_STORE);
+    var nativeOfflineAudioContextConstructor = createNativeOfflineAudioContextConstructor(window$1);
+    var isNativeOfflineAudioContext = createIsNativeOfflineAudioContext(nativeOfflineAudioContextConstructor);
+    var audioParamAudioNodeStore = new WeakMap();
+    var eventTargetConstructor = createEventTargetConstructor(wrapEventListener);
+    var nativeAudioContextConstructor = createNativeAudioContextConstructor(window$1);
+    var isNativeAudioContext = createIsNativeAudioContext(nativeAudioContextConstructor);
+    var isNativeAudioNode = createIsNativeAudioNode(window$1);
+    var isNativeAudioParam = createIsNativeAudioParam(window$1);
+    var nativeAudioWorkletNodeConstructor = createNativeAudioWorkletNodeConstructor(window$1);
+    var audioNodeConstructor = createAudioNodeConstructor(createAddAudioNodeConnections(AUDIO_NODE_CONNECTIONS_STORE), createAddConnectionToAudioNode(addActiveInputConnectionToAudioNode, addPassiveInputConnectionToAudioNode, connectNativeAudioNodeToNativeAudioNode, deleteActiveInputConnectionToAudioNode, disconnectNativeAudioNodeFromNativeAudioNode, getAudioNodeConnections, getAudioNodeTailTime, getEventListenersOfAudioNode, getNativeAudioNode, insertElementInSet, isActiveAudioNode, isPartOfACycle, isPassiveAudioNode), cacheTestResult, createIncrementCycleCounterFactory(CYCLE_COUNTERS, disconnectNativeAudioNodeFromNativeAudioNode, getAudioNodeConnections, getNativeAudioNode, getNativeAudioParam, isActiveAudioNode), createIndexSizeError, createInvalidAccessError, createNotSupportedError, createDecrementCycleCounter(connectNativeAudioNodeToNativeAudioNode, CYCLE_COUNTERS, getAudioNodeConnections, getNativeAudioNode, getNativeAudioParam, getNativeContext, isActiveAudioNode, isNativeOfflineAudioContext), createDetectCycles(audioParamAudioNodeStore, getAudioNodeConnections, getValueForKey), eventTargetConstructor, getNativeContext, isNativeAudioContext, isNativeAudioNode, isNativeAudioParam, isNativeOfflineAudioContext, nativeAudioWorkletNodeConstructor);
+    var analyserNodeConstructor = createAnalyserNodeConstructor(audioNodeConstructor, createAnalyserNodeRenderer, createIndexSizeError, createNativeAnalyserNode, getNativeContext, isNativeOfflineAudioContext);
+    var audioBufferStore = new WeakSet();
+    var nativeAudioBufferConstructor = createNativeAudioBufferConstructor(window$1);
+    var convertNumberToUnsignedLong = createConvertNumberToUnsignedLong(new Uint32Array(1));
+    var wrapAudioBufferCopyChannelMethods = createWrapAudioBufferCopyChannelMethods(convertNumberToUnsignedLong, createIndexSizeError);
+    var wrapAudioBufferCopyChannelMethodsOutOfBounds = createWrapAudioBufferCopyChannelMethodsOutOfBounds(convertNumberToUnsignedLong);
+    var audioBufferConstructor = createAudioBufferConstructor(audioBufferStore, cacheTestResult, createNotSupportedError, nativeAudioBufferConstructor, nativeOfflineAudioContextConstructor, createTestAudioBufferConstructorSupport(nativeAudioBufferConstructor), wrapAudioBufferCopyChannelMethods, wrapAudioBufferCopyChannelMethodsOutOfBounds);
+    var addSilentConnection = createAddSilentConnection(createNativeGainNode);
+    var renderInputsOfAudioParam = createRenderInputsOfAudioParam(getAudioNodeRenderer, getAudioParamConnections, isPartOfACycle);
+    var connectAudioParam = createConnectAudioParam(renderInputsOfAudioParam);
+    var createNativeAudioBufferSourceNode = createNativeAudioBufferSourceNodeFactory(addSilentConnection, cacheTestResult, testAudioBufferSourceNodeStartMethodConsecutiveCallsSupport, testAudioBufferSourceNodeStartMethodOffsetClampingSupport, testAudioBufferSourceNodeStopMethodNullifiedBufferSupport, testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport, testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, wrapAudioBufferSourceNodeStartMethodOffsetClamping, createWrapAudioBufferSourceNodeStopMethodNullifiedBuffer(overwriteAccessors), wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls);
+    var renderAutomation = createRenderAutomation(createGetAudioParamRenderer(getAudioParamConnections), renderInputsOfAudioParam);
+    var createAudioBufferSourceNodeRenderer = createAudioBufferSourceNodeRendererFactory(connectAudioParam, createNativeAudioBufferSourceNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var createAudioParam = createAudioParamFactory(createAddAudioParamConnections(AUDIO_PARAM_CONNECTIONS_STORE), audioParamAudioNodeStore, AUDIO_PARAM_STORE, createAudioParamRenderer, automationEvents.createCancelAndHoldAutomationEvent, automationEvents.createCancelScheduledValuesAutomationEvent, automationEvents.createExponentialRampToValueAutomationEvent, automationEvents.createLinearRampToValueAutomationEvent, automationEvents.createSetTargetAutomationEvent, automationEvents.createSetValueAutomationEvent, automationEvents.createSetValueCurveAutomationEvent, nativeAudioContextConstructor, setValueAtTimeUntilPossible);
+    var audioBufferSourceNodeConstructor = createAudioBufferSourceNodeConstructor(audioNodeConstructor, createAudioBufferSourceNodeRenderer, createAudioParam, createInvalidStateError, createNativeAudioBufferSourceNode, getNativeContext, isNativeOfflineAudioContext, wrapEventListener);
+    var audioDestinationNodeConstructor = createAudioDestinationNodeConstructor(audioNodeConstructor, createAudioDestinationNodeRenderer, createIndexSizeError, createInvalidStateError, createNativeAudioDestinationNodeFactory(createNativeGainNode, overwriteAccessors), getNativeContext, isNativeOfflineAudioContext, renderInputsOfAudioNode);
+    var createBiquadFilterNodeRenderer = createBiquadFilterNodeRendererFactory(connectAudioParam, createNativeBiquadFilterNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var setAudioNodeTailTime = createSetAudioNodeTailTime(audioNodeTailTimeStore);
+    var biquadFilterNodeConstructor = createBiquadFilterNodeConstructor(audioNodeConstructor, createAudioParam, createBiquadFilterNodeRenderer, createInvalidAccessError, createNativeBiquadFilterNode, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var monitorConnections = createMonitorConnections(insertElementInSet, isNativeAudioNode);
+    var wrapChannelMergerNode = createWrapChannelMergerNode(createInvalidStateError, monitorConnections);
+    var createNativeChannelMergerNode = createNativeChannelMergerNodeFactory(nativeAudioContextConstructor, wrapChannelMergerNode);
+    var createChannelMergerNodeRenderer = createChannelMergerNodeRendererFactory(createNativeChannelMergerNode, getNativeAudioNode, renderInputsOfAudioNode);
+    var channelMergerNodeConstructor = createChannelMergerNodeConstructor(audioNodeConstructor, createChannelMergerNodeRenderer, createNativeChannelMergerNode, getNativeContext, isNativeOfflineAudioContext);
+    var createChannelSplitterNodeRenderer = createChannelSplitterNodeRendererFactory(createNativeChannelSplitterNode, getNativeAudioNode, renderInputsOfAudioNode);
+    var channelSplitterNodeConstructor = createChannelSplitterNodeConstructor(audioNodeConstructor, createChannelSplitterNodeRenderer, createNativeChannelSplitterNode, getNativeContext, isNativeOfflineAudioContext, sanitizeChannelSplitterOptions);
+    var createNativeConstantSourceNodeFaker = createNativeConstantSourceNodeFakerFactory(addSilentConnection, createNativeAudioBufferSourceNode, createNativeGainNode, monitorConnections);
+    var createNativeConstantSourceNode = createNativeConstantSourceNodeFactory(addSilentConnection, cacheTestResult, createNativeConstantSourceNodeFaker, testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, testAudioScheduledSourceNodeStopMethodNegativeParametersSupport);
+    var createConstantSourceNodeRenderer = createConstantSourceNodeRendererFactory(connectAudioParam, createNativeConstantSourceNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var constantSourceNodeConstructor = createConstantSourceNodeConstructor(audioNodeConstructor, createAudioParam, createConstantSourceNodeRenderer, createNativeConstantSourceNode, getNativeContext, isNativeOfflineAudioContext, wrapEventListener);
+    var createNativeConvolverNode = createNativeConvolverNodeFactory(createNotSupportedError, overwriteAccessors);
+    var createConvolverNodeRenderer = createConvolverNodeRendererFactory(createNativeConvolverNode, getNativeAudioNode, renderInputsOfAudioNode);
+    var convolverNodeConstructor = createConvolverNodeConstructor(audioNodeConstructor, createConvolverNodeRenderer, createNativeConvolverNode, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var createDelayNodeRenderer = createDelayNodeRendererFactory(connectAudioParam, createNativeDelayNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var delayNodeConstructor = createDelayNodeConstructor(audioNodeConstructor, createAudioParam, createDelayNodeRenderer, createNativeDelayNode, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var createNativeDynamicsCompressorNode = createNativeDynamicsCompressorNodeFactory(createNotSupportedError);
+    var createDynamicsCompressorNodeRenderer = createDynamicsCompressorNodeRendererFactory(connectAudioParam, createNativeDynamicsCompressorNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var dynamicsCompressorNodeConstructor = createDynamicsCompressorNodeConstructor(audioNodeConstructor, createAudioParam, createDynamicsCompressorNodeRenderer, createNativeDynamicsCompressorNode, createNotSupportedError, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var createGainNodeRenderer = createGainNodeRendererFactory(connectAudioParam, createNativeGainNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var gainNodeConstructor = createGainNodeConstructor(audioNodeConstructor, createAudioParam, createGainNodeRenderer, createNativeGainNode, getNativeContext, isNativeOfflineAudioContext);
+    var createNativeIIRFilterNodeFaker = createNativeIIRFilterNodeFakerFactory(createInvalidAccessError, createInvalidStateError, createNativeScriptProcessorNode, createNotSupportedError);
+    var renderNativeOfflineAudioContext = createRenderNativeOfflineAudioContext(cacheTestResult, createNativeGainNode, createNativeScriptProcessorNode, createTestOfflineAudioContextCurrentTimeSupport(createNativeGainNode, nativeOfflineAudioContextConstructor));
+    var createIIRFilterNodeRenderer = createIIRFilterNodeRendererFactory(createNativeAudioBufferSourceNode, getNativeAudioNode, nativeOfflineAudioContextConstructor, renderInputsOfAudioNode, renderNativeOfflineAudioContext);
+    var createNativeIIRFilterNode = createNativeIIRFilterNodeFactory(createNativeIIRFilterNodeFaker);
+    var iIRFilterNodeConstructor = createIIRFilterNodeConstructor(audioNodeConstructor, createNativeIIRFilterNode, createIIRFilterNodeRenderer, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var createAudioListener = createAudioListenerFactory(createAudioParam, createNativeChannelMergerNode, createNativeConstantSourceNode, createNativeScriptProcessorNode, createNotSupportedError, getFirstSample, isNativeOfflineAudioContext, overwriteAccessors);
+    var unrenderedAudioWorkletNodeStore = new WeakMap();
+    var minimalBaseAudioContextConstructor = createMinimalBaseAudioContextConstructor(audioDestinationNodeConstructor, createAudioListener, eventTargetConstructor, isNativeOfflineAudioContext, unrenderedAudioWorkletNodeStore, wrapEventListener);
+    var createNativeOscillatorNode = createNativeOscillatorNodeFactory(addSilentConnection, cacheTestResult, testAudioScheduledSourceNodeStartMethodNegativeParametersSupport, testAudioScheduledSourceNodeStopMethodConsecutiveCallsSupport, testAudioScheduledSourceNodeStopMethodNegativeParametersSupport, wrapAudioScheduledSourceNodeStopMethodConsecutiveCalls);
+    var createOscillatorNodeRenderer = createOscillatorNodeRendererFactory(connectAudioParam, createNativeOscillatorNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var oscillatorNodeConstructor = createOscillatorNodeConstructor(audioNodeConstructor, createAudioParam, createNativeOscillatorNode, createOscillatorNodeRenderer, getNativeContext, isNativeOfflineAudioContext, wrapEventListener);
+    var createConnectedNativeAudioBufferSourceNode = createConnectedNativeAudioBufferSourceNodeFactory(createNativeAudioBufferSourceNode);
+    var createNativeWaveShaperNodeFaker = createNativeWaveShaperNodeFakerFactory(createConnectedNativeAudioBufferSourceNode, createInvalidStateError, createNativeGainNode, isDCCurve, monitorConnections);
+    var createNativeWaveShaperNode = createNativeWaveShaperNodeFactory(createConnectedNativeAudioBufferSourceNode, createInvalidStateError, createNativeWaveShaperNodeFaker, isDCCurve, monitorConnections, nativeAudioContextConstructor, overwriteAccessors);
+    var createNativePannerNodeFaker = createNativePannerNodeFakerFactory(connectNativeAudioNodeToNativeAudioNode, createInvalidStateError, createNativeChannelMergerNode, createNativeGainNode, createNativeScriptProcessorNode, createNativeWaveShaperNode, createNotSupportedError, disconnectNativeAudioNodeFromNativeAudioNode, getFirstSample, monitorConnections);
+    var createNativePannerNode = createNativePannerNodeFactory(createNativePannerNodeFaker);
+    var createPannerNodeRenderer = createPannerNodeRendererFactory(connectAudioParam, createNativeChannelMergerNode, createNativeConstantSourceNode, createNativeGainNode, createNativePannerNode, getNativeAudioNode, nativeOfflineAudioContextConstructor, renderAutomation, renderInputsOfAudioNode, renderNativeOfflineAudioContext);
+    var pannerNodeConstructor = createPannerNodeConstructor(audioNodeConstructor, createAudioParam, createNativePannerNode, createPannerNodeRenderer, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var createNativePeriodicWave = createNativePeriodicWaveFactory(createIndexSizeError);
+    var periodicWaveConstructor = createPeriodicWaveConstructor(createNativePeriodicWave, getNativeContext, new WeakSet(), sanitizePeriodicWaveOptions);
+    var nativeStereoPannerNodeFakerFactory = createNativeStereoPannerNodeFakerFactory(createNativeChannelMergerNode, createNativeChannelSplitterNode, createNativeGainNode, createNativeWaveShaperNode, createNotSupportedError, monitorConnections);
+    var createNativeStereoPannerNode = createNativeStereoPannerNodeFactory(nativeStereoPannerNodeFakerFactory, createNotSupportedError);
+    var createStereoPannerNodeRenderer = createStereoPannerNodeRendererFactory(connectAudioParam, createNativeStereoPannerNode, getNativeAudioNode, renderAutomation, renderInputsOfAudioNode);
+    var stereoPannerNodeConstructor = createStereoPannerNodeConstructor(audioNodeConstructor, createAudioParam, createNativeStereoPannerNode, createStereoPannerNodeRenderer, getNativeContext, isNativeOfflineAudioContext);
+    var createWaveShaperNodeRenderer = createWaveShaperNodeRendererFactory(createNativeWaveShaperNode, getNativeAudioNode, renderInputsOfAudioNode);
+    var waveShaperNodeConstructor = createWaveShaperNodeConstructor(audioNodeConstructor, createInvalidStateError, createNativeWaveShaperNode, createWaveShaperNodeRenderer, getNativeContext, isNativeOfflineAudioContext, setAudioNodeTailTime);
+    var isSecureContext = createIsSecureContext(window$1);
+    var exposeCurrentFrameAndCurrentTime = createExposeCurrentFrameAndCurrentTime(window$1);
+    var backupOfflineAudioContextStore = new WeakMap();
+    var getOrCreateBackupOfflineAudioContext = createGetOrCreateBackupOfflineAudioContext(backupOfflineAudioContextStore, nativeOfflineAudioContextConstructor); // The addAudioWorkletModule() function is only available in a SecureContext.
+
+    var addAudioWorkletModule = isSecureContext ? createAddAudioWorkletModule(cacheTestResult, createNotSupportedError, createEvaluateSource(window$1), exposeCurrentFrameAndCurrentTime, createFetchSource(createAbortError), getNativeContext, getOrCreateBackupOfflineAudioContext, isNativeOfflineAudioContext, nativeAudioWorkletNodeConstructor, new WeakMap(), new WeakMap(), createTestAudioWorkletProcessorPostMessageSupport(nativeAudioWorkletNodeConstructor, nativeOfflineAudioContextConstructor), // @todo window is guaranteed to be defined because isSecureContext checks that as well.
+    window$1) : undefined;
+    var isNativeContext = createIsNativeContext(isNativeAudioContext, isNativeOfflineAudioContext);
+    var decodeAudioData = createDecodeAudioData(audioBufferStore, cacheTestResult, createDataCloneError, createEncodingError, new WeakSet(), getNativeContext, isNativeContext, testAudioBufferCopyChannelMethodsOutOfBoundsSupport, testPromiseSupport, wrapAudioBufferCopyChannelMethods, wrapAudioBufferCopyChannelMethodsOutOfBounds);
+    var baseAudioContextConstructor = createBaseAudioContextConstructor(addAudioWorkletModule, analyserNodeConstructor, audioBufferConstructor, audioBufferSourceNodeConstructor, biquadFilterNodeConstructor, channelMergerNodeConstructor, channelSplitterNodeConstructor, constantSourceNodeConstructor, convolverNodeConstructor, decodeAudioData, delayNodeConstructor, dynamicsCompressorNodeConstructor, gainNodeConstructor, iIRFilterNodeConstructor, minimalBaseAudioContextConstructor, oscillatorNodeConstructor, pannerNodeConstructor, periodicWaveConstructor, stereoPannerNodeConstructor, waveShaperNodeConstructor);
+    var mediaElementAudioSourceNodeConstructor = createMediaElementAudioSourceNodeConstructor(audioNodeConstructor, createNativeMediaElementAudioSourceNode, getNativeContext, isNativeOfflineAudioContext);
+    var mediaStreamAudioDestinationNodeConstructor = createMediaStreamAudioDestinationNodeConstructor(audioNodeConstructor, createNativeMediaStreamAudioDestinationNode, getNativeContext, isNativeOfflineAudioContext);
+    var mediaStreamAudioSourceNodeConstructor = createMediaStreamAudioSourceNodeConstructor(audioNodeConstructor, createNativeMediaStreamAudioSourceNode, getNativeContext, isNativeOfflineAudioContext);
+    var createNativeMediaStreamTrackAudioSourceNode = createNativeMediaStreamTrackAudioSourceNodeFactory(createInvalidStateError, isNativeOfflineAudioContext);
+    var mediaStreamTrackAudioSourceNodeConstructor = createMediaStreamTrackAudioSourceNodeConstructor(audioNodeConstructor, createNativeMediaStreamTrackAudioSourceNode, getNativeContext);
+    var audioContextConstructor = createAudioContextConstructor(baseAudioContextConstructor, createInvalidStateError, createNotSupportedError, createUnknownError, mediaElementAudioSourceNodeConstructor, mediaStreamAudioDestinationNodeConstructor, mediaStreamAudioSourceNodeConstructor, mediaStreamTrackAudioSourceNodeConstructor, nativeAudioContextConstructor);
+    var getUnrenderedAudioWorkletNodes = createGetUnrenderedAudioWorkletNodes(unrenderedAudioWorkletNodeStore);
+    var addUnrenderedAudioWorkletNode = createAddUnrenderedAudioWorkletNode(getUnrenderedAudioWorkletNodes);
+    var connectMultipleOutputs = createConnectMultipleOutputs(createIndexSizeError);
+    var deleteUnrenderedAudioWorkletNode = createDeleteUnrenderedAudioWorkletNode(getUnrenderedAudioWorkletNodes);
+    var disconnectMultipleOutputs = createDisconnectMultipleOutputs(createIndexSizeError);
+    var activeAudioWorkletNodeInputsStore = new WeakMap();
+    var getActiveAudioWorkletNodeInputs = createGetActiveAudioWorkletNodeInputs(activeAudioWorkletNodeInputsStore, getValueForKey);
+    var createNativeAudioWorkletNodeFaker = createNativeAudioWorkletNodeFakerFactory(connectMultipleOutputs, createIndexSizeError, createInvalidStateError, createNativeChannelMergerNode, createNativeChannelSplitterNode, createNativeConstantSourceNode, createNativeGainNode, createNativeScriptProcessorNode, createNotSupportedError, disconnectMultipleOutputs, exposeCurrentFrameAndCurrentTime, getActiveAudioWorkletNodeInputs, monitorConnections);
+    var createNativeAudioWorkletNode = createNativeAudioWorkletNodeFactory(createInvalidStateError, createNativeAudioWorkletNodeFaker, createNativeGainNode, createNotSupportedError, monitorConnections);
+    var createAudioWorkletNodeRenderer = createAudioWorkletNodeRendererFactory(connectAudioParam, connectMultipleOutputs, createNativeAudioBufferSourceNode, createNativeChannelMergerNode, createNativeChannelSplitterNode, createNativeConstantSourceNode, createNativeGainNode, deleteUnrenderedAudioWorkletNode, disconnectMultipleOutputs, exposeCurrentFrameAndCurrentTime, getNativeAudioNode, nativeAudioWorkletNodeConstructor, nativeOfflineAudioContextConstructor, renderAutomation, renderInputsOfAudioNode, renderNativeOfflineAudioContext);
+    var getBackupOfflineAudioContext = createGetBackupOfflineAudioContext(backupOfflineAudioContextStore);
+    var setActiveAudioWorkletNodeInputs = createSetActiveAudioWorkletNodeInputs(activeAudioWorkletNodeInputsStore); // The AudioWorkletNode constructor is only available in a SecureContext.
+
+    var audioWorkletNodeConstructor = isSecureContext ? createAudioWorkletNodeConstructor(addUnrenderedAudioWorkletNode, audioNodeConstructor, createAudioParam, createAudioWorkletNodeRenderer, createNativeAudioWorkletNode, getAudioNodeConnections, getBackupOfflineAudioContext, getNativeContext, isNativeOfflineAudioContext, nativeAudioWorkletNodeConstructor, sanitizeAudioWorkletNodeOptions, setActiveAudioWorkletNodeInputs, testAudioWorkletNodeOptionsClonability, wrapEventListener) : undefined;
+    var minimalAudioContextConstructor = createMinimalAudioContextConstructor(createInvalidStateError, createNotSupportedError, createUnknownError, minimalBaseAudioContextConstructor, nativeAudioContextConstructor);
+    var createNativeOfflineAudioContext = createCreateNativeOfflineAudioContext(createNotSupportedError, nativeOfflineAudioContextConstructor);
+    var startRendering = createStartRendering(audioBufferStore, cacheTestResult, getAudioNodeRenderer, getUnrenderedAudioWorkletNodes, renderNativeOfflineAudioContext, testAudioBufferCopyChannelMethodsOutOfBoundsSupport, wrapAudioBufferCopyChannelMethods, wrapAudioBufferCopyChannelMethodsOutOfBounds);
+    var minimalOfflineAudioContextConstructor = createMinimalOfflineAudioContextConstructor(cacheTestResult, createInvalidStateError, createNativeOfflineAudioContext, minimalBaseAudioContextConstructor, startRendering);
+    var offlineAudioContextConstructor = createOfflineAudioContextConstructor(baseAudioContextConstructor, cacheTestResult, createInvalidStateError, createNativeOfflineAudioContext, startRendering);
+    var isAnyAudioContext = createIsAnyAudioContext(CONTEXT_STORE, isNativeAudioContext);
+    var isAnyAudioNode = createIsAnyAudioNode(AUDIO_NODE_STORE, isNativeAudioNode);
+    var isAnyAudioParam = createIsAnyAudioParam(AUDIO_PARAM_STORE, isNativeAudioParam);
+    var isAnyOfflineAudioContext = createIsAnyOfflineAudioContext(CONTEXT_STORE, isNativeOfflineAudioContext);
+    var isSupported = function isSupported() {
+      return createIsSupportedPromise(cacheTestResult, createTestAudioBufferCopyChannelMethodsSubarraySupport(nativeOfflineAudioContextConstructor), createTestAudioContextCloseMethodSupport(nativeAudioContextConstructor), createTestAudioContextDecodeAudioDataMethodTypeErrorSupport(nativeOfflineAudioContextConstructor), createTestAudioContextOptionsSupport(nativeAudioContextConstructor), createTestAudioNodeConnectMethodSupport(nativeOfflineAudioContextConstructor), createTestAudioWorkletProcessorNoOutputsSupport(nativeAudioWorkletNodeConstructor, nativeOfflineAudioContextConstructor), createTestChannelMergerNodeChannelCountSupport(nativeOfflineAudioContextConstructor), createTestConstantSourceNodeAccurateSchedulingSupport(nativeOfflineAudioContextConstructor), createTestConvolverNodeBufferReassignabilitySupport(nativeOfflineAudioContextConstructor), createTestConvolverNodeChannelCountSupport(nativeOfflineAudioContextConstructor), testDomExceptionConstructorSupport, createTestIsSecureContextSupport(window$1), createTestMediaStreamAudioSourceNodeMediaStreamWithoutAudioTrackSupport(nativeAudioContextConstructor), createTestStereoPannerNodeDefaultValueSupport(nativeOfflineAudioContextConstructor), testTransferablesSupport);
+    };
+
+    exports.AnalyserNode = analyserNodeConstructor;
+    exports.AudioBuffer = audioBufferConstructor;
+    exports.AudioBufferSourceNode = audioBufferSourceNodeConstructor;
+    exports.AudioContext = audioContextConstructor;
+    exports.AudioWorkletNode = audioWorkletNodeConstructor;
+    exports.BiquadFilterNode = biquadFilterNodeConstructor;
+    exports.ChannelMergerNode = channelMergerNodeConstructor;
+    exports.ChannelSplitterNode = channelSplitterNodeConstructor;
+    exports.ConstantSourceNode = constantSourceNodeConstructor;
+    exports.ConvolverNode = convolverNodeConstructor;
+    exports.DelayNode = delayNodeConstructor;
+    exports.DynamicsCompressorNode = dynamicsCompressorNodeConstructor;
+    exports.GainNode = gainNodeConstructor;
+    exports.IIRFilterNode = iIRFilterNodeConstructor;
+    exports.MediaElementAudioSourceNode = mediaElementAudioSourceNodeConstructor;
+    exports.MediaStreamAudioDestinationNode = mediaStreamAudioDestinationNodeConstructor;
+    exports.MediaStreamAudioSourceNode = mediaStreamAudioSourceNodeConstructor;
+    exports.MediaStreamTrackAudioSourceNode = mediaStreamTrackAudioSourceNodeConstructor;
+    exports.MinimalAudioContext = minimalAudioContextConstructor;
+    exports.MinimalOfflineAudioContext = minimalOfflineAudioContextConstructor;
+    exports.OfflineAudioContext = offlineAudioContextConstructor;
+    exports.OscillatorNode = oscillatorNodeConstructor;
+    exports.PannerNode = pannerNodeConstructor;
+    exports.PeriodicWave = periodicWaveConstructor;
+    exports.StereoPannerNode = stereoPannerNodeConstructor;
+    exports.WaveShaperNode = waveShaperNodeConstructor;
+    exports.addAudioWorkletModule = addAudioWorkletModule;
+    exports.decodeAudioData = decodeAudioData;
+    exports.isAnyAudioContext = isAnyAudioContext;
+    exports.isAnyAudioNode = isAnyAudioNode;
+    exports.isAnyAudioParam = isAnyAudioParam;
+    exports.isAnyOfflineAudioContext = isAnyOfflineAudioContext;
+    exports.isSupported = isSupported;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/assertThisInitialized":5,"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/helpers/classCallCheck":7,"@babel/runtime/helpers/createClass":8,"@babel/runtime/helpers/defineProperty":9,"@babel/runtime/helpers/getPrototypeOf":10,"@babel/runtime/helpers/inherits":11,"@babel/runtime/helpers/objectWithoutProperties":16,"@babel/runtime/helpers/possibleConstructorReturn":18,"@babel/runtime/helpers/slicedToArray":20,"@babel/runtime/helpers/toConsumableArray":21,"@babel/runtime/helpers/typeof":22,"@babel/runtime/regenerator":24,"automation-events":41}],199:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25557,7 +41906,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":36,"inherits":65,"readable-stream/lib/_stream_duplex.js":104,"readable-stream/lib/_stream_passthrough.js":105,"readable-stream/lib/_stream_readable.js":106,"readable-stream/lib/_stream_transform.js":107,"readable-stream/lib/_stream_writable.js":108,"readable-stream/lib/internal/streams/end-of-stream.js":112,"readable-stream/lib/internal/streams/pipeline.js":114}],157:[function(require,module,exports){
+},{"events":63,"inherits":97,"readable-stream/lib/_stream_duplex.js":139,"readable-stream/lib/_stream_passthrough.js":140,"readable-stream/lib/_stream_readable.js":141,"readable-stream/lib/_stream_transform.js":142,"readable-stream/lib/_stream_writable.js":143,"readable-stream/lib/internal/streams/end-of-stream.js":147,"readable-stream/lib/internal/streams/pipeline.js":149}],200:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const STREAM_DESTROYED = new Error('Stream was destroyed')
 const PREMATURE_CLOSE = new Error('Premature close')
@@ -26547,7 +42896,7 @@ module.exports = {
   PassThrough
 }
 
-},{"events":36,"fast-fifo":38,"queue-tick":98}],158:[function(require,module,exports){
+},{"events":63,"fast-fifo":68,"queue-tick":133}],201:[function(require,module,exports){
 /**
  * @module  string-to-arraybuffer
  */
@@ -26611,9 +42960,594 @@ function decode(uri) {
 	return abuf
 }
 
-},{"atob-lite":11,"is-base64":67}],159:[function(require,module,exports){
-arguments[4][82][0].apply(exports,arguments)
-},{"dup":82,"safe-buffer":118}],160:[function(require,module,exports){
+},{"atob-lite":34,"is-base64":99}],202:[function(require,module,exports){
+arguments[4][116][0].apply(exports,arguments)
+},{"dup":116,"safe-buffer":160}],203:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('rxjs-interop'), require('@babel/runtime/helpers/defineProperty')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'rxjs-interop', '@babel/runtime/helpers/defineProperty'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.subscribableThings = {}, global.rxjsInterop, global._defineProperty));
+})(this, (function (exports, rxjsInterop, _defineProperty) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _defineProperty__default = /*#__PURE__*/_interopDefaultLegacy(_defineProperty);
+
+    var createAnimationFrame = function createAnimationFrame(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function () {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.cancelAnimationFrame === undefined || window.requestAnimationFrame === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var animationFrameHandle = window.requestAnimationFrame(function animationFrameCallback(timestamp) {
+            animationFrameHandle = window.requestAnimationFrame(animationFrameCallback);
+            observer.next(timestamp);
+          });
+          return function () {
+            return window.cancelAnimationFrame(animationFrameHandle);
+          };
+        });
+      };
+    };
+
+    var createGeolocation = function createGeolocation(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (options) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.navigator === undefined || window.navigator.geolocation === undefined || window.navigator.geolocation.clearWatch === undefined || window.navigator.geolocation.watchPosition === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var watchId = window.navigator.geolocation.watchPosition(function (position) {
+            return observer.next(position);
+          }, function (err) {
+            return observer.error(err);
+          }, options);
+          return function () {
+            return window.navigator.geolocation.clearWatch(watchId);
+          };
+        });
+      };
+    };
+
+    var createIntersections = function createIntersections(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (htmlElement, options) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.IntersectionObserver === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var intersectionObserverObserver = new window.IntersectionObserver(function (entries) {
+            return observer.next(entries);
+          }, options);
+
+          try {
+            intersectionObserverObserver.observe(htmlElement);
+          } catch (err) {
+            observer.error(err);
+          }
+
+          return function () {
+            return intersectionObserverObserver.disconnect();
+          };
+        });
+      };
+    };
+
+    var createMediaDevices = function createMediaDevices(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function () {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.navigator === undefined || window.navigator.mediaDevices === undefined || window.navigator.mediaDevices.enumerateDevices === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var isActive = true;
+
+          var enumerateDevices = function enumerateDevices() {
+            window.navigator.mediaDevices.enumerateDevices().then(function (mediaDevices) {
+              if (isActive) {
+                observer.next(mediaDevices);
+              }
+            }, function (err) {
+              if (isActive) {
+                unsubscribe();
+                observer.error(err);
+              }
+            });
+          };
+
+          var unsubscribe = function unsubscribe() {
+            isActive = false;
+            window.navigator.mediaDevices.removeEventListener('devicechange', enumerateDevices);
+          };
+
+          enumerateDevices();
+          window.navigator.mediaDevices.addEventListener('devicechange', enumerateDevices);
+          return unsubscribe;
+        });
+      };
+    };
+
+    var createMediaQueryMatch = function createMediaQueryMatch(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (mediaQueryString) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.matchMedia === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var mediaQueryList = window.matchMedia(mediaQueryString);
+          observer.next(mediaQueryList.matches);
+
+          mediaQueryList.onchange = function () {
+            return observer.next(mediaQueryList.matches);
+          };
+
+          return function () {
+            mediaQueryList.onchange = null;
+          };
+        });
+      };
+    };
+
+    var createMetrics = function createMetrics(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (options) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.PerformanceObserver === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var performanceObserver = new window.PerformanceObserver(function (entryList) {
+            return observer.next(entryList.getEntries());
+          });
+
+          try {
+            performanceObserver.observe(options);
+          } catch (err) {
+            observer.error(err);
+          }
+
+          return function () {
+            return performanceObserver.disconnect();
+          };
+        });
+      };
+    };
+
+    var createMidiInputs = function createMidiInputs(wrapSubscribeFunction) {
+      return function (midiAccess) {
+        return wrapSubscribeFunction(function (observer) {
+          var midiInputs = Array.from(midiAccess.inputs.values());
+
+          var emitMidiInputs = function emitMidiInputs() {
+            var midiAccessInputs = midiAccess.inputs;
+
+            if (midiInputs.length !== midiAccessInputs.size || midiInputs.some(function (_ref) {
+              var id = _ref.id;
+              return !midiAccessInputs.has(id);
+            })) {
+              midiInputs = Array.from(midiAccessInputs.values());
+              observer.next(midiInputs);
+            }
+          };
+
+          observer.next(midiInputs);
+          midiAccess.addEventListener('statechange', emitMidiInputs);
+          return function () {
+            return midiAccess.removeEventListener('statechange', emitMidiInputs);
+          };
+        });
+      };
+    };
+
+    var createMidiOutputs = function createMidiOutputs(wrapSubscribeFunction) {
+      return function (midiAccess) {
+        return wrapSubscribeFunction(function (observer) {
+          var midiOutputs = Array.from(midiAccess.outputs.values());
+
+          var emitMidiOutputs = function emitMidiOutputs() {
+            var midiAccessOutputs = midiAccess.outputs;
+
+            if (midiOutputs.length !== midiAccessOutputs.size || midiOutputs.some(function (_ref) {
+              var id = _ref.id;
+              return !midiAccessOutputs.has(id);
+            })) {
+              midiOutputs = Array.from(midiAccessOutputs.values());
+              observer.next(midiOutputs);
+            }
+          };
+
+          observer.next(midiOutputs);
+          midiAccess.addEventListener('statechange', emitMidiOutputs);
+          return function () {
+            return midiAccess.removeEventListener('statechange', emitMidiOutputs);
+          };
+        });
+      };
+    };
+
+    var createMutations = function createMutations(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (htmlElement, options) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.MutationObserver === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var mutationObserver = new window.MutationObserver(function (records) {
+            return observer.next(records);
+          });
+
+          try {
+            mutationObserver.observe(htmlElement, options);
+          } catch (err) {
+            observer.error(err);
+          }
+
+          return function () {
+            return mutationObserver.disconnect();
+          };
+        });
+      };
+    };
+
+    var createOn = function createOn(wrapSubscribeFunction) {
+      return function (target, type, options) {
+        return wrapSubscribeFunction(function (observer) {
+          var listener = function listener(event) {
+            return observer.next(event);
+          };
+
+          target.addEventListener(type, listener, options);
+          return function () {
+            return target.removeEventListener(type, listener, options);
+          };
+        });
+      };
+    };
+
+    var createOnline = function createOnline(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function () {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.navigator === undefined || window.navigator.onLine === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var emitFalse = function emitFalse() {
+            return observer.next(false);
+          };
+
+          var emitTrue = function emitTrue() {
+            return observer.next(true);
+          };
+
+          window.addEventListener('offline', emitFalse);
+          window.addEventListener('online', emitTrue);
+          observer.next(window.navigator.onLine);
+          return function () {
+            window.removeEventListener('offline', emitFalse);
+            window.removeEventListener('online', emitTrue);
+          };
+        });
+      };
+    };
+
+    var createPermissionState = function createPermissionState(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (permissionDescriptor) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.navigator === undefined || window.navigator.permissions === undefined || window.navigator.permissions.query === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var isActive = true;
+
+          var unsubscribe = function unsubscribe() {
+            isActive = false;
+          };
+
+          window.navigator.permissions.query(permissionDescriptor).then(function (permissionStatus) {
+            if (isActive) {
+              observer.next(permissionStatus.state);
+            }
+
+            if (isActive) {
+              permissionStatus.onchange = function () {
+                return observer.next(permissionStatus.state);
+              };
+
+              unsubscribe = function unsubscribe() {
+                permissionStatus.onchange = null;
+              };
+            }
+          }, function (err) {
+            if (isActive) {
+              observer.error(err);
+            }
+          });
+          return function () {
+            return unsubscribe();
+          };
+        });
+      };
+    };
+
+    var createReports = function createReports(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (options) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.ReportingObserver === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var reportingObserver = new window.ReportingObserver(function (reportList) {
+            return observer.next(reportList);
+          }, options);
+          reportingObserver.observe();
+          return function () {
+            return reportingObserver.disconnect();
+          };
+        });
+      };
+    };
+
+    var createResizes = function createResizes(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (htmlElement, options) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.ResizeObserver === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var resizeObserver = new window.ResizeObserver(function (entries) {
+            return observer.next(entries);
+          });
+
+          try {
+            resizeObserver.observe(htmlElement, options);
+          } catch (err) {
+            observer.error(err);
+          }
+
+          return function () {
+            return resizeObserver.disconnect();
+          };
+        });
+      };
+    };
+
+    var createUnhandledRejection = function createUnhandledRejection(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (coolingOffPeriod) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.clearInterval === undefined || window.setInterval === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var possiblyUnhandledRejections = new Map();
+          var intervalId = null;
+
+          var deletePossiblyUnhandledRejection = function deletePossiblyUnhandledRejection(_ref) {
+            var promise = _ref.promise;
+            return possiblyUnhandledRejections["delete"](promise);
+          };
+
+          var emitUnhandledRejection = function emitUnhandledRejection() {
+            var latestTimestampToEmit = Date.now() - coolingOffPeriod;
+            possiblyUnhandledRejections.forEach(function (_ref2, promise) {
+              var reason = _ref2.reason,
+                  timestamp = _ref2.timestamp;
+
+              if (timestamp > latestTimestampToEmit) {
+                return;
+              }
+
+              possiblyUnhandledRejections["delete"](promise);
+              observer.next(reason);
+            });
+
+            if (intervalId !== null && possiblyUnhandledRejections.size === 0) {
+              window.clearInterval(intervalId);
+              intervalId = null;
+            }
+          };
+
+          var registerPossiblyUnhandledRejection = function registerPossiblyUnhandledRejection(event) {
+            event.preventDefault();
+            possiblyUnhandledRejections.set(event.promise, {
+              reason: event.reason,
+              timestamp: Date.now()
+            });
+
+            if (intervalId === null) {
+              intervalId = window.setInterval(emitUnhandledRejection, coolingOffPeriod / 2);
+            }
+          };
+
+          window.addEventListener('rejectionhandled', deletePossiblyUnhandledRejection);
+          window.addEventListener('unhandledrejection', registerPossiblyUnhandledRejection);
+          return function () {
+            if (intervalId !== null) {
+              window.clearInterval(intervalId);
+            }
+
+            window.removeEventListener('rejectionhandled', deletePossiblyUnhandledRejection);
+            window.removeEventListener('unhandledrejection', registerPossiblyUnhandledRejection);
+          };
+        });
+      };
+    };
+
+    function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+    var createVideoFrame = function createVideoFrame(emitNotSupportedError, wrapSubscribeFunction) {
+      return function (videoElement) {
+        return wrapSubscribeFunction(function (observer) {
+          if (videoElement.cancelVideoFrameCallback === undefined || videoElement.requestVideoFrameCallback === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var videoFrameHandle = videoElement.requestVideoFrameCallback(function videoFrameCallback(now, metadata) {
+            videoFrameHandle = videoElement.requestVideoFrameCallback(videoFrameCallback);
+            observer.next(_objectSpread(_objectSpread({}, metadata), {}, {
+              now: now
+            }));
+          });
+          return function () {
+            return videoElement.cancelVideoFrameCallback(videoFrameHandle);
+          };
+        });
+      };
+    };
+
+    var createWakeLock = function createWakeLock(emitNotSupportedError, window, wrapSubscribeFunction) {
+      return function (type) {
+        return wrapSubscribeFunction(function (observer) {
+          if (window === null || window.navigator === undefined || window.navigator.wakeLock === undefined) {
+            return emitNotSupportedError(observer);
+          }
+
+          var releaseWakeLock = function releaseWakeLock(wakeLockSentinel) {
+            return wakeLockSentinel.release()["catch"](function () {// Ignore errors.
+            });
+          };
+
+          var removeReleaseEventListener = function removeReleaseEventListener(wakeLockSentinel) {
+            wakeLockSentinel.onrelease = null;
+          };
+
+          var isActive = true;
+
+          var unsubscribeWhileRequesting = function unsubscribeWhileRequesting() {
+            isActive = false;
+          };
+
+          var unsubscribe = unsubscribeWhileRequesting;
+
+          var requestWakeLock = function requestWakeLock() {
+            return window.navigator.wakeLock.request(type).then(function (wakeLockSentinel) {
+              if (isActive) {
+                observer.next(true);
+              }
+
+              if (isActive) {
+                wakeLockSentinel.onrelease = function () {
+                  observer.next(false);
+                  unsubscribe = unsubscribeWhileRequesting;
+                  removeReleaseEventListener(wakeLockSentinel);
+                  requestWakeLock();
+                };
+
+                unsubscribe = function unsubscribe() {
+                  removeReleaseEventListener(wakeLockSentinel);
+                  releaseWakeLock(wakeLockSentinel);
+                };
+              } else {
+                releaseWakeLock(wakeLockSentinel);
+              }
+            }, function (err) {
+              if (isActive) {
+                observer.error(err);
+              }
+            });
+          };
+
+          requestWakeLock();
+          return function () {
+            return unsubscribe();
+          };
+        });
+      };
+    };
+
+    // @todo TypeScript does not include type definitions for the Reporting API yet.
+    var createWindow = function createWindow() {
+      return typeof window === 'undefined' ? null : window;
+    };
+
+    var createWrapSubscribeFunction = function createWrapSubscribeFunction(patch, toObserver) {
+      var emptyFunction = function emptyFunction() {}; // tslint:disable-line:no-empty
+
+
+      var isNextFunction = function isNextFunction(args) {
+        return typeof args[0] === 'function';
+      };
+
+      return function (innerSubscribe) {
+        var _subscribe = function subscribe() {
+          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+          }
+
+          var unsubscribe = innerSubscribe(isNextFunction(args) ? toObserver({
+            next: args[0]
+          }) : toObserver.apply(void 0, args));
+
+          if (unsubscribe !== undefined) {
+            return unsubscribe;
+          }
+
+          return emptyFunction;
+        };
+
+        _subscribe[Symbol.observable] = function () {
+          return {
+            subscribe: function subscribe() {
+              return {
+                unsubscribe: _subscribe.apply(void 0, arguments)
+              };
+            }
+          };
+        };
+
+        return patch(_subscribe);
+      };
+    };
+
+    var emitNotSupportedError = function emitNotSupportedError(observer) {
+      observer.error(new Error('The required browser API seems to be not supported.'));
+      return function () {}; // tslint:disable-line:no-empty
+    };
+
+    var window$1 = createWindow();
+    var wrapSubscribeFunction = createWrapSubscribeFunction(rxjsInterop.patch, rxjsInterop.toObserver);
+    var animationFrame = createAnimationFrame(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var geolocation = createGeolocation(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var intersections = createIntersections(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var mediaDevices = createMediaDevices(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var mediaQueryMatch = createMediaQueryMatch(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var metrics = createMetrics(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var midiInputs = createMidiInputs(wrapSubscribeFunction);
+    var midiOutputs = createMidiOutputs(wrapSubscribeFunction);
+    var mutations = createMutations(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var on = createOn(wrapSubscribeFunction);
+    var online = createOnline(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var permissionState = createPermissionState(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var reports = createReports(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var resizes = createResizes(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var unhandledRejection = createUnhandledRejection(emitNotSupportedError, window$1, wrapSubscribeFunction);
+    var videoFrame = createVideoFrame(emitNotSupportedError, wrapSubscribeFunction);
+    var wakeLock = createWakeLock(emitNotSupportedError, window$1, wrapSubscribeFunction);
+
+    exports.animationFrame = animationFrame;
+    exports.geolocation = geolocation;
+    exports.intersections = intersections;
+    exports.mediaDevices = mediaDevices;
+    exports.mediaQueryMatch = mediaQueryMatch;
+    exports.metrics = metrics;
+    exports.midiInputs = midiInputs;
+    exports.midiOutputs = midiOutputs;
+    exports.mutations = mutations;
+    exports.on = on;
+    exports.online = online;
+    exports.permissionState = permissionState;
+    exports.reports = reports;
+    exports.resizes = resizes;
+    exports.unhandledRejection = unhandledRejection;
+    exports.videoFrame = videoFrame;
+    exports.wakeLock = wakeLock;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/defineProperty":9,"rxjs-interop":155}],204:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -26692,7 +43626,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":97,"timers":160}],161:[function(require,module,exports){
+},{"process/browser.js":132,"timers":204}],205:[function(require,module,exports){
 exports.add = add
 exports.has = has
 exports.remove = remove
@@ -26730,7 +43664,7 @@ function swap (list, a, b) {
   list[b._index] = b
 }
 
-},{}],162:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -26801,7 +43735,297 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],163:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('compilerr'), require('@babel/runtime/helpers/defineProperty'), require('fast-unique-numbers')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', 'compilerr', '@babel/runtime/helpers/defineProperty', 'fast-unique-numbers'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.workerFactory = {}, global._asyncToGenerator, global._regeneratorRuntime, global.compilerr, global._defineProperty, global.fastUniqueNumbers));
+})(this, (function (exports, _asyncToGenerator, _regeneratorRuntime, compilerr, _defineProperty, fastUniqueNumbers) { 'use strict';
+
+    function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+    var _asyncToGenerator__default = /*#__PURE__*/_interopDefaultLegacy(_asyncToGenerator);
+    var _regeneratorRuntime__default = /*#__PURE__*/_interopDefaultLegacy(_regeneratorRuntime);
+    var _defineProperty__default = /*#__PURE__*/_interopDefaultLegacy(_defineProperty);
+
+    var JSON_RPC_ERROR_CODES = {
+      INTERNAL_ERROR: -32603,
+      INVALID_PARAMS: -32602,
+      METHOD_NOT_FOUND: -32601
+    };
+    var renderMethodNotFoundError = compilerr.compile({
+      message: 'The requested method called "${method}" is not supported.',
+      status: JSON_RPC_ERROR_CODES.METHOD_NOT_FOUND
+    });
+    var renderMissingResponseError = compilerr.compile({
+      message: 'The handler of the method called "${method}" returned no required result.',
+      status: JSON_RPC_ERROR_CODES.INTERNAL_ERROR
+    });
+    var renderUnexpectedResultError = compilerr.compile({
+      message: 'The handler of the method called "${method}" returned an unexpected result.',
+      status: JSON_RPC_ERROR_CODES.INTERNAL_ERROR
+    });
+    var renderUnknownPortIdError = compilerr.compile({
+      message: 'The specified parameter called "portId" with the given value "${portId}" does not identify a port connected to this worker.',
+      status: JSON_RPC_ERROR_CODES.INVALID_PARAMS
+    });
+
+    var createMessageHandler = function createMessageHandler(receiver, workerImplementation) {
+      return /*#__PURE__*/function () {
+        var _ref2 = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee(_ref) {
+          var _ref$data, id, method, params, messageHandler, response, synchronousResponse, result, _synchronousResponse$, transferables, message, _err$status, status;
+
+          return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _ref$data = _ref.data, id = _ref$data.id, method = _ref$data.method, params = _ref$data.params;
+                  messageHandler = workerImplementation[method];
+                  _context.prev = 2;
+
+                  if (!(messageHandler === undefined)) {
+                    _context.next = 5;
+                    break;
+                  }
+
+                  throw renderMethodNotFoundError({
+                    method: method
+                  });
+
+                case 5:
+                  response = params === undefined ? messageHandler() : messageHandler(params);
+
+                  if (!(response === undefined)) {
+                    _context.next = 8;
+                    break;
+                  }
+
+                  throw renderMissingResponseError({
+                    method: method
+                  });
+
+                case 8:
+                  if (!(response instanceof Promise)) {
+                    _context.next = 14;
+                    break;
+                  }
+
+                  _context.next = 11;
+                  return response;
+
+                case 11:
+                  _context.t0 = _context.sent;
+                  _context.next = 15;
+                  break;
+
+                case 14:
+                  _context.t0 = response;
+
+                case 15:
+                  synchronousResponse = _context.t0;
+
+                  if (!(id === null)) {
+                    _context.next = 21;
+                    break;
+                  }
+
+                  if (!(synchronousResponse.result !== undefined)) {
+                    _context.next = 19;
+                    break;
+                  }
+
+                  throw renderUnexpectedResultError({
+                    method: method
+                  });
+
+                case 19:
+                  _context.next = 25;
+                  break;
+
+                case 21:
+                  if (!(synchronousResponse.result === undefined)) {
+                    _context.next = 23;
+                    break;
+                  }
+
+                  throw renderUnexpectedResultError({
+                    method: method
+                  });
+
+                case 23:
+                  result = synchronousResponse.result, _synchronousResponse$ = synchronousResponse.transferables, transferables = _synchronousResponse$ === void 0 ? [] : _synchronousResponse$;
+                  receiver.postMessage({
+                    id: id,
+                    result: result
+                  }, transferables);
+
+                case 25:
+                  _context.next = 31;
+                  break;
+
+                case 27:
+                  _context.prev = 27;
+                  _context.t1 = _context["catch"](2);
+                  message = _context.t1.message, _err$status = _context.t1.status, status = _err$status === void 0 ? -32603 : _err$status;
+                  receiver.postMessage({
+                    error: {
+                      code: status,
+                      message: message
+                    },
+                    id: id
+                  });
+
+                case 31:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, null, [[2, 27]]);
+        }));
+
+        return function (_x) {
+          return _ref2.apply(this, arguments);
+        };
+      }();
+    };
+
+    // Bug #1: Safari does currently not support to use transferables.
+    var isSupportingTransferables = function isSupportingTransferables() {
+      return new Promise(function (resolve) {
+        var arrayBuffer = new ArrayBuffer(0);
+
+        var _MessageChannel = new MessageChannel(),
+            port1 = _MessageChannel.port1,
+            port2 = _MessageChannel.port2;
+
+        port1.onmessage = function (_ref) {
+          var data = _ref.data;
+          return resolve(data !== null);
+        };
+
+        port2.postMessage(arrayBuffer, [arrayBuffer]);
+      });
+    };
+
+    function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+    function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty__default["default"](target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+    var DESTROY_WORKER_FUNCTIONS = new Map();
+    var extendWorkerImplementation = function extendWorkerImplementation(createWorker, partialWorkerImplementation, isSupportedFunction) {
+      return _objectSpread(_objectSpread({}, partialWorkerImplementation), {}, {
+        connect: function connect(_ref) {
+          var port = _ref.port;
+          port.start();
+          var destroyWorker = createWorker(port, partialWorkerImplementation);
+          var portId = fastUniqueNumbers.generateUniqueNumber(DESTROY_WORKER_FUNCTIONS);
+          DESTROY_WORKER_FUNCTIONS.set(portId, function () {
+            destroyWorker();
+            port.close();
+            DESTROY_WORKER_FUNCTIONS["delete"](portId);
+          });
+          return {
+            result: portId
+          };
+        },
+        disconnect: function disconnect(_ref2) {
+          var portId = _ref2.portId;
+          var destroyWorker = DESTROY_WORKER_FUNCTIONS.get(portId);
+
+          if (destroyWorker === undefined) {
+            throw renderUnknownPortIdError({
+              portId: portId.toString()
+            });
+          }
+
+          destroyWorker();
+          return {
+            result: null
+          };
+        },
+        isSupported: function () {
+          var _isSupported = _asyncToGenerator__default["default"]( /*#__PURE__*/_regeneratorRuntime__default["default"].mark(function _callee() {
+            var isSelfSupported, result, synchronousResult;
+            return _regeneratorRuntime__default["default"].wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _context.next = 2;
+                    return isSupportingTransferables();
+
+                  case 2:
+                    isSelfSupported = _context.sent;
+
+                    if (!isSelfSupported) {
+                      _context.next = 14;
+                      break;
+                    }
+
+                    result = isSupportedFunction();
+
+                    if (!(result instanceof Promise)) {
+                      _context.next = 11;
+                      break;
+                    }
+
+                    _context.next = 8;
+                    return result;
+
+                  case 8:
+                    _context.t0 = _context.sent;
+                    _context.next = 12;
+                    break;
+
+                  case 11:
+                    _context.t0 = result;
+
+                  case 12:
+                    synchronousResult = _context.t0;
+                    return _context.abrupt("return", {
+                      result: synchronousResult
+                    });
+
+                  case 14:
+                    return _context.abrupt("return", {
+                      result: false
+                    });
+
+                  case 15:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          function isSupported() {
+            return _isSupported.apply(this, arguments);
+          }
+
+          return isSupported;
+        }()
+      });
+    };
+
+    var createWorker = function createWorker(receiver, workerImplementation) {
+      var isSupportedFunction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {
+        return true;
+      };
+      var fullWorkerImplementation = extendWorkerImplementation(createWorker, workerImplementation, isSupportedFunction);
+      var messageHandler = createMessageHandler(receiver, fullWorkerImplementation);
+      receiver.addEventListener('message', messageHandler);
+      return function () {
+        return receiver.removeEventListener('message', messageHandler);
+      };
+    };
+
+    exports.createWorker = createWorker;
+    exports.isSupported = isSupportingTransferables;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+
+},{"@babel/runtime/helpers/asyncToGenerator":6,"@babel/runtime/helpers/defineProperty":9,"@babel/runtime/regenerator":24,"compilerr":59,"fast-unique-numbers":69}],208:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
@@ -26836,7 +44060,7 @@ function wrappy (fn, cb) {
   }
 }
 
-},{}],164:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
 module.exports = class MaxCache {
   constructor ({ maxSize, maxAge }) {
     this.maxSize = maxSize
@@ -26937,7 +44161,7 @@ class Iterator {
   }
 }
 
-},{}],165:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 var xsalsa20 = typeof WebAssembly !== "undefined" && require('./xsalsa20')()
 
 var SIGMA = new Uint8Array([101, 120, 112, 97, 110, 100, 32, 51, 50, 45, 98, 121, 116, 101, 32, 107])
@@ -27394,7 +44618,7 @@ function core_hsalsa20(o,p,k,c) {
   o[31] = x9 >>> 24 & 0xff
 }
 
-},{"./xsalsa20":166}],166:[function(require,module,exports){
+},{"./xsalsa20":211}],211:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -27430,7 +44654,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],167:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 (function (process,Buffer){(function (){
 const abf = require('audio-buffer-from')
 const Hypercore = require('hypercore')
@@ -27462,51 +44686,6 @@ class Wavecore {
   static coreOpts() {
     return { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
   }
-  /**
-   * Get new Wavecore from a previously-instantiated hypercore and its parent
-   * Wavecore.
-   * @arg {Wavecore} core - The Hypercore to copy from
-   * @arg {Wavecore} [parent=null] - The Wavecore from which the core derives
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Source} [opts.source=null] - The Source from which the core derives
-   * @returns {Wavecore} newCore - The new Wavecore
-  static fromCore(core, parent, opts = { source: null }) {
-    const { source } = opts
-    if (core instanceof Hypercore) return new this({ core, parent, source })
-  }
-   */
-  /**
-   * Get new Wavecore from a raw audio asset - either its URI string or its
-   * `Source` instance.
-   * @arg {String|Source} rawFile - The raw audio file to copy from
-   * @returns {Wavecore} newCore - The new Wavecore
-  static fromRaw(rawFile, opts = { indexSize: null }) {
-    let source = null
-    const { indexSize } = opts
-
-    if (typeof rawFile == 'string') source = new Source(rawFile)
-    if (rawFile instanceof Source) source = rawFile
-    if (!source) return
-
-    return new this({ source, indexSize })
-  }
-   */
-  /**
-   * Start recording via the `rec` CLI application, then create a new Wavecore
-   * instance from the resulting audio data.
-   * @arg {String} [dur="30:00"] - Duration of the recording to capture
-   * @arg {Object} [opts={}] - Options
-   * @arg {Number} [opts.indexSize=76800] - Size of each index in bytes
-   * @returns {Wavecore}
-  static fromRec(dur = '30:00', opts = { indexSize: null }) {
-    let source = new Source()
-    const { indexSize } = opts
-
-    const newWavecore = new this({ source, indexSize })
-    newWavecore._rec(dur)
-    return newWavecore
-  }
-   */
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
@@ -27662,49 +44841,6 @@ class Wavecore {
     return this.core.sessions
   }
   /**
-   * Get the maximum volume adjustment value for the Wavecore's PCM audio data.
-   * Used by the `norm()` method to ensure the normalized audio does not clip.
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Number} [opts.start=0] - Index from which to start the stream
-   * @arg {Number} [opts.end=-1] - Index where the stream should end.
-   * @returns {Number} vol - The SoX `vol -v` value.
-  _volAdjust(opts = { start: 0, end: -1 }) {
-    const { start, end } = opts
-    return new Promise((resolve, reject) => {
-      const statsCmd = nanoprocess('sox', [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-        '-n',
-        'stat',
-        '-v',
-      ])
-      statsCmd.open((err) => {
-        if (err) throw err
-
-        const statsOut = []
-
-        const pt = new PassThrough()
-        pt.on('data', (d) => statsOut.push(`${d}`))
-
-        statsCmd.on('close', (code) => {
-          if (code !== 0) reject(new Error('Non-zero exit code'))
-          resolve(Number(statsOut.join('')))
-        })
-        statsCmd.stderr.pipe(pt)
-
-        this._rawStream(start, end).pipe(statsCmd.stdin)
-      })
-    })
-  }
-   */
-  /**
    * Append blank data to the tail of the wavecore. If no index count is
    * specified the function will add one index of blank data.
    * @async
@@ -27775,60 +44911,6 @@ class Wavecore {
     }
   }
   /**
-   * Apply gain attenuation or amplification to the Wavecore audio.
-   * @arg {String} g - A string beginning with `+` or `-` indicating gain
-   * operation to perform on the audio, i.e., `+8` or `-2.3`.
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Number} [opts.start=0] - Start index
-   * @arg {Number} [opts.end=-1] - End index
-   * @arg {Boolean} [opts.limiter=false] - Whether to apply a limiter to the
-   * gain function to prevent clipping.
-   * @returns {Wavecore} - New Wavecore with the gain processing applied.
-  async gain(g, opts = { start: 0, end: -1, limiter: false }) {
-    const { start, end, limiter } = opts
-    const rs = this._rawStream(start, end)
-    const cmdOpts = [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-      '-t',
-      'raw',
-      '-',
-      'gain',
-    ]
-    if (limiter) cmdOpts.push('-l')
-    cmdOpts.push(`${g}`)
-
-    const gainCmd = nanoprocess('sox', cmdOpts)
-
-    const prom = new Promise((resolve, reject) => {
-      gainCmd.open((err) => {
-        if (err) reject(err)
-
-        const newGainCore = new Hypercore(ram)
-        const ws = newGainCore.createWriteStream({
-          highWaterMark: this.indexSize,
-        })
-        ws.on('close', () => {
-          newGainCore
-            .update()
-            .then(() => resolve(Wavecore.fromCore(newGainCore, this)))
-        })
-        gainCmd.stdout.pipe(ws)
-        rs.pipe(gainCmd.stdin)
-      })
-    })
-
-    return await Promise.resolve(prom)
-  }
-   */
-  /**
    * Check if the Wavecore has the block at the provided index number.
    * @arg {Number} i - The index number to check for
    * @returns {Boolean} - Does the wavecore have that index?
@@ -27840,188 +44922,6 @@ class Wavecore {
       throw err
     }
   }
-  /**
-   * Listen live to the audio data coming in to the Wavecore. Great way to
-   * monitor the audio inputs or broadcast the content to others.
-  monitor() {
-    const cmdOpts = [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-    ]
-    const playCmd = nanoprocess('play', cmdOpts)
-    playCmd.open((err) => {
-      playCmd.stdout.pipe(process.stdout)
-      this.liveStream.pipe(playCmd.stdin)
-    })
-  }
-   */
-  /**
-   * Normalize the audio data in the Wavecore. Returns a new Wavecore instance.
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Number} [opts.start=0] - Index from which to start the stream
-   * @arg {Number} [opts.end=-1] - Index where the stream should end.
-  async norm(opts = { start: 0, end: -1 }) {
-    const { start, end } = opts
-    try {
-      const vol = await this._volAdjust({ start, end })
-      const normCmd = nanoprocess('sox', [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-        '-t',
-        'raw',
-        '-',
-        'vol',
-        vol,
-      ])
-
-      const rs = this._rawStream(start, end)
-
-      const prom = new Promise((resolve, reject) => {
-        normCmd.open((err) => {
-          if (err) reject(err)
-
-          // TODO figure out why number of indeces higher in new wavecore
-          const newCore = new Hypercore(ram)
-
-          const pt = new PassThrough()
-          pt.on('error', (err) => reject(err))
-          pt.on('data', (d) => newCore.append(d))
-
-          normCmd.on('close', (code) => {
-            if (code !== 0) reject(new Error('Non-zero exit code'))
-            resolve(Wavecore.fromCore(newCore, this))
-          })
-          normCmd.stdout.pipe(pt)
-
-          rs.pipe(normCmd.stdin)
-        })
-      })
-      return await Promise.resolve(prom)
-    } catch (err) {
-      throw err
-    }
-  }
-   */
-  /**
-   * Reads the source WAV into the class instance's Hypercore v10.
-   * @async
-   * @arg {Object} [opts={}] - Options object.
-   * @arg {Source} [opts.source=null] - Declare a `Source` before loading.
-   * @returns {Hypercore} - The Hypercore v10 data structure
-   * @see {@link https://github.com/hypercore-protocol/hypercore|Hypercore}
-  async open(opts = { source: null }) {
-    const { source } = opts
-    if (this.core.length > 0 && this.core.opened) return
-    if (source instanceof Source) this.source = Source.from(source)
-    try {
-      await this.core.ready()
-      this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
-
-      for await (const block of fs.createReadStream(this.source.pathname, {
-        highWaterMark: this.indexSize,
-      })) {
-        await this.core.append(block)
-      }
-
-      await this.core.update()
-      return this.core
-    } catch (err) {
-      throw err
-    }
-  }
-   */
-  /**
-   * Play the raw Wavecore PCM audio via a nanoprocess
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Number} [opts.start=0] - Start index
-   * @arg {Number} [opts.end=-1] - End index
-   * @arg {nanoprocess} [opts.np=null] - Declare a custom nanoprocess for playback
-   * @see {@link https://github.com/little-core-labs/nanoprocess nanoprocess}
-  play(opts = { start: 0, end: -1, np: null }) {
-    const { np, start, end } = opts
-
-    let proc = null
-
-    if (np) {
-      proc = np
-    } else {
-      proc = nanoprocess('play', [
-        '-r',
-        '48000',
-        '-b',
-        '16',
-        '-e',
-        'signed',
-        '-t',
-        'raw',
-        '-',
-      ])
-    }
-
-    if (!proc) throw new Error('nanoprocess didnt work wtf')
-    const rs = this._rawStream(start, end)
-
-    proc.open((err) => {
-      if (err) throw err
-      rs.on('end', () => console.log('ended'))
-      proc.stderr.pipe(process.stderr)
-      proc.stdout.pipe(process.stdout)
-      rs.pipe(proc.stdin)
-    })
-  }
-   */
-  /** Record into the Wavecore via the `rec` CLI application.
-   * @arg {String} [dur="30:00"] - Duration string for recording; defaults to
-   * 30min.
-  async _rec(dur = '30:00') {
-    const cmdOpts = [
-      '-r',
-      '48000',
-      '-c',
-      '1',
-      '-b',
-      '16',
-      '-e',
-      'signed-integer',
-      '-t',
-      'raw',
-      '-',
-      'trim',
-      '0',
-      `${dur}`,
-    ]
-    const recCmd = nanoprocess('rec', cmdOpts)
-    const prom = new Promise((resolve, reject) => {
-      recCmd.open((err) => {
-        if (err) reject(err)
-
-        recCmd.on('close', (code) => {
-          if (code !== 0) reject(new Error('Non-Zero exit code!', code))
-
-          this.core.update().then(() => resolve())
-        })
-
-        recCmd.stdout.pipe(this.core.createWriteStream())
-      })
-    })
-
-    await Promise.resolve(prom)
-  }
-   */
   /**
    * Record a stream of data into the Wavecore's hypercore.
    * @arg {Stream} st - The stream to record into the Wavecore.
@@ -28119,58 +45019,6 @@ class Wavecore {
     })
   }
   /**
-   * Runs `sox -n stats` on the raw audio in the Wavecore, via a nanoprocess.
-   * @async
-   * @arg {Object} [opts={}] - Optional opts object for declaring index
-   * @arg {Number} [opts.index=null] - Declare index to get stats on
-   * @returns {String} statsOut - The string of stats information returned by
-   * SoX
-  async stats(opts = { index: null }) {
-    const { index } = opts
-    const statsCmd = nanoprocess('sox', [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-      '-n',
-      'stats',
-      'stat',
-    ])
-
-    const statsOut = []
-
-    const pt = new PassThrough()
-    pt.on('data', (d) => statsOut.push(`${d}`))
-    const prom = new Promise((resolve, reject) => {
-      statsCmd.open((err) => {
-        if (err) throw err
-
-        statsCmd.on('close', (code) => {
-          if (code !== 0) reject(new Error('Non-zero exit code'))
-          resolve(statsOut.join(''))
-        })
-        statsCmd.stderr.pipe(pt)
-
-        let rs = null
-
-        if (index !== null) {
-          rs = this._rawStream(index, index + 1)
-        } else {
-          rs = this.core.createReadStream()
-        }
-
-        rs.pipe(statsCmd.stdin)
-      })
-    })
-    return await Promise.resolve(prom)
-  }
-   */
-  /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
    * @arg {String} id - The four-character RIFF tag ID
    * @arg {String} value - The string value to assign the RIFF tag.
@@ -28185,61 +45033,6 @@ class Wavecore {
       return err
     }
   }
-  /**
-   * Increase or decrease playback speed of audio samples, without changing the
-   * pitch of the audio itself. Returns a new Wavecore containing the
-   * time-stretched samples.
-   * @arg {Float} f - The new tempo factor. 0.9 = slow down by 10%; 1.1 = faster
-   * by 10%.
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Boolean} [opts.stats=false] - Whether to also get SoX stats on the
-   * time-stretched audio data. Currently these stats are output to `stdout`.
-   * Useful for getting the new Wavecore's audio duration.
-   * @returns {Wavecore} stretchedCore - The new time-stretched Wavecore.
-  async tempo(f, opts = { stats: false }) {
-    const { stats } = opts
-    const cmdOpts = [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-      '-t',
-      'raw',
-      '-',
-      'tempo',
-      '-s',
-      `${f}`,
-    ]
-    if (stats) cmdOpts.push('stats')
-    const tempoCmd = nanoprocess('sox', cmdOpts)
-    const prom = new Promise((resolve, reject) => {
-      tempoCmd.open((err) => {
-        if (err) throw err
-
-        const newCore = new Hypercore(ram)
-
-        const pt = new PassThrough()
-        pt.on('data', (d) => newCore.append(d))
-
-        tempoCmd.on('close', (code) => {
-          if (code !== 0) reject(new Error('Non-zero exit code'))
-          resolve(Wavecore.fromCore(newCore, this))
-        })
-        tempoCmd.stdout.pipe(pt)
-        if (stats) tempoCmd.stderr.pipe(process.stdout)
-
-        let rs = this._rawStream()
-        rs.pipe(tempoCmd.stdin)
-      })
-    })
-    return await Promise.resolve(prom)
-  }
-   */
   /**
    * Truncate the Hypercore to a shorter length.
    * @async
@@ -28256,92 +45049,9 @@ class Wavecore {
     await this.core.truncate(length)
     return
   }
-  /**
-   * Runs `sox vad` on the Wavecore audio. Trims excessive silence from the
-   * front of voice recordings.
-   * @returns {Wavecore}
-  async vad() {
-    const cmdOpts = [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-      '-t',
-      'raw',
-      '-',
-      'vad',
-    ]
-    const cmd = nanoprocess('sox', cmdOpts)
-    const newCore = new Hypercore(ram)
-    const normCore = await this.norm()
-    const prom = new Promise((resolve, reject) => {
-      cmd.open((err) => {
-        if (err) reject(err)
-
-        cmd.on('close', (code) => {
-          if (code !== 0) reject(new Error('Non-zero exit!', code))
-          resolve(Wavecore.fromCore(newCore, this))
-        })
-
-        cmd.stdout.pipe(newCore.createWriteStream())
-        normCore._rawStream().pipe(cmd.stdin)
-      })
-    })
-    return await Promise.resolve(prom)
-  }
-   */
-  /**
-   * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file. Requires
-   * `sox` in PATH.
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Boolean} [opts.store=false] - Whether to store the wav as a buffer in
-   * the Wavecore class instance.
-   * @returns {Buffer} wavBuf - WAV file Buffer
-  async wav(opts = { store: false }) {
-    const { store } = opts
-    const bufs = []
-    const pt = new PassThrough()
-    pt.on('error', (err) => reject(err))
-    pt.on('data', (d) => bufs.push(d))
-    const soxCmd = nanoprocess('sox', [
-      '-r',
-      '48000',
-      '-b',
-      '16',
-      '-e',
-      'signed',
-      '-t',
-      'raw',
-      '-',
-      '-t',
-      'wav',
-      '-',
-    ])
-    const np = new Promise((resolve, reject) => {
-      soxCmd.open((err) => {
-        if (err) reject(err)
-
-        soxCmd.on('close', (code) => {
-          const wavBuf = Buffer.concat(bufs)
-          if (store) this.wavBuffer = wavBuf
-          resolve(wavBuf)
-        })
-        soxCmd.stdout.pipe(pt)
-        const rs = this.core.createReadStream()
-        rs.pipe(soxCmd.stdin)
-      })
-    })
-    return await Promise.resolve(np)
-  }
-   */
 }
 
 module.exports = Wavecore
 
 }).call(this)}).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":97,"audio-buffer-from":12,"buffer":30,"hypercore":43,"hyperswarm":58,"multistream":83,"random-access-memory":100,"stream":156}]},{},[1]);
+},{"_process":132,"audio-buffer-from":35,"buffer":55,"hypercore":74,"hyperswarm":89,"multistream":118,"random-access-memory":135,"stream":199}]},{},[1]);

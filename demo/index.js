@@ -25,7 +25,7 @@ async function main() {
   console.log(s)
   const wave = new Wavecore()
   console.log(wave)
-  const stream = recorder(s, {interval:800})
+  const stream = recorder(s)
   stream.on('data', d => console.log('data', d))
   wave.recStream(stream)
 
