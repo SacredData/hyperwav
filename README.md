@@ -120,7 +120,53 @@ const waveStream = wavecore._liveStream()
 // Consume this ReadableStream to listen to the audio as it gets recorded into
 // the Wavecore!
 ```
-### Splitting Audio
+### Editing Operations
+#### Editing Sessions & Snapshots
+Here we make a snapshot of our Wavecore so we can test out an edit to the WAV
+audio. By using our new session to test the edit we leave the original Wavecore
+audio in-tact, enabling non-destructive editing with no additional memory
+allocation necessary!
+```js
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test/test.wav.raw')
+
+const wave = new Wavecore({ source })
+await wave.open()
+
+const snapshot = wave.snapshot()
+await wave.truncate(10)
+
+console.log(wave.core.length) // 10
+console.log(snapshot.core.length) // 58
+```
+#### Trimming Audio
+##### Trim From Beginning
+The following trims a Wavecore to start on the 20th index.
+```js
+const { Source } = require('@storyboard-fm/little-media-box')
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test.wav')
+const wave = new Wavecore({ source })
+
+await wave.open()
+console.log(wave.core.length) // 58
+const shiftedCore = await Promise.resolve(wave.shift(20))
+console.log(shiftedCore.length) // 38
+```
+##### Trim From End
+The following truncates a Wavecore to the first 20 indeces.
+```js
+const { Source } = require('@storyboard-fm/little-media-box')
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test.wav')
+const wave = new Wavecore({ source })
+
+await wave.open()
+console.log(wave.core.length) // 58
+await wave.truncate(20)
+console.log(wave.core.length) // 20
+```
+#### Splitting Audio
 
 Execute this script at `example2.js`.
 
@@ -140,52 +186,14 @@ async function main() {
 
 main()
 ```
-### Trimming Audio
-#### Trim From Beginning
-The following trims a Wavecore to start on the 20th index.
-```js
-const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
-const wave = new Wavecore({ source })
-
-await wave.open()
-console.log(wave.core.length) // 58
-const shiftedCore = await Promise.resolve(wave.shift(20))
-console.log(shiftedCore.length) // 38
-```
-#### Trim From End
-The following truncates a Wavecore to the first 20 indeces.
-```js
-const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
-const wave = new Wavecore({ source })
-
-await wave.open()
-console.log(wave.core.length) // 58
-await wave.truncate(20)
-console.log(wave.core.length) // 20
-```
-### Editing Sessions & Snapshots
-Here we make a snapshot of our Wavecore so we can test out an edit to the WAV
-audio. By using our new session to test the edit we leave the original Wavecore
-audio in-tact, enabling non-destructive editing with no additional memory
-allocation necessary!
-```js
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test/test.wav.raw')
-
-const wave = new Wavecore({ source })
-await wave.open()
-
-const snapshot = wave.snapshot()
-await wave.truncate(10)
-
-console.log(wave.core.length) // 10
-console.log(snapshot.core.length) // 58
-```
 ### Signal Processing
+#### Gain (+ Limiting)
+> Increase gain by +6dBFS and add a limiter to prevent clipping
+```js
+const wave = new Wavecore({ source })
+await wave.open()
+const gainUp = await wave.gain('+6', {limiter:true})
+```
 #### Normalization
 > Increase gain so that the peak dBFS value = 0
 ```js

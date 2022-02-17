@@ -248,49 +248,8 @@ const waveStream = wavecore._liveStream()
 // Consume this ReadableStream to listen to the audio as it gets recorded into
 // the Wavecore!
 </code></pre>
-<h3>Splitting Audio</h3>
-<p>Execute this script at <code>example2.js</code>.</p>
-<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('.')
-
-const source = new Source('./test/test.wav')
-const w = new Wavecore({ source })
-
-async function main() {
-  await w.open()
-  console.log('splitting Wavecore at index 22....')
-  const [head, tail] = await w.split(22)
-  console.log('done!', head, tail)
-}
-
-main()
-</code></pre>
-<h3>Trimming Audio</h3>
-<h4>Trim From Beginning</h4>
-<p>The following trims a Wavecore to start on the 20th index.</p>
-<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
-const wave = new Wavecore({ source })
-
-await wave.open()
-console.log(wave.core.length) // 58
-const shiftedCore = await Promise.resolve(wave.shift(20))
-console.log(shiftedCore.length) // 38
-</code></pre>
-<h4>Trim From End</h4>
-<p>The following truncates a Wavecore to the first 20 indeces.</p>
-<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
-const wave = new Wavecore({ source })
-
-await wave.open()
-console.log(wave.core.length) // 58
-await wave.truncate(20)
-console.log(wave.core.length) // 20
-</code></pre>
-<h3>Editing Sessions &amp; Snapshots</h3>
+<h3>Editing Operations</h3>
+<h4>Editing Sessions &amp; Snapshots</h4>
 <p>Here we make a snapshot of our Wavecore so we can test out an edit to the WAV
 audio. By using our new session to test the edit we leave the original Wavecore
 audio in-tact, enabling non-destructive editing with no additional memory
@@ -307,7 +266,57 @@ await wave.truncate(10)
 console.log(wave.core.length) // 10
 console.log(snapshot.core.length) // 58
 </code></pre>
+<h4>Trimming Audio</h4>
+<h5>Trim From Beginning</h5>
+<p>The following trims a Wavecore to start on the 20th index.</p>
+<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test.wav')
+const wave = new Wavecore({ source })
+
+await wave.open()
+console.log(wave.core.length) // 58
+const shiftedCore = await Promise.resolve(wave.shift(20))
+console.log(shiftedCore.length) // 38
+</code></pre>
+<h5>Trim From End</h5>
+<p>The following truncates a Wavecore to the first 20 indeces.</p>
+<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
+const Wavecore = require('@storyboard-fm/wavecore')
+const source = new Source('./test.wav')
+const wave = new Wavecore({ source })
+
+await wave.open()
+console.log(wave.core.length) // 58
+await wave.truncate(20)
+console.log(wave.core.length) // 20
+</code></pre>
+<h4>Splitting Audio</h4>
+<p>Execute this script at <code>example2.js</code>.</p>
+<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
+const Wavecore = require('.')
+
+const source = new Source('./test/test.wav')
+const w = new Wavecore({ source })
+
+async function main() {
+  await w.open()
+  console.log('splitting Wavecore at index 22....')
+  const [head, tail] = await w.split(22)
+  console.log('done!', head, tail)
+}
+
+main()
+</code></pre>
 <h3>Signal Processing</h3>
+<h4>Gain (+ Limiting)</h4>
+<blockquote>
+<p>Increase gain by +6dBFS and add a limiter to prevent clipping</p>
+</blockquote>
+<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+await wave.open()
+const gainUp = await wave.gain('+6', {limiter:true})
+</code></pre>
 <h4>Normalization</h4>
 <blockquote>
 <p>Increase gain so that the peak dBFS value = 0</p>
