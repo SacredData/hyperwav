@@ -256,8 +256,18 @@ describe('Wavecore', function () {
     it('should get the max volume adjustment without clipping', async function () {
       await Promise.resolve(core27.open())
       const vol = await core27._volAdjust()
-      console.log(vol)
       expect(vol).to.equal(1.076)
+    })
+  })
+  describe('#concat', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core30 = new Wavecore({ source })
+    it('should concat the cores to the source and make a new wavecore', async function () {
+      await Promise.resolve(core30.open())
+      const splits = await core30.split(20)
+      const concatCore = await core30.concat(splits)
+      expect(concatCore).to.not.equal(null) &&
+        expect(concatCore.length).to.equal(114)
     })
   })
   describe('#norm', function () {
