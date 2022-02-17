@@ -861,7 +861,7 @@ class Wavecore {
       '-t',
       'raw',
       '-',
-      'vad'
+      'vad',
     ]
     const cmd = nanoprocess('sox', cmdOpts)
     const newCore = new Hypercore(ram)
@@ -871,7 +871,7 @@ class Wavecore {
         if (err) reject(err)
 
         cmd.on('close', (code) => {
-          if (code !==0) reject(new Error('Non-zero exit!', code))
+          if (code !== 0) reject(new Error('Non-zero exit!', code))
           resolve(Wavecore.fromCore(newCore, this))
         })
 
