@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2022-02-17
+### Changed
+- nextZero method to accept a seek return value
+
 ## [0.1.1] - 2022-02-17
 ### Added
 - vad method for removing excessive silences
@@ -54,7 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.9...v0.1.0
 [0.0.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.8...v0.0.9
