@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2022-02-17
+### Added
+- vad method for removing excessive silences
+
 ## [0.1.0] - 2022-02-16
 ### Changed
 - volume adjustment and normalization methods to allow for a custom range of indeces to process, rather than the entire wavecore
@@ -50,7 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.9...v0.1.0
 [0.0.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/Storyboard-fm/wavecore/compare/v0.0.7...v0.0.8

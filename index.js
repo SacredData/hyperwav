@@ -843,6 +843,45 @@ class Wavecore {
     return
   }
   /**
+   * Runs `sox vad` on the Wavecore audio. Trims excessive silence from the
+   * front of voice recordings.
+   * @returns {Wavecore}
+   */
+  async vad() {
+    const cmdOpts = [
+      '-r',
+      '48000',
+      '-b',
+      '16',
+      '-e',
+      'signed',
+      '-t',
+      'raw',
+      '-',
+      '-t',
+      'raw',
+      '-',
+      'vad'
+    ]
+    const cmd = nanoprocess('sox', cmdOpts)
+    const newCore = new Hypercore(ram)
+    const normCore = await this.norm()
+    const prom = new Promise((resolve, reject) => {
+      cmd.open((err) => {
+        if (err) reject(err)
+
+        cmd.on('close', (code) => {
+          if (code !==0) reject(new Error('Non-zero exit!', code))
+          resolve(Wavecore.fromCore(newCore, this))
+        })
+
+        cmd.stdout.pipe(newCore.createWriteStream())
+        normCore._rawStream().pipe(cmd.stdin)
+      })
+    })
+    return await Promise.resolve(prom)
+  }
+  /**
    * Returns a `Promise` which resolves a `Buffer` of a PCM WAV file. Requires
    * `sox` in PATH.
    * @arg {Object} [opts={}] - Optional options object

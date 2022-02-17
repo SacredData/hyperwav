@@ -280,6 +280,15 @@ describe('Wavecore', function () {
         expect(concatCore.length).to.equal(114)
     })
   })
+  describe('#vad', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core32 = new Wavecore({ source })
+    it('should remove excessive silence from the recording', async function () {
+      await Promise.resolve(core32.open())
+      const vadCore = await core32.vad()
+      expect(vadCore.core.byteLength).to.equal(4298156)
+    })
+  })
   describe('#norm', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core28 = new Wavecore({ source })
