@@ -209,6 +209,14 @@ occur on each channel of audio without worrying about data interleaving.</p>
 <h2>Examples</h2>
 <h3>Recording Into A Wavecore</h3>
 <h4><a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder"><code>MediaRecorder</code></a></h4>
+<h5>Stream-based</h5>
+<pre class="prettyprint source lang-js"><code>const mr = new MediaRecorder(stream)
+const wave = new Wavecore()
+wave.recStream(mr.stream)
+// Optionally, monitor the Wavecore's input as it streams in:
+// wave.monitor()
+</code></pre>
+<h5>Event-based</h5>
 <pre class="prettyprint source lang-js"><code>const core = new Hypercore(ram)
 mediaRecorder.onstop = function() {
   const wave = new Wavecore({ core })

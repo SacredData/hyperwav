@@ -78,6 +78,15 @@ occur on each channel of audio without worrying about data interleaving.
 ## Examples
 ### Recording Into A Wavecore
 #### [`MediaRecorder`][mr]
+##### Stream-based
+```js
+const mr = new MediaRecorder(stream)
+const wave = new Wavecore()
+wave.recStream(mr.stream)
+// Optionally, monitor the Wavecore's input as it streams in:
+// wave.monitor()
+```
+##### Event-based
 ```js
 const core = new Hypercore(ram)
 mediaRecorder.onstop = function() {
