@@ -626,10 +626,18 @@ class Wavecore {
    * @arg {Number} byteOffset - Number of bytes to seek from beginning of file
    * @returns {Array} seekData - `[index, relativeOffset]`
    */
-  async seek(byteOffset) {
+  async seek(byteOffset, opts={ zero: false}) {
     try {
+      const sa = []
       const [index, relativeOffset] = await this.core.seek(byteOffset)
-      return [index, relativeOffset]
+      sa.push(index, relativeOffset)
+      if (opts.zero) {
+        const zeroCross = await this._nextZero(byteOffset)
+        const bs = (zeroCross[0] * this.indexSize) + zeroCross[1]
+        sa.push(bs)
+      }
+      return sa
+      // return [index, relativeOffset]
     } catch (err) {
       console.error(err)
       return
