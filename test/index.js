@@ -60,12 +60,16 @@ describe('Wavecore', function () {
   })
   describe('#seek', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
+    const core6 = new Wavecore({ source })
     it('should provide index and relative offset values', async function () {
-      const core6 = new Wavecore({ source })
       await Promise.resolve(core6.open())
       const [index, relative] = await core6.seek(20000)
       expect(index).to.equal(0) &&
         expect(relative).to.equal(20000)
+    })
+    it('should provide the next zeroCrossing', async function () {
+      const [index, relative, byteOffset] = await core6.seek(20000, {zero:true})
+      expect(byteOffset).to.equal(20001)
     })
   })
   describe('#_fileBuffer', function () {
@@ -306,6 +310,15 @@ describe('Wavecore', function () {
       await Promise.resolve(core29.open())
       const ls = core29.liveStream
       expect(ls).to.be.instanceof(Object).that.has.any.key('live')
+    })
+  })
+  describe('#tag', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core33 = new Wavecore({ source })
+    it('should allow user to write a RIFF tag to the core', async function () {
+      await Promise.resolve(core33.open())
+      core33.tag('TEST', '1234')
+      expect(core33.tags.size).to.equal(1)
     })
   })
 })
