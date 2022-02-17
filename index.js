@@ -604,7 +604,9 @@ class Wavecore {
           this.core.update().then(() => resolve())
         })
 
-        recCmd.stdout.pipe(this.core.createWriteStream({ highWaterMark: this.indexSize }))
+        recCmd.stdout.pipe(
+          this.core.createWriteStream({ highWaterMark: this.indexSize })
+        )
       })
     })
 
@@ -885,7 +887,9 @@ class Wavecore {
           resolve(Wavecore.fromCore(newCore, this))
         })
 
-        cmd.stdout.pipe(newCore.createWriteStream({ highWaterMark: this.indexSize }))
+        cmd.stdout.pipe(
+          newCore.createWriteStream({ highWaterMark: this.indexSize })
+        )
         normCore._rawStream().pipe(cmd.stdin)
       })
     })
