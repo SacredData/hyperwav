@@ -148,7 +148,6 @@ describe('Wavecore', function () {
       await Promise.resolve(core31.open())
       const gainInc = await core31.gain(2)
       const gainStats = await gainInc.stats()
-      console.log(gainInc, gainStats)
       expect(gainStats.split('\n')[3]).to.equal('Pk lev dB       0.00')
     })
   })
