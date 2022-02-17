@@ -141,6 +141,17 @@ describe('Wavecore', function () {
       })
     })
   })
+  describe('#gain', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core31 = new Wavecore({ source })
+    it('should increase gain by 2.0dBFS', async function () {
+      await Promise.resolve(core31.open())
+      const gainInc = await core31.gain(2)
+      const gainStats = await gainInc.stats()
+      console.log(gainInc, gainStats)
+      expect(gainStats.split('\n')[3]).to.equal('Pk lev dB       0.00')
+    })
+  })
   describe('#addBlank', function () {
     const core14 = new Wavecore()
     it('should produce 3 indeces of blank data and append to the end', async function() {
