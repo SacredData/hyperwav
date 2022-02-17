@@ -215,13 +215,15 @@ class Wavecore {
    * audio sample after the specified byte length. Useful to find the correct
    * place to make an audio edit without causing any undesirable audio
    * artifacts.
-   * @arg {Number} byteLength - The byteLength from which to start the search
+   * @arg {Number|Array} byteLength - The byteLength from which to start the search. (Can also be an array as returned by the seek method.)
    * @returns {Array} nextZ - Array containing the index number and relative byte
    * offset of the next zero crossing in the audio data.
    * @see {@link https://en.wikipedia.org/wiki/Zero_crossing|Zero Crossing}
    */
   async _nextZero(b) {
-    const [i, rel] = await this.core.seek(b)
+    let sv = b
+    if (b instanceof Array) sv = (b[0]*this.indexSize) + b[1]
+    const [i, rel] = await this.core.seek(sv)
     const idData = await this.core.get(i)
     const idArr = Array.from(idData)
     const nextZ = idArr.indexOf(0, rel)
