@@ -222,7 +222,7 @@ class Wavecore {
    */
   async _nextZero(b) {
     let sv = b
-    if (b instanceof Array) sv = (b[0]*this.indexSize) + b[1]
+    if (b instanceof Array) sv = b[0] * this.indexSize + b[1]
     const [i, rel] = await this.core.seek(sv)
     const idData = await this.core.get(i)
     const idArr = Array.from(idData)
