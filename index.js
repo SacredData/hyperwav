@@ -69,7 +69,7 @@ class Wavecore {
    * @arg {Number} [opts.indexSize=76800] - Size of each index in bytes
    * @returns {Wavecore}
    */
-  static fromRec(dur = '30:00', opts = { indexSize: null }) {
+  static fromRec(dur = '30:00', opts = { indexSize: 16384 }) {
     let source = new Source()
     const { indexSize } = opts
 
@@ -604,7 +604,7 @@ class Wavecore {
           this.core.update().then(() => resolve())
         })
 
-        recCmd.stdout.pipe(this.core.createWriteStream())
+        recCmd.stdout.pipe(this.core.createWriteStream({ highWaterMark: this.indexSize }))
       })
     })
 
@@ -885,7 +885,7 @@ class Wavecore {
           resolve(Wavecore.fromCore(newCore, this))
         })
 
-        cmd.stdout.pipe(newCore.createWriteStream())
+        cmd.stdout.pipe(newCore.createWriteStream({ highWaterMark: this.indexSize }))
         normCore._rawStream().pipe(cmd.stdin)
       })
     })
