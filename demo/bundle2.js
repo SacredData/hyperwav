@@ -35,13 +35,20 @@ async function main() {
   s.on('data', async (d) => {
     await wave.core.append(d)
   })
-  */
   setTimeout(async () => {
     s.stop()
     console.log(wave)
     const ab = await wave.audioBuffer()
     console.log(ab)
   }, 5000)
+  */
+
+  document.getElementById("stop").onclick = async function () {
+    s.stop()
+    console.log(wave)
+    const ab = await wave.audioBuffer()
+    console.log(ab)
+  }
   /*
   const stream = recorder(s)
   stream.on('data', d => console.log('data', d))
