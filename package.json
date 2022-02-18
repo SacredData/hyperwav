@@ -33,7 +33,8 @@
     "mocha": "^9.1.3",
     "nyc": "^15.1.0",
     "parcel": "^2.2.0",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "random-access-file": "github:random-access-storage/random-access-file"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

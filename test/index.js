@@ -38,6 +38,11 @@ describe('Wavecore', function () {
       const core3 = new Wavecore({ core: hypercore })
       expect(core3).to.be.instanceof(Wavecore)
     })
+    it('should accept a custom random-access-storage interface', async function () {
+      const customStorage = new Wavecore({ storage: new require('random-access-file')('./testy') })
+      console.log(customStorage.storage)
+      expect(customStorage).to.be.instanceof(Wavecore)
+    })
   })
   describe('#open', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
