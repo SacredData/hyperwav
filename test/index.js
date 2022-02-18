@@ -15,6 +15,14 @@ describe('Wavecore', function () {
       expect(newCore).to.be.instanceof(Wavecore)
     })
   })
+  describe('#fromRaw', function () {
+    const source = path.join(__dirname, 'test.wav.raw')
+    it('should construct from a raw file', async function () {
+      const core34 = Wavecore.fromRaw(source)
+      await Promise.resolve(core34.open())
+      expect(core34.length).to.equal(57)
+    })
+  })
   describe('#constructor', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a new instance of a Wavecore', function () {
@@ -135,14 +143,22 @@ describe('Wavecore', function () {
   })
   describe('#split', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
+    const core13 = new Wavecore({ source })
     it('should split at index 20 and return two new Wavecores', async function () {
-      const core13 = new Wavecore({ source })
       await Promise.resolve(core13.open())
       Promise.resolve(await core13.split(20)).then(newCores => {
         expect(newCores).to.be.an('array') &&
           expect(newCores[0].length).to.equal(20) &&
           expect(newCores[1].length).to.equal(38)
       })
+    })
+    it('should reject index numbers greater than its own length', async function (){
+      try {
+        const error = await core13.split(8000)
+        console.log(error, core13)
+      } catch (err) {
+        expect(err).to.not.equal(null)
+      }
     })
   })
   describe('#gain', function () {
