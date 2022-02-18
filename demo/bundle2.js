@@ -36,9 +36,11 @@ async function main() {
     await wave.core.append(d)
   })
   */
-  setTimeout(() => {
+  setTimeout(async () => {
     s.stop()
     console.log(wave)
+    const ab = await wave.audioBuffer()
+    console.log(ab)
   }, 5000)
   /*
   const stream = recorder(s)
@@ -25136,7 +25138,8 @@ class Wavecore {
     const prom = new Promise((resolve, reject) => {
       pt.on('error', (err) => reject(err))
       pt.on('end', () => {
-        const audioBuffer = abf(Buffer.concat(bufs), 'stereo buffer le 48000')
+        // const audioBuffer = abf(Buffer.concat(bufs), 'stereo buffer le 48000')
+        const audioBuffer = abf(Buffer.concat(bufs), 'mono buffer float32 le 44100')
         if (store) this.audioBuffer = audioBuffer
         resolve(audioBuffer)
       })

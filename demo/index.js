@@ -35,9 +35,11 @@ async function main() {
     await wave.core.append(d)
   })
   */
-  setTimeout(() => {
+  setTimeout(async () => {
     s.stop()
     console.log(wave)
+    const ab = await wave.audioBuffer()
+    console.log(ab)
   }, 5000)
   /*
   const stream = recorder(s)
