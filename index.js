@@ -145,7 +145,10 @@ class Wavecore {
     const prom = new Promise((resolve, reject) => {
       pt.on('error', (err) => reject(err))
       pt.on('end', () => {
-        let audioBuffer = abf(Buffer.concat(bufs), 'mono buffer uint16 le 48000')
+        let audioBuffer = abf(
+          Buffer.concat(bufs),
+          'mono buffer uint16 le 48000'
+        )
         if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
         if (store) this.audioBuffer = audioBuffer
         resolve(audioBuffer)
