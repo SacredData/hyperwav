@@ -1,4 +1,5 @@
 const expect = require('chai').expect
+const fs = require('fs')
 const Hypercore = require('hypercore')
 const path = require('path')
 const ram = require('random-access-memory')
@@ -322,6 +323,17 @@ describe('Wavecore', function () {
       const norm = await core28.norm()
       const stats = await norm.stats()
       expect(stats.split('\n')[3]).to.equal('Pk lev dB      -0.00')
+    })
+  })
+  describe('#recStream', function () {
+    const source = path.join(__dirname, 'test.wav.raw')
+    const core35 = new Wavecore()
+    it('should record a readable stream into the hypercore', async function () {
+      const rs = fs.createReadStream(source)
+      rs.on('close', async () => {
+        await core35.core.update()
+        expect(core35.length).to.equal(67)
+      })
     })
   })
   describe('#liveStream', function () {

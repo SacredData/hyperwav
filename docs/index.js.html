@@ -727,6 +727,7 @@ class Wavecore {
     if (!st) return
     const ws = this.core.createWriteStream()
     st.pipe(ws)
+    if (this.source === null) this.source = st
     return
   }
   /**
