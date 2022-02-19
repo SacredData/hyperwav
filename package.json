@@ -15,6 +15,7 @@
   "dependencies": {
     "@storyboard-fm/little-media-box": "github:Storyboard-fm/little-media-box",
     "audio-buffer-from": "^1.1.1",
+    "audio-buffer-utils": "^5.1.2",
     "hypercore": "github:hypercore-protocol/hypercore-next",
     "hyperswarm": "^3.0.1",
     "multistream": "^4.1.0",
