@@ -129,15 +129,15 @@ class Wavecore {
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
    * @arg {Object} [opts={}] - Options object
-   * @arg {Boolean} [opts.dcOffset=false] - Whether to apply DC offset to the
-   * signal
+   * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
+   * signal. (Recommended)
    * @returns {AudioBuffer}
    * @see {@link
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
    * MDN}
    */
-  async audioBuffer(opts = { dcOffset: false, store: false }) {
-    const { dcOffset, store } = opts
+  async audioBuffer(opts = { dcOffset: true, normalize: false, store: false }) {
+    const { dcOffset, normalize, store } = opts
     const bufs = []
     const rs = this.core.createReadStream()
     const pt = new PassThrough()
@@ -150,6 +150,7 @@ class Wavecore {
           'mono buffer uint16 le 48000'
         )
         if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
+        if (normalize) audioBuffer = abu.normalize(audioBuffer)
         if (store) this.audioBuffer = audioBuffer
         resolve(audioBuffer)
       })
