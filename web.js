@@ -28,6 +28,11 @@ class Wavecore {
   static coreOpts() {
     return { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
   }
+  static fromStream(st) {
+    const w = new Wavecore({ source: st })
+    w.recStream(st)
+    return w
+  }
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
@@ -271,9 +276,13 @@ class Wavecore {
    */
   recStream(st) {
     if (!st) return
-    const ws = this.core.createWriteStream()
+    const ws = this.core.createWriteStream({
+      highWaterMark: this.indexSize || INDEX_SIZE
+    })
+    ws.on('close', () => {
+      return
+    })
     st.pipe(ws)
-    return
   }
   /**
    * Returns index and byte position of a byte offset.
