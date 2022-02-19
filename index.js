@@ -1,4 +1,5 @@
 const abf = require('audio-buffer-from')
+const abu = require('audio-buffer-utils')
 const fs = require('fs')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
@@ -127,13 +128,16 @@ class Wavecore {
   /**
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
-   * @returns {Promise} - Promise resolving with the AudioBuffer data
+   * @arg {Object} [opts={}] - Options object
+   * @arg {Boolean} [opts.dcOffset=false] - Whether to apply DC offset to the
+   * signal
+   * @returns {AudioBuffer}
    * @see {@link
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
    * MDN}
    */
-  async audioBuffer(opts = { store: false }) {
-    const { store } = opts
+  async audioBuffer(opts = { dcOffset: false, store: false }) {
+    const { dcOffset, store } = opts
     const bufs = []
     const rs = this.core.createReadStream()
     const pt = new PassThrough()
@@ -141,7 +145,8 @@ class Wavecore {
     const prom = new Promise((resolve, reject) => {
       pt.on('error', (err) => reject(err))
       pt.on('end', () => {
-        const audioBuffer = abf(Buffer.concat(bufs), 'stereo buffer le 48000')
+        let audioBuffer = abf(Buffer.concat(bufs), 'mono buffer uint16 le 48000')
+        if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
         if (store) this.audioBuffer = audioBuffer
         resolve(audioBuffer)
       })
