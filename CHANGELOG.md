@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - normalize and dcOffset DSP options for audiobuffer method
 
+### Fixed
+- incorrect formatting opts made audiobuffer output wrong
+
 ## [0.1.3] - 2022-02-19
 ### Added
 - seek optional argument to return next zero crossing byteOffset
