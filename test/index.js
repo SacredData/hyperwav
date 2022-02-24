@@ -94,6 +94,14 @@ describe('Wavecore', function () {
       const buffer = await core7._fileBuffer()
       expect(buffer).to.be.instanceof(Buffer)
     })
+    it('should fail with no source added', async function () {
+      const core7b = new Wavecore()
+      try {
+        await Promise.resolve(core7.open())
+      } catch (err) {
+        expect(err).to.not.equal(null)
+      }
+    })
   })
   describe('#_rawStream', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
