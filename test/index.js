@@ -347,14 +347,15 @@ describe('Wavecore', function () {
     })
   })
   describe('#recStream', function () {
-    const source = path.join(__dirname, 'test.wav.raw')
-    const core35 = new Wavecore()
     it('should record a readable stream into the hypercore', async function () {
+      const source = path.join(__dirname, 'test.wav.raw')
+      const core35 = new Wavecore()
       const rs = fs.createReadStream(source)
-      rs.on('close', async () => {
+      rs.on('close', async function () {
         await core35.core.update()
         expect(core35.length).to.equal(67)
       })
+      core35.recStream(rs)
     })
   })
   describe('#liveStream', function () {
