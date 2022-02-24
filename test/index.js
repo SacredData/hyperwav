@@ -231,6 +231,19 @@ describe('Wavecore', function () {
       expect(ab).to.be.instanceof(Object) &&
         expect(ab).to.have.property('length')
     })
+    it('should normalize the audio', async function () {
+      const ab1 = await Promise.resolve(core21.audioBuffer({
+        normalize: true
+      }))
+      const ab2 = await Promise.resolve(core21.audioBuffer({
+        normalize: false
+      }))
+      expect(ab1).to.not.equal(ab2)
+    })
+    it('should store the buffer in the class instance', async function () {
+      await Promise.resolve(core21.audioBuffer({ store: true }))
+      expect(core21).to.have.property('audioBuffer')
+    })
   })
   describe('#_nextZero', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
