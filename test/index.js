@@ -41,7 +41,6 @@ describe('Wavecore', function () {
     })
     it('should accept a custom random-access-storage interface', async function () {
       const customStorage = new Wavecore({ storage: new require('random-access-file')('./testy') })
-      console.log(customStorage.storage)
       expect(customStorage).to.be.instanceof(Wavecore)
     })
   })
@@ -169,7 +168,6 @@ describe('Wavecore', function () {
     it('should reject index numbers greater than its own length', async function (){
       try {
         const error = await core13.split(8000)
-        console.log(error, core13)
       } catch (err) {
         expect(err).to.not.equal(null)
       }
@@ -297,6 +295,10 @@ describe('Wavecore', function () {
       const faster = fasterBy200.core.byteLength
       expect(faster).to.equal(orig/2)
     })
+    it('should provide stats', async function () {
+      const statsTest = await core25.tempo(2.0, { stats: true })
+      expect(statsTest.core.byteLength).to.equal(2163478)
+    })
   })
   describe('#stats', function () {
       const source = new Source(path.join(__dirname, 'test.wav'))
@@ -374,6 +376,15 @@ describe('Wavecore', function () {
       await Promise.resolve(core33.open())
       core33.tag('TEST', '1234')
       expect(core33.tags.size).to.equal(1)
+    })
+  })
+  describe('#session', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core36 = new Wavecore({ source })
+    it('should return a new session', async function () {
+      await Promise.resolve(core36.open())
+      const newCore = core36.session()
+      expect(newCore).to.be.instanceof(Hypercore)
     })
   })
 })
