@@ -143,16 +143,19 @@ class Wavecore {
     const pt = new PassThrough()
     pt.on('data', (d) => bufs.push(d))
     const prom = new Promise((resolve, reject) => {
-      pt.on('error', (err) => reject(err))
       pt.on('end', () => {
-        let audioBuffer = abf(
-          Buffer.concat(bufs),
-          'mono buffer uint16 le 48000'
-        )
-        if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
-        if (normalize) audioBuffer = abu.normalize(audioBuffer)
-        if (store) this.audioBuffer = audioBuffer
-        resolve(audioBuffer)
+        try {
+          let audioBuffer = abf(
+            Buffer.concat(bufs),
+            'mono buffer uint16 le 48000'
+          )
+          if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
+          if (normalize) audioBuffer = abu.normalize(audioBuffer)
+          if (store) this.audioBuffer = audioBuffer
+          resolve(audioBuffer)
+        } catch (err) {
+          reject(err)
+        }
       })
       rs.pipe(pt)
     })
