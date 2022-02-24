@@ -54,6 +54,14 @@ describe('Wavecore', function () {
         expect(core4.core.length).to.equal(57)
     })
   })
+  describe('#has', function () {
+    const core37 = new Wavecore()
+    it('should have index 1', async function () {
+      await core37.addBlank(3)
+      const has = await core37.has(1)
+      expect(has).to.equal(true)
+    })
+  })
   describe('#truncate', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should truncate the hypercore', async function () {
