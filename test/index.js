@@ -201,6 +201,10 @@ describe('Wavecore', function () {
       await core14.addBlank()
       expect(core14.core.length).to.equal(4)
     })
+    it('should not add anything when n=0', async function () {
+      await core14.addBlank(0)
+      expect(core14.core.length).to.equal(4)
+    })
   })
   describe('#append', async function () {
     const core15 = new Wavecore()
