@@ -78,6 +78,20 @@ describe('Wavecore', function () {
         expect(core5b.sessions[1].length).to.equal(57) &&
         expect(core5b.sessions.length).to.equal(2)
     })
+    it('should not succeed if new length is greater than old length', async function () {
+      const core5c = new Wavecore()
+      try {
+        await core5c.truncate(2)
+      } catch (err) {
+        expect(err).to.not.equal(null)
+      }
+    })
+    it('should not accept a non-number', async function () {
+      let results = null
+      const core5d = new Wavecore()
+      results = await core5d.truncate('hello')
+      expect(results).to.be.undefined
+    })
   })
   describe('#seek', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
