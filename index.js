@@ -311,6 +311,7 @@ class Wavecore {
    * @arg {Number} [n] - Number of indeces of blank data to append.
    */
   async addBlank(n) {
+    if (n == 0) return
     try {
       let counter = n || 1
       while (counter > 0) {
