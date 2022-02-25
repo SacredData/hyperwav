@@ -267,9 +267,12 @@ describe('Wavecore', function () {
       const nzArr = await Promise.resolve(core22._nextZero(741444))
       expect(nzArr).to.be.instanceof(Array).that.includes(9).that.includes(50365)
     })
+    it('should accept a seek() return value', async function () {
+      const seekVal = await core22.seek(741444)
+      const nz = await core22._nextZero(seekVal)
+      expect(nz).to.be.instanceof(Array)
+    })
   })
-  // TODO fix these tests on GitHub Actions runner
-  // Gotta install SoX somehow on that environment and put it in PATH
   describe('#wav', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core23 = new Wavecore({ source })
