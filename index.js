@@ -942,6 +942,7 @@ class Wavecore {
         if (err) reject(err)
 
         soxCmd.on('close', (code) => {
+          if (code !== 0) reject(new Error('Non-Zero exit-code!', code))
           const wavBuf = Buffer.concat(bufs)
           if (store) this.wavBuffer = wavBuf
           resolve(wavBuf)
