@@ -55,7 +55,11 @@ async function main() {
     const s2 = audioCtx.createBufferSource()
     s1.buffer = ab
     s2.buffer = abProc
-    s2.connect(audioCtx.destination)
+    var hp = audioCtx.createBiquadFilter()
+    hp.type = "highpass"
+    hp.frequency.setValueAtTime(3000, audioCtx.currentTime)
+    hp.connect(audioCtx.destination)
+    s2.connect(hp)
     s2.start()
   }
   /*

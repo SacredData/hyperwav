@@ -1,11 +1,6 @@
 const Wavecore = require('../web')
 const MicrophoneStream = require('microphone-stream').default
 
-/*
-function stopRec() {
-  mr.stop()
-}
-*/
 
 async function getMedia(constraints) {
   let stream = null;
@@ -16,7 +11,6 @@ async function getMedia(constraints) {
     stream = await navigator.mediaDevices.getUserMedia(constraints)
     micStream.setStream(stream)
     return micStream
-    // return stream
   } catch(err) {
     console.error(err)
   }
@@ -30,17 +24,6 @@ async function main() {
   const s = await getMedia({audio:true,video:false})
   console.log(s)
   wave.recStream(s)
-  /*
-  s.on('data', async (d) => {
-    await wave.core.append(d)
-  })
-  setTimeout(async () => {
-    s.stop()
-    console.log(wave)
-    const ab = await wave.audioBuffer()
-    console.log(ab)
-  }, 5000)
-  */
 
   document.getElementById("stop").onclick = async function () {
     s.stop()
@@ -54,22 +37,14 @@ async function main() {
     const s2 = audioCtx.createBufferSource()
     s1.buffer = ab
     s2.buffer = abProc
-    s2.connect(audioCtx.destination)
+    var hp = audioCtx.createBiquadFilter()
+    hp.type = "highpass"
+    hp.frequency.setValueAtTime(70, audioCtx.currentTime)
+    hp.connect(audioCtx.destination)
+    s2.connect(hp)
     s2.start()
   }
-  /*
-  const stream = recorder(s)
-  stream.on('data', d => console.log('data', d))
-  wave.recStream(stream)
-
-  setTimeout(() => {
-    stream.recorder.stop()
-    console.log('stopped')
-    console.log(wave, wave.core)
-  }, 3000)
-  */
 }
-//main()
 
 document.getElementById("start").onclick = async function () {
   main()
