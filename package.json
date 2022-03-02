@@ -4,7 +4,7 @@
   "description": " Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
-    "build": "node_modules/.bin/browserify index.js -o demo/bundle.js",
+    "build": "node_modules/.bin/browserify ./demo/index.js -o bundle.js",
     "docs": "node_modules/.bin/jsdoc --configure jsdoc.json --verbose",
     "lint": "node_modules/.bin/prettier -w index.js",
     "make-badges": "istanbul-badges-readme",
@@ -23,6 +23,7 @@
     "random-access-memory": "^4.0.0"
   },
   "devDependencies": {
+    "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "chai": "^4.3.4",
     "eslint": "^8.6.0",
@@ -31,6 +32,7 @@
     "istanbul-badges-readme": "^1.8.1",
     "jsdoc": "^3.6.7",
     "jsdoc-template": "github:braintree/jsdoc-template",
+    "microphone-stream": "^6.0.1",
     "mocha": "^9.1.3",
     "nyc": "^15.1.0",
     "parcel": "^2.2.0",
