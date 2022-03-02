@@ -1,4 +1,5 @@
 const abf = require('audio-buffer-from')
+const abu = require('audio-buffer-utils')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
@@ -87,8 +88,8 @@ class Wavecore {
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
    * MDN}
    */
-  async audioBuffer(opts = { store: false }) {
-    const { store } = opts
+  async audioBuffer(opts = { dcOffset: true, normalize: false, store: false }) {
+    const { dcOffset, normalize, store } = opts
     const bufs = []
     const rs = this.core.createReadStream()
     const pt = new PassThrough()
@@ -96,8 +97,9 @@ class Wavecore {
     const prom = new Promise((resolve, reject) => {
       pt.on('error', (err) => reject(err))
       pt.on('end', () => {
-        // const audioBuffer = abf(Buffer.concat(bufs), 'stereo buffer le 48000')
-        const audioBuffer = abf(Buffer.concat(bufs), 'mono buffer float32 le 44100')
+        let audioBuffer = abf(Buffer.concat(bufs), 'mono buffer float32 le 44100')
+        if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
+        if (normalize) audioBuffer = abu.normalize(audioBuffer)
         if (store) this.audioBuffer = audioBuffer
         resolve(audioBuffer)
       })

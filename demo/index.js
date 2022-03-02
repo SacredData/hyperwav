@@ -45,8 +45,17 @@ async function main() {
   document.getElementById("stop").onclick = async function () {
     s.stop()
     console.log(wave)
-    const ab = await wave.audioBuffer()
-    console.log(ab)
+    const ab = await wave.audioBuffer({dcOffset: false})
+    const abProc = await wave.audioBuffer({dcOffset: true, normalize: true, store: true})
+    console.log(ab, abProc)
+
+    const audioCtx = new AudioContext()
+    const s1 = audioCtx.createBufferSource()
+    const s2 = audioCtx.createBufferSource()
+    s1.buffer = ab
+    s2.buffer = abProc
+    s2.connect(audioCtx.destination)
+    s2.start()
   }
   /*
   const stream = recorder(s)
