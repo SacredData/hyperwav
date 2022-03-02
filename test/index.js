@@ -24,6 +24,15 @@ describe('Wavecore', function () {
       expect(core34.length).to.equal(57)
     })
   })
+  describe('#fromCore', function () {
+    const source = path.join(__dirname, 'test.wav.raw')
+    it('should return a new Wavecore from a parent Wavecore', async function () {
+      const core38 = Wavecore.fromRaw(source)
+      await Promise.resolve(core38.open())
+      const newCore = Wavecore.fromCore(core38.core, core38)
+      expect(newCore).to.be.instanceof(Wavecore)
+    })
+  })
   describe('#constructor', function() {
     const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a new instance of a Wavecore', function () {
