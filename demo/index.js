@@ -1,6 +1,6 @@
 const Wavecore = require('../web')
 const MicrophoneStream = require('microphone-stream').default
-
+const toWav = require('audiobuffer-to-wav')
 
 async function getMedia(constraints) {
   let stream = null;
@@ -32,6 +32,15 @@ async function main() {
   document.getElementById("stop").onclick = async function () {
     s.stop()
     console.log(wave)
+    document.getElementById("info").innerHTML=`
+  <h2><b>Core</b></h2>
+
+  <h4>INDEX LENGTH</h4>
+  ${wave.core.length}
+
+<h4>BYTELENGTH</h4>
+  ${wave.core.byteLength}
+`
     abOrig = await wave.audioBuffer({dcOffset:false})
     console.log(abOrig)
     abProc = await wave.audioBuffer({dcOffset: true, normalize: true, store: true})
@@ -47,6 +56,14 @@ async function main() {
     s1.buffer = abOrig
     s1.connect(audioCtx.destination)
     s1.start()
+  }
+
+  document.getElementById("wav").onclick = async function () {
+    const wav = toWav(abOrig, { float32: true })
+    console.log(wav)
+    const blob = new Blob([wav], {type:'audio/wav'})
+    console.log(blob)
+    console.log(URL.createObjectURL(blob))
   }
 }
 
