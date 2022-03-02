@@ -287,7 +287,7 @@ class Wavecore {
         '-v',
       ])
       statsCmd.open((err) => {
-        if (err) throw err
+        if (err) reject(err)
 
         const statsOut = []
 
@@ -761,7 +761,7 @@ class Wavecore {
     pt.on('data', (d) => statsOut.push(`${d}`))
     const prom = new Promise((resolve, reject) => {
       statsCmd.open((err) => {
-        if (err) throw err
+        if (err) reject(err)
 
         statsCmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-zero exit code'))
@@ -832,7 +832,7 @@ class Wavecore {
     const tempoCmd = nanoprocess('sox', cmdOpts)
     const prom = new Promise((resolve, reject) => {
       tempoCmd.open((err) => {
-        if (err) throw err
+        if (err) reject(err)
 
         const newCore = new Hypercore(ram)
 
@@ -862,11 +862,15 @@ class Wavecore {
    * operation later on.
    */
   async truncate(length, opts = { snapshot: false }) {
-    if (!length || !length instanceof Number) return
-    if (length > this.core.length) throw new Error('Must be a shorter length')
-    if (opts.snapshot) await this.snapshot()
-    await this.core.truncate(length)
-    return
+    try {
+      if (!length || !length instanceof Number) return
+      if (length > this.core.length) throw new Error('Must be a shorter length')
+      if (opts.snapshot) this.snapshot()
+      await this.core.truncate(length)
+      return
+    } catch (err) {
+      console.error(err)
+    }
   }
   /**
    * Runs `sox vad` on the Wavecore audio. Trims excessive silence from the
