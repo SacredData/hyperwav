@@ -20,22 +20,34 @@ async function getMedia(constraints) {
 
 
 async function main() {
+  var abOrig = null
+  var abProc = null
+
   const wave = new Wavecore()
   console.log(wave)
   const s = await getMedia({audio:true,video:false})
   console.log(s)
   wave.recStream(s)
+  const audioCtx = new AudioContext()
 
   document.getElementById("stop").onclick = async function () {
     s.stop()
     console.log(wave)
-    const abProc = await wave.audioBuffer({dcOffset: true, normalize: true, store: true})
+    abOrig = await wave.audioBuffer({dcOffset:false})
+    console.log(abOrig)
+    abProc = await wave.audioBuffer({dcOffset: true, normalize: true, store: true})
     console.log(abProc)
-    const audioCtx = new AudioContext()
     const s2 = audioCtx.createBufferSource()
     s2.buffer = abProc
     s2.connect(audioCtx.destination)
     s2.start()
+  }
+
+  document.getElementById("orig").onclick = async function () {
+    const s1 = audioCtx.createBufferSource()
+    s1.buffer = abOrig
+    s1.connect(audioCtx.destination)
+    s1.start()
   }
 }
 
@@ -43,7 +55,7 @@ document.getElementById("start").onclick = async function () {
   main()
 }
 
-},{"../web":157,"microphone-stream":74}],2:[function(require,module,exports){
+},{"../web":189,"microphone-stream":73}],2:[function(require,module,exports){
 const { hash, createKeyPair } = require('./lib/crypto')
 
 module.exports = class Stub {
@@ -83,11 +95,12 @@ module.exports = {
   createKeyPair
 }
 
-},{"b4a":20,"sodium-universal":142}],4:[function(require,module,exports){
+},{"b4a":18,"sodium-universal":158}],4:[function(require,module,exports){
 const { Pull, Push, HEADERBYTES, KEYBYTES, ABYTES } = require('sodium-secretstream')
 const sodium = require('sodium-universal')
 const { Duplex } = require('streamx')
 const b4a = require('b4a')
+const Timeout = require('timeout-refresh')
 const Bridge = require('./lib/bridge')
 const Handshake = require('./lib/handshake')
 
@@ -105,7 +118,7 @@ sodium.crypto_generichash(NS_RESPONDER, b4a.from([1]), NS)
 
 module.exports = class NoiseSecretStream extends Duplex {
   constructor (isInitiator, rawStream, opts = {}) {
-    super()
+    super({ mapWritable: toBuffer })
 
     if (typeof isInitiator !== 'boolean') {
       throw new Error('isInitiator should be a boolean')
@@ -146,8 +159,13 @@ module.exports = class NoiseSecretStream extends Duplex {
     this._outgoingWrapped = null
     this._utp = null
     this._setup = true
+    this._ended = 2
     this._encrypt = null
     this._decrypt = null
+    this._timeout = null
+    this._timeoutMs = 0
+    this._keepAlive = null
+    this._keepAliveMs = 0
 
     if (opts.autoStart !== false) this.start(rawStream, opts)
 
@@ -164,6 +182,29 @@ module.exports = class NoiseSecretStream extends Duplex {
     return streamId(handshakeHash, isInitiator, id)
   }
 
+  setTimeout (ms) {
+    if (!ms) ms = 0
+
+    this._clearTimeout()
+    this._timeoutMs = ms
+
+    if (!ms || this.rawStream === null) return
+
+    this._timeout = Timeout.once(ms, destroyTimeout, this)
+    this._timeout.unref()
+  }
+
+  setKeepAlive (ms) {
+    if (!ms) ms = 0
+
+    this._keepAliveMs = ms
+
+    if (!ms || this.rawStream === null) return
+
+    this._keepAlive = Timeout.on(ms, sendKeepAlive, this)
+    this._keepAlive.unref()
+  }
+
   start (rawStream, opts = {}) {
     if (rawStream) {
       this.rawStream = rawStream
@@ -176,15 +217,24 @@ module.exports = class NoiseSecretStream extends Duplex {
       this._rawStream = this.rawStream.reverse
     }
 
-    this.rawStream.on('error', this.destroy.bind(this))
-    this.rawStream.on('close', this.destroy.bind(this, null))
+    this.rawStream.on('error', this._onrawerror.bind(this))
+    this.rawStream.on('close', this._onrawclose.bind(this))
 
     this._startHandshake(opts.handshake, opts.keyPair || null)
     this._continueOpen(null)
 
     if (this.destroying) return
+
     if (opts.data) this._onrawdata(opts.data)
     if (opts.ended) this._onrawend()
+
+    if (this._keepAliveMs > 0 && this._keepAlive === null) {
+      this.setKeepAlive(this._keepAliveMs)
+    }
+
+    if (this._timeoutMs > 0 && this._timeout === null) {
+      this.setTimeout(this._timeoutMs)
+    }
   }
 
   _continueOpen (err) {
@@ -231,8 +281,20 @@ module.exports = class NoiseSecretStream extends Duplex {
     }
   }
 
+  _onrawerror (err) {
+    this.destroy(err)
+  }
+
+  _onrawclose () {
+    if (this._ended !== 0) this.destroy()
+  }
+
   _onrawdata (data) {
     let offset = 0
+
+    if (this._timeout !== null) {
+      this._timeout.refresh()
+    }
 
     do {
       switch (this._state) {
@@ -287,6 +349,7 @@ module.exports = class NoiseSecretStream extends Duplex {
   }
 
   _onrawend () {
+    this._ended--
     this.push(null)
   }
 
@@ -347,6 +410,9 @@ module.exports = class NoiseSecretStream extends Duplex {
       this.destroy(err)
       return
     }
+
+    // If keep alive is selective, eat the empty buffers (ie assume the other side has it enabled also)
+    if (plain.byteLength === 0 && this._keepAliveMs !== 0) return
 
     if (this.push(plain) === false) {
       this.rawStream.pause()
@@ -419,6 +485,11 @@ module.exports = class NoiseSecretStream extends Duplex {
   }
 
   _predestroy () {
+    if (this.rawStream) {
+      const error = this._readableState.error || this._writableState.error
+      this.rawStream.destroy(error)
+    }
+
     if (this._startDone !== null) {
       const done = this._startDone
       this._startDone = null
@@ -428,14 +499,12 @@ module.exports = class NoiseSecretStream extends Duplex {
     if (this._handshakeDone !== null) {
       const done = this._handshakeDone
       this._handshakeDone = null
-      if (this.rawStream) this.rawStream.destroy()
       done(new Error('Stream destroyed'))
     }
 
     if (this._drainDone !== null) {
       const done = this._drainDone
       this._drainDone = null
-      if (this.rawStream) this.rawStream.destroy()
       done(new Error('Stream destroyed'))
     }
   }
@@ -444,7 +513,6 @@ module.exports = class NoiseSecretStream extends Duplex {
     let wrapped = this._outgoingWrapped
 
     if (data !== this._outgoingPlain) {
-      if (typeof data === 'string') data = b4a.from(data)
       wrapped = b4a.allocUnsafe(data.byteLength + 3 + ABYTES)
       wrapped.set(data, 4)
     } else {
@@ -455,6 +523,8 @@ module.exports = class NoiseSecretStream extends Duplex {
     // offset 4 so we can do it in-place
     this._encrypt.next(wrapped.subarray(4, 4 + data.byteLength), wrapped.subarray(3))
 
+    if (this._keepAlive !== null) this._keepAlive.refresh()
+
     if (this._rawStream.write(wrapped) === false) {
       this._drainDone = cb
     } else {
@@ -463,6 +533,8 @@ module.exports = class NoiseSecretStream extends Duplex {
   }
 
   _final (cb) {
+    this._clearKeepAlive()
+    this._ended--
     this._rawStream.end()
     cb(null)
   }
@@ -476,10 +548,24 @@ module.exports = class NoiseSecretStream extends Duplex {
     }
   }
 
+  _clearTimeout () {
+    if (this._timeout === null) return
+    this._timeout.destroy()
+    this._timeout = null
+    this._timeoutMs = 0
+  }
+
+  _clearKeepAlive () {
+    if (this._keepAlive === null) return
+    this._keepAlive.destroy()
+    this._keepAlive = null
+    this._keepAliveMs = 0
+  }
+
   _destroy (cb) {
+    this._clearKeepAlive()
+    this._clearTimeout()
     this._resolveOpened(false)
-    const error = this._readableState.error || this._writableState.error
-    if (this.rawStream) this.rawStream.destroy(error)
     cb(null)
   }
 
@@ -502,7 +588,20 @@ function streamId (handshakeHash, isInitiator, out = b4a.allocUnsafe(32)) {
   return out
 }
 
-},{"./lib/bridge":5,"./lib/handshake":6,"b4a":20,"sodium-secretstream":124,"sodium-universal":142,"streamx":148}],5:[function(require,module,exports){
+function toBuffer (data) {
+  return typeof data === 'string' ? b4a.from(data) : data
+}
+
+function destroyTimeout () {
+  this.destroy(new Error('Stream timed out'))
+}
+
+function sendKeepAlive () {
+  const empty = this.alloc(0)
+  this.write(empty)
+}
+
+},{"./lib/bridge":5,"./lib/handshake":6,"b4a":18,"sodium-secretstream":139,"sodium-universal":158,"streamx":179,"timeout-refresh":182}],5:[function(require,module,exports){
 const { Duplex } = require('streamx')
 
 class ReversePassThrough extends Duplex {
@@ -576,7 +675,7 @@ module.exports = class Bridge extends Duplex {
   }
 }
 
-},{"streamx":148}],6:[function(require,module,exports){
+},{"streamx":179}],6:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const curve = require('noise-curve-ed')
 const Noise = require('noise-handshake')
@@ -656,7 +755,7 @@ function writeUint24le (n, buf) {
   buf[2] = (n >>> 16) & 255
 }
 
-},{"b4a":20,"noise-curve-ed":77,"noise-handshake":81,"sodium-universal":142}],7:[function(require,module,exports){
+},{"b4a":18,"noise-curve-ed":106,"noise-handshake":110,"sodium-universal":158}],7:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -1166,7 +1265,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":83,"util/":10}],8:[function(require,module,exports){
+},{"object-assign":112,"util/":10}],8:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1788,7 +1887,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":9,"_process":88,"inherits":8}],11:[function(require,module,exports){
+},{"./support/isBuffer":9,"_process":118,"inherits":8}],11:[function(require,module,exports){
 module.exports = function _atob(str) {
   return atob(str)
 }
@@ -1944,16 +2043,7 @@ function getFormat (arg) {
 	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
 }
 
-},{"audio-buffer":16,"audio-context":17,"audio-format":18,"is-audio-buffer":69,"is-plain-obj":13,"pcm-convert":86,"pick-by-alias":87,"string-to-arraybuffer":149}],13:[function(require,module,exports){
-'use strict';
-var toString = Object.prototype.toString;
-
-module.exports = function (x) {
-	var prototype;
-	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
-};
-
-},{}],14:[function(require,module,exports){
+},{"audio-buffer":14,"audio-context":15,"audio-format":16,"is-audio-buffer":67,"is-plain-obj":72,"pcm-convert":115,"pick-by-alias":117,"string-to-arraybuffer":180}],13:[function(require,module,exports){
 /**
  * @module  audio-buffer-utils
  */
@@ -2655,20 +2745,7 @@ function data (buffer, data) {
 	return data;
 }
 
-},{"audio-buffer":16,"audio-buffer-from":12,"audio-context":17,"clamp":35,"is-audio-buffer":69,"is-browser":71,"is-buffer":15}],15:[function(require,module,exports){
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-module.exports = function isBuffer (obj) {
-  return obj != null && obj.constructor != null &&
-    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-},{}],16:[function(require,module,exports){
+},{"audio-buffer":14,"audio-buffer-from":12,"audio-context":15,"clamp":33,"is-audio-buffer":67,"is-browser":69,"is-buffer":70}],14:[function(require,module,exports){
 /**
  * AudioBuffer class
  *
@@ -2781,7 +2858,7 @@ AudioBuffer.prototype.copyToChannel = function (source, channelNumber, startInCh
 };
 
 
-},{"audio-context":17}],17:[function(require,module,exports){
+},{"audio-context":15}],15:[function(require,module,exports){
 'use strict'
 
 var cache = {}
@@ -2827,7 +2904,7 @@ module.exports = function getContext (options) {
 	return ctx
 }
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * @module audio-format
  */
@@ -3006,9 +3083,30 @@ function getType (arg) {
 	if (arg instanceof Uint32Array) return 'uint32'
 }
 
-},{"is-audio-buffer":69,"is-buffer":72,"is-plain-obj":19,"os":85,"pick-by-alias":87,"sample-rate":111}],19:[function(require,module,exports){
-arguments[4][13][0].apply(exports,arguments)
-},{"dup":13}],20:[function(require,module,exports){
+},{"is-audio-buffer":67,"is-buffer":17,"is-plain-obj":72,"os":114,"pick-by-alias":117,"sample-rate":126}],17:[function(require,module,exports){
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+module.exports = function (obj) {
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+}
+
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+}
+
+},{}],18:[function(require,module,exports){
 const ascii = require('./lib/ascii')
 const base64 = require('./lib/base64')
 const hex = require('./lib/hex')
@@ -3336,7 +3434,7 @@ module.exports = {
   write
 }
 
-},{"./lib/ascii":21,"./lib/base64":22,"./lib/hex":23,"./lib/utf16le":24,"./lib/utf8":25}],21:[function(require,module,exports){
+},{"./lib/ascii":19,"./lib/base64":20,"./lib/hex":21,"./lib/utf16le":22,"./lib/utf8":23}],19:[function(require,module,exports){
 function byteLength (string) {
   return string.length
 }
@@ -3369,7 +3467,7 @@ module.exports = {
   write
 }
 
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 const codes = new Uint8Array(256)
@@ -3436,7 +3534,7 @@ module.exports = {
   write
 }
 
-},{}],23:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 function byteLength (string) {
   return string.length >>> 1
 }
@@ -3489,7 +3587,7 @@ function hexValue (char) {
   if (char >= 0x61 && char <= 0x66) return char - 0x61 + 10
 }
 
-},{}],24:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 function byteLength (string) {
   return string.length * 2
 }
@@ -3531,7 +3629,7 @@ module.exports = {
   write
 }
 
-},{}],25:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 function byteLength (string) {
   let length = 0
 
@@ -3678,7 +3776,7 @@ module.exports = {
   write
 }
 
-},{}],26:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -3830,7 +3928,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],27:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 const FACTOR = new Uint16Array(8)
 
 function factor4096 (i, n) {
@@ -3954,7 +4052,7 @@ class TinyArray {
   }
 }
 
-},{}],28:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -3990,7 +4088,7 @@ module.exports = async (imports) => {
   return instance.exports;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var assert = require('nanoassert')
 var b4a = require('b4a')
 
@@ -4126,7 +4224,7 @@ Blake2b.prototype.setPartialHash = function (ph) {
 
 function noop () {}
 
-},{"./blake2b":28,"b4a":20,"nanoassert":76}],30:[function(require,module,exports){
+},{"./blake2b":26,"b4a":18,"nanoassert":105}],28:[function(require,module,exports){
 var assert = require('nanoassert')
 var b2wasm = require('blake2b-wasm')
 
@@ -4451,9 +4549,9 @@ b2wasm.ready(function (err) {
   }
 })
 
-},{"blake2b-wasm":29,"nanoassert":76}],31:[function(require,module,exports){
+},{"blake2b-wasm":27,"nanoassert":105}],29:[function(require,module,exports){
 
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (Buffer){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -4529,7 +4627,7 @@ function bufferFrom (value, encodingOrOffset, length) {
 module.exports = bufferFrom
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":33}],33:[function(require,module,exports){
+},{"buffer":31}],31:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -6310,7 +6408,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":26,"buffer":33,"ieee754":67}],34:[function(require,module,exports){
+},{"base64-js":24,"buffer":31,"ieee754":65}],32:[function(require,module,exports){
 const assert = require('nanoassert')
 
 module.exports = Chacha20
@@ -6447,7 +6545,7 @@ function QR (obj, a, b, c, d) {
   obj[b] = rotl(obj[b], 7)
 }
 
-},{"nanoassert":76}],35:[function(require,module,exports){
+},{"nanoassert":105}],33:[function(require,module,exports){
 module.exports = clamp
 
 function clamp(value, min, max) {
@@ -6456,7 +6554,7 @@ function clamp(value, min, max) {
     : (value < max ? max : value > min ? min : value)
 }
 
-},{}],36:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = codecs
@@ -6532,8 +6630,8 @@ function createString (type) {
   }
 }
 
-},{"b4a":20}],37:[function(require,module,exports){
-const b = require('b4a')
+},{"b4a":18}],35:[function(require,module,exports){
+const b4a = require('b4a')
 
 const LE = (new Uint8Array(new Uint16Array([255]).buffer))[0] === 0xff
 const BE = !LE
@@ -6698,38 +6796,28 @@ exports.float64 = {
 
 exports.buffer = {
   preencode (state, b) {
-    if (b) {
-      uint.preencode(state, b.length)
-      state.end += b.length
-    } else {
-      state.end++
-    }
+    if (b) uint8array.preencode(state, b)
+    else state.end++
   },
   encode (state, b) {
-    if (b) {
-      uint.encode(state, b.length)
-      state.buffer.set(b, state.start)
-      state.start += b.length
-    } else {
-      state.buffer[state.start++] = 0
-    }
+    if (b) uint8array.encode(state, b)
+    else state.buffer[state.start++] = 0
   },
   decode (state) {
     const len = uint.decode(state)
     if (len === 0) return null
-    const b = state.buffer.subarray(state.start, state.start += len)
-    if (b.length !== len) throw new Error('Out of bounds')
-    return b
+    if (state.end - state.start < len) throw new Error('Out of bounds')
+    return state.buffer.subarray(state.start, (state.start += len))
   }
 }
 
 const raw = exports.raw = {
   preencode (state, b) {
-    state.end += b.length
+    state.end += b.byteLength
   },
   encode (state, b) {
     state.buffer.set(b, state.start)
-    state.start += b.length
+    state.start += b.byteLength
   },
   decode (state) {
     const b = state.buffer.subarray(state.start, state.end)
@@ -6738,58 +6826,65 @@ const raw = exports.raw = {
   }
 }
 
-exports.uint32array = {
-  preencode (state, b) {
-    uint.preencode(state, b.length)
-    state.end += b.byteLength
-  },
-  encode (state, b) {
-    uint.encode(state, b.length)
-    const view = new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
-    if (BE) hostToLE32(view, b.length)
-    state.buffer.set(view, state.start)
-    state.start += b.byteLength
-  },
-  decode (state) {
-    const len = uint.decode(state)
+function typedarray (TypedArray, swap) {
+  const n = TypedArray.BYTES_PER_ELEMENT
 
-    const byteOffset = state.buffer.byteOffset + state.start
-    const s = state.start
+  return {
+    preencode (state, b) {
+      uint.preencode(state, b.length)
+      state.end += b.byteLength
+    },
+    encode (state, b) {
+      uint.encode(state, b.length)
 
-    state.start += len * 4
+      const view = new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
 
-    if ((byteOffset & 3) === 0) {
-      const arr = new Uint32Array(state.buffer.buffer, byteOffset, len)
-      if (BE) LEToHost32(arr, len)
-      return arr
+      if (BE && swap) swap(view)
+
+      state.buffer.set(view, state.start)
+      state.start += b.byteLength
+    },
+    decode (state) {
+      const len = uint.decode(state)
+
+      let b = state.buffer.subarray(state.start, state.start += len * n)
+      if (b.byteLength !== len * n) throw new Error('Out of bounds')
+      if ((b.byteOffset % n) !== 0) b = new Uint8Array(b)
+
+      if (BE && swap) swap(b)
+
+      return new TypedArray(b.buffer, b.byteOffset, b.byteLength / n)
     }
-
-    // align mismatch
-    const copy = new Uint8Array(len * 4)
-    const arr = new Uint32Array(copy.buffer, copy.byteOffset, len)
-    copy.set(state.buffer.subarray(s, state.start), 0)
-    if (BE) LEToHost32(arr, len)
-    return arr
   }
 }
 
+const uint8array = exports.uint8array = typedarray(Uint8Array)
+exports.uint16array = typedarray(Uint16Array, b4a.swap16)
+exports.uint32array = typedarray(Uint32Array, b4a.swap32)
+
+exports.int8array = typedarray(Int8Array)
+exports.int16array = typedarray(Int16Array, b4a.swap16)
+exports.int32array = typedarray(Int32Array, b4a.swap32)
+
+exports.float32array = typedarray(Float32Array, b4a.swap32)
+exports.float64array = typedarray(Float64Array, b4a.swap64)
+
 exports.string = {
   preencode (state, s) {
-    const len = b.byteLength(s)
+    const len = b4a.byteLength(s)
     uint.preencode(state, len)
     state.end += len
   },
   encode (state, s) {
-    const len = b.byteLength(s)
+    const len = b4a.byteLength(s)
     uint.encode(state, len)
-    b.write(state.buffer, s, state.start)
+    b4a.write(state.buffer, s, state.start)
     state.start += len
   },
   decode (state) {
     const len = uint.decode(state)
-    const s = b.toString(state.buffer, 'utf8', state.start, state.start += len)
-    if (b.byteLength(s) !== len || state.start > state.end) throw new Error('Out of bounds')
-    return s
+    if (state.end - state.start < len) throw new Error('Out of bounds')
+    return b4a.toString(state.buffer, 'utf-8', state.start, (state.start += len))
   }
 }
 
@@ -6816,9 +6911,8 @@ const fixed = exports.fixed = function fixed (n) {
       state.start += n
     },
     decode (state) {
-      const b = state.buffer.subarray(state.start, state.start += n)
-      if (b.length !== n) throw new Error('Out of bounds')
-      return b
+      if (state.end - state.start < n) throw new Error('Out of bounds')
+      return state.buffer.subarray(state.start, (state.start += n))
     }
   }
 }
@@ -6872,7 +6966,7 @@ function fromCodec (enc) {
     preencode (state, m) {
       tmpM = m
       tmpBuf = enc.encode(m)
-      state.end += tmpBuf.length
+      state.end += tmpBuf.byteLength
     },
     encode (state, m) {
       raw.encode(state, m === tmpM ? tmpBuf : enc.encode(m))
@@ -6904,31 +6998,13 @@ function fromAbstractEncoder (enc) {
 exports.encode = function encode (enc, m) {
   const state = { start: 0, end: 0, buffer: null }
   enc.preencode(state, m)
-  state.buffer = b.allocUnsafe(state.end)
+  state.buffer = b4a.allocUnsafe(state.end)
   enc.encode(state, m)
   return state.buffer
 }
 
 exports.decode = function decode (enc, buffer) {
   return enc.decode({ start: 0, end: buffer.byteLength, buffer })
-}
-
-function LEToHost32 (arr, len) {
-  const view = new DataView(arr.buffer, arr.byteOffset)
-  const host = new Uint32Array(arr.buffer, arr.byteOffset, len)
-
-  for (let i = 0; i < host.length; i++) {
-    host[i] = view.getUint32(4 * i, BE)
-  }
-}
-
-function hostToLE32 (arr, len) {
-  const view = new DataView(arr.buffer, arr.byteOffset)
-  const host = new Uint32Array(arr.buffer, arr.byteOffset, len)
-
-  for (let i = 0; i < host.length; i++) {
-    view.setUint32(4 * i, host[i], BE)
-  }
 }
 
 function zigZag (enc) {
@@ -6954,7 +7030,7 @@ function zigZagEncode (n) {
   return n < 0 ? (2 * -n) - 1 : n === 0 ? 0 : 2 * n
 }
 
-},{"b4a":20}],38:[function(require,module,exports){
+},{"b4a":18}],36:[function(require,module,exports){
 /**!
  * Fast CRC32 in JavaScript
  * 101arrowz (https://github.com/101arrowz)
@@ -7014,7 +7090,7 @@ function crc32 (d) {
   return (~c) >>> 0
 }
 
-},{}],39:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7513,7 +7589,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],40:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = class FixedFIFO {
   constructor (hwm) {
     if (!(hwm > 0) || ((hwm - 1) & hwm) !== 0) throw new Error('Max size for a FixedFIFO should be a power of two')
@@ -7548,7 +7624,7 @@ module.exports = class FixedFIFO {
   }
 }
 
-},{}],41:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 const FixedFIFO = require('./fixed-size')
 
 module.exports = class FastFIFO {
@@ -7586,7 +7662,7 @@ module.exports = class FastFIFO {
   }
 }
 
-},{"./fixed-size":40}],42:[function(require,module,exports){
+},{"./fixed-size":38}],40:[function(require,module,exports){
 exports.fullRoots = function (index, result) {
   if (index & 1) throw new Error('You can only look up roots for depth(0) blocks')
   if (!result) result = []
@@ -7843,7 +7919,7 @@ Iterator.prototype.fullRoot = function (index) {
   return true
 }
 
-},{}],43:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /* eslint-disable camelcase */
 var { sodium_malloc, sodium_memzero } = require('sodium-universal/memory')
 var { crypto_generichash, crypto_generichash_batch } = require('sodium-universal/crypto_generichash')
@@ -7887,7 +7963,7 @@ module.exports = function hmac (out, data, key) {
 module.exports.BYTES = HASHLEN
 module.exports.KEYBYTES = BLOCKLEN
 
-},{"nanoassert":44,"sodium-universal/crypto_generichash":128,"sodium-universal/memory":145}],44:[function(require,module,exports){
+},{"nanoassert":42,"sodium-universal/crypto_generichash":143,"sodium-universal/memory":162}],42:[function(require,module,exports){
 assert.notEqual = notEqual
 assert.notOk = notOk
 assert.equal = equal
@@ -7911,7 +7987,7 @@ function assert (t, m) {
   if (!t) throw new Error(m || 'AssertionError')
 }
 
-},{}],45:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const c = require('compact-encoding')
 const b4a = require('b4a')
@@ -8021,7 +8097,23 @@ if (sodium.sodium_free) {
   exports.free = function () {}
 }
 
-},{"b4a":20,"compact-encoding":37,"sodium-universal":142}],46:[function(require,module,exports){
+exports.namespace = function (name, count) {
+  const buf = b4a.allocUnsafe(32 * count)
+  const list = new Array(count)
+
+  const ns = b4a.allocUnsafe(32)
+  sodium.crypto_generichash(ns, typeof name === 'string' ? b4a.from(name) : name)
+
+  for (let i = 0; i < list.length; i++) {
+    const sub = list[i] = buf.subarray(32 * i, 32 * i + 32)
+    sub[0] = i
+    sodium.crypto_generichash(sub, sub.subarray(0, 1), ns)
+  }
+
+  return list
+}
+
+},{"b4a":18,"compact-encoding":35,"sodium-universal":158}],44:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const raf = require('random-access-file')
 const isOptions = require('is-options')
@@ -8642,7 +8734,7 @@ function preappend (blocks) {
   }
 }
 
-},{"./lib/block-encryption":48,"./lib/core":50,"./lib/extensions":51,"./lib/replicator":58,"./lib/streams":59,"@hyperswarm/secret-stream":4,"b4a":20,"codecs":36,"compact-encoding":37,"events":39,"hypercore-crypto":45,"is-options":73,"random-access-file":90,"xache":154}],47:[function(require,module,exports){
+},{"./lib/block-encryption":46,"./lib/core":48,"./lib/extensions":49,"./lib/replicator":56,"./lib/streams":57,"@hyperswarm/secret-stream":4,"b4a":18,"codecs":34,"compact-encoding":35,"events":37,"hypercore-crypto":43,"is-options":71,"random-access-file":120,"xache":186}],45:[function(require,module,exports){
 // TODO: needs massive improvements obvs
 
 const BigSparseArray = require('big-sparse-array')
@@ -8799,7 +8891,7 @@ function ensureSize (uint32, size) {
   return a
 }
 
-},{"b4a":20,"big-sparse-array":27}],48:[function(require,module,exports){
+},{"b4a":18,"big-sparse-array":25}],46:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const c = require('compact-encoding')
 const b4a = require('b4a')
@@ -8869,7 +8961,7 @@ module.exports = class BlockEncryption {
   }
 }
 
-},{"b4a":20,"compact-encoding":37,"sodium-universal":142}],49:[function(require,module,exports){
+},{"b4a":18,"compact-encoding":35,"sodium-universal":158}],47:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = class BlockStore {
@@ -8929,7 +9021,7 @@ module.exports = class BlockStore {
   }
 }
 
-},{"b4a":20}],50:[function(require,module,exports){
+},{"b4a":18}],48:[function(require,module,exports){
 const hypercoreCrypto = require('hypercore-crypto')
 const b4a = require('b4a')
 const Oplog = require('./oplog')
@@ -9400,7 +9492,7 @@ function updateUserData (list, key, value) {
 
 function noop () {}
 
-},{"./bitfield":47,"./block-store":49,"./merkle-tree":52,"./messages":53,"./mutex":54,"./oplog":55,"b4a":20,"hypercore-crypto":45}],51:[function(require,module,exports){
+},{"./bitfield":45,"./block-store":47,"./merkle-tree":50,"./messages":51,"./mutex":52,"./oplog":53,"b4a":18,"hypercore-crypto":43}],49:[function(require,module,exports){
 class Extension {
   constructor (extensions, name, handlers) {
     this.extensions = extensions
@@ -9478,7 +9570,7 @@ module.exports = class Extensions {
 
 function noop () {}
 
-},{}],52:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 const flat = require('flat-tree')
 const crypto = require('hypercore-crypto')
 const c = require('compact-encoding')
@@ -10618,7 +10710,7 @@ function signable (hash, length, fork) {
   return state.buffer
 }
 
-},{"b4a":20,"compact-encoding":37,"flat-tree":42,"hypercore-crypto":45}],53:[function(require,module,exports){
+},{"b4a":18,"compact-encoding":35,"flat-tree":40,"hypercore-crypto":43}],51:[function(require,module,exports){
 const c = require('compact-encoding')
 
 const node = exports.node = {
@@ -11200,7 +11292,7 @@ exports.oplogHeader = {
   }
 }
 
-},{"compact-encoding":37}],54:[function(require,module,exports){
+},{"compact-encoding":35}],52:[function(require,module,exports){
 module.exports = class Mutex {
   constructor () {
     this.locked = false
@@ -11241,7 +11333,7 @@ module.exports = class Mutex {
   }
 }
 
-},{}],55:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const crc32 = require('crc32-universal')
@@ -11467,7 +11559,7 @@ module.exports = class Oplog {
   }
 }
 
-},{"b4a":20,"compact-encoding":37,"crc32-universal":38}],56:[function(require,module,exports){
+},{"b4a":18,"compact-encoding":35,"crc32-universal":36}],54:[function(require,module,exports){
 const { uint, from: fromEncoding } = require('compact-encoding')
 const b4a = require('b4a')
 const safetyCatch = require('safety-catch')
@@ -12075,7 +12167,7 @@ function hypercoreCapability (initiator, handshakeHash, key, cap = b4a.alloc(32)
   return cap
 }
 
-},{"./messages":53,"b4a":20,"codecs":36,"compact-encoding":37,"safety-catch":110,"sodium-universal":142}],57:[function(require,module,exports){
+},{"./messages":51,"b4a":18,"codecs":34,"compact-encoding":35,"safety-catch":125,"sodium-universal":158}],55:[function(require,module,exports){
 const BigSparseArray = require('big-sparse-array')
 
 module.exports = class RemoteBitfield {
@@ -12101,7 +12193,7 @@ module.exports = class RemoteBitfield {
   }
 }
 
-},{"big-sparse-array":27}],58:[function(require,module,exports){
+},{"big-sparse-array":25}],56:[function(require,module,exports){
 const Protocol = require('./protocol')
 const RemoteBitfield = require('./remote-bitfield')
 const RandomIterator = require('random-array-iterator')
@@ -12980,7 +13072,7 @@ function log2 (n) {
   return res
 }
 
-},{"../package.json":60,"./protocol":56,"./remote-bitfield":57,"b4a":20,"random-array-iterator":93}],59:[function(require,module,exports){
+},{"../package.json":58,"./protocol":54,"./remote-bitfield":55,"b4a":18,"random-array-iterator":123}],57:[function(require,module,exports){
 const { Writable, Readable } = require('streamx')
 
 class ReadStream extends Readable {
@@ -13038,7 +13130,7 @@ class WriteStream extends Writable {
 
 exports.WriteStream = WriteStream
 
-},{"streamx":148}],60:[function(require,module,exports){
+},{"streamx":179}],58:[function(require,module,exports){
 module.exports={
   "name": "hypercore",
   "version": "10.0.0-alpha.24",
@@ -13101,7 +13193,7 @@ module.exports={
   }
 }
 
-},{}],61:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const DHT = require('@hyperswarm/dht')
 const spq = require('shuffled-priority-queue')
@@ -13112,6 +13204,7 @@ const ConnectionSet = require('./lib/connection-set')
 const PeerDiscovery = require('./lib/peer-discovery')
 
 const MAX_PEERS = 64
+const MAX_PARALLEL = 3
 const MAX_CLIENT_CONNECTIONS = Infinity // TODO: Change
 const MAX_SERVER_CONNECTIONS = Infinity
 
@@ -13128,6 +13221,7 @@ module.exports = class Hyperswarm extends EventEmitter {
       maxPeers = MAX_PEERS,
       maxClientConnections = MAX_CLIENT_CONNECTIONS,
       maxServerConnections = MAX_SERVER_CONNECTIONS,
+      maxParallel = MAX_PARALLEL,
       firewall = allowAll
     } = opts
 
@@ -13145,6 +13239,7 @@ module.exports = class Hyperswarm extends EventEmitter {
     this.maxPeers = maxPeers
     this.maxClientConnections = maxClientConnections
     this.maxServerConnections = maxServerConnections
+    this.maxParallel = maxParallel
     this.connections = new Set()
     this.peers = new Map()
     this.explicitPeers = new Set()
@@ -13161,32 +13256,30 @@ module.exports = class Hyperswarm extends EventEmitter {
     this._pendingFlushes = []
     this._flushTick = 0
 
+    this._drainingQueue = false
+    this._connecting = 0
     this._clientConnections = 0
     this._serverConnections = 0
     this._firewall = firewall
   }
 
   _enqueue (peerInfo) {
-    const empty = !this._queue.head()
     peerInfo.queued = true
     peerInfo._flushTick = this._flushTick
     this._queue.add(peerInfo)
-    if (empty) this._attemptClientConnections()
+
+    this._attemptClientConnections()
   }
 
   _requeue (batch) {
-    const empty = !this._queue.head()
-    let readable = false
-
     for (const peerInfo of batch) {
       if ((peerInfo._updatePriority() === false) || this._allConnections.has(peerInfo.publicKey)) continue
       peerInfo.queued = true
       peerInfo._flushTick = this._flushTick
       this._queue.add(peerInfo)
-      readable = true
     }
 
-    if (empty && readable) this._attemptClientConnections()
+    this._attemptClientConnections()
   }
 
   _flushMaybe (peerInfo) {
@@ -13202,7 +13295,8 @@ module.exports = class Hyperswarm extends EventEmitter {
   _shouldConnect () {
     return !this.destroyed &&
       this._allConnections.size < this.maxPeers &&
-      this._clientConnections < this.maxClientConnections
+      this._clientConnections < this.maxClientConnections &&
+      this._connecting < this.maxParallel
   }
 
   _shouldRequeue (peerInfo) {
@@ -13233,21 +13327,25 @@ module.exports = class Hyperswarm extends EventEmitter {
       keyPair: this.keyPair
     })
     this._allConnections.add(conn)
-
+    this._connecting++
     this._clientConnections++
     let opened = false
 
     conn.on('close', () => {
+      if (!opened) this._connectDone()
       this.connections.delete(conn)
       this._allConnections.delete(conn)
       this._clientConnections--
       peerInfo._disconnected()
       if (this._shouldRequeue(peerInfo)) this._timer.add(peerInfo)
       if (!opened) this._flushMaybe(peerInfo)
+
+      this._attemptClientConnections()
     })
     conn.on('error', noop)
     conn.on('open', () => {
       opened = true
+      this._connectDone()
       this.connections.add(conn)
       conn.removeListener('error', noop)
       peerInfo._connected()
@@ -13257,14 +13355,22 @@ module.exports = class Hyperswarm extends EventEmitter {
     })
   }
 
+  _connectDone () {
+    this._connecting--
+    if (this._connecting < this.maxParallel) this._attemptClientConnections()
+  }
+
   // Called when the PeerQueue indicates a connection should be attempted.
   _attemptClientConnections () {
-    // TODO: Add max parallelism
+    // Guard against re-entries - unsure if it still needed but doesn't hurt
+    if (this._drainingQueue) return
+    this._drainingQueue = true
     while (this._queue.length && this._shouldConnect()) {
       const peerInfo = this._queue.shift()
       peerInfo.queued = false
       this._connect(peerInfo)
     }
+    this._drainingQueue = false
   }
 
   _handleFirewall (remotePublicKey, payload) {
@@ -13310,6 +13416,8 @@ module.exports = class Hyperswarm extends EventEmitter {
       this.connections.delete(conn)
       this._allConnections.delete(conn)
       this._serverConnections--
+
+      this._attemptClientConnections()
     })
     peerInfo.client = false
     this.emit('connection', conn, peerInfo)
@@ -13456,7 +13564,7 @@ function isOpen (stream) {
   return !!stream.id
 }
 
-},{"./lib/connection-set":63,"./lib/peer-discovery":64,"./lib/peer-info":65,"./lib/retry-timer":66,"@hyperswarm/dht":2,"events":39,"shuffled-priority-queue":120}],62:[function(require,module,exports){
+},{"./lib/connection-set":61,"./lib/peer-discovery":62,"./lib/peer-info":63,"./lib/retry-timer":64,"@hyperswarm/dht":2,"events":37,"shuffled-priority-queue":135}],60:[function(require,module,exports){
 module.exports = class BulkTimer {
   constructor (time, fn) {
     this._time = time
@@ -13491,7 +13599,7 @@ module.exports = class BulkTimer {
   }
 }
 
-},{}],63:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module.exports = class ConnectionSet {
   constructor () {
     this._byPublicKey = new Map()
@@ -13525,7 +13633,7 @@ module.exports = class ConnectionSet {
   }
 }
 
-},{}],64:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 const REFRESH_INTERVAL = 1000 * 60 * 10 // 10 min
 const RANDOM_JITTER = 1000 * 60 * 2 // 2 min
 const DELAY_GRACE_PERIOD = 1000 * 30 // 30s
@@ -13662,7 +13770,7 @@ module.exports = class PeerDiscovery {
 
 function noop () {}
 
-},{}],65:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 const { EventEmitter } = require('events')
 
 const VERY_LOW_PRIORITY = 0
@@ -13761,7 +13869,7 @@ module.exports = class PeerInfo extends EventEmitter {
   }
 }
 
-},{"events":39}],66:[function(require,module,exports){
+},{"events":37}],64:[function(require,module,exports){
 const BulkTimer = require('./bulk-timer')
 
 const BACKOFF_JITTER = 500
@@ -13810,7 +13918,7 @@ module.exports = class RetryTimer {
   }
 }
 
-},{"./bulk-timer":62}],67:[function(require,module,exports){
+},{"./bulk-timer":60}],65:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -13897,7 +14005,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],68:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -13926,7 +14034,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],69:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * @module  is-audio-buffer
  */
@@ -13943,7 +14051,7 @@ module.exports = function isAudioBuffer (buffer) {
 	&& typeof buffer.duration === 'number'
 };
 
-},{}],70:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 (function(root) {
   'use strict';
 
@@ -13985,9 +14093,9 @@ module.exports = function isAudioBuffer (buffer) {
   }
 })(this);
 
-},{}],71:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = true;
-},{}],72:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -13995,29 +14103,28 @@ module.exports = true;
  * @license  MIT
  */
 
-// The _isBuffer check is for Safari 5-7 support, because it's missing
-// Object.prototype.constructor. Remove this eventually
-module.exports = function (obj) {
-  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+module.exports = function isBuffer (obj) {
+  return obj != null && obj.constructor != null &&
+    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
 
-function isBuffer (obj) {
-  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-// For Node v0.10 support. Remove this eventually.
-function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
-}
-
-},{}],73:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = function isOptions (opts) {
   return typeof opts === 'object' && opts && !b4a.isBuffer(opts)
 }
 
-},{"b4a":20}],74:[function(require,module,exports){
+},{"b4a":18}],72:[function(require,module,exports){
+'use strict';
+var toString = Object.prototype.toString;
+
+module.exports = function (x) {
+	var prototype;
+	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
+};
+
+},{}],73:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -14199,2009 +14306,7 @@ var MicrophoneStream = /** @class */ (function (_super) {
 }(readable_stream_1.Readable));
 exports.default = MicrophoneStream;
 
-},{"buffer-from":32,"readable-stream":108}],75:[function(require,module,exports){
-/*! multistream. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
-const stream = require('readable-stream')
-const once = require('once')
-
-function toStreams2Obj (s) {
-  return toStreams2(s, { objectMode: true, highWaterMark: 16 })
-}
-
-function toStreams2Buf (s) {
-  return toStreams2(s)
-}
-
-function toStreams2 (s, opts) {
-  if (!s || typeof s === 'function' || s._readableState) return s
-
-  const wrap = new stream.Readable(opts).wrap(s)
-  if (s.destroy) {
-    wrap.destroy = s.destroy.bind(s)
-  }
-  return wrap
-}
-
-class MultiStream extends stream.Readable {
-  constructor (streams, opts) {
-    super({ ...opts, autoDestroy: true })
-
-    this._drained = false
-    this._forwarding = false
-    this._current = null
-    this._toStreams2 = (opts && opts.objectMode) ? toStreams2Obj : toStreams2Buf
-
-    if (typeof streams === 'function') {
-      this._queue = streams
-    } else {
-      this._queue = streams.map(this._toStreams2)
-      this._queue.forEach(stream => {
-        if (typeof stream !== 'function') this._attachErrorListener(stream)
-      })
-    }
-
-    this._next()
-  }
-
-  _read () {
-    this._drained = true
-    this._forward()
-  }
-
-  _forward () {
-    if (this._forwarding || !this._drained || !this._current) return
-    this._forwarding = true
-
-    let chunk
-    while (this._drained && (chunk = this._current.read()) !== null) {
-      this._drained = this.push(chunk)
-    }
-
-    this._forwarding = false
-  }
-
-  _destroy (err, cb) {
-    let streams = []
-    if (this._current) streams.push(this._current)
-    if (typeof this._queue !== 'function') streams = streams.concat(this._queue)
-
-    if (streams.length === 0) {
-      cb(err)
-    } else {
-      let counter = streams.length
-      let er = err
-      streams.forEach(stream => {
-        destroy(stream, err, err => {
-          er = er || err
-          if (--counter === 0) {
-            cb(er)
-          }
-        })
-      })
-    }
-  }
-
-  _next () {
-    this._current = null
-
-    if (typeof this._queue === 'function') {
-      this._queue((err, stream) => {
-        if (err) return this.destroy(err)
-        stream = this._toStreams2(stream)
-        this._attachErrorListener(stream)
-        this._gotNextStream(stream)
-      })
-    } else {
-      let stream = this._queue.shift()
-      if (typeof stream === 'function') {
-        stream = this._toStreams2(stream())
-        this._attachErrorListener(stream)
-      }
-      this._gotNextStream(stream)
-    }
-  }
-
-  _gotNextStream (stream) {
-    if (!stream) {
-      this.push(null)
-      return
-    }
-
-    this._current = stream
-    this._forward()
-
-    const onReadable = () => {
-      this._forward()
-    }
-
-    const onClose = () => {
-      if (!stream._readableState.ended && !stream.destroyed) {
-        const err = new Error('ERR_STREAM_PREMATURE_CLOSE')
-        err.code = 'ERR_STREAM_PREMATURE_CLOSE'
-        this.destroy(err)
-      }
-    }
-
-    const onEnd = () => {
-      this._current = null
-      stream.removeListener('readable', onReadable)
-      stream.removeListener('end', onEnd)
-      stream.removeListener('close', onClose)
-      stream.destroy()
-      this._next()
-    }
-
-    stream.on('readable', onReadable)
-    stream.once('end', onEnd)
-    stream.once('close', onClose)
-  }
-
-  _attachErrorListener (stream) {
-    if (!stream) return
-
-    const onError = (err) => {
-      stream.removeListener('error', onError)
-      this.destroy(err)
-    }
-
-    stream.once('error', onError)
-  }
-}
-
-MultiStream.obj = streams => (
-  new MultiStream(streams, { objectMode: true, highWaterMark: 16 })
-)
-
-module.exports = MultiStream
-
-// Normalize stream destroy w/ callback.
-function destroy (stream, err, cb) {
-  if (!stream.destroy || stream.destroyed) {
-    cb(err)
-  } else {
-    const callback = once(er => cb(er || err))
-    stream
-      .on('error', callback)
-      .on('close', () => callback())
-      .destroy(err, callback)
-  }
-}
-
-},{"once":84,"readable-stream":108}],76:[function(require,module,exports){
-module.exports = assert
-
-class AssertionError extends Error {}
-AssertionError.prototype.name = 'AssertionError'
-
-/**
- * Minimal assert function
- * @param  {any} t Value to check if falsy
- * @param  {string=} m Optional assertion error message
- * @throws {AssertionError}
- */
-function assert (t, m) {
-  if (!t) {
-    var err = new AssertionError(m)
-    if (Error.captureStackTrace) Error.captureStackTrace(err, assert)
-    throw err
-  }
-}
-
-},{}],77:[function(require,module,exports){
-/* eslint-disable camelcase */
-const sodium = require('sodium-universal')
-const assert = require('nanoassert')
-const b4a = require('b4a')
-
-const DHLEN = sodium.crypto_scalarmult_ed25519_BYTES
-const PKLEN = sodium.crypto_scalarmult_ed25519_BYTES
-const SKLEN = sodium.crypto_sign_SECRETKEYBYTES
-const ALG = 'Ed25519'
-
-module.exports = {
-  DHLEN,
-  PKLEN,
-  SKLEN,
-  ALG,
-  name: ALG,
-  generateKeyPair,
-  dh
-}
-
-function generateKeyPair (privKey) {
-  if (privKey) return generateSeedKeyPair(privKey.subarray(0, 32))
-
-  const keyPair = {}
-  keyPair.secretKey = b4a.alloc(SKLEN)
-  keyPair.publicKey = b4a.alloc(PKLEN)
-
-  sodium.crypto_sign_keypair(keyPair.publicKey, keyPair.secretKey)
-  return keyPair
-}
-
-function generateSeedKeyPair (seed) {
-  const keyPair = {}
-  keyPair.secretKey = b4a.alloc(SKLEN)
-  keyPair.publicKey = b4a.alloc(PKLEN)
-
-  sodium.crypto_sign_seed_keypair(keyPair.publicKey, keyPair.secretKey, seed)
-  return keyPair
-}
-
-function dh (pk, lsk) {
-  assert(lsk.byteLength === SKLEN)
-  assert(pk.byteLength === PKLEN)
-
-  const output = b4a.alloc(DHLEN)
-
-  // libsodium stores seed not actual scalar
-  const sk = b4a.alloc(64)
-  sodium.crypto_hash_sha512(sk, lsk.subarray(0, 32))
-  sk[0] &= 248
-  sk[31] &= 127
-  sk[31] |= 64
-
-  sodium.crypto_scalarmult_ed25519(
-    output,
-    sk.subarray(0, 32),
-    pk
-  )
-
-  return output
-}
-
-},{"b4a":20,"nanoassert":76,"sodium-universal":142}],78:[function(require,module,exports){
-const sodium = require('sodium-universal')
-const b4a = require('b4a')
-
-module.exports = class CipherState {
-  constructor (key) {
-    this.key = key || null
-    this.nonce = 0
-    this.CIPHER_ALG = 'ChaChaPoly'
-  }
-
-  initialiseKey (key) {
-    this.key = key
-    this.nonce = 0
-  }
-
-  setNonce (nonce) {
-    this.nonce = nonce
-  }
-
-  encrypt (plaintext, ad) {
-    if (!this.hasKey) return plaintext
-    if (!ad) ad = b4a.alloc(0)
-
-    const ciphertext = encryptWithAD(this.key, this.nonce, ad, plaintext)
-    this.nonce++
-
-    return ciphertext
-  }
-
-  decrypt (ciphertext, ad) {
-    if (!this.hasKey) return ciphertext
-    if (!ad) ad = b4a.alloc(0)
-
-    const plaintext = decryptWithAD(this.key, this.nonce, ad, ciphertext)
-    this.nonce++
-
-    return plaintext
-  }
-
-  get hasKey () {
-    return this.key !== null
-  }
-
-  _clear () {
-    sodium.sodium_memzero(this.key)
-    this.key = null
-    this.nonce = null
-  }
-
-  static get MACBYTES () {
-    return 16
-  }
-
-  static get NONCEBYTES () {
-    return 8
-  }
-
-  static get KEYBYTES () {
-    return 32
-  }
-}
-
-function encryptWithAD (key, counter, additionalData, plaintext) {
-  // for our purposes, additionalData will always be a pubkey so we encode from hex
-  if (!b4a.isBuffer(additionalData)) additionalData = b4a.from(additionalData, 'hex')
-  if (!b4a.isBuffer(plaintext)) plaintext = b4a.from(plaintext, 'hex')
-
-  const nonce = b4a.alloc(sodium.crypto_aead_chacha20poly1305_ietf_NPUBBYTES)
-  const view = new DataView(nonce.buffer, nonce.byteOffset, nonce.byteLength)
-  view.setUint32(4, counter, true)
-
-  const ciphertext = b4a.alloc(plaintext.byteLength + sodium.crypto_aead_chacha20poly1305_ietf_ABYTES)
-
-  sodium.crypto_aead_chacha20poly1305_ietf_encrypt(ciphertext, plaintext, additionalData, null, nonce, key)
-  return ciphertext
-}
-
-function decryptWithAD (key, counter, additionalData, ciphertext) {
-  // for our purposes, additionalData will always be a pubkey so we encode from hex
-  if (!b4a.isBuffer(additionalData)) additionalData = b4a.from(additionalData, 'hex')
-  if (!b4a.isBuffer(ciphertext)) ciphertext = b4a.from(ciphertext, 'hex')
-
-  const nonce = b4a.alloc(sodium.crypto_aead_chacha20poly1305_ietf_NPUBBYTES)
-  const view = new DataView(nonce.buffer, nonce.byteOffset, nonce.byteLength)
-  view.setUint32(4, counter, true)
-
-  const plaintext = b4a.alloc(ciphertext.byteLength - sodium.crypto_aead_chacha20poly1305_ietf_ABYTES)
-
-  sodium.crypto_aead_chacha20poly1305_ietf_decrypt(plaintext, null, ciphertext, additionalData, nonce, key)
-  return plaintext
-}
-
-},{"b4a":20,"sodium-universal":142}],79:[function(require,module,exports){
-/* eslint-disable camelcase */
-const { crypto_kx_SEEDBYTES, crypto_kx_keypair, crypto_kx_seed_keypair } = require('sodium-universal/crypto_kx')
-const { crypto_scalarmult_BYTES, crypto_scalarmult_SCALARBYTES, crypto_scalarmult, crypto_scalarmult_base } = require('sodium-universal/crypto_scalarmult')
-
-const assert = require('nanoassert')
-const b4a = require('b4a')
-
-const DHLEN = crypto_scalarmult_BYTES
-const PKLEN = crypto_scalarmult_BYTES
-const SKLEN = crypto_scalarmult_SCALARBYTES
-const SEEDLEN = crypto_kx_SEEDBYTES
-const ALG = '25519'
-
-module.exports = {
-  DHLEN,
-  PKLEN,
-  SKLEN,
-  SEEDLEN,
-  ALG,
-  generateKeyPair,
-  generateSeedKeyPair,
-  dh
-}
-
-function generateKeyPair (privKey) {
-  const keyPair = {}
-
-  keyPair.secretKey = privKey || b4a.alloc(SKLEN)
-  keyPair.publicKey = b4a.alloc(PKLEN)
-
-  if (privKey) {
-    crypto_scalarmult_base(keyPair.publicKey, keyPair.secretKey)
-  } else {
-    crypto_kx_keypair(keyPair.publicKey, keyPair.secretKey)
-  }
-
-  return keyPair
-}
-
-function generateSeedKeyPair (seed) {
-  assert(seed.byteLength === SKLEN)
-
-  const keyPair = {}
-  keyPair.secretKey = b4a.alloc(SKLEN)
-  keyPair.publicKey = b4a.alloc(PKLEN)
-
-  crypto_kx_seed_keypair(keyPair.publicKey, keyPair.secretKey, seed)
-  return keyPair
-}
-
-function dh (pk, lsk) {
-  assert(lsk.byteLength === SKLEN)
-  assert(pk.byteLength === PKLEN)
-
-  const output = b4a.alloc(DHLEN)
-
-  crypto_scalarmult(
-    output,
-    lsk,
-    pk
-  )
-
-  return output
-}
-
-},{"b4a":20,"nanoassert":76,"sodium-universal/crypto_kx":132,"sodium-universal/crypto_scalarmult":134}],80:[function(require,module,exports){
-const assert = require('nanoassert')
-const hmacBlake2b = require('hmac-blake2b')
-const b4a = require('b4a')
-
-const HASHLEN = 64
-
-module.exports = {
-  hkdf,
-  HASHLEN
-}
-
-function hkdf (salt, inputKeyMaterial, info = '', length = 2 * HASHLEN) {
-  const pseudoRandomKey = hkdfExtract(salt, inputKeyMaterial)
-  const result = hkdfExpand(pseudoRandomKey, info, length)
-
-  const [k1, k2] = [result.slice(0, HASHLEN), result.slice(HASHLEN)]
-
-  return [k1, k2]
-
-  function hkdfExtract (salt, inputKeyMaterial) {
-    return hmacDigest(salt, inputKeyMaterial)
-  }
-
-  function hkdfExpand (key, info, length) {
-    const T = [b4a.from(info)]
-    const lengthRatio = length / HASHLEN
-
-    for (let i = 0; i < lengthRatio; i++) {
-      const infoBuf = b4a.from(info)
-      const toHash = b4a.concat([T[i], infoBuf, b4a.from([i + 1])])
-
-      T[i + 1] = hmacDigest(key, toHash)
-    }
-
-    const result = b4a.concat(T.slice(1))
-    assert(result.byteLength === length, 'key expansion failed, length not as expected')
-
-    return result
-  }
-}
-
-function hmacDigest (key, input) {
-  const hmac = b4a.alloc(HASHLEN)
-  hmacBlake2b(hmac, input, key)
-
-  return hmac
-}
-
-},{"b4a":20,"hmac-blake2b":43,"nanoassert":76}],81:[function(require,module,exports){
-const assert = require('nanoassert')
-const b4a = require('b4a')
-
-const SymmetricState = require('./symmetric-state')
-const { HASHLEN } = require('./hkdf')
-
-const PRESHARE_IS = Symbol('initiator static key preshared')
-const PRESHARE_RS = Symbol('responder static key preshared')
-
-const TOK_S = Symbol('s')
-const TOK_E = Symbol('e')
-
-const TOK_ES = Symbol('es')
-const TOK_SE = Symbol('se')
-const TOK_EE = Symbol('ee')
-const TOK_SS = Symbol('ss')
-
-const HANDSHAKES = Object.freeze({
-  XX: [
-    [TOK_E],
-    [TOK_E, TOK_EE, TOK_S, TOK_ES],
-    [TOK_S, TOK_SE]
-  ],
-  IK: [
-    PRESHARE_RS,
-    [TOK_E, TOK_ES, TOK_S, TOK_SS],
-    [TOK_E, TOK_EE, TOK_SE]
-  ]
-})
-
-class Writer {
-  constructor () {
-    this.size = 0
-    this.buffers = []
-  }
-
-  push (b) {
-    this.size += b.byteLength
-    this.buffers.push(b)
-  }
-
-  end () {
-    const all = b4a.alloc(this.size)
-    let offset = 0
-    for (const b of this.buffers) {
-      all.set(b, offset)
-      offset += b.byteLength
-    }
-    return all
-  }
-}
-
-class Reader {
-  constructor (buf) {
-    this.offset = 0
-    this.buffer = buf
-  }
-
-  shift (n) {
-    const start = this.offset
-    const end = this.offset += n
-    if (end > this.buffer.byteLength) throw new Error('Insufficient bytes')
-    return this.buffer.subarray(start, end)
-  }
-
-  end () {
-    return this.shift(this.buffer.byteLength - this.offset)
-  }
-}
-
-module.exports = class NoiseState extends SymmetricState {
-  constructor (pattern, initiator, staticKeypair, opts = {}) {
-    super(opts)
-
-    this.s = staticKeypair || this.curve.generateKeyPair()
-    this.e = null
-
-    this.re = null
-    this.rs = null
-
-    this.pattern = pattern
-    this.handshake = HANDSHAKES[this.pattern].slice()
-
-    this.protocol = b4a.from([
-      'Noise',
-      this.pattern,
-      this.DH_ALG,
-      this.CIPHER_ALG,
-      'BLAKE2b'
-    ].join('_'))
-
-    this.initiator = initiator
-    this.complete = false
-
-    this.rx = null
-    this.tx = null
-    this.hash = null
-  }
-
-  initialise (prologue, remoteStatic) {
-    if (this.protocol.byteLength <= HASHLEN) this.digest.set(this.protocol)
-    else this.mixHash(this.protocol)
-
-    this.chainingKey = b4a.from(this.digest)
-
-    this.mixHash(prologue)
-
-    while (!Array.isArray(this.handshake[0])) {
-      const message = this.handshake.shift()
-
-      // handshake steps should be as arrays, only
-      // preshare tokens are provided otherwise
-      assert(message === PRESHARE_RS || message === PRESHARE_IS,
-        'Unexpected pattern')
-
-      const takeRemoteKey = this.initiator
-        ? message === PRESHARE_RS
-        : message === PRESHARE_IS
-
-      if (takeRemoteKey) this.rs = remoteStatic
-
-      const key = takeRemoteKey ? this.rs : this.s.publicKey
-      assert(key != null, 'Remote pubkey required')
-
-      this.mixHash(key)
-    }
-  }
-
-  final () {
-    const [k1, k2] = this.split()
-
-    this.tx = this.initiator ? k1 : k2
-    this.rx = this.initiator ? k2 : k1
-
-    this.complete = true
-    this.hash = this.getHandshakeHash()
-
-    this._clear()
-  }
-
-  recv (buf) {
-    const r = new Reader(buf)
-
-    for (const pattern of this.handshake.shift()) {
-      switch (pattern) {
-        case TOK_E :
-          this.re = r.shift(this.curve.PKLEN)
-          this.mixHash(this.re)
-          break
-
-        case TOK_S : {
-          const klen = this.hasKey ? this.curve.PKLEN + 16 : this.curve.PKLEN
-          this.rs = this.decryptAndHash(r.shift(klen))
-          break
-        }
-
-        case TOK_EE :
-        case TOK_ES :
-        case TOK_SE :
-        case TOK_SS : {
-          const useStatic = keyPattern(pattern, this.initiator)
-
-          const localKey = useStatic.local ? this.s.secretKey : this.e.secretKey
-          const remoteKey = useStatic.remote ? this.rs : this.re
-
-          this.mixKey(remoteKey, localKey)
-          break
-        }
-
-        default :
-          throw new Error('Unexpected message')
-      }
-    }
-
-    const payload = this.decryptAndHash(r.end())
-
-    if (!this.handshake.length) this.final()
-    return payload
-  }
-
-  send (payload = b4a.alloc(0)) {
-    const w = new Writer()
-
-    for (const pattern of this.handshake.shift()) {
-      switch (pattern) {
-        case TOK_E :
-          if (this.e === null) this.e = this.curve.generateKeyPair()
-          this.mixHash(this.e.publicKey)
-          w.push(this.e.publicKey)
-          break
-
-        case TOK_S :
-          w.push(this.encryptAndHash(this.s.publicKey))
-          break
-
-        case TOK_ES :
-        case TOK_SE :
-        case TOK_EE :
-        case TOK_SS : {
-          const useStatic = keyPattern(pattern, this.initiator)
-
-          const localKey = useStatic.local ? this.s.secretKey : this.e.secretKey
-          const remoteKey = useStatic.remote ? this.rs : this.re
-
-          this.mixKey(remoteKey, localKey)
-          break
-        }
-
-        default :
-          throw new Error('Unexpected message')
-      }
-    }
-
-    w.push(this.encryptAndHash(payload))
-    const response = w.end()
-
-    if (!this.handshake.length) this.final()
-    return response
-  }
-
-  _clear () {
-    super._clear()
-
-    this.e.secretKey.fill(0)
-    this.e.publicKey.fill(0)
-
-    this.re.fill(0)
-
-    this.e = null
-    this.re = null
-  }
-}
-
-function keyPattern (pattern, initiator) {
-  const ret = {
-    local: false,
-    remote: false
-  }
-
-  switch (pattern) {
-    case TOK_EE:
-      return ret
-
-    case TOK_ES:
-      ret.local ^= !initiator
-      ret.remote ^= initiator
-      return ret
-
-    case TOK_SE:
-      ret.local ^= initiator
-      ret.remote ^= !initiator
-      return ret
-
-    case TOK_SS:
-      ret.local ^= 1
-      ret.remote ^= 1
-      return ret
-  }
-}
-
-},{"./hkdf":80,"./symmetric-state":82,"b4a":20,"nanoassert":76}],82:[function(require,module,exports){
-const sodium = require('sodium-universal')
-const assert = require('nanoassert')
-const b4a = require('b4a')
-const CipherState = require('./cipher')
-const curve = require('./dh')
-const { HASHLEN, hkdf } = require('./hkdf')
-
-module.exports = class SymmetricState extends CipherState {
-  constructor (opts = {}) {
-    super()
-
-    this.curve = opts.curve || curve
-    this.digest = b4a.alloc(HASHLEN)
-    this.chainingKey = null
-    this.offset = 0
-
-    this.DH_ALG = this.curve.ALG
-  }
-
-  mixHash (data) {
-    accumulateDigest(this.digest, data)
-  }
-
-  mixKey (pubkey, seckey) {
-    const dh = this.curve.dh(pubkey, seckey)
-    const hkdfResult = hkdf(this.chainingKey, dh)
-    this.chainingKey = hkdfResult[0]
-    this.initialiseKey(hkdfResult[1].subarray(0, 32))
-  }
-
-  encryptAndHash (plaintext) {
-    const ciphertext = this.encrypt(plaintext, this.digest)
-    accumulateDigest(this.digest, ciphertext)
-    return ciphertext
-  }
-
-  decryptAndHash (ciphertext) {
-    const plaintext = this.decrypt(ciphertext, this.digest)
-    accumulateDigest(this.digest, ciphertext)
-    return plaintext
-  }
-
-  getHandshakeHash (out) {
-    if (!out) return this.getHandshakeHash(b4a.alloc(HASHLEN))
-    assert(out.byteLength === HASHLEN, `output must be ${HASHLEN} bytes`)
-
-    out.set(this.digest)
-    return out
-  }
-
-  split () {
-    const res = hkdf(this.chainingKey, b4a.alloc(0))
-    return res.map(k => k.subarray(0, 32))
-  }
-
-  _clear () {
-    super._clear()
-
-    sodium.sodium_memzero(this.digest)
-    sodium.sodium_memzero(this.chainingKey)
-
-    this.digest = null
-    this.chainingKey = null
-    this.offset = null
-
-    this.curve = null
-  }
-
-  static get alg () {
-    return CipherState.alg + '_BLAKE2b'
-  }
-}
-
-function accumulateDigest (digest, input) {
-  const toHash = b4a.concat([digest, input])
-  sodium.crypto_generichash(digest, toHash)
-}
-
-},{"./cipher":78,"./dh":79,"./hkdf":80,"b4a":20,"nanoassert":76,"sodium-universal":142}],83:[function(require,module,exports){
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-'use strict';
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-},{}],84:[function(require,module,exports){
-var wrappy = require('wrappy')
-module.exports = wrappy(once)
-module.exports.strict = wrappy(onceStrict)
-
-once.proto = once(function () {
-  Object.defineProperty(Function.prototype, 'once', {
-    value: function () {
-      return once(this)
-    },
-    configurable: true
-  })
-
-  Object.defineProperty(Function.prototype, 'onceStrict', {
-    value: function () {
-      return onceStrict(this)
-    },
-    configurable: true
-  })
-})
-
-function once (fn) {
-  var f = function () {
-    if (f.called) return f.value
-    f.called = true
-    return f.value = fn.apply(this, arguments)
-  }
-  f.called = false
-  return f
-}
-
-function onceStrict (fn) {
-  var f = function () {
-    if (f.called)
-      throw new Error(f.onceError)
-    f.called = true
-    return f.value = fn.apply(this, arguments)
-  }
-  var name = fn.name || 'Function wrapped with `once`'
-  f.onceError = name + " shouldn't be called more than once"
-  f.called = false
-  return f
-}
-
-},{"wrappy":153}],85:[function(require,module,exports){
-exports.endianness = function () { return 'LE' };
-
-exports.hostname = function () {
-    if (typeof location !== 'undefined') {
-        return location.hostname
-    }
-    else return '';
-};
-
-exports.loadavg = function () { return [] };
-
-exports.uptime = function () { return 0 };
-
-exports.freemem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.totalmem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.cpus = function () { return [] };
-
-exports.type = function () { return 'Browser' };
-
-exports.release = function () {
-    if (typeof navigator !== 'undefined') {
-        return navigator.appVersion;
-    }
-    return '';
-};
-
-exports.networkInterfaces
-= exports.getNetworkInterfaces
-= function () { return {} };
-
-exports.arch = function () { return 'javascript' };
-
-exports.platform = function () { return 'browser' };
-
-exports.tmpdir = exports.tmpDir = function () {
-    return '/tmp';
-};
-
-exports.EOL = '\n';
-
-exports.homedir = function () {
-	return '/'
-};
-
-},{}],86:[function(require,module,exports){
-/**
- * @module pcm-convert
- */
-'use strict'
-
-var assert = require('assert')
-var isBuffer = require('is-buffer')
-var format = require('audio-format')
-var extend = require('object-assign')
-var isAudioBuffer = require('is-audio-buffer')
-
-module.exports = convert
-
-function convert (buffer, from, to, target) {
-	assert(buffer, 'First argument should be data')
-	assert(from, 'Second argument should be format string or object')
-
-	//quick ignore
-	if (from === to) {
-		return buffer
-	}
-
-	//2-containers case
-	if (isContainer(from)) {
-		target = from
-		to = format.detect(target)
-		from = format.detect(buffer)
-	}
-	//if no source format defined, just target format
-	else if (to === undefined && target === undefined) {
-		to = getFormat(from)
-		from = format.detect(buffer)
-	}
-	//if no source format but container is passed with from as target format
-	else if (isContainer(to)) {
-		target = to
-		to = getFormat(from)
-		from = format.detect(buffer)
-	}
-	//all arguments
-	else {
-		var inFormat = getFormat(from)
-		var srcFormat = format.detect(buffer)
-		srcFormat.dtype = inFormat.type === 'arraybuffer' ? srcFormat.type : inFormat.type
-		from = extend(inFormat, srcFormat)
-
-		var outFormat = getFormat(to)
-		var dstFormat = format.detect(target)
-		if (outFormat.type) {
-			dstFormat.dtype = outFormat.type === 'arraybuffer' ? (dstFormat.type || from.dtype) : outFormat.type
-		}
-		to = extend(outFormat, dstFormat)
-	}
-
-	if (to.channels == null && from.channels != null) {
-		to.channels = from.channels
-	}
-
-	if (to.type == null) {
-		to.type = from.type
-		to.dtype = from.dtype
-	}
-
-	if (to.interleaved != null && from.channels == null) {
-		from.channels = 2
-	}
-
-	//ignore same format
-	if (from.type === to.type &&
-		from.interleaved === to.interleaved &&
-		from.endianness === to.endianness) return buffer
-
-	normalize(from)
-	normalize(to)
-
-	//audio-buffer-list/audio types
-	if (buffer.buffers || (buffer.buffer && buffer.buffer.buffers)) {
-		//handle audio
-		if (buffer.buffer) buffer = buffer.buffer
-
-		//handle audiobufferlist
-		if (buffer.buffers) buffer = buffer.join()
-	}
-
-	var src
-	//convert buffer/alike to arrayBuffer
-	if (isAudioBuffer(buffer)) {
-		if (buffer._data) src = buffer._data
-		else {
-			src = new Float32Array(buffer.length * buffer.numberOfChannels)
-			for (var c = 0, l = buffer.numberOfChannels; c < l; c++) {
-				src.set(buffer.getChannelData(c), buffer.length * c)
-			}
-		}
-	}
-	else if (buffer instanceof ArrayBuffer) {
-		src = new (dtypeClass[from.dtype])(buffer)
-	}
-	else if (isBuffer(buffer)) {
-		if (buffer.byteOffset != null) src = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-		else src = buffer.buffer;
-
-		src = new (dtypeClass[from.dtype])(src)
-	}
-	//typed arrays are unchanged as is
-	else {
-		src = buffer
-	}
-
-	//dst is automatically filled with mapped values
-	//but in some cases mapped badly, e. g. float → int(round + rotate)
-	var dst = to.type === 'array' ? Array.from(src) : new (dtypeClass[to.dtype])(src)
-
-	//if range differ, we should apply more thoughtful mapping
-	if (from.max !== to.max) {
-		var fromRange = from.max - from.min, toRange = to.max - to.min
-		for (var i = 0, l = src.length; i < l; i++) {
-			var value = src[i]
-
-			//ignore not changed range
-			//bring to 0..1
-			var normalValue = (value - from.min) / fromRange
-
-			//bring to new format ranges
-			value = normalValue * toRange + to.min
-
-			//clamp (buffers do not like values outside of bounds)
-			dst[i] = Math.max(to.min, Math.min(to.max, value))
-		}
-	}
-
-	//reinterleave, if required
-	if (from.interleaved != to.interleaved) {
-		var channels = from.channels
-		var len = Math.floor(src.length / channels)
-
-		//deinterleave
-		if (from.interleaved && !to.interleaved) {
-			dst = dst.map(function (value, idx, data) {
-				var offset = idx % len
-				var channel = ~~(idx / len)
-
-				return data[offset * channels + channel]
-			})
-		}
-		//interleave
-		else if (!from.interleaved && to.interleaved) {
-			dst = dst.map(function (value, idx, data) {
-				var offset = ~~(idx / channels)
-				var channel = idx % channels
-
-				return data[channel * len + offset]
-			})
-		}
-	}
-
-	//ensure endianness
-	if (to.dtype != 'array' && to.dtype != 'int8' && to.dtype != 'uint8' && from.endianness && to.endianness && from.endianness !== to.endianness) {
-		var le = to.endianness === 'le'
-		var view = new DataView(dst.buffer)
-		var step = dst.BYTES_PER_ELEMENT
-		var methodName = 'set' + to.dtype[0].toUpperCase() + to.dtype.slice(1)
-		for (var i = 0, l = dst.length; i < l; i++) {
-			view[methodName](i*step, dst[i], le)
-		}
-	}
-
-	if (to.type === 'audiobuffer') {
-		//TODO
-	}
-
-
-	if (target) {
-		if (Array.isArray(target)) {
-			for (var i = 0; i < dst.length; i++) {
-				target[i] = dst[i]
-			}
-		}
-		else if (target instanceof ArrayBuffer) {
-			var
-			targetContainer = new dtypeClass[to.dtype](target)
-			targetContainer.set(dst)
-			target = targetContainer
-		}
-		else {
-			target.set(dst)
-		}
-		dst = target
-	}
-
-	if (to.type === 'arraybuffer' || to.type === 'buffer') dst = dst.buffer
-
-	return dst
-}
-
-function getFormat (arg) {
-	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
-}
-
-function isContainer (arg) {
-	return typeof arg != 'string' && (Array.isArray(arg) || ArrayBuffer.isView(arg) || arg instanceof ArrayBuffer)
-}
-
-
-var dtypeClass = {
-	'uint8': Uint8Array,
-	'uint8_clamped': Uint8ClampedArray,
-	'uint16': Uint16Array,
-	'uint32': Uint32Array,
-	'int8': Int8Array,
-	'int16': Int16Array,
-	'int32': Int32Array,
-	'float32': Float32Array,
-	'float64': Float64Array,
-	'array': Array,
-	'arraybuffer': Uint8Array,
-	'buffer': Uint8Array,
-}
-
-var defaultDtype = {
-	'float32': 'float32',
-	'audiobuffer': 'float32',
-	'ndsamples': 'float32',
-	'ndarray': 'float32',
-	'float64': 'float64',
-	'buffer': 'uint8',
-	'arraybuffer': 'uint8',
-	'uint8': 'uint8',
-	'uint8_clamped': 'uint8',
-	'uint16': 'uint16',
-	'uint32': 'uint32',
-	'int8': 'int8',
-	'int16': 'int16',
-	'int32': 'int32',
-	'array': 'array'
-}
-
-//make sure all format properties are present
-function normalize (obj) {
-	if (!obj.dtype) {
-		obj.dtype = defaultDtype[obj.type] || 'array'
-	}
-
-	//provide limits
-	switch (obj.dtype) {
-		case 'float32':
-		case 'float64':
-		case 'audiobuffer':
-		case 'ndsamples':
-		case 'ndarray':
-			obj.min = -1
-			obj.max = 1
-			break;
-		case 'uint8':
-			obj.min = 0
-			obj.max = 255
-			break;
-		case 'uint16':
-			obj.min = 0
-			obj.max = 65535
-			break;
-		case 'uint32':
-			obj.min = 0
-			obj.max = 4294967295
-			break;
-		case 'int8':
-			obj.min = -128
-			obj.max = 127
-			break;
-		case 'int16':
-			obj.min = -32768
-			obj.max = 32767
-			break;
-		case 'int32':
-			obj.min = -2147483648
-			obj.max = 2147483647
-			break;
-		default:
-			obj.min = -1
-			obj.max = 1
-			break;
-	}
-
-	return obj
-}
-
-},{"assert":7,"audio-format":18,"is-audio-buffer":69,"is-buffer":72,"object-assign":83}],87:[function(require,module,exports){
-'use strict'
-
-
-module.exports = function pick (src, props, keepRest) {
-	var result = {}, prop, i
-
-	if (typeof props === 'string') props = toList(props)
-	if (Array.isArray(props)) {
-		var res = {}
-		for (i = 0; i < props.length; i++) {
-			res[props[i]] = true
-		}
-		props = res
-	}
-
-	// convert strings to lists
-	for (prop in props) {
-		props[prop] = toList(props[prop])
-	}
-
-	// keep-rest strategy requires unmatched props to be preserved
-	var occupied = {}
-
-	for (prop in props) {
-		var aliases = props[prop]
-
-		if (Array.isArray(aliases)) {
-			for (i = 0; i < aliases.length; i++) {
-				var alias = aliases[i]
-
-				if (keepRest) {
-					occupied[alias] = true
-				}
-
-				if (alias in src) {
-					result[prop] = src[alias]
-
-					if (keepRest) {
-						for (var j = i; j < aliases.length; j++) {
-							occupied[aliases[j]] = true
-						}
-					}
-
-					break
-				}
-			}
-		}
-		else if (prop in src) {
-			if (props[prop]) {
-				result[prop] = src[prop]
-			}
-
-			if (keepRest) {
-				occupied[prop] = true
-			}
-		}
-	}
-
-	if (keepRest) {
-		for (prop in src) {
-			if (occupied[prop]) continue
-			result[prop] = src[prop]
-		}
-	}
-
-	return result
-}
-
-var CACHE = {}
-
-function toList(arg) {
-	if (CACHE[arg]) return CACHE[arg]
-	if (typeof arg === 'string') {
-		arg = CACHE[arg] = arg.split(/\s*,\s*|\s+/)
-	}
-	return arg
-}
-
-},{}],88:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],89:[function(require,module,exports){
-module.exports = typeof queueMicrotask === 'function' ? queueMicrotask : (fn) => Promise.resolve().then(fn)
-
-},{}],90:[function(require,module,exports){
-module.exports = function () {
-  throw new Error('random-access-file is not supported in the browser')
-}
-
-},{}],91:[function(require,module,exports){
-const RandomAccess = require('random-access-storage')
-const isOptions = require('is-options')
-const inherits = require('inherits')
-const b4a = require('b4a')
-
-const DEFAULT_PAGE_SIZE = 1024 * 1024
-
-module.exports = RAM
-
-function RAM (opts) {
-  if (!(this instanceof RAM)) return new RAM(opts)
-  if (typeof opts === 'number') opts = {length: opts}
-  if (!opts) opts = {}
-
-  RandomAccess.call(this)
-
-  if (b4a.isBuffer(opts)) {
-    opts = {length: opts.length, buffer: opts}
-  }
-  if (!isOptions(opts)) opts = {}
-
-  this.length = opts.length || 0
-  this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
-  this.buffers = []
-
-  if (opts.buffer) this.buffers.push(opts.buffer)
-}
-
-inherits(RAM, RandomAccess)
-
-RAM.prototype._stat = function (req) {
-  req.callback(null, {size: this.length})
-}
-
-RAM.prototype._write = function (req) {
-  var i = Math.floor(req.offset / this.pageSize)
-  var rel = req.offset - i * this.pageSize
-  var start = 0
-
-  const len = req.offset + req.size
-  if (len > this.length) this.length = len
-
-  while (start < req.size) {
-    const page = this._page(i++, true)
-    const free = this.pageSize - rel
-    const end = free < (req.size - start)
-      ? start + free
-      : req.size
-
-    b4a.copy(req.data, page, rel, start, end)
-    start = end
-    rel = 0
-  }
-
-  req.callback(null, null)
-}
-
-RAM.prototype._read = function (req) {
-  var i = Math.floor(req.offset / this.pageSize)
-  var rel = req.offset - i * this.pageSize
-  var start = 0
-
-  if (req.offset + req.size > this.length) {
-    return req.callback(new Error('Could not satisfy length'), null)
-  }
-
-  const data = b4a.alloc(req.size)
-
-  while (start < req.size) {
-    const page = this._page(i++, false)
-    const avail = this.pageSize - rel
-    const wanted = req.size - start
-    const len = avail < wanted ? avail : wanted
-
-    if (page) b4a.copy(page, data, start, rel, rel + len)
-    start += len
-    rel = 0
-  }
-
-  req.callback(null, data)
-}
-
-RAM.prototype._del = function (req) {
-  var i = Math.floor(req.offset / this.pageSize)
-  var rel = req.offset - i * this.pageSize
-  var start = 0
-
-  if (rel && req.offset + req.size >= this.length) {
-    var buf = this.buffers[i]
-    if (buf) buf.fill(0, rel)
-  }
-
-  if (req.offset + req.size > this.length) {
-    req.size = Math.max(0, this.length - req.offset)
-  }
-
-  while (start < req.size) {
-    if (rel === 0 && req.size - start >= this.pageSize) {
-      this.buffers[i++] = undefined
-    }
-
-    rel = 0
-    start += this.pageSize - rel
-  }
-
-  if (req.offset + req.size >= this.length) {
-    this.length = req.offset
-  }
-
-  req.callback(null, null)
-}
-
-RAM.prototype._destroy = function (req) {
-  this._buffers = []
-  this.length = 0
-  req.callback(null, null)
-}
-
-RAM.prototype._page = function (i, upsert) {
-  var page = this.buffers[i]
-  if (page || !upsert) return page
-  page = this.buffers[i] = b4a.alloc(this.pageSize)
-  return page
-}
-
-RAM.prototype.toBuffer = function () {
-  const buf = b4a.alloc(this.length)
-
-  for (var i = 0; i < this.buffers.length; i++) {
-    if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
-  }
-
-  return buf
-}
-
-},{"b4a":20,"inherits":68,"is-options":73,"random-access-storage":92}],92:[function(require,module,exports){
-var events = require('events')
-var inherits = require('inherits')
-var queueTick = require('queue-tick')
-
-var NOT_READABLE = defaultImpl(new Error('Not readable'))
-var NOT_WRITABLE = defaultImpl(new Error('Not writable'))
-var NOT_DELETABLE = defaultImpl(new Error('Not deletable'))
-var NOT_STATABLE = defaultImpl(new Error('Not statable'))
-var NO_OPEN_READABLE = defaultImpl(new Error('No readonly open'))
-
-// NON_BLOCKING_OPS
-var READ_OP = 0
-var WRITE_OP = 1
-var DEL_OP = 2
-var STAT_OP = 3
-
-// BLOCKING_OPS
-var OPEN_OP = 4
-var CLOSE_OP = 5
-var DESTROY_OP = 6
-
-module.exports = RandomAccess
-
-function RandomAccess (opts) {
-  if (!(this instanceof RandomAccess)) return new RandomAccess(opts)
-  events.EventEmitter.call(this)
-
-  this._queued = []
-  this._pending = 0
-  this._needsOpen = true
-
-  this.opened = false
-  this.closed = false
-  this.destroyed = false
-
-  if (opts) {
-    if (opts.openReadonly) this._openReadonly = opts.openReadonly
-    if (opts.open) this._open = opts.open
-    if (opts.read) this._read = opts.read
-    if (opts.write) this._write = opts.write
-    if (opts.del) this._del = opts.del
-    if (opts.stat) this._stat = opts.stat
-    if (opts.close) this._close = opts.close
-    if (opts.destroy) this._destroy = opts.destroy
-  }
-
-  this.preferReadonly = this._openReadonly !== NO_OPEN_READABLE
-  this.readable = this._read !== NOT_READABLE
-  this.writable = this._write !== NOT_WRITABLE
-  this.deletable = this._del !== NOT_DELETABLE
-  this.statable = this._stat !== NOT_STATABLE
-}
-
-inherits(RandomAccess, events.EventEmitter)
-
-RandomAccess.prototype.read = function (offset, size, cb) {
-  this.run(new Request(this, READ_OP, offset, size, null, cb))
-}
-
-RandomAccess.prototype._read = NOT_READABLE
-
-RandomAccess.prototype.write = function (offset, data, cb) {
-  if (!cb) cb = noop
-  openWritable(this)
-  this.run(new Request(this, WRITE_OP, offset, data.length, data, cb))
-}
-
-RandomAccess.prototype._write = NOT_WRITABLE
-
-RandomAccess.prototype.del = function (offset, size, cb) {
-  if (!cb) cb = noop
-  openWritable(this)
-  this.run(new Request(this, DEL_OP, offset, size, null, cb))
-}
-
-RandomAccess.prototype._del = NOT_DELETABLE
-
-RandomAccess.prototype.stat = function (cb) {
-  this.run(new Request(this, STAT_OP, 0, 0, null, cb))
-}
-
-RandomAccess.prototype._stat = NOT_STATABLE
-
-RandomAccess.prototype.open = function (cb) {
-  if (!cb) cb = noop
-  if (this.opened && !this._needsOpen) return queueTick(() => cb(null))
-  queueAndRun(this, new Request(this, OPEN_OP, 0, 0, null, cb))
-}
-
-RandomAccess.prototype._open = defaultImpl(null)
-RandomAccess.prototype._openReadonly = NO_OPEN_READABLE
-
-RandomAccess.prototype.close = function (cb) {
-  if (!cb) cb = noop
-  if (this.closed) return queueTick(() => cb(null))
-  queueAndRun(this, new Request(this, CLOSE_OP, 0, 0, null, cb))
-}
-
-RandomAccess.prototype._close = defaultImpl(null)
-
-RandomAccess.prototype.destroy = function (cb) {
-  if (!cb) cb = noop
-  if (!this.closed) this.close(noop)
-  queueAndRun(this, new Request(this, DESTROY_OP, 0, 0, null, cb))
-}
-
-RandomAccess.prototype._destroy = defaultImpl(null)
-
-RandomAccess.prototype.run = function (req) {
-  if (this._needsOpen) this.open(noop)
-  if (this._queued.length) this._queued.push(req)
-  else req._run()
-}
-
-function noop () {}
-
-function Request (self, type, offset, size, data, cb) {
-  this.type = type
-  this.offset = offset
-  this.data = data
-  this.size = size
-  this.storage = self
-
-  this._sync = false
-  this._callback = cb
-  this._openError = null
-}
-
-Request.prototype._maybeOpenError = function (err) {
-  if (this.type !== OPEN_OP) return
-  var queued = this.storage._queued
-  for (var i = 0; i < queued.length; i++) queued[i]._openError = err
-}
-
-Request.prototype._unqueue = function (err) {
-  var ra = this.storage
-  var queued = ra._queued
-
-  if (!err) {
-    switch (this.type) {
-      case OPEN_OP:
-        if (!ra.opened) {
-          ra.opened = true
-          ra.emit('open')
-        }
-        break
-
-      case CLOSE_OP:
-        if (!ra.closed) {
-          ra.closed = true
-          ra.emit('close')
-        }
-        break
-
-      case DESTROY_OP:
-        if (!ra.destroyed) {
-          ra.destroyed = true
-          ra.emit('destroy')
-        }
-        break
-    }
-  } else {
-    this._maybeOpenError(err)
-  }
-
-  if (queued.length && queued[0] === this) queued.shift()
-
-  if (!--ra._pending) drainQueue(ra)
-}
-
-Request.prototype.callback = function (err, val) {
-  if (this._sync) return nextTick(this, err, val)
-  this._unqueue(err)
-  this._callback(err, val)
-}
-
-Request.prototype._openAndNotClosed = function () {
-  var ra = this.storage
-  if (ra.opened && !ra.closed) return true
-  if (!ra.opened) nextTick(this, this._openError || new Error('Not opened'))
-  else if (ra.closed) nextTick(this, new Error('Closed'))
-  return false
-}
-
-Request.prototype._open = function () {
-  var ra = this.storage
-
-  if (ra.opened && !ra._needsOpen) return nextTick(this, null)
-  if (ra.closed) return nextTick(this, new Error('Closed'))
-
-  ra._needsOpen = false
-  if (ra.preferReadonly) ra._openReadonly(this)
-  else ra._open(this)
-}
-
-Request.prototype._run = function () {
-  var ra = this.storage
-  ra._pending++
-
-  this._sync = true
-
-  switch (this.type) {
-    case READ_OP:
-      if (this._openAndNotClosed()) ra._read(this)
-      break
-
-    case WRITE_OP:
-      if (this._openAndNotClosed()) ra._write(this)
-      break
-
-    case DEL_OP:
-      if (this._openAndNotClosed()) ra._del(this)
-      break
-
-    case STAT_OP:
-      if (this._openAndNotClosed()) ra._stat(this)
-      break
-
-    case OPEN_OP:
-      this._open()
-      break
-
-    case CLOSE_OP:
-      if (ra.closed || !ra.opened) nextTick(this, null)
-      else ra._close(this)
-      break
-
-    case DESTROY_OP:
-      if (ra.destroyed) nextTick(this, null)
-      else ra._destroy(this)
-      break
-  }
-
-  this._sync = false
-}
-
-function queueAndRun (self, req) {
-  self._queued.push(req)
-  if (!self._pending) req._run()
-}
-
-function drainQueue (self) {
-  var queued = self._queued
-
-  while (queued.length > 0) {
-    var blocking = queued[0].type > 3
-    if (!blocking || !self._pending) queued[0]._run()
-    if (blocking) return
-    queued.shift()
-  }
-}
-
-function openWritable (self) {
-  if (self.preferReadonly) {
-    self._needsOpen = true
-    self.preferReadonly = false
-  }
-}
-
-function defaultImpl (err) {
-  return overridable
-
-  function overridable (req) {
-    nextTick(req, err)
-  }
-}
-
-function nextTick (req, err, val) {
-  queueTick(() => req.callback(err, val))
-}
-
-},{"events":39,"inherits":68,"queue-tick":89}],93:[function(require,module,exports){
-module.exports = class RandomArrayIterator {
-  constructor (values) {
-    this.values = values
-    this.start = 0
-    this.length = this.values.length
-  }
-
-  next () {
-    if (this.length === 0) {
-      if (this.start === 0) return { done: true, value: undefined }
-      this.length = this.start
-      this.start = 0
-    }
-
-    const i = this.start + ((Math.random() * this.length) | 0)
-    const j = this.start + --this.length
-    const value = this.values[i]
-
-    this.values[i] = this.values[j]
-    this.values[j] = value
-
-    return { done: false, value }
-  }
-
-  dequeue () {
-    this.values[this.start + this.length] = this.values[this.values.length - 1]
-    this.values.pop()
-  }
-
-  requeue () {
-    const i = this.start + this.length
-    const value = this.values[i]
-    this.values[i] = this.values[this.start]
-    this.values[this.start++] = value
-  }
-
-  restart () {
-    this.start = 0
-    this.length = this.values.length
-    return this
-  }
-
-  [Symbol.iterator] () {
-    return this
-  }
-}
-
-},{}],94:[function(require,module,exports){
+},{"buffer-from":30,"readable-stream":88}],74:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -16330,7 +14435,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],95:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16472,7 +14577,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":97,"./_stream_writable":99,"_process":88,"inherits":68}],96:[function(require,module,exports){
+},{"./_stream_readable":77,"./_stream_writable":79,"_process":118,"inherits":66}],76:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16512,7 +14617,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":98,"inherits":68}],97:[function(require,module,exports){
+},{"./_stream_transform":78,"inherits":66}],77:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -17639,7 +15744,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":94,"./_stream_duplex":95,"./internal/streams/async_iterator":100,"./internal/streams/buffer_list":101,"./internal/streams/destroy":102,"./internal/streams/from":104,"./internal/streams/state":106,"./internal/streams/stream":107,"_process":88,"buffer":33,"events":39,"inherits":68,"string_decoder/":150,"util":31}],98:[function(require,module,exports){
+},{"../errors":74,"./_stream_duplex":75,"./internal/streams/async_iterator":80,"./internal/streams/buffer_list":81,"./internal/streams/destroy":82,"./internal/streams/from":84,"./internal/streams/state":86,"./internal/streams/stream":87,"_process":118,"buffer":31,"events":37,"inherits":66,"string_decoder/":181,"util":29}],78:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -17841,7 +15946,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":94,"./_stream_duplex":95,"inherits":68}],99:[function(require,module,exports){
+},{"../errors":74,"./_stream_duplex":75,"inherits":66}],79:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18541,7 +16646,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":94,"./_stream_duplex":95,"./internal/streams/destroy":102,"./internal/streams/state":106,"./internal/streams/stream":107,"_process":88,"buffer":33,"inherits":68,"util-deprecate":152}],100:[function(require,module,exports){
+},{"../errors":74,"./_stream_duplex":75,"./internal/streams/destroy":82,"./internal/streams/state":86,"./internal/streams/stream":87,"_process":118,"buffer":31,"inherits":66,"util-deprecate":184}],80:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -18751,7 +16856,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":103,"_process":88}],101:[function(require,module,exports){
+},{"./end-of-stream":83,"_process":118}],81:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -18962,7 +17067,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":33,"util":31}],102:[function(require,module,exports){
+},{"buffer":31,"util":29}],82:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -19070,7 +17175,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":88}],103:[function(require,module,exports){
+},{"_process":118}],83:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -19175,12 +17280,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":94}],104:[function(require,module,exports){
+},{"../../../errors":74}],84:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],105:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -19278,7 +17383,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":94,"./end-of-stream":103}],106:[function(require,module,exports){
+},{"../../../errors":74,"./end-of-stream":83}],86:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -19306,10 +17411,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":94}],107:[function(require,module,exports){
+},{"../../../errors":74}],87:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":39}],108:[function(require,module,exports){
+},{"events":37}],88:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -19320,7 +17425,2041 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":95,"./lib/_stream_passthrough.js":96,"./lib/_stream_readable.js":97,"./lib/_stream_transform.js":98,"./lib/_stream_writable.js":99,"./lib/internal/streams/end-of-stream.js":103,"./lib/internal/streams/pipeline.js":105}],109:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":75,"./lib/_stream_passthrough.js":76,"./lib/_stream_readable.js":77,"./lib/_stream_transform.js":78,"./lib/_stream_writable.js":79,"./lib/internal/streams/end-of-stream.js":83,"./lib/internal/streams/pipeline.js":85}],89:[function(require,module,exports){
+/*! multistream. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
+const stream = require('readable-stream')
+const once = require('once')
+
+function toStreams2Obj (s) {
+  return toStreams2(s, { objectMode: true, highWaterMark: 16 })
+}
+
+function toStreams2Buf (s) {
+  return toStreams2(s)
+}
+
+function toStreams2 (s, opts) {
+  if (!s || typeof s === 'function' || s._readableState) return s
+
+  const wrap = new stream.Readable(opts).wrap(s)
+  if (s.destroy) {
+    wrap.destroy = s.destroy.bind(s)
+  }
+  return wrap
+}
+
+class MultiStream extends stream.Readable {
+  constructor (streams, opts) {
+    super({ ...opts, autoDestroy: true })
+
+    this._drained = false
+    this._forwarding = false
+    this._current = null
+    this._toStreams2 = (opts && opts.objectMode) ? toStreams2Obj : toStreams2Buf
+
+    if (typeof streams === 'function') {
+      this._queue = streams
+    } else {
+      this._queue = streams.map(this._toStreams2)
+      this._queue.forEach(stream => {
+        if (typeof stream !== 'function') this._attachErrorListener(stream)
+      })
+    }
+
+    this._next()
+  }
+
+  _read () {
+    this._drained = true
+    this._forward()
+  }
+
+  _forward () {
+    if (this._forwarding || !this._drained || !this._current) return
+    this._forwarding = true
+
+    let chunk
+    while (this._drained && (chunk = this._current.read()) !== null) {
+      this._drained = this.push(chunk)
+    }
+
+    this._forwarding = false
+  }
+
+  _destroy (err, cb) {
+    let streams = []
+    if (this._current) streams.push(this._current)
+    if (typeof this._queue !== 'function') streams = streams.concat(this._queue)
+
+    if (streams.length === 0) {
+      cb(err)
+    } else {
+      let counter = streams.length
+      let er = err
+      streams.forEach(stream => {
+        destroy(stream, err, err => {
+          er = er || err
+          if (--counter === 0) {
+            cb(er)
+          }
+        })
+      })
+    }
+  }
+
+  _next () {
+    this._current = null
+
+    if (typeof this._queue === 'function') {
+      this._queue((err, stream) => {
+        if (err) return this.destroy(err)
+        stream = this._toStreams2(stream)
+        this._attachErrorListener(stream)
+        this._gotNextStream(stream)
+      })
+    } else {
+      let stream = this._queue.shift()
+      if (typeof stream === 'function') {
+        stream = this._toStreams2(stream())
+        this._attachErrorListener(stream)
+      }
+      this._gotNextStream(stream)
+    }
+  }
+
+  _gotNextStream (stream) {
+    if (!stream) {
+      this.push(null)
+      return
+    }
+
+    this._current = stream
+    this._forward()
+
+    const onReadable = () => {
+      this._forward()
+    }
+
+    const onClose = () => {
+      if (!stream._readableState.ended && !stream.destroyed) {
+        const err = new Error('ERR_STREAM_PREMATURE_CLOSE')
+        err.code = 'ERR_STREAM_PREMATURE_CLOSE'
+        this.destroy(err)
+      }
+    }
+
+    const onEnd = () => {
+      this._current = null
+      stream.removeListener('readable', onReadable)
+      stream.removeListener('end', onEnd)
+      stream.removeListener('close', onClose)
+      stream.destroy()
+      this._next()
+    }
+
+    stream.on('readable', onReadable)
+    stream.once('end', onEnd)
+    stream.once('close', onClose)
+  }
+
+  _attachErrorListener (stream) {
+    if (!stream) return
+
+    const onError = (err) => {
+      stream.removeListener('error', onError)
+      this.destroy(err)
+    }
+
+    stream.once('error', onError)
+  }
+}
+
+MultiStream.obj = streams => (
+  new MultiStream(streams, { objectMode: true, highWaterMark: 16 })
+)
+
+module.exports = MultiStream
+
+// Normalize stream destroy w/ callback.
+function destroy (stream, err, cb) {
+  if (!stream.destroy || stream.destroyed) {
+    cb(err)
+  } else {
+    const callback = once(er => cb(er || err))
+    stream
+      .on('error', callback)
+      .on('close', () => callback())
+      .destroy(err, callback)
+  }
+}
+
+},{"once":113,"readable-stream":104}],90:[function(require,module,exports){
+arguments[4][74][0].apply(exports,arguments)
+},{"dup":74}],91:[function(require,module,exports){
+arguments[4][75][0].apply(exports,arguments)
+},{"./_stream_readable":93,"./_stream_writable":95,"_process":118,"dup":75,"inherits":66}],92:[function(require,module,exports){
+arguments[4][76][0].apply(exports,arguments)
+},{"./_stream_transform":94,"dup":76,"inherits":66}],93:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"../errors":90,"./_stream_duplex":91,"./internal/streams/async_iterator":96,"./internal/streams/buffer_list":97,"./internal/streams/destroy":98,"./internal/streams/from":100,"./internal/streams/state":102,"./internal/streams/stream":103,"_process":118,"buffer":31,"dup":77,"events":37,"inherits":66,"string_decoder/":181,"util":29}],94:[function(require,module,exports){
+arguments[4][78][0].apply(exports,arguments)
+},{"../errors":90,"./_stream_duplex":91,"dup":78,"inherits":66}],95:[function(require,module,exports){
+arguments[4][79][0].apply(exports,arguments)
+},{"../errors":90,"./_stream_duplex":91,"./internal/streams/destroy":98,"./internal/streams/state":102,"./internal/streams/stream":103,"_process":118,"buffer":31,"dup":79,"inherits":66,"util-deprecate":184}],96:[function(require,module,exports){
+arguments[4][80][0].apply(exports,arguments)
+},{"./end-of-stream":99,"_process":118,"dup":80}],97:[function(require,module,exports){
+arguments[4][81][0].apply(exports,arguments)
+},{"buffer":31,"dup":81,"util":29}],98:[function(require,module,exports){
+arguments[4][82][0].apply(exports,arguments)
+},{"_process":118,"dup":82}],99:[function(require,module,exports){
+arguments[4][83][0].apply(exports,arguments)
+},{"../../../errors":90,"dup":83}],100:[function(require,module,exports){
+arguments[4][84][0].apply(exports,arguments)
+},{"dup":84}],101:[function(require,module,exports){
+arguments[4][85][0].apply(exports,arguments)
+},{"../../../errors":90,"./end-of-stream":99,"dup":85}],102:[function(require,module,exports){
+arguments[4][86][0].apply(exports,arguments)
+},{"../../../errors":90,"dup":86}],103:[function(require,module,exports){
+arguments[4][87][0].apply(exports,arguments)
+},{"dup":87,"events":37}],104:[function(require,module,exports){
+arguments[4][88][0].apply(exports,arguments)
+},{"./lib/_stream_duplex.js":91,"./lib/_stream_passthrough.js":92,"./lib/_stream_readable.js":93,"./lib/_stream_transform.js":94,"./lib/_stream_writable.js":95,"./lib/internal/streams/end-of-stream.js":99,"./lib/internal/streams/pipeline.js":101,"dup":88}],105:[function(require,module,exports){
+module.exports = assert
+
+class AssertionError extends Error {}
+AssertionError.prototype.name = 'AssertionError'
+
+/**
+ * Minimal assert function
+ * @param  {any} t Value to check if falsy
+ * @param  {string=} m Optional assertion error message
+ * @throws {AssertionError}
+ */
+function assert (t, m) {
+  if (!t) {
+    var err = new AssertionError(m)
+    if (Error.captureStackTrace) Error.captureStackTrace(err, assert)
+    throw err
+  }
+}
+
+},{}],106:[function(require,module,exports){
+/* eslint-disable camelcase */
+const sodium = require('sodium-universal')
+const assert = require('nanoassert')
+const b4a = require('b4a')
+
+const DHLEN = sodium.crypto_scalarmult_ed25519_BYTES
+const PKLEN = sodium.crypto_scalarmult_ed25519_BYTES
+const SKLEN = sodium.crypto_sign_SECRETKEYBYTES
+const ALG = 'Ed25519'
+
+module.exports = {
+  DHLEN,
+  PKLEN,
+  SKLEN,
+  ALG,
+  name: ALG,
+  generateKeyPair,
+  dh
+}
+
+function generateKeyPair (privKey) {
+  if (privKey) return generateSeedKeyPair(privKey.subarray(0, 32))
+
+  const keyPair = {}
+  keyPair.secretKey = b4a.alloc(SKLEN)
+  keyPair.publicKey = b4a.alloc(PKLEN)
+
+  sodium.crypto_sign_keypair(keyPair.publicKey, keyPair.secretKey)
+  return keyPair
+}
+
+function generateSeedKeyPair (seed) {
+  const keyPair = {}
+  keyPair.secretKey = b4a.alloc(SKLEN)
+  keyPair.publicKey = b4a.alloc(PKLEN)
+
+  sodium.crypto_sign_seed_keypair(keyPair.publicKey, keyPair.secretKey, seed)
+  return keyPair
+}
+
+function dh (pk, lsk) {
+  assert(lsk.byteLength === SKLEN)
+  assert(pk.byteLength === PKLEN)
+
+  const output = b4a.alloc(DHLEN)
+
+  // libsodium stores seed not actual scalar
+  const sk = b4a.alloc(64)
+  sodium.crypto_hash_sha512(sk, lsk.subarray(0, 32))
+  sk[0] &= 248
+  sk[31] &= 127
+  sk[31] |= 64
+
+  sodium.crypto_scalarmult_ed25519(
+    output,
+    sk.subarray(0, 32),
+    pk
+  )
+
+  return output
+}
+
+},{"b4a":18,"nanoassert":105,"sodium-universal":158}],107:[function(require,module,exports){
+const sodium = require('sodium-universal')
+const b4a = require('b4a')
+
+module.exports = class CipherState {
+  constructor (key) {
+    this.key = key || null
+    this.nonce = 0
+    this.CIPHER_ALG = 'ChaChaPoly'
+  }
+
+  initialiseKey (key) {
+    this.key = key
+    this.nonce = 0
+  }
+
+  setNonce (nonce) {
+    this.nonce = nonce
+  }
+
+  encrypt (plaintext, ad) {
+    if (!this.hasKey) return plaintext
+    if (!ad) ad = b4a.alloc(0)
+
+    const ciphertext = encryptWithAD(this.key, this.nonce, ad, plaintext)
+    this.nonce++
+
+    return ciphertext
+  }
+
+  decrypt (ciphertext, ad) {
+    if (!this.hasKey) return ciphertext
+    if (!ad) ad = b4a.alloc(0)
+
+    const plaintext = decryptWithAD(this.key, this.nonce, ad, ciphertext)
+    this.nonce++
+
+    return plaintext
+  }
+
+  get hasKey () {
+    return this.key !== null
+  }
+
+  _clear () {
+    sodium.sodium_memzero(this.key)
+    this.key = null
+    this.nonce = null
+  }
+
+  static get MACBYTES () {
+    return 16
+  }
+
+  static get NONCEBYTES () {
+    return 8
+  }
+
+  static get KEYBYTES () {
+    return 32
+  }
+}
+
+function encryptWithAD (key, counter, additionalData, plaintext) {
+  // for our purposes, additionalData will always be a pubkey so we encode from hex
+  if (!b4a.isBuffer(additionalData)) additionalData = b4a.from(additionalData, 'hex')
+  if (!b4a.isBuffer(plaintext)) plaintext = b4a.from(plaintext, 'hex')
+
+  const nonce = b4a.alloc(sodium.crypto_aead_chacha20poly1305_ietf_NPUBBYTES)
+  const view = new DataView(nonce.buffer, nonce.byteOffset, nonce.byteLength)
+  view.setUint32(4, counter, true)
+
+  const ciphertext = b4a.alloc(plaintext.byteLength + sodium.crypto_aead_chacha20poly1305_ietf_ABYTES)
+
+  sodium.crypto_aead_chacha20poly1305_ietf_encrypt(ciphertext, plaintext, additionalData, null, nonce, key)
+  return ciphertext
+}
+
+function decryptWithAD (key, counter, additionalData, ciphertext) {
+  // for our purposes, additionalData will always be a pubkey so we encode from hex
+  if (!b4a.isBuffer(additionalData)) additionalData = b4a.from(additionalData, 'hex')
+  if (!b4a.isBuffer(ciphertext)) ciphertext = b4a.from(ciphertext, 'hex')
+
+  const nonce = b4a.alloc(sodium.crypto_aead_chacha20poly1305_ietf_NPUBBYTES)
+  const view = new DataView(nonce.buffer, nonce.byteOffset, nonce.byteLength)
+  view.setUint32(4, counter, true)
+
+  const plaintext = b4a.alloc(ciphertext.byteLength - sodium.crypto_aead_chacha20poly1305_ietf_ABYTES)
+
+  sodium.crypto_aead_chacha20poly1305_ietf_decrypt(plaintext, null, ciphertext, additionalData, nonce, key)
+  return plaintext
+}
+
+},{"b4a":18,"sodium-universal":158}],108:[function(require,module,exports){
+/* eslint-disable camelcase */
+const { crypto_kx_SEEDBYTES, crypto_kx_keypair, crypto_kx_seed_keypair } = require('sodium-universal/crypto_kx')
+const { crypto_scalarmult_BYTES, crypto_scalarmult_SCALARBYTES, crypto_scalarmult, crypto_scalarmult_base } = require('sodium-universal/crypto_scalarmult')
+
+const assert = require('nanoassert')
+const b4a = require('b4a')
+
+const DHLEN = crypto_scalarmult_BYTES
+const PKLEN = crypto_scalarmult_BYTES
+const SKLEN = crypto_scalarmult_SCALARBYTES
+const SEEDLEN = crypto_kx_SEEDBYTES
+const ALG = '25519'
+
+module.exports = {
+  DHLEN,
+  PKLEN,
+  SKLEN,
+  SEEDLEN,
+  ALG,
+  generateKeyPair,
+  generateSeedKeyPair,
+  dh
+}
+
+function generateKeyPair (privKey) {
+  const keyPair = {}
+
+  keyPair.secretKey = privKey || b4a.alloc(SKLEN)
+  keyPair.publicKey = b4a.alloc(PKLEN)
+
+  if (privKey) {
+    crypto_scalarmult_base(keyPair.publicKey, keyPair.secretKey)
+  } else {
+    crypto_kx_keypair(keyPair.publicKey, keyPair.secretKey)
+  }
+
+  return keyPair
+}
+
+function generateSeedKeyPair (seed) {
+  assert(seed.byteLength === SKLEN)
+
+  const keyPair = {}
+  keyPair.secretKey = b4a.alloc(SKLEN)
+  keyPair.publicKey = b4a.alloc(PKLEN)
+
+  crypto_kx_seed_keypair(keyPair.publicKey, keyPair.secretKey, seed)
+  return keyPair
+}
+
+function dh (pk, lsk) {
+  assert(lsk.byteLength === SKLEN)
+  assert(pk.byteLength === PKLEN)
+
+  const output = b4a.alloc(DHLEN)
+
+  crypto_scalarmult(
+    output,
+    lsk,
+    pk
+  )
+
+  return output
+}
+
+},{"b4a":18,"nanoassert":105,"sodium-universal/crypto_kx":147,"sodium-universal/crypto_scalarmult":149}],109:[function(require,module,exports){
+const assert = require('nanoassert')
+const hmacBlake2b = require('hmac-blake2b')
+const b4a = require('b4a')
+
+const HASHLEN = 64
+
+module.exports = {
+  hkdf,
+  HASHLEN
+}
+
+function hkdf (salt, inputKeyMaterial, info = '', length = 2 * HASHLEN) {
+  const pseudoRandomKey = hkdfExtract(salt, inputKeyMaterial)
+  const result = hkdfExpand(pseudoRandomKey, info, length)
+
+  const [k1, k2] = [result.slice(0, HASHLEN), result.slice(HASHLEN)]
+
+  return [k1, k2]
+
+  function hkdfExtract (salt, inputKeyMaterial) {
+    return hmacDigest(salt, inputKeyMaterial)
+  }
+
+  function hkdfExpand (key, info, length) {
+    const T = [b4a.from(info)]
+    const lengthRatio = length / HASHLEN
+
+    for (let i = 0; i < lengthRatio; i++) {
+      const infoBuf = b4a.from(info)
+      const toHash = b4a.concat([T[i], infoBuf, b4a.from([i + 1])])
+
+      T[i + 1] = hmacDigest(key, toHash)
+    }
+
+    const result = b4a.concat(T.slice(1))
+    assert(result.byteLength === length, 'key expansion failed, length not as expected')
+
+    return result
+  }
+}
+
+function hmacDigest (key, input) {
+  const hmac = b4a.alloc(HASHLEN)
+  hmacBlake2b(hmac, input, key)
+
+  return hmac
+}
+
+},{"b4a":18,"hmac-blake2b":41,"nanoassert":105}],110:[function(require,module,exports){
+const assert = require('nanoassert')
+const b4a = require('b4a')
+
+const SymmetricState = require('./symmetric-state')
+const { HASHLEN } = require('./hkdf')
+
+const PRESHARE_IS = Symbol('initiator static key preshared')
+const PRESHARE_RS = Symbol('responder static key preshared')
+
+const TOK_S = Symbol('s')
+const TOK_E = Symbol('e')
+
+const TOK_ES = Symbol('es')
+const TOK_SE = Symbol('se')
+const TOK_EE = Symbol('ee')
+const TOK_SS = Symbol('ss')
+
+const HANDSHAKES = Object.freeze({
+  XX: [
+    [TOK_E],
+    [TOK_E, TOK_EE, TOK_S, TOK_ES],
+    [TOK_S, TOK_SE]
+  ],
+  IK: [
+    PRESHARE_RS,
+    [TOK_E, TOK_ES, TOK_S, TOK_SS],
+    [TOK_E, TOK_EE, TOK_SE]
+  ]
+})
+
+class Writer {
+  constructor () {
+    this.size = 0
+    this.buffers = []
+  }
+
+  push (b) {
+    this.size += b.byteLength
+    this.buffers.push(b)
+  }
+
+  end () {
+    const all = b4a.alloc(this.size)
+    let offset = 0
+    for (const b of this.buffers) {
+      all.set(b, offset)
+      offset += b.byteLength
+    }
+    return all
+  }
+}
+
+class Reader {
+  constructor (buf) {
+    this.offset = 0
+    this.buffer = buf
+  }
+
+  shift (n) {
+    const start = this.offset
+    const end = this.offset += n
+    if (end > this.buffer.byteLength) throw new Error('Insufficient bytes')
+    return this.buffer.subarray(start, end)
+  }
+
+  end () {
+    return this.shift(this.buffer.byteLength - this.offset)
+  }
+}
+
+module.exports = class NoiseState extends SymmetricState {
+  constructor (pattern, initiator, staticKeypair, opts = {}) {
+    super(opts)
+
+    this.s = staticKeypair || this.curve.generateKeyPair()
+    this.e = null
+
+    this.re = null
+    this.rs = null
+
+    this.pattern = pattern
+    this.handshake = HANDSHAKES[this.pattern].slice()
+
+    this.protocol = b4a.from([
+      'Noise',
+      this.pattern,
+      this.DH_ALG,
+      this.CIPHER_ALG,
+      'BLAKE2b'
+    ].join('_'))
+
+    this.initiator = initiator
+    this.complete = false
+
+    this.rx = null
+    this.tx = null
+    this.hash = null
+  }
+
+  initialise (prologue, remoteStatic) {
+    if (this.protocol.byteLength <= HASHLEN) this.digest.set(this.protocol)
+    else this.mixHash(this.protocol)
+
+    this.chainingKey = b4a.from(this.digest)
+
+    this.mixHash(prologue)
+
+    while (!Array.isArray(this.handshake[0])) {
+      const message = this.handshake.shift()
+
+      // handshake steps should be as arrays, only
+      // preshare tokens are provided otherwise
+      assert(message === PRESHARE_RS || message === PRESHARE_IS,
+        'Unexpected pattern')
+
+      const takeRemoteKey = this.initiator
+        ? message === PRESHARE_RS
+        : message === PRESHARE_IS
+
+      if (takeRemoteKey) this.rs = remoteStatic
+
+      const key = takeRemoteKey ? this.rs : this.s.publicKey
+      assert(key != null, 'Remote pubkey required')
+
+      this.mixHash(key)
+    }
+  }
+
+  final () {
+    const [k1, k2] = this.split()
+
+    this.tx = this.initiator ? k1 : k2
+    this.rx = this.initiator ? k2 : k1
+
+    this.complete = true
+    this.hash = this.getHandshakeHash()
+
+    this._clear()
+  }
+
+  recv (buf) {
+    const r = new Reader(buf)
+
+    for (const pattern of this.handshake.shift()) {
+      switch (pattern) {
+        case TOK_E :
+          this.re = r.shift(this.curve.PKLEN)
+          this.mixHash(this.re)
+          break
+
+        case TOK_S : {
+          const klen = this.hasKey ? this.curve.PKLEN + 16 : this.curve.PKLEN
+          this.rs = this.decryptAndHash(r.shift(klen))
+          break
+        }
+
+        case TOK_EE :
+        case TOK_ES :
+        case TOK_SE :
+        case TOK_SS : {
+          const useStatic = keyPattern(pattern, this.initiator)
+
+          const localKey = useStatic.local ? this.s.secretKey : this.e.secretKey
+          const remoteKey = useStatic.remote ? this.rs : this.re
+
+          this.mixKey(remoteKey, localKey)
+          break
+        }
+
+        default :
+          throw new Error('Unexpected message')
+      }
+    }
+
+    const payload = this.decryptAndHash(r.end())
+
+    if (!this.handshake.length) this.final()
+    return payload
+  }
+
+  send (payload = b4a.alloc(0)) {
+    const w = new Writer()
+
+    for (const pattern of this.handshake.shift()) {
+      switch (pattern) {
+        case TOK_E :
+          if (this.e === null) this.e = this.curve.generateKeyPair()
+          this.mixHash(this.e.publicKey)
+          w.push(this.e.publicKey)
+          break
+
+        case TOK_S :
+          w.push(this.encryptAndHash(this.s.publicKey))
+          break
+
+        case TOK_ES :
+        case TOK_SE :
+        case TOK_EE :
+        case TOK_SS : {
+          const useStatic = keyPattern(pattern, this.initiator)
+
+          const localKey = useStatic.local ? this.s.secretKey : this.e.secretKey
+          const remoteKey = useStatic.remote ? this.rs : this.re
+
+          this.mixKey(remoteKey, localKey)
+          break
+        }
+
+        default :
+          throw new Error('Unexpected message')
+      }
+    }
+
+    w.push(this.encryptAndHash(payload))
+    const response = w.end()
+
+    if (!this.handshake.length) this.final()
+    return response
+  }
+
+  _clear () {
+    super._clear()
+
+    this.e.secretKey.fill(0)
+    this.e.publicKey.fill(0)
+
+    this.re.fill(0)
+
+    this.e = null
+    this.re = null
+  }
+}
+
+function keyPattern (pattern, initiator) {
+  const ret = {
+    local: false,
+    remote: false
+  }
+
+  switch (pattern) {
+    case TOK_EE:
+      return ret
+
+    case TOK_ES:
+      ret.local ^= !initiator
+      ret.remote ^= initiator
+      return ret
+
+    case TOK_SE:
+      ret.local ^= initiator
+      ret.remote ^= !initiator
+      return ret
+
+    case TOK_SS:
+      ret.local ^= 1
+      ret.remote ^= 1
+      return ret
+  }
+}
+
+},{"./hkdf":109,"./symmetric-state":111,"b4a":18,"nanoassert":105}],111:[function(require,module,exports){
+const sodium = require('sodium-universal')
+const assert = require('nanoassert')
+const b4a = require('b4a')
+const CipherState = require('./cipher')
+const curve = require('./dh')
+const { HASHLEN, hkdf } = require('./hkdf')
+
+module.exports = class SymmetricState extends CipherState {
+  constructor (opts = {}) {
+    super()
+
+    this.curve = opts.curve || curve
+    this.digest = b4a.alloc(HASHLEN)
+    this.chainingKey = null
+    this.offset = 0
+
+    this.DH_ALG = this.curve.ALG
+  }
+
+  mixHash (data) {
+    accumulateDigest(this.digest, data)
+  }
+
+  mixKey (pubkey, seckey) {
+    const dh = this.curve.dh(pubkey, seckey)
+    const hkdfResult = hkdf(this.chainingKey, dh)
+    this.chainingKey = hkdfResult[0]
+    this.initialiseKey(hkdfResult[1].subarray(0, 32))
+  }
+
+  encryptAndHash (plaintext) {
+    const ciphertext = this.encrypt(plaintext, this.digest)
+    accumulateDigest(this.digest, ciphertext)
+    return ciphertext
+  }
+
+  decryptAndHash (ciphertext) {
+    const plaintext = this.decrypt(ciphertext, this.digest)
+    accumulateDigest(this.digest, ciphertext)
+    return plaintext
+  }
+
+  getHandshakeHash (out) {
+    if (!out) return this.getHandshakeHash(b4a.alloc(HASHLEN))
+    assert(out.byteLength === HASHLEN, `output must be ${HASHLEN} bytes`)
+
+    out.set(this.digest)
+    return out
+  }
+
+  split () {
+    const res = hkdf(this.chainingKey, b4a.alloc(0))
+    return res.map(k => k.subarray(0, 32))
+  }
+
+  _clear () {
+    super._clear()
+
+    sodium.sodium_memzero(this.digest)
+    sodium.sodium_memzero(this.chainingKey)
+
+    this.digest = null
+    this.chainingKey = null
+    this.offset = null
+
+    this.curve = null
+  }
+
+  static get alg () {
+    return CipherState.alg + '_BLAKE2b'
+  }
+}
+
+function accumulateDigest (digest, input) {
+  const toHash = b4a.concat([digest, input])
+  sodium.crypto_generichash(digest, toHash)
+}
+
+},{"./cipher":107,"./dh":108,"./hkdf":109,"b4a":18,"nanoassert":105,"sodium-universal":158}],112:[function(require,module,exports){
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+'use strict';
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+},{}],113:[function(require,module,exports){
+var wrappy = require('wrappy')
+module.exports = wrappy(once)
+module.exports.strict = wrappy(onceStrict)
+
+once.proto = once(function () {
+  Object.defineProperty(Function.prototype, 'once', {
+    value: function () {
+      return once(this)
+    },
+    configurable: true
+  })
+
+  Object.defineProperty(Function.prototype, 'onceStrict', {
+    value: function () {
+      return onceStrict(this)
+    },
+    configurable: true
+  })
+})
+
+function once (fn) {
+  var f = function () {
+    if (f.called) return f.value
+    f.called = true
+    return f.value = fn.apply(this, arguments)
+  }
+  f.called = false
+  return f
+}
+
+function onceStrict (fn) {
+  var f = function () {
+    if (f.called)
+      throw new Error(f.onceError)
+    f.called = true
+    return f.value = fn.apply(this, arguments)
+  }
+  var name = fn.name || 'Function wrapped with `once`'
+  f.onceError = name + " shouldn't be called more than once"
+  f.called = false
+  return f
+}
+
+},{"wrappy":185}],114:[function(require,module,exports){
+exports.endianness = function () { return 'LE' };
+
+exports.hostname = function () {
+    if (typeof location !== 'undefined') {
+        return location.hostname
+    }
+    else return '';
+};
+
+exports.loadavg = function () { return [] };
+
+exports.uptime = function () { return 0 };
+
+exports.freemem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.totalmem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.cpus = function () { return [] };
+
+exports.type = function () { return 'Browser' };
+
+exports.release = function () {
+    if (typeof navigator !== 'undefined') {
+        return navigator.appVersion;
+    }
+    return '';
+};
+
+exports.networkInterfaces
+= exports.getNetworkInterfaces
+= function () { return {} };
+
+exports.arch = function () { return 'javascript' };
+
+exports.platform = function () { return 'browser' };
+
+exports.tmpdir = exports.tmpDir = function () {
+    return '/tmp';
+};
+
+exports.EOL = '\n';
+
+exports.homedir = function () {
+	return '/'
+};
+
+},{}],115:[function(require,module,exports){
+/**
+ * @module pcm-convert
+ */
+'use strict'
+
+var assert = require('assert')
+var isBuffer = require('is-buffer')
+var format = require('audio-format')
+var extend = require('object-assign')
+var isAudioBuffer = require('is-audio-buffer')
+
+module.exports = convert
+
+function convert (buffer, from, to, target) {
+	assert(buffer, 'First argument should be data')
+	assert(from, 'Second argument should be format string or object')
+
+	//quick ignore
+	if (from === to) {
+		return buffer
+	}
+
+	//2-containers case
+	if (isContainer(from)) {
+		target = from
+		to = format.detect(target)
+		from = format.detect(buffer)
+	}
+	//if no source format defined, just target format
+	else if (to === undefined && target === undefined) {
+		to = getFormat(from)
+		from = format.detect(buffer)
+	}
+	//if no source format but container is passed with from as target format
+	else if (isContainer(to)) {
+		target = to
+		to = getFormat(from)
+		from = format.detect(buffer)
+	}
+	//all arguments
+	else {
+		var inFormat = getFormat(from)
+		var srcFormat = format.detect(buffer)
+		srcFormat.dtype = inFormat.type === 'arraybuffer' ? srcFormat.type : inFormat.type
+		from = extend(inFormat, srcFormat)
+
+		var outFormat = getFormat(to)
+		var dstFormat = format.detect(target)
+		if (outFormat.type) {
+			dstFormat.dtype = outFormat.type === 'arraybuffer' ? (dstFormat.type || from.dtype) : outFormat.type
+		}
+		to = extend(outFormat, dstFormat)
+	}
+
+	if (to.channels == null && from.channels != null) {
+		to.channels = from.channels
+	}
+
+	if (to.type == null) {
+		to.type = from.type
+		to.dtype = from.dtype
+	}
+
+	if (to.interleaved != null && from.channels == null) {
+		from.channels = 2
+	}
+
+	//ignore same format
+	if (from.type === to.type &&
+		from.interleaved === to.interleaved &&
+		from.endianness === to.endianness) return buffer
+
+	normalize(from)
+	normalize(to)
+
+	//audio-buffer-list/audio types
+	if (buffer.buffers || (buffer.buffer && buffer.buffer.buffers)) {
+		//handle audio
+		if (buffer.buffer) buffer = buffer.buffer
+
+		//handle audiobufferlist
+		if (buffer.buffers) buffer = buffer.join()
+	}
+
+	var src
+	//convert buffer/alike to arrayBuffer
+	if (isAudioBuffer(buffer)) {
+		if (buffer._data) src = buffer._data
+		else {
+			src = new Float32Array(buffer.length * buffer.numberOfChannels)
+			for (var c = 0, l = buffer.numberOfChannels; c < l; c++) {
+				src.set(buffer.getChannelData(c), buffer.length * c)
+			}
+		}
+	}
+	else if (buffer instanceof ArrayBuffer) {
+		src = new (dtypeClass[from.dtype])(buffer)
+	}
+	else if (isBuffer(buffer)) {
+		if (buffer.byteOffset != null) src = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+		else src = buffer.buffer;
+
+		src = new (dtypeClass[from.dtype])(src)
+	}
+	//typed arrays are unchanged as is
+	else {
+		src = buffer
+	}
+
+	//dst is automatically filled with mapped values
+	//but in some cases mapped badly, e. g. float → int(round + rotate)
+	var dst = to.type === 'array' ? Array.from(src) : new (dtypeClass[to.dtype])(src)
+
+	//if range differ, we should apply more thoughtful mapping
+	if (from.max !== to.max) {
+		var fromRange = from.max - from.min, toRange = to.max - to.min
+		for (var i = 0, l = src.length; i < l; i++) {
+			var value = src[i]
+
+			//ignore not changed range
+			//bring to 0..1
+			var normalValue = (value - from.min) / fromRange
+
+			//bring to new format ranges
+			value = normalValue * toRange + to.min
+
+			//clamp (buffers do not like values outside of bounds)
+			dst[i] = Math.max(to.min, Math.min(to.max, value))
+		}
+	}
+
+	//reinterleave, if required
+	if (from.interleaved != to.interleaved) {
+		var channels = from.channels
+		var len = Math.floor(src.length / channels)
+
+		//deinterleave
+		if (from.interleaved && !to.interleaved) {
+			dst = dst.map(function (value, idx, data) {
+				var offset = idx % len
+				var channel = ~~(idx / len)
+
+				return data[offset * channels + channel]
+			})
+		}
+		//interleave
+		else if (!from.interleaved && to.interleaved) {
+			dst = dst.map(function (value, idx, data) {
+				var offset = ~~(idx / channels)
+				var channel = idx % channels
+
+				return data[channel * len + offset]
+			})
+		}
+	}
+
+	//ensure endianness
+	if (to.dtype != 'array' && to.dtype != 'int8' && to.dtype != 'uint8' && from.endianness && to.endianness && from.endianness !== to.endianness) {
+		var le = to.endianness === 'le'
+		var view = new DataView(dst.buffer)
+		var step = dst.BYTES_PER_ELEMENT
+		var methodName = 'set' + to.dtype[0].toUpperCase() + to.dtype.slice(1)
+		for (var i = 0, l = dst.length; i < l; i++) {
+			view[methodName](i*step, dst[i], le)
+		}
+	}
+
+	if (to.type === 'audiobuffer') {
+		//TODO
+	}
+
+
+	if (target) {
+		if (Array.isArray(target)) {
+			for (var i = 0; i < dst.length; i++) {
+				target[i] = dst[i]
+			}
+		}
+		else if (target instanceof ArrayBuffer) {
+			var
+			targetContainer = new dtypeClass[to.dtype](target)
+			targetContainer.set(dst)
+			target = targetContainer
+		}
+		else {
+			target.set(dst)
+		}
+		dst = target
+	}
+
+	if (to.type === 'arraybuffer' || to.type === 'buffer') dst = dst.buffer
+
+	return dst
+}
+
+function getFormat (arg) {
+	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
+}
+
+function isContainer (arg) {
+	return typeof arg != 'string' && (Array.isArray(arg) || ArrayBuffer.isView(arg) || arg instanceof ArrayBuffer)
+}
+
+
+var dtypeClass = {
+	'uint8': Uint8Array,
+	'uint8_clamped': Uint8ClampedArray,
+	'uint16': Uint16Array,
+	'uint32': Uint32Array,
+	'int8': Int8Array,
+	'int16': Int16Array,
+	'int32': Int32Array,
+	'float32': Float32Array,
+	'float64': Float64Array,
+	'array': Array,
+	'arraybuffer': Uint8Array,
+	'buffer': Uint8Array,
+}
+
+var defaultDtype = {
+	'float32': 'float32',
+	'audiobuffer': 'float32',
+	'ndsamples': 'float32',
+	'ndarray': 'float32',
+	'float64': 'float64',
+	'buffer': 'uint8',
+	'arraybuffer': 'uint8',
+	'uint8': 'uint8',
+	'uint8_clamped': 'uint8',
+	'uint16': 'uint16',
+	'uint32': 'uint32',
+	'int8': 'int8',
+	'int16': 'int16',
+	'int32': 'int32',
+	'array': 'array'
+}
+
+//make sure all format properties are present
+function normalize (obj) {
+	if (!obj.dtype) {
+		obj.dtype = defaultDtype[obj.type] || 'array'
+	}
+
+	//provide limits
+	switch (obj.dtype) {
+		case 'float32':
+		case 'float64':
+		case 'audiobuffer':
+		case 'ndsamples':
+		case 'ndarray':
+			obj.min = -1
+			obj.max = 1
+			break;
+		case 'uint8':
+			obj.min = 0
+			obj.max = 255
+			break;
+		case 'uint16':
+			obj.min = 0
+			obj.max = 65535
+			break;
+		case 'uint32':
+			obj.min = 0
+			obj.max = 4294967295
+			break;
+		case 'int8':
+			obj.min = -128
+			obj.max = 127
+			break;
+		case 'int16':
+			obj.min = -32768
+			obj.max = 32767
+			break;
+		case 'int32':
+			obj.min = -2147483648
+			obj.max = 2147483647
+			break;
+		default:
+			obj.min = -1
+			obj.max = 1
+			break;
+	}
+
+	return obj
+}
+
+},{"assert":7,"audio-format":16,"is-audio-buffer":67,"is-buffer":116,"object-assign":112}],116:[function(require,module,exports){
+arguments[4][17][0].apply(exports,arguments)
+},{"dup":17}],117:[function(require,module,exports){
+'use strict'
+
+
+module.exports = function pick (src, props, keepRest) {
+	var result = {}, prop, i
+
+	if (typeof props === 'string') props = toList(props)
+	if (Array.isArray(props)) {
+		var res = {}
+		for (i = 0; i < props.length; i++) {
+			res[props[i]] = true
+		}
+		props = res
+	}
+
+	// convert strings to lists
+	for (prop in props) {
+		props[prop] = toList(props[prop])
+	}
+
+	// keep-rest strategy requires unmatched props to be preserved
+	var occupied = {}
+
+	for (prop in props) {
+		var aliases = props[prop]
+
+		if (Array.isArray(aliases)) {
+			for (i = 0; i < aliases.length; i++) {
+				var alias = aliases[i]
+
+				if (keepRest) {
+					occupied[alias] = true
+				}
+
+				if (alias in src) {
+					result[prop] = src[alias]
+
+					if (keepRest) {
+						for (var j = i; j < aliases.length; j++) {
+							occupied[aliases[j]] = true
+						}
+					}
+
+					break
+				}
+			}
+		}
+		else if (prop in src) {
+			if (props[prop]) {
+				result[prop] = src[prop]
+			}
+
+			if (keepRest) {
+				occupied[prop] = true
+			}
+		}
+	}
+
+	if (keepRest) {
+		for (prop in src) {
+			if (occupied[prop]) continue
+			result[prop] = src[prop]
+		}
+	}
+
+	return result
+}
+
+var CACHE = {}
+
+function toList(arg) {
+	if (CACHE[arg]) return CACHE[arg]
+	if (typeof arg === 'string') {
+		arg = CACHE[arg] = arg.split(/\s*,\s*|\s+/)
+	}
+	return arg
+}
+
+},{}],118:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],119:[function(require,module,exports){
+module.exports = typeof queueMicrotask === 'function' ? queueMicrotask : (fn) => Promise.resolve().then(fn)
+
+},{}],120:[function(require,module,exports){
+module.exports = function () {
+  throw new Error('random-access-file is not supported in the browser')
+}
+
+},{}],121:[function(require,module,exports){
+const RandomAccess = require('random-access-storage')
+const isOptions = require('is-options')
+const inherits = require('inherits')
+const b4a = require('b4a')
+
+const DEFAULT_PAGE_SIZE = 1024 * 1024
+
+module.exports = RAM
+
+function RAM (opts) {
+  if (!(this instanceof RAM)) return new RAM(opts)
+  if (typeof opts === 'number') opts = {length: opts}
+  if (!opts) opts = {}
+
+  RandomAccess.call(this)
+
+  if (b4a.isBuffer(opts)) {
+    opts = {length: opts.length, buffer: opts}
+  }
+  if (!isOptions(opts)) opts = {}
+
+  this.length = opts.length || 0
+  this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
+  this.buffers = []
+
+  if (opts.buffer) this.buffers.push(opts.buffer)
+}
+
+inherits(RAM, RandomAccess)
+
+RAM.prototype._stat = function (req) {
+  req.callback(null, {size: this.length})
+}
+
+RAM.prototype._write = function (req) {
+  var i = Math.floor(req.offset / this.pageSize)
+  var rel = req.offset - i * this.pageSize
+  var start = 0
+
+  const len = req.offset + req.size
+  if (len > this.length) this.length = len
+
+  while (start < req.size) {
+    const page = this._page(i++, true)
+    const free = this.pageSize - rel
+    const end = free < (req.size - start)
+      ? start + free
+      : req.size
+
+    b4a.copy(req.data, page, rel, start, end)
+    start = end
+    rel = 0
+  }
+
+  req.callback(null, null)
+}
+
+RAM.prototype._read = function (req) {
+  var i = Math.floor(req.offset / this.pageSize)
+  var rel = req.offset - i * this.pageSize
+  var start = 0
+
+  if (req.offset + req.size > this.length) {
+    return req.callback(new Error('Could not satisfy length'), null)
+  }
+
+  const data = b4a.alloc(req.size)
+
+  while (start < req.size) {
+    const page = this._page(i++, false)
+    const avail = this.pageSize - rel
+    const wanted = req.size - start
+    const len = avail < wanted ? avail : wanted
+
+    if (page) b4a.copy(page, data, start, rel, rel + len)
+    start += len
+    rel = 0
+  }
+
+  req.callback(null, data)
+}
+
+RAM.prototype._del = function (req) {
+  var i = Math.floor(req.offset / this.pageSize)
+  var rel = req.offset - i * this.pageSize
+  var start = 0
+
+  if (rel && req.offset + req.size >= this.length) {
+    var buf = this.buffers[i]
+    if (buf) buf.fill(0, rel)
+  }
+
+  if (req.offset + req.size > this.length) {
+    req.size = Math.max(0, this.length - req.offset)
+  }
+
+  while (start < req.size) {
+    if (rel === 0 && req.size - start >= this.pageSize) {
+      this.buffers[i++] = undefined
+    }
+
+    rel = 0
+    start += this.pageSize - rel
+  }
+
+  if (req.offset + req.size >= this.length) {
+    this.length = req.offset
+  }
+
+  req.callback(null, null)
+}
+
+RAM.prototype._destroy = function (req) {
+  this._buffers = []
+  this.length = 0
+  req.callback(null, null)
+}
+
+RAM.prototype._page = function (i, upsert) {
+  var page = this.buffers[i]
+  if (page || !upsert) return page
+  page = this.buffers[i] = b4a.alloc(this.pageSize)
+  return page
+}
+
+RAM.prototype.toBuffer = function () {
+  const buf = b4a.alloc(this.length)
+
+  for (var i = 0; i < this.buffers.length; i++) {
+    if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
+  }
+
+  return buf
+}
+
+},{"b4a":18,"inherits":66,"is-options":71,"random-access-storage":122}],122:[function(require,module,exports){
+var events = require('events')
+var inherits = require('inherits')
+var queueTick = require('queue-tick')
+
+var NOT_READABLE = defaultImpl(new Error('Not readable'))
+var NOT_WRITABLE = defaultImpl(new Error('Not writable'))
+var NOT_DELETABLE = defaultImpl(new Error('Not deletable'))
+var NOT_STATABLE = defaultImpl(new Error('Not statable'))
+var NO_OPEN_READABLE = defaultImpl(new Error('No readonly open'))
+
+// NON_BLOCKING_OPS
+var READ_OP = 0
+var WRITE_OP = 1
+var DEL_OP = 2
+var STAT_OP = 3
+
+// BLOCKING_OPS
+var OPEN_OP = 4
+var CLOSE_OP = 5
+var DESTROY_OP = 6
+
+module.exports = RandomAccess
+
+function RandomAccess (opts) {
+  if (!(this instanceof RandomAccess)) return new RandomAccess(opts)
+  events.EventEmitter.call(this)
+
+  this._queued = []
+  this._pending = 0
+  this._needsOpen = true
+
+  this.opened = false
+  this.closed = false
+  this.destroyed = false
+
+  if (opts) {
+    if (opts.openReadonly) this._openReadonly = opts.openReadonly
+    if (opts.open) this._open = opts.open
+    if (opts.read) this._read = opts.read
+    if (opts.write) this._write = opts.write
+    if (opts.del) this._del = opts.del
+    if (opts.stat) this._stat = opts.stat
+    if (opts.close) this._close = opts.close
+    if (opts.destroy) this._destroy = opts.destroy
+  }
+
+  this.preferReadonly = this._openReadonly !== NO_OPEN_READABLE
+  this.readable = this._read !== NOT_READABLE
+  this.writable = this._write !== NOT_WRITABLE
+  this.deletable = this._del !== NOT_DELETABLE
+  this.statable = this._stat !== NOT_STATABLE
+}
+
+inherits(RandomAccess, events.EventEmitter)
+
+RandomAccess.prototype.read = function (offset, size, cb) {
+  this.run(new Request(this, READ_OP, offset, size, null, cb))
+}
+
+RandomAccess.prototype._read = NOT_READABLE
+
+RandomAccess.prototype.write = function (offset, data, cb) {
+  if (!cb) cb = noop
+  openWritable(this)
+  this.run(new Request(this, WRITE_OP, offset, data.length, data, cb))
+}
+
+RandomAccess.prototype._write = NOT_WRITABLE
+
+RandomAccess.prototype.del = function (offset, size, cb) {
+  if (!cb) cb = noop
+  openWritable(this)
+  this.run(new Request(this, DEL_OP, offset, size, null, cb))
+}
+
+RandomAccess.prototype._del = NOT_DELETABLE
+
+RandomAccess.prototype.stat = function (cb) {
+  this.run(new Request(this, STAT_OP, 0, 0, null, cb))
+}
+
+RandomAccess.prototype._stat = NOT_STATABLE
+
+RandomAccess.prototype.open = function (cb) {
+  if (!cb) cb = noop
+  if (this.opened && !this._needsOpen) return queueTick(() => cb(null))
+  queueAndRun(this, new Request(this, OPEN_OP, 0, 0, null, cb))
+}
+
+RandomAccess.prototype._open = defaultImpl(null)
+RandomAccess.prototype._openReadonly = NO_OPEN_READABLE
+
+RandomAccess.prototype.close = function (cb) {
+  if (!cb) cb = noop
+  if (this.closed) return queueTick(() => cb(null))
+  queueAndRun(this, new Request(this, CLOSE_OP, 0, 0, null, cb))
+}
+
+RandomAccess.prototype._close = defaultImpl(null)
+
+RandomAccess.prototype.destroy = function (cb) {
+  if (!cb) cb = noop
+  if (!this.closed) this.close(noop)
+  queueAndRun(this, new Request(this, DESTROY_OP, 0, 0, null, cb))
+}
+
+RandomAccess.prototype._destroy = defaultImpl(null)
+
+RandomAccess.prototype.run = function (req) {
+  if (this._needsOpen) this.open(noop)
+  if (this._queued.length) this._queued.push(req)
+  else req._run()
+}
+
+function noop () {}
+
+function Request (self, type, offset, size, data, cb) {
+  this.type = type
+  this.offset = offset
+  this.data = data
+  this.size = size
+  this.storage = self
+
+  this._sync = false
+  this._callback = cb
+  this._openError = null
+}
+
+Request.prototype._maybeOpenError = function (err) {
+  if (this.type !== OPEN_OP) return
+  var queued = this.storage._queued
+  for (var i = 0; i < queued.length; i++) queued[i]._openError = err
+}
+
+Request.prototype._unqueue = function (err) {
+  var ra = this.storage
+  var queued = ra._queued
+
+  if (!err) {
+    switch (this.type) {
+      case OPEN_OP:
+        if (!ra.opened) {
+          ra.opened = true
+          ra.emit('open')
+        }
+        break
+
+      case CLOSE_OP:
+        if (!ra.closed) {
+          ra.closed = true
+          ra.emit('close')
+        }
+        break
+
+      case DESTROY_OP:
+        if (!ra.destroyed) {
+          ra.destroyed = true
+          ra.emit('destroy')
+        }
+        break
+    }
+  } else {
+    this._maybeOpenError(err)
+  }
+
+  if (queued.length && queued[0] === this) queued.shift()
+
+  if (!--ra._pending) drainQueue(ra)
+}
+
+Request.prototype.callback = function (err, val) {
+  if (this._sync) return nextTick(this, err, val)
+  this._unqueue(err)
+  this._callback(err, val)
+}
+
+Request.prototype._openAndNotClosed = function () {
+  var ra = this.storage
+  if (ra.opened && !ra.closed) return true
+  if (!ra.opened) nextTick(this, this._openError || new Error('Not opened'))
+  else if (ra.closed) nextTick(this, new Error('Closed'))
+  return false
+}
+
+Request.prototype._open = function () {
+  var ra = this.storage
+
+  if (ra.opened && !ra._needsOpen) return nextTick(this, null)
+  if (ra.closed) return nextTick(this, new Error('Closed'))
+
+  ra._needsOpen = false
+  if (ra.preferReadonly) ra._openReadonly(this)
+  else ra._open(this)
+}
+
+Request.prototype._run = function () {
+  var ra = this.storage
+  ra._pending++
+
+  this._sync = true
+
+  switch (this.type) {
+    case READ_OP:
+      if (this._openAndNotClosed()) ra._read(this)
+      break
+
+    case WRITE_OP:
+      if (this._openAndNotClosed()) ra._write(this)
+      break
+
+    case DEL_OP:
+      if (this._openAndNotClosed()) ra._del(this)
+      break
+
+    case STAT_OP:
+      if (this._openAndNotClosed()) ra._stat(this)
+      break
+
+    case OPEN_OP:
+      this._open()
+      break
+
+    case CLOSE_OP:
+      if (ra.closed || !ra.opened) nextTick(this, null)
+      else ra._close(this)
+      break
+
+    case DESTROY_OP:
+      if (ra.destroyed) nextTick(this, null)
+      else ra._destroy(this)
+      break
+  }
+
+  this._sync = false
+}
+
+function queueAndRun (self, req) {
+  self._queued.push(req)
+  if (!self._pending) req._run()
+}
+
+function drainQueue (self) {
+  var queued = self._queued
+
+  while (queued.length > 0) {
+    var blocking = queued[0].type > 3
+    if (!blocking || !self._pending) queued[0]._run()
+    if (blocking) return
+    queued.shift()
+  }
+}
+
+function openWritable (self) {
+  if (self.preferReadonly) {
+    self._needsOpen = true
+    self.preferReadonly = false
+  }
+}
+
+function defaultImpl (err) {
+  return overridable
+
+  function overridable (req) {
+    nextTick(req, err)
+  }
+}
+
+function nextTick (req, err, val) {
+  queueTick(() => req.callback(err, val))
+}
+
+},{"events":37,"inherits":66,"queue-tick":119}],123:[function(require,module,exports){
+module.exports = class RandomArrayIterator {
+  constructor (values) {
+    this.values = values
+    this.start = 0
+    this.length = this.values.length
+  }
+
+  next () {
+    if (this.length === 0) {
+      if (this.start === 0) return { done: true, value: undefined }
+      this.length = this.start
+      this.start = 0
+    }
+
+    const i = this.start + ((Math.random() * this.length) | 0)
+    const j = this.start + --this.length
+    const value = this.values[i]
+
+    this.values[i] = this.values[j]
+    this.values[j] = value
+
+    return { done: false, value }
+  }
+
+  dequeue () {
+    this.values[this.start + this.length] = this.values[this.values.length - 1]
+    this.values.pop()
+  }
+
+  requeue () {
+    const i = this.start + this.length
+    const value = this.values[i]
+    this.values[i] = this.values[this.start]
+    this.values[this.start++] = value
+  }
+
+  restart () {
+    this.start = 0
+    this.length = this.values.length
+    return this
+  }
+
+  [Symbol.iterator] () {
+    return this
+  }
+}
+
+},{}],124:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -19387,7 +19526,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":33}],110:[function(require,module,exports){
+},{"buffer":31}],125:[function(require,module,exports){
 module.exports = safetyCatch
 
 function isActuallyUncaught (err) {
@@ -19411,7 +19550,7 @@ function safetyCatch (err) {
   }
 }
 
-},{}],111:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module.exports={
 "8000": 8000,
 "11025": 11025,
@@ -19427,7 +19566,7 @@ module.exports={
 "384000": 384000
 }
 
-},{}],112:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 const js = require('./sha256.js')
 const wasm = require('sha256-wasm')
 
@@ -19455,7 +19594,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha256.js":113,"sha256-wasm":114}],113:[function(require,module,exports){
+},{"./sha256.js":128,"sha256-wasm":129}],128:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -19692,7 +19831,7 @@ function bswap (a) {
   return r | l
 }
 
-},{"b4a":20,"nanoassert":76}],114:[function(require,module,exports){
+},{"b4a":18,"nanoassert":105}],129:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -19863,7 +20002,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha256.js":115,"b4a":20,"nanoassert":76}],115:[function(require,module,exports){
+},{"./sha256.js":130,"b4a":18,"nanoassert":105}],130:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -19899,7 +20038,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],116:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 const js = require('./sha512.js')
 const wasm = require('sha512-wasm')
 
@@ -19927,7 +20066,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha512.js":117,"sha512-wasm":118}],117:[function(require,module,exports){
+},{"./sha512.js":132,"sha512-wasm":133}],132:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -20487,7 +20626,7 @@ HMAC.prototype.digest = function (enc, offset = 0) {
 
 Sha512.HMAC = HMAC
 
-},{"b4a":20,"nanoassert":76}],118:[function(require,module,exports){
+},{"b4a":18,"nanoassert":105}],133:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -20660,7 +20799,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha512.js":119,"b4a":20,"nanoassert":76}],119:[function(require,module,exports){
+},{"./sha512.js":134,"b4a":18,"nanoassert":105}],134:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -20696,7 +20835,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],120:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 const set = require('unordered-set')
 
 module.exports = opts => new ShuffledPriorityQueue(opts)
@@ -20832,7 +20971,7 @@ function add (len, b) {
   return len + b.length
 }
 
-},{"unordered-set":151}],121:[function(require,module,exports){
+},{"unordered-set":183}],136:[function(require,module,exports){
 module.exports = fallback
 
 function _add (a, b) {
@@ -20954,7 +21093,7 @@ function fallback (out, m, key) { // modified from https://github.com/jedisct1/s
   out[7] = (h.h >> 24) & 0xff
 }
 
-},{}],122:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 var assert = require('nanoassert')
 var wasm = typeof WebAssembly !== 'undefined' && require('./siphash24')()
 var fallback = require('./fallback')
@@ -20995,7 +21134,7 @@ function realloc (size) {
   memory = new Uint8Array(wasm.memory.buffer)
 }
 
-},{"./fallback":121,"./siphash24":123,"nanoassert":76}],123:[function(require,module,exports){
+},{"./fallback":136,"./siphash24":138,"nanoassert":105}],138:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -21031,7 +21170,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],124:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -21102,7 +21241,7 @@ module.exports = {
   Pull
 }
 
-},{"b4a":20,"sodium-universal":142}],125:[function(require,module,exports){
+},{"b4a":18,"sodium-universal":158}],140:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_stream_chacha20_ietf, crypto_stream_chacha20_ietf_xor_ic } = require('./crypto_stream_chacha20')
 const { crypto_verify_16 } = require('./crypto_verify')
@@ -21264,7 +21403,7 @@ module.exports = {
   crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX
 }
 
-},{"./crypto_stream_chacha20":139,"./crypto_verify":140,"./internal/poly1305":144,"nanoassert":76}],126:[function(require,module,exports){
+},{"./crypto_stream_chacha20":155,"./crypto_verify":156,"./internal/poly1305":161,"nanoassert":105}],141:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_verify_32 } = require('./crypto_verify')
 const Sha512 = require('sha512-universal')
@@ -21301,7 +21440,7 @@ module.exports = {
   crypto_auth_verify
 }
 
-},{"./crypto_verify":140,"nanoassert":76,"sha512-universal":116}],127:[function(require,module,exports){
+},{"./crypto_verify":156,"nanoassert":105,"sha512-universal":131}],142:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_hash_sha512 } = require('./crypto_hash')
 const { crypto_scalarmult, crypto_scalarmult_base } = require('./crypto_scalarmult')
@@ -21503,7 +21642,7 @@ function cleanup (arr) {
   for (let i = 0; i < arr.length; i++) arr[i] = 0
 }
 
-},{"./crypto_generichash":128,"./crypto_hash":129,"./crypto_scalarmult":134,"./crypto_secretbox":135,"./crypto_stream":138,"./randombytes":146,"nanoassert":76,"xsalsa20":155}],128:[function(require,module,exports){
+},{"./crypto_generichash":143,"./crypto_hash":144,"./crypto_scalarmult":149,"./crypto_secretbox":150,"./crypto_stream":154,"./randombytes":163,"nanoassert":105,"xsalsa20":187}],143:[function(require,module,exports){
 var blake2b = require('blake2b')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -21541,7 +21680,7 @@ blake2b.ready(function (_) {
   module.exports.crypto_generichash_WASM_LOADED = blake2b.WASM_LOADED
 })
 
-},{"blake2b":30}],129:[function(require,module,exports){
+},{"blake2b":28}],144:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha512 = require('sha512-universal')
 const assert = require('nanoassert')
@@ -21569,7 +21708,7 @@ module.exports = {
   crypto_hash_BYTES
 }
 
-},{"nanoassert":76,"sha512-universal":116}],130:[function(require,module,exports){
+},{"nanoassert":105,"sha512-universal":131}],145:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha256 = require('sha256-universal')
 const assert = require('nanoassert')
@@ -21590,7 +21729,7 @@ module.exports = {
   crypto_hash_sha256_BYTES
 }
 
-},{"nanoassert":76,"sha256-universal":112}],131:[function(require,module,exports){
+},{"nanoassert":105,"sha256-universal":127}],146:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const randombytes_buf = require('./randombytes').randombytes_buf
@@ -21632,7 +21771,7 @@ module.exports.crypto_kdf_keygen = function crypto_kdf_keygen (out) {
   randombytes_buf(out.subarray(0, module.exports.crypto_kdf_KEYBYTES))
 }
 
-},{"./randombytes":146,"blake2b":30,"nanoassert":76}],132:[function(require,module,exports){
+},{"./randombytes":163,"blake2b":28,"nanoassert":105}],147:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_scalarmult_base } = require('./crypto_scalarmult')
 const { crypto_generichash } = require('./crypto_generichash')
@@ -21668,7 +21807,7 @@ module.exports = {
   crypto_kx_PUBLICKEYBYTES
 }
 
-},{"./crypto_generichash":128,"./crypto_scalarmult":134,"./randombytes":146,"nanoassert":76}],133:[function(require,module,exports){
+},{"./crypto_generichash":143,"./crypto_scalarmult":149,"./randombytes":163,"nanoassert":105}],148:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const Poly1305 = require('./internal/poly1305')
@@ -21706,7 +21845,7 @@ function crypto_onetimeauth_verify (mac, msg, key) {
   return crypto_verify_16(mac, 0, tmp, 0)
 }
 
-},{"./crypto_verify":140,"./internal/poly1305":144,"nanoassert":76}],134:[function(require,module,exports){
+},{"./crypto_verify":156,"./internal/poly1305":161,"nanoassert":105}],149:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { _9, _121665, gf, inv25519, pack25519, unpack25519, sel25519, A, M, Z, S } = require('./internal/ed25519')
 
@@ -21784,7 +21923,7 @@ function check (buf, len) {
   if (!buf || (len && buf.length < len)) throw new Error('Argument must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./internal/ed25519":143}],135:[function(require,module,exports){
+},{"./internal/ed25519":159}],150:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { crypto_stream, crypto_stream_xor } = require('./crypto_stream')
@@ -21897,7 +22036,280 @@ function crypto_secretbox_open_easy (msg, box, n, k) {
   return true
 }
 
-},{"./crypto_onetimeauth":133,"./crypto_stream":138,"nanoassert":76}],136:[function(require,module,exports){
+},{"./crypto_onetimeauth":148,"./crypto_stream":154,"nanoassert":105}],151:[function(require,module,exports){
+/* eslint-disable camelcase */
+const assert = require('nanoassert')
+const { randombytes_buf } = require('./randombytes')
+const {
+  crypto_stream_chacha20_ietf,
+  crypto_stream_chacha20_ietf_xor,
+  crypto_stream_chacha20_ietf_xor_ic,
+  crypto_stream_chacha20_ietf_KEYBYTES
+} = require('./crypto_stream_chacha20')
+const { crypto_core_hchacha20, crypto_core_hchacha20_INPUTBYTES } = require('./internal/hchacha20')
+const Poly1305 = require('./internal/poly1305')
+const { sodium_increment, sodium_is_zero, sodium_memcmp } = require('./helpers')
+
+const crypto_onetimeauth_poly1305_BYTES = 16
+const crypto_secretstream_xchacha20poly1305_COUNTERBYTES = 4
+const crypto_secretstream_xchacha20poly1305_INONCEBYTES = 8
+const crypto_aead_xchacha20poly1305_ietf_KEYBYTES = 32
+const crypto_secretstream_xchacha20poly1305_KEYBYTES = crypto_aead_xchacha20poly1305_ietf_KEYBYTES
+const crypto_aead_xchacha20poly1305_ietf_NPUBBYTES = 24
+const crypto_secretstream_xchacha20poly1305_HEADERBYTES = crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+const crypto_aead_xchacha20poly1305_ietf_ABYTES = 16
+const crypto_secretstream_xchacha20poly1305_ABYTES = 1 + crypto_aead_xchacha20poly1305_ietf_ABYTES
+const crypto_secretstream_xchacha20poly1305_MESSAGEBYTES_MAX = Number.MAX_SAFE_INTEGER
+const crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX = Number.MAX_SAFE_INTEGER
+const crypto_secretstream_xchacha20poly1305_TAGBYTES = 1
+const crypto_secretstream_xchacha20poly1305_TAG_MESSAGE = new Uint8Array([0])
+const crypto_secretstream_xchacha20poly1305_TAG_PUSH = new Uint8Array([1])
+const crypto_secretstream_xchacha20poly1305_TAG_REKEY = new Uint8Array([2])
+const crypto_secretstream_xchacha20poly1305_TAG_FINAL = new Uint8Array([crypto_secretstream_xchacha20poly1305_TAG_PUSH | crypto_secretstream_xchacha20poly1305_TAG_REKEY])
+const crypto_secretstream_xchacha20poly1305_STATEBYTES = crypto_secretstream_xchacha20poly1305_KEYBYTES +
+  crypto_secretstream_xchacha20poly1305_INONCEBYTES + crypto_secretstream_xchacha20poly1305_COUNTERBYTES + 8
+
+const KEY_OFFSET = 0
+const NONCE_OFFSET = crypto_secretstream_xchacha20poly1305_KEYBYTES
+const PAD_OFFSET = NONCE_OFFSET + crypto_secretstream_xchacha20poly1305_INONCEBYTES + crypto_secretstream_xchacha20poly1305_COUNTERBYTES
+
+const _pad0 = new Uint8Array(16)
+
+function STORE64_LE (dest, int) {
+  let mul = 1
+  let i = 0
+  dest[0] = int & 0xFF
+  while (++i < 8 && (mul *= 0x100)) {
+    dest[i] = (int / mul) & 0xFF
+  }
+}
+
+function crypto_secretstream_xchacha20poly1305_counter_reset (state) {
+  assert(state.byteLength === crypto_secretstream_xchacha20poly1305_STATEBYTES,
+    'state is should be crypto_secretstream_xchacha20poly1305_STATEBYTES long')
+
+  const nonce = state.subarray(NONCE_OFFSET, PAD_OFFSET)
+  for (let i = 0; i < crypto_secretstream_xchacha20poly1305_COUNTERBYTES; i++) {
+    nonce[i] = 0
+  }
+  nonce[0] = 1
+}
+
+function crypto_secretstream_xchacha20poly1305_keygen (k) {
+  assert(k.length === crypto_secretstream_xchacha20poly1305_KEYBYTES)
+  randombytes_buf(k)
+}
+
+function crypto_secretstream_xchacha20poly1305_init_push (state, out, key) {
+  assert(state.byteLength === crypto_secretstream_xchacha20poly1305_STATEBYTES,
+    'state is should be crypto_secretstream_xchacha20poly1305_STATEBYTES long')
+  assert(out instanceof Uint8Array && out.length === crypto_secretstream_xchacha20poly1305_HEADERBYTES, 'out not byte array of length crypto_secretstream_xchacha20poly1305_HEADERBYTES')
+  assert(key instanceof Uint8Array && key.length === crypto_secretstream_xchacha20poly1305_KEYBYTES, 'key not byte array of length crypto_secretstream_xchacha20poly1305_KEYBYTES')
+
+  const k = state.subarray(KEY_OFFSET, NONCE_OFFSET)
+  const nonce = state.subarray(NONCE_OFFSET, PAD_OFFSET)
+  const pad = state.subarray(PAD_OFFSET)
+
+  randombytes_buf(out, crypto_secretstream_xchacha20poly1305_HEADERBYTES)
+  crypto_core_hchacha20(k, out, key, null)
+  crypto_secretstream_xchacha20poly1305_counter_reset(state)
+  for (let i = 0; i < crypto_secretstream_xchacha20poly1305_INONCEBYTES; i++) {
+    nonce[i + crypto_secretstream_xchacha20poly1305_COUNTERBYTES] = out[i + crypto_core_hchacha20_INPUTBYTES]
+  }
+  pad.fill(0)
+}
+
+function crypto_secretstream_xchacha20poly1305_init_pull (state, _in, key) {
+  assert(state.byteLength === crypto_secretstream_xchacha20poly1305_STATEBYTES,
+    'state is should be crypto_secretstream_xchacha20poly1305_STATEBYTES long')
+  assert(_in instanceof Uint8Array && _in.length === crypto_secretstream_xchacha20poly1305_HEADERBYTES,
+    '_in not byte array of length crypto_secretstream_xchacha20poly1305_HEADERBYTES')
+  assert(key instanceof Uint8Array && key.length === crypto_secretstream_xchacha20poly1305_KEYBYTES,
+    'key not byte array of length crypto_secretstream_xchacha20poly1305_KEYBYTES')
+
+  const k = state.subarray(KEY_OFFSET, NONCE_OFFSET)
+  const nonce = state.subarray(NONCE_OFFSET, PAD_OFFSET)
+  const pad = state.subarray(PAD_OFFSET)
+
+  crypto_core_hchacha20(k, _in, key, null)
+  crypto_secretstream_xchacha20poly1305_counter_reset(state)
+
+  for (let i = 0; i < crypto_secretstream_xchacha20poly1305_INONCEBYTES; i++) {
+    nonce[i + crypto_secretstream_xchacha20poly1305_COUNTERBYTES] = _in[i + crypto_core_hchacha20_INPUTBYTES]
+  }
+  pad.fill(0)
+}
+
+function crypto_secretstream_xchacha20poly1305_rekey (state) {
+  assert(state.byteLength === crypto_secretstream_xchacha20poly1305_STATEBYTES,
+    'state is should be crypto_secretstream_xchacha20poly1305_STATEBYTES long')
+
+  const k = state.subarray(KEY_OFFSET, NONCE_OFFSET)
+  const nonce = state.subarray(NONCE_OFFSET, PAD_OFFSET)
+
+  const new_key_and_inonce = new Uint8Array(
+    crypto_stream_chacha20_ietf_KEYBYTES + crypto_secretstream_xchacha20poly1305_INONCEBYTES)
+  let i
+  for (i = 0; i < crypto_stream_chacha20_ietf_KEYBYTES; i++) {
+    new_key_and_inonce[i] = k[i]
+  }
+  for (i = 0; i < crypto_secretstream_xchacha20poly1305_INONCEBYTES; i++) {
+    new_key_and_inonce[crypto_stream_chacha20_ietf_KEYBYTES + i] =
+      nonce[crypto_secretstream_xchacha20poly1305_COUNTERBYTES + i]
+  }
+  crypto_stream_chacha20_ietf_xor(new_key_and_inonce, new_key_and_inonce, nonce, k)
+  for (i = 0; i < crypto_stream_chacha20_ietf_KEYBYTES; i++) {
+    k[i] = new_key_and_inonce[i]
+  }
+  for (i = 0; i < crypto_secretstream_xchacha20poly1305_INONCEBYTES; i++) {
+    nonce[crypto_secretstream_xchacha20poly1305_COUNTERBYTES + i] =
+      new_key_and_inonce[crypto_stream_chacha20_ietf_KEYBYTES + i]
+  }
+  crypto_secretstream_xchacha20poly1305_counter_reset(state)
+}
+
+function crypto_secretstream_xchacha20poly1305_push (state, out, m, ad, tag) {
+  assert(state.byteLength === crypto_secretstream_xchacha20poly1305_STATEBYTES,
+    'state is should be crypto_secretstream_xchacha20poly1305_STATEBYTES long')
+  if (!ad) ad = new Uint8Array(0)
+
+  const k = state.subarray(KEY_OFFSET, NONCE_OFFSET)
+  const nonce = state.subarray(NONCE_OFFSET, PAD_OFFSET)
+
+  const block = new Uint8Array(64)
+  const slen = new Uint8Array(8)
+
+  assert(crypto_secretstream_xchacha20poly1305_MESSAGEBYTES_MAX <=
+    crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX)
+
+  crypto_stream_chacha20_ietf(block, nonce, k)
+  const poly = new Poly1305(block)
+  block.fill(0)
+
+  poly.update(ad, 0, ad.byteLength)
+  poly.update(_pad0, 0, (0x10 - ad.byteLength) & 0xf)
+
+  block[0] = tag[0]
+  crypto_stream_chacha20_ietf_xor_ic(block, block, nonce, 1, k)
+
+  poly.update(block, 0, block.byteLength)
+  out[0] = block[0]
+
+  const c = out.subarray(1, out.byteLength)
+  crypto_stream_chacha20_ietf_xor_ic(c, m, nonce, 2, k)
+  poly.update(c, 0, m.byteLength)
+  poly.update(_pad0, 0, (0x10 - block.byteLength + m.byteLength) & 0xf)
+
+  STORE64_LE(slen, ad.byteLength)
+  poly.update(slen, 0, slen.byteLength)
+  STORE64_LE(slen, block.byteLength + m.byteLength)
+  poly.update(slen, 0, slen.byteLength)
+
+  const mac = out.subarray(1 + m.byteLength, out.byteLength)
+  poly.finish(mac, 0)
+
+  assert(crypto_onetimeauth_poly1305_BYTES >=
+    crypto_secretstream_xchacha20poly1305_INONCEBYTES)
+  xor_buf(nonce.subarray(crypto_secretstream_xchacha20poly1305_COUNTERBYTES, nonce.length),
+    mac, crypto_secretstream_xchacha20poly1305_INONCEBYTES)
+  sodium_increment(nonce)
+
+  if ((tag[0] & crypto_secretstream_xchacha20poly1305_TAG_REKEY) !== 0 ||
+    sodium_is_zero(nonce.subarray(0, crypto_secretstream_xchacha20poly1305_COUNTERBYTES))) {
+    crypto_secretstream_xchacha20poly1305_rekey(state)
+  }
+
+  return crypto_secretstream_xchacha20poly1305_ABYTES + m.byteLength
+}
+
+function crypto_secretstream_xchacha20poly1305_pull (state, m, tag, _in, ad) {
+  assert(state.byteLength === crypto_secretstream_xchacha20poly1305_STATEBYTES,
+    'state is should be crypto_secretstream_xchacha20poly1305_STATEBYTES long')
+  if (!ad) ad = new Uint8Array(0)
+
+  const k = state.subarray(KEY_OFFSET, NONCE_OFFSET)
+  const nonce = state.subarray(NONCE_OFFSET, PAD_OFFSET)
+
+  const block = new Uint8Array(64)
+  const slen = new Uint8Array(8)
+  const mac = new Uint8Array(crypto_onetimeauth_poly1305_BYTES)
+
+  assert(_in.byteLength >= crypto_secretstream_xchacha20poly1305_ABYTES,
+    'ciphertext is too short.')
+
+  const mlen = _in.byteLength - crypto_secretstream_xchacha20poly1305_ABYTES
+  crypto_stream_chacha20_ietf(block, nonce, k)
+  const poly = new Poly1305(block)
+  block.fill(0) // sodium_memzero(block, sizeof block);
+
+  poly.update(ad, 0, ad.byteLength)
+  poly.update(_pad0, 0, (0x10 - ad.byteLength) & 0xf)
+
+  block.fill(0) // memset(block, 0, sizeof block);
+  block[0] = _in[0]
+  crypto_stream_chacha20_ietf_xor_ic(block, block, nonce, 1, k)
+
+  tag[0] = block[0]
+  block[0] = _in[0]
+  poly.update(block, 0, block.byteLength)
+
+  const c = _in.subarray(1, _in.length)
+  poly.update(c, 0, mlen)
+
+  poly.update(_pad0, 0, (0x10 - block.byteLength + mlen) & 0xf)
+
+  STORE64_LE(slen, ad.byteLength)
+  poly.update(slen, 0, slen.byteLength)
+  STORE64_LE(slen, block.byteLength + m.byteLength)
+  poly.update(slen, 0, slen.byteLength)
+
+  poly.finish(mac, 0)
+  const stored_mac = _in.subarray(1 + mlen, _in.length)
+
+  if (!sodium_memcmp(mac, stored_mac)) {
+    mac.fill(0)
+    throw new Error('MAC could not be verified.')
+  }
+
+  crypto_stream_chacha20_ietf_xor_ic(m, c.subarray(0, m.length), nonce, 2, k)
+  xor_buf(nonce.subarray(crypto_secretstream_xchacha20poly1305_COUNTERBYTES, nonce.length),
+    mac, crypto_secretstream_xchacha20poly1305_INONCEBYTES)
+  sodium_increment(nonce)
+
+  if ((tag & crypto_secretstream_xchacha20poly1305_TAG_REKEY) !== 0 ||
+    sodium_is_zero(nonce.subarray(0, crypto_secretstream_xchacha20poly1305_COUNTERBYTES))) {
+    crypto_secretstream_xchacha20poly1305_rekey(state)
+  }
+
+  return mlen
+}
+
+function xor_buf (out, _in, n) {
+  for (let i = 0; i < n; i++) {
+    out[i] ^= _in[i]
+  }
+}
+
+module.exports = {
+  crypto_secretstream_xchacha20poly1305_keygen,
+  crypto_secretstream_xchacha20poly1305_init_push,
+  crypto_secretstream_xchacha20poly1305_init_pull,
+  crypto_secretstream_xchacha20poly1305_rekey,
+  crypto_secretstream_xchacha20poly1305_push,
+  crypto_secretstream_xchacha20poly1305_pull,
+  crypto_secretstream_xchacha20poly1305_STATEBYTES,
+  crypto_secretstream_xchacha20poly1305_ABYTES,
+  crypto_secretstream_xchacha20poly1305_HEADERBYTES,
+  crypto_secretstream_xchacha20poly1305_KEYBYTES,
+  crypto_secretstream_xchacha20poly1305_MESSAGEBYTES_MAX,
+  crypto_secretstream_xchacha20poly1305_TAGBYTES,
+  crypto_secretstream_xchacha20poly1305_TAG_MESSAGE,
+  crypto_secretstream_xchacha20poly1305_TAG_PUSH,
+  crypto_secretstream_xchacha20poly1305_TAG_REKEY,
+  crypto_secretstream_xchacha20poly1305_TAG_FINAL
+}
+
+},{"./crypto_stream_chacha20":155,"./helpers":157,"./internal/hchacha20":160,"./internal/poly1305":161,"./randombytes":163,"nanoassert":105}],152:[function(require,module,exports){
 var siphash = require('siphash24')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -21913,7 +22325,7 @@ function shorthash (out, data, key, noAssert) {
   siphash(data, key, out, noAssert)
 }
 
-},{"siphash24":122}],137:[function(require,module,exports){
+},{"siphash24":137}],153:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { crypto_verify_32 } = require('./crypto_verify')
 const { crypto_hash } = require('./crypto_hash')
@@ -22384,7 +22796,7 @@ function check (buf, len, arg = 'Argument') {
   if (!buf || (len && buf.length < len)) throw new Error(arg + ' must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./crypto_hash":129,"./crypto_hash.js":129,"./crypto_scalarmult.js":134,"./crypto_verify":140,"./internal/ed25519":143,"./randombytes":146,"nanoassert":76}],138:[function(require,module,exports){
+},{"./crypto_hash":144,"./crypto_hash.js":144,"./crypto_scalarmult.js":149,"./crypto_verify":156,"./internal/ed25519":159,"./randombytes":163,"nanoassert":105}],154:[function(require,module,exports){
 /* eslint-disable camelcase */
 const xsalsa20 = require('xsalsa20')
 
@@ -22424,7 +22836,7 @@ XOR.prototype.final = function () {
   this._instance = null
 }
 
-},{"xsalsa20":155}],139:[function(require,module,exports){
+},{"xsalsa20":187}],155:[function(require,module,exports){
 const assert = require('nanoassert')
 const Chacha20 = require('chacha20-universal')
 
@@ -22510,7 +22922,7 @@ exports.crypto_stream_chacha20_ietf_xor_instance = function (n, k) {
   return new Chacha20(n, k)
 }
 
-},{"chacha20-universal":34,"nanoassert":76}],140:[function(require,module,exports){
+},{"chacha20-universal":32,"nanoassert":105}],156:[function(require,module,exports){
 /* eslint-disable camelcase */
 module.exports = {
   crypto_verify_16,
@@ -22541,7 +22953,7 @@ function crypto_verify_64 (x, xi, y, yi) {
   return vn(x, xi, y, yi, 64) === 0
 }
 
-},{}],141:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { vn } = require('./crypto_verify')
@@ -22574,7 +22986,7 @@ module.exports = {
   sodium_is_zero
 }
 
-},{"./crypto_verify":140,"nanoassert":76}],142:[function(require,module,exports){
+},{"./crypto_verify":156,"nanoassert":105}],158:[function(require,module,exports){
 'use strict'
 
 // Based on https://github.com/dchest/tweetnacl-js/blob/6dcbcaf5f5cbfd313f2dcfe763db35c828c8ff5b/nacl-fast.js.
@@ -22600,6 +23012,7 @@ forward(require('./crypto_aead'))
 forward(require('./crypto_onetimeauth'))
 forward(require('./crypto_scalarmult'))
 forward(require('./crypto_secretbox'))
+forward(require('./crypto_secretstream'))
 forward(require('./crypto_shorthash'))
 forward(require('./crypto_sign'))
 forward(require('./crypto_stream'))
@@ -22611,7 +23024,7 @@ function forward (submodule) {
   })
 }
 
-},{"./crypto_aead":125,"./crypto_auth":126,"./crypto_box":127,"./crypto_generichash":128,"./crypto_hash":129,"./crypto_hash_sha256":130,"./crypto_kdf":131,"./crypto_kx":132,"./crypto_onetimeauth":133,"./crypto_scalarmult":134,"./crypto_secretbox":135,"./crypto_shorthash":136,"./crypto_sign":137,"./crypto_stream":138,"./crypto_stream_chacha20":139,"./crypto_verify":140,"./helpers":141,"./memory":145,"./randombytes":146}],143:[function(require,module,exports){
+},{"./crypto_aead":140,"./crypto_auth":141,"./crypto_box":142,"./crypto_generichash":143,"./crypto_hash":144,"./crypto_hash_sha256":145,"./crypto_kdf":146,"./crypto_kx":147,"./crypto_onetimeauth":148,"./crypto_scalarmult":149,"./crypto_secretbox":150,"./crypto_secretstream":151,"./crypto_shorthash":152,"./crypto_sign":153,"./crypto_stream":154,"./crypto_stream_chacha20":155,"./crypto_verify":156,"./helpers":157,"./memory":162,"./randombytes":163}],159:[function(require,module,exports){
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
 
 var gf = function(init) {
@@ -23096,7 +23509,137 @@ module.exports = {
   I
 }
 
-},{}],144:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
+/* eslint-disable camelcase */
+const { sodium_malloc } = require('../memory')
+const assert = require('nanoassert')
+
+if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
+
+const crypto_core_hchacha20_OUTPUTBYTES = 32
+const crypto_core_hchacha20_INPUTBYTES = 16
+const crypto_core_hchacha20_KEYBYTES = 32
+const crypto_core_hchacha20_CONSTBYTES = 16
+
+function ROTL32 (x, b) {
+  x &= 0xFFFFFFFF
+  b &= 0xFFFFFFFF
+  return (x << b) | (x >>> (32 - b))
+}
+
+function LOAD32_LE (src, offset) {
+  assert(src instanceof Uint8Array, 'src not byte array')
+  let w = src[offset]
+  w |= src[offset + 1] << 8
+  w |= src[offset + 2] << 16
+  w |= src[offset + 3] << 24
+  return w
+}
+
+function STORE32_LE (dest, int, offset) {
+  assert(dest instanceof Uint8Array, 'dest not byte array')
+  var mul = 1
+  var i = 0
+  dest[offset] = int & 0xFF // grab bottom byte
+  while (++i < 4 && (mul *= 0x100)) {
+    dest[offset + i] = (int / mul) & 0xFF
+  }
+}
+
+function QUARTERROUND (l, A, B, C, D) {
+  l[A] += l[B]
+  l[D] = ROTL32(l[D] ^ l[A], 16)
+  l[C] += l[D]
+  l[B] = ROTL32(l[B] ^ l[C], 12)
+  l[A] += l[B]
+  l[D] = ROTL32(l[D] ^ l[A], 8)
+  l[C] += l[D]
+  l[B] = ROTL32(l[B] ^ l[C], 7)
+}
+
+function crypto_core_hchacha20 (out, _in, k, c) {
+  assert(out instanceof Uint8Array && out.length === 32, 'out is not an array of 32 bytes')
+  assert(k instanceof Uint8Array && k.length === 32, 'k is not an array of 32 bytes')
+  assert(c === null || (c instanceof Uint8Array && c.length === 16), 'c is not null or an array of 16 bytes')
+
+  let i = 0
+  const x = new Uint32Array(16)
+  if (!c) {
+    x[0] = 0x61707865
+    x[1] = 0x3320646E
+    x[2] = 0x79622D32
+    x[3] = 0x6B206574
+  } else {
+    x[0] = LOAD32_LE(c, 0)
+    x[1] = LOAD32_LE(c, 4)
+    x[2] = LOAD32_LE(c, 8)
+    x[3] = LOAD32_LE(c, 12)
+  }
+  x[4] = LOAD32_LE(k, 0)
+  x[5] = LOAD32_LE(k, 4)
+  x[6] = LOAD32_LE(k, 8)
+  x[7] = LOAD32_LE(k, 12)
+  x[8] = LOAD32_LE(k, 16)
+  x[9] = LOAD32_LE(k, 20)
+  x[10] = LOAD32_LE(k, 24)
+  x[11] = LOAD32_LE(k, 28)
+  x[12] = LOAD32_LE(_in, 0)
+  x[13] = LOAD32_LE(_in, 4)
+  x[14] = LOAD32_LE(_in, 8)
+  x[15] = LOAD32_LE(_in, 12)
+
+  for (i = 0; i < 10; i++) {
+    QUARTERROUND(x, 0, 4, 8, 12)
+    QUARTERROUND(x, 1, 5, 9, 13)
+    QUARTERROUND(x, 2, 6, 10, 14)
+    QUARTERROUND(x, 3, 7, 11, 15)
+    QUARTERROUND(x, 0, 5, 10, 15)
+    QUARTERROUND(x, 1, 6, 11, 12)
+    QUARTERROUND(x, 2, 7, 8, 13)
+    QUARTERROUND(x, 3, 4, 9, 14)
+  }
+
+  STORE32_LE(out, x[0], 0)
+  STORE32_LE(out, x[1], 4)
+  STORE32_LE(out, x[2], 8)
+  STORE32_LE(out, x[3], 12)
+  STORE32_LE(out, x[12], 16)
+  STORE32_LE(out, x[13], 20)
+  STORE32_LE(out, x[14], 24)
+  STORE32_LE(out, x[15], 28)
+
+  return 0
+}
+
+function crypto_core_hchacha20_outputbytes () {
+  return crypto_core_hchacha20_OUTPUTBYTES
+}
+
+function crypto_core_hchacha20_inputbytes () {
+  return crypto_core_hchacha20_INPUTBYTES
+}
+
+function crypto_core_hchacha20_keybytes () {
+  return crypto_core_hchacha20_KEYBYTES
+}
+
+function crypto_core_hchacha20_constbytes () {
+  return crypto_core_hchacha20_CONSTBYTES
+}
+
+module.exports = {
+  crypto_core_hchacha20_INPUTBYTES,
+  LOAD32_LE,
+  STORE32_LE,
+  QUARTERROUND,
+  crypto_core_hchacha20,
+  crypto_core_hchacha20_outputbytes,
+  crypto_core_hchacha20_inputbytes,
+  crypto_core_hchacha20_keybytes,
+  crypto_core_hchacha20_constbytes
+}
+
+},{"../memory":162,"nanoassert":105}],161:[function(require,module,exports){
 /*
 * Port of Andrew Moon's Poly1305-donna-16. Public domain.
 * https://github.com/floodyberry/poly1305-donna
@@ -23458,7 +24001,7 @@ poly1305.prototype.update = function(m, mpos, bytes) {
 
 module.exports = poly1305
 
-},{}],145:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 /* eslint-disable camelcase */
 
 function sodium_malloc (n) {
@@ -23490,7 +24033,7 @@ module.exports = {
   sodium_memzero
 }
 
-},{}],146:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 var assert = require('nanoassert')
 
 var randombytes = (function () {
@@ -23532,7 +24075,7 @@ module.exports.randombytes_buf = function (out) {
   randombytes(out, out.byteLength)
 }
 
-},{"nanoassert":76}],147:[function(require,module,exports){
+},{"nanoassert":105}],164:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -23663,7 +24206,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":39,"inherits":68,"readable-stream/lib/_stream_duplex.js":95,"readable-stream/lib/_stream_passthrough.js":96,"readable-stream/lib/_stream_readable.js":97,"readable-stream/lib/_stream_transform.js":98,"readable-stream/lib/_stream_writable.js":99,"readable-stream/lib/internal/streams/end-of-stream.js":103,"readable-stream/lib/internal/streams/pipeline.js":105}],148:[function(require,module,exports){
+},{"events":37,"inherits":66,"readable-stream/lib/_stream_duplex.js":166,"readable-stream/lib/_stream_passthrough.js":167,"readable-stream/lib/_stream_readable.js":168,"readable-stream/lib/_stream_transform.js":169,"readable-stream/lib/_stream_writable.js":170,"readable-stream/lib/internal/streams/end-of-stream.js":174,"readable-stream/lib/internal/streams/pipeline.js":176}],165:[function(require,module,exports){
+arguments[4][74][0].apply(exports,arguments)
+},{"dup":74}],166:[function(require,module,exports){
+arguments[4][75][0].apply(exports,arguments)
+},{"./_stream_readable":168,"./_stream_writable":170,"_process":118,"dup":75,"inherits":66}],167:[function(require,module,exports){
+arguments[4][76][0].apply(exports,arguments)
+},{"./_stream_transform":169,"dup":76,"inherits":66}],168:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"../errors":165,"./_stream_duplex":166,"./internal/streams/async_iterator":171,"./internal/streams/buffer_list":172,"./internal/streams/destroy":173,"./internal/streams/from":175,"./internal/streams/state":177,"./internal/streams/stream":178,"_process":118,"buffer":31,"dup":77,"events":37,"inherits":66,"string_decoder/":181,"util":29}],169:[function(require,module,exports){
+arguments[4][78][0].apply(exports,arguments)
+},{"../errors":165,"./_stream_duplex":166,"dup":78,"inherits":66}],170:[function(require,module,exports){
+arguments[4][79][0].apply(exports,arguments)
+},{"../errors":165,"./_stream_duplex":166,"./internal/streams/destroy":173,"./internal/streams/state":177,"./internal/streams/stream":178,"_process":118,"buffer":31,"dup":79,"inherits":66,"util-deprecate":184}],171:[function(require,module,exports){
+arguments[4][80][0].apply(exports,arguments)
+},{"./end-of-stream":174,"_process":118,"dup":80}],172:[function(require,module,exports){
+arguments[4][81][0].apply(exports,arguments)
+},{"buffer":31,"dup":81,"util":29}],173:[function(require,module,exports){
+arguments[4][82][0].apply(exports,arguments)
+},{"_process":118,"dup":82}],174:[function(require,module,exports){
+arguments[4][83][0].apply(exports,arguments)
+},{"../../../errors":165,"dup":83}],175:[function(require,module,exports){
+arguments[4][84][0].apply(exports,arguments)
+},{"dup":84}],176:[function(require,module,exports){
+arguments[4][85][0].apply(exports,arguments)
+},{"../../../errors":165,"./end-of-stream":174,"dup":85}],177:[function(require,module,exports){
+arguments[4][86][0].apply(exports,arguments)
+},{"../../../errors":165,"dup":86}],178:[function(require,module,exports){
+arguments[4][87][0].apply(exports,arguments)
+},{"dup":87,"events":37}],179:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const STREAM_DESTROYED = new Error('Stream was destroyed')
 const PREMATURE_CLOSE = new Error('Premature close')
@@ -23760,7 +24331,7 @@ const WRITE_DRAIN_STATUS = WRITE_QUEUED | WRITE_UNDRAINED | OPEN_STATUS | WRITE_
 const WRITE_STATUS = OPEN_STATUS | WRITE_ACTIVE | WRITE_QUEUED
 const WRITE_PRIMARY_AND_ACTIVE = WRITE_PRIMARY | WRITE_ACTIVE
 const WRITE_ACTIVE_AND_SYNC = WRITE_ACTIVE | WRITE_SYNC
-const WRITE_FINISHING_STATUS = OPEN_STATUS | WRITE_FINISHING | WRITE_QUEUED
+const WRITE_FINISHING_STATUS = OPEN_STATUS | WRITE_FINISHING | WRITE_QUEUED_AND_ACTIVE | WRITE_DONE
 const WRITE_BACKPRESSURE_STATUS = WRITE_UNDRAINED | DESTROY_STATUS | WRITE_FINISHING | WRITE_DONE
 
 const asyncIterator = Symbol.asyncIterator || Symbol('asyncIterator')
@@ -24321,6 +24892,7 @@ class Readable extends Stream {
         destroy = ite.return()
       },
       destroy (cb) {
+        if (!destroy) return cb(null)
         destroy.then(cb.bind(null, null)).catch(cb)
       }
     })
@@ -24653,7 +25225,7 @@ module.exports = {
   PassThrough
 }
 
-},{"events":39,"fast-fifo":41,"queue-tick":89}],149:[function(require,module,exports){
+},{"events":37,"fast-fifo":39,"queue-tick":119}],180:[function(require,module,exports){
 /**
  * @module  string-to-arraybuffer
  */
@@ -24717,7 +25289,7 @@ function decode(uri) {
 	return abuf
 }
 
-},{"atob-lite":11,"is-base64":70}],150:[function(require,module,exports){
+},{"atob-lite":11,"is-base64":68}],181:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25014,7 +25586,67 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":109}],151:[function(require,module,exports){
+},{"safe-buffer":124}],182:[function(require,module,exports){
+module.exports = class TimerBrowser {
+  constructor (ms, fn, ctx = null, interval = false) {
+    this.ms = ms
+    this.ontimeout = fn
+    this.context = ctx || null
+    this.interval = interval
+    this.done = false
+
+    this._timer = interval
+      ? setInterval(callInterval, ms, this)
+      : setTimeout(callTimeout, ms, this)
+  }
+
+  unref () {
+    this._timer.unref()
+  }
+
+  ref () {
+    this._timer.ref()
+  }
+
+  refresh () {
+    if (this.done) return
+
+    if (this.interval) {
+      clearInterval(this._timer)
+      this._timer = setInterval(callInterval, this.ms, this)
+    } else {
+      clearTimeout(this._timer)
+      this._timer = setTimeout(callTimeout, this.ms, this)
+    }
+  }
+
+  destroy () {
+    this.done = true
+    this.ontimeout = null
+
+    if (this.interval) clearInterval(this._timer)
+    else clearTimeout(this._timer)
+  }
+
+  static once (ms, fn, ctx) {
+    return new this(ms, fn, ctx, false)
+  }
+
+  static on (ms, fn, ctx) {
+    return new this(ms, fn, ctx, true)
+  }
+}
+
+function callTimeout (self) {
+  self.done = true
+  self.ontimeout.call(self.context)
+}
+
+function callInterval (self) {
+  self.ontimeout.call(self.context)
+}
+
+},{}],183:[function(require,module,exports){
 exports.add = add
 exports.has = has
 exports.remove = remove
@@ -25052,7 +25684,7 @@ function swap (list, a, b) {
   list[b._index] = b
 }
 
-},{}],152:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -25123,7 +25755,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],153:[function(require,module,exports){
+},{}],185:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
@@ -25158,7 +25790,7 @@ function wrappy (fn, cb) {
   }
 }
 
-},{}],154:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 module.exports = class MaxCache {
   constructor ({ maxSize, maxAge }) {
     this.maxSize = maxSize
@@ -25259,7 +25891,7 @@ class Iterator {
   }
 }
 
-},{}],155:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 var xsalsa20 = typeof WebAssembly !== "undefined" && require('./xsalsa20')()
 
 var SIGMA = new Uint8Array([101, 120, 112, 97, 110, 100, 32, 51, 50, 45, 98, 121, 116, 101, 32, 107])
@@ -25716,7 +26348,7 @@ function core_hsalsa20(o,p,k,c) {
   o[31] = x9 >>> 24 & 0xff
 }
 
-},{"./xsalsa20":156}],156:[function(require,module,exports){
+},{"./xsalsa20":188}],188:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -25752,7 +26384,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],157:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 (function (process,Buffer){(function (){
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
@@ -26164,4 +26796,4 @@ class Wavecore {
 module.exports = Wavecore
 
 }).call(this)}).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":88,"audio-buffer-from":12,"audio-buffer-utils":14,"buffer":33,"hypercore":46,"hyperswarm":61,"multistream":75,"random-access-memory":91,"stream":147}]},{},[1]);
+},{"_process":118,"audio-buffer-from":12,"audio-buffer-utils":13,"buffer":31,"hypercore":44,"hyperswarm":59,"multistream":89,"random-access-memory":121,"stream":164}]},{},[1]);
