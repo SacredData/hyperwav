@@ -1,5 +1,6 @@
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
+const b4a = require('b4a')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
@@ -7,11 +8,11 @@ const { PassThrough, Readable } = require('stream')
 const ram = require('random-access-memory')
 
 const WAVE_FORMAT = {
-  bitDepth: 16,
+  bitDepth: 32,
   channels: 1,
-  encoding: 'signed',
-  rate: 48000,
-  type: 'raw',
+  encoding: 'floating-point',
+  rate: 44100,
+  type: 'buffer',
 }
 const INDEX_SIZE = 76800 // 800ms
 // const INDEX_SIZE = 57600 // 600ms
