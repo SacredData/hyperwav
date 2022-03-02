@@ -653,7 +653,6 @@ class Wavecore {
         sa.push(bs)
       }
       return sa
-      // return [index, relativeOffset]
     } catch (err) {
       console.error(err)
       return
