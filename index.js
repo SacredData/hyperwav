@@ -27,11 +27,17 @@ const INDEX_SIZE = 76800 // 800ms
  */
 class Wavecore {
   /**
-   * Get the default hypercore instantiation options
+   * Get the default hypercore instantiation options with optional hypercore
+   * opts applied
+   * @arg {Object} [opts={}]
+   * @arg {Buffer} [opts.encryptionKey=null]
    * @returns {Object} coreOpts
    */
-  static coreOpts() {
-    return { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
+  static coreOpts(opts = { encryptionKey: null }) {
+    const { encryptionKey } = opts
+    const baseOpts = { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
+    if (encryptionKey) baseOpts.encryptionKey = encryptionKey
+    return baseOpts
   }
   /**
    * Get new Wavecore from a previously-instantiated hypercore and its parent
@@ -90,6 +96,7 @@ class Wavecore {
   constructor(
     opts = {
       core: null,
+      encryptionKey: null,
       indexSize: null,
       parent: null,
       source: null,
@@ -105,7 +112,7 @@ class Wavecore {
     } else {
       storage = ram
     }
-    const { core, indexSize, parent, source } = opts
+    const { core, encryptionKey, indexSize, parent, source } = opts
     if (parent) {
       this.parent = parent
       this.source = Source.from(parent.source) || null
@@ -117,7 +124,7 @@ class Wavecore {
       if (core instanceof Hypercore) this.core = core
     }
     // If there is still no hypercore lets just make a sane default one
-    if (!this.core) this.core = new Hypercore(storage, Wavecore.coreOpts())
+    if (!this.core) this.core = new Hypercore(storage, Wavecore.coreOpts({ encryptionKey }))
     this.core.ready().then(
       process.nextTick(() => {
         this.indexSize = indexSize ? indexSize : INDEX_SIZE
