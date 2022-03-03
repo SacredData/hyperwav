@@ -215,7 +215,7 @@ const fasterWave = await Promise.resolve(wave.tempo(1.1)) // 10% faster
 
 | Statements                  | Branches                | Functions                 | Lines             |
 | --------------------------- | ----------------------- | ------------------------- | ----------------- |
-| ![Statements](https://img.shields.io/badge/statements-79.01%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-64.66%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-83.5%25-yellow.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-85.32%25-yellow.svg?style=flat) |
+| ![Statements](https://img.shields.io/badge/statements-78.92%25-red.svg?style=flat) | ![Branches](https://img.shields.io/badge/branches-63.7%25-red.svg?style=flat) | ![Functions](https://img.shields.io/badge/functions-83.5%25-yellow.svg?style=flat) | ![Lines](https://img.shields.io/badge/lines-85.41%25-yellow.svg?style=flat) |
 
 We use `mocha`, with `nyc` for test coverage reporting.
 ```sh
