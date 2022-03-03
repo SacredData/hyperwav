@@ -145,13 +145,23 @@ class Wavecore {
    * @arg {Object} [opts={}] - Options object
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
+   * @arg {Boolean} [opts.normalize=false] - Normalize the audio
+   * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
+   * instance
+   * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
+   * the resulting output
    * @returns {AudioBuffer}
    * @see {@link
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
    * MDN}
    */
-  async audioBuffer(opts = { dcOffset: true, normalize: false, store: false }) {
-    const { dcOffset, normalize, store } = opts
+  async audioBuffer(opts = {
+    dcOffset: true,
+    mix: false,
+    normalize: false,
+    store: false
+  }) {
+    const { dcOffset, mix, normalize, store } = opts
     const bufs = []
     const rs = this.core.createReadStream()
     const pt = new PassThrough()
@@ -165,6 +175,7 @@ class Wavecore {
           )
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
+          if (mix) audioBuffer = abu.mix(audioBuffer, mix)
           if (store) this.audioBuffer = audioBuffer
           resolve(audioBuffer)
         } catch (err) {
