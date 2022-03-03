@@ -9,6 +9,7 @@ const { PassThrough, Readable } = require('stream')
 const process = require('process')
 const ram = require('random-access-memory')
 const { Source } = require('@storyboard-fm/little-media-box')
+const WaveFile = require('wavefile').WaveFile
 
 const WAVE_FORMAT = {
   bitDepth: 16,
@@ -959,6 +960,7 @@ class Wavecore {
           if (code !== 0) reject(new Error('Non-Zero exit-code!', code))
           const wavBuf = Buffer.concat(bufs)
           if (store) this.wavBuffer = wavBuf
+          if (this.wavBuffer) this.wavFile = new WaveFile(this.wavBuffer)
           resolve(wavBuf)
         })
         soxCmd.stdout.pipe(pt)
