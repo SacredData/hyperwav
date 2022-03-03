@@ -965,7 +965,7 @@ class Wavecore {
             Array.from(this.tags).forEach((t) =>
               this.wavFile.setTag(t[0], t[1])
             )
-            this.wavBuffer = this.wavFile.toBuffer()
+            this.wavBuffer = Buffer.from(this.wavFile.toBuffer())
           }
           resolve(wavBuf)
         })
