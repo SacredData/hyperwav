@@ -95,6 +95,7 @@ class Wavecore {
    * @arg {Hypercore} [opts.core=null] - Provide a previously-made hypercore.
    * @arg {Integer} [opts.indexSize=null] - Declare alternate index size.
    * @arg {Source} [opts.source=null] - Provide `little-media-box` source.
+   * @arg {Buffer} [opts.encryptionKey=null] - Provide an optional encryption key.
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {Wavecore}
    */
