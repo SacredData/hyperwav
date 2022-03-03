@@ -35,7 +35,11 @@ class Wavecore {
    */
   static coreOpts(opts = { encryptionKey: null }) {
     const { encryptionKey } = opts
-    const baseOpts = { valueEncoding: 'binary', overwrite: true, createIfMissing: true }
+    const baseOpts = {
+      valueEncoding: 'binary',
+      overwrite: true,
+      createIfMissing: true,
+    }
     if (encryptionKey) baseOpts.encryptionKey = encryptionKey
     return baseOpts
   }
@@ -124,7 +128,8 @@ class Wavecore {
       if (core instanceof Hypercore) this.core = core
     }
     // If there is still no hypercore lets just make a sane default one
-    if (!this.core) this.core = new Hypercore(storage, Wavecore.coreOpts({ encryptionKey }))
+    if (!this.core)
+      this.core = new Hypercore(storage, Wavecore.coreOpts({ encryptionKey }))
     this.core.ready().then(
       process.nextTick(() => {
         this.indexSize = indexSize ? indexSize : INDEX_SIZE
