@@ -155,12 +155,14 @@ class Wavecore {
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
    * MDN}
    */
-  async audioBuffer(opts = {
-    dcOffset: true,
-    mix: false,
-    normalize: false,
-    store: false
-  }) {
+  async audioBuffer(
+    opts = {
+      dcOffset: true,
+      mix: false,
+      normalize: false,
+      store: false,
+    }
+  ) {
     const { dcOffset, mix, normalize, store } = opts
     const bufs = []
     const rs = this.core.createReadStream()
