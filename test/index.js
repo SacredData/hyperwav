@@ -6,6 +6,7 @@ const ram = require('random-access-memory')
 const { Readable } = require('stream')
 const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
+const WaveFile = require('wavefile').WaveFile
 
 describe('Wavecore', function () {
   describe('#from', function () {
@@ -304,6 +305,7 @@ describe('Wavecore', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core23 = new Wavecore({ source })
     const core24 = new Wavecore({ source })
+    const core24b = new Wavecore({ source })
     it('should produce a buffer of the WAV file output', async function () {
       await Promise.resolve(core23.open())
       const wavBuf = await Promise.resolve(core23.wav())
@@ -313,6 +315,11 @@ describe('Wavecore', function () {
       await Promise.resolve(core24.open())
       await Promise.resolve(core24.wav({store: true}))
       expect(core24.wavBuffer).to.be.instanceof(Buffer)
+    })
+    it('should create a wavefile instance when storing the buffer', async function () {
+      await Promise.resolve(core24b.open())
+      await Promise.resolve(core24b.wav({store:true}))
+      expect(core24b.wavFile).to.be.instanceof(WaveFile)
     })
   })
   describe('#tempo', function () {
