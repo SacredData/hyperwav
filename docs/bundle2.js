@@ -21,14 +21,21 @@ async function getMedia(constraints) {
 
 async function main() {
   var abOrig = null
-  var abProc = null
+  var abNorm = null
 
   const wave = new Wavecore()
   console.log(wave)
   const s = await getMedia({audio:true,video:false})
   console.log(s)
   wave.recStream(s)
-  const audioCtx = new AudioContext()
+  var audioCtx = new AudioContext()
+
+  document.getElementById("norm").onclick = async function () {
+    const s2 = audioCtx.createBufferSource()
+    s2.buffer = abNorm
+    s2.connect(audioCtx.destination)
+    s2.start()
+  }
 
   document.getElementById("stop").onclick = async function () {
     s.stop()
@@ -43,13 +50,7 @@ async function main() {
   ${wave.core.byteLength}
 `
     abOrig = await wave.audioBuffer({dcOffset:false})
-    console.log(abOrig)
-    abProc = await wave.audioBuffer({dcOffset: true, normalize: true, store: true})
-    console.log(abProc)
-    const s2 = audioCtx.createBufferSource()
-    s2.buffer = abProc
-    s2.connect(audioCtx.destination)
-    s2.start()
+    abNorm = await wave.audioBuffer({dcOffset: true, normalize: true})
   }
 
   document.getElementById("orig").onclick = async function () {
@@ -26501,6 +26502,7 @@ module.exports = (imports) => {
 (function (process,Buffer){(function (){
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
+const b4a = require('b4a')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
@@ -26508,11 +26510,11 @@ const { PassThrough, Readable } = require('stream')
 const ram = require('random-access-memory')
 
 const WAVE_FORMAT = {
-  bitDepth: 16,
+  bitDepth: 32,
   channels: 1,
-  encoding: 'signed',
-  rate: 48000,
-  type: 'raw',
+  encoding: 'floating-point',
+  rate: 44100,
+  type: 'buffer',
 }
 const INDEX_SIZE = 76800 // 800ms
 // const INDEX_SIZE = 57600 // 600ms
@@ -26909,4 +26911,4 @@ class Wavecore {
 module.exports = Wavecore
 
 }).call(this)}).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":119,"audio-buffer-from":12,"audio-buffer-utils":13,"buffer":32,"hypercore":45,"hyperswarm":60,"multistream":90,"random-access-memory":122,"stream":165}]},{},[1]);
+},{"_process":119,"audio-buffer-from":12,"audio-buffer-utils":13,"b4a":19,"buffer":32,"hypercore":45,"hyperswarm":60,"multistream":90,"random-access-memory":122,"stream":165}]},{},[1]);

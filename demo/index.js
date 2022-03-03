@@ -20,14 +20,21 @@ async function getMedia(constraints) {
 
 async function main() {
   var abOrig = null
-  var abProc = null
+  var abNorm = null
 
   const wave = new Wavecore()
   console.log(wave)
   const s = await getMedia({audio:true,video:false})
   console.log(s)
   wave.recStream(s)
-  const audioCtx = new AudioContext()
+  var audioCtx = new AudioContext()
+
+  document.getElementById("norm").onclick = async function () {
+    const s2 = audioCtx.createBufferSource()
+    s2.buffer = abNorm
+    s2.connect(audioCtx.destination)
+    s2.start()
+  }
 
   document.getElementById("stop").onclick = async function () {
     s.stop()
@@ -42,13 +49,7 @@ async function main() {
   ${wave.core.byteLength}
 `
     abOrig = await wave.audioBuffer({dcOffset:false})
-    console.log(abOrig)
-    abProc = await wave.audioBuffer({dcOffset: true, normalize: true, store: true})
-    console.log(abProc)
-    const s2 = audioCtx.createBufferSource()
-    s2.buffer = abProc
-    s2.connect(audioCtx.destination)
-    s2.start()
+    abNorm = await wave.audioBuffer({dcOffset: true, normalize: true})
   }
 
   document.getElementById("orig").onclick = async function () {
