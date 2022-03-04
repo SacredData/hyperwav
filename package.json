@@ -24,6 +24,7 @@
     "wavefile": "^11.0.0"
   },
   "devDependencies": {
+    "@storyboard-fm/soapbox": "github:storyboard-fm/soapbox",
     "audiobuffer-to-wav": "^1.0.0",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",

@@ -1,19 +1,23 @@
 const Wavecore = require('../web')
 const MicrophoneStream = require('microphone-stream').default
 const toWav = require('audiobuffer-to-wav')
+const {
+  AudioEnvironment,
+  Gain,
+  Highpass,
+  Lowpass,
+  Limiter,
+  SignalFlow
+} = require('@storyboard-fm/soapbox')
 
 async function getMedia(constraints) {
-  let stream = null;
-
+  const audioEnv = new AudioEnvironment()
+  console.log(audioEnv)
+  const mix = await audioEnv.instantiateMic()
+  console.log(mix)
   const micStream = new MicrophoneStream()
-
-  try {
-    stream = await navigator.mediaDevices.getUserMedia(constraints)
-    micStream.setStream(stream)
-    return micStream
-  } catch(err) {
-    console.error(err)
-  }
+  micStream.setStream(mix.outputStream.stream)
+  return micStream
 }
 
 
@@ -21,13 +25,13 @@ async function getMedia(constraints) {
 async function main() {
   var abOrig = null
   var abNorm = null
+  var audioCtx = new AudioContext()
 
   const wave = new Wavecore()
   console.log(wave)
   const s = await getMedia({audio:true,video:false})
   console.log(s)
   wave.recStream(s)
-  var audioCtx = new AudioContext()
 
   document.getElementById("norm").onclick = async function () {
     const s2 = audioCtx.createBufferSource()
