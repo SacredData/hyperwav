@@ -413,6 +413,10 @@ describe('Wavecore', function () {
       const classification = await core39.classify(0)
       expect(classification).to.equal('quiet')
     })
+    it('should classify index 1 as voice', async function () {
+      const classification = await core39.classify(1)
+      expect(classification).to.equal('voice')
+    })
   })
   describe('#liveStream', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
