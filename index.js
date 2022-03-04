@@ -370,12 +370,12 @@ class Wavecore {
    * @arg {Boolean} [opts.dynamics=true] - Enable dynamics classification
    * @returns {String}
    */
-  async classify(i, opts={ dynamics:true }) {
+  async classify(i, opts = { dynamics: true }) {
     function dyn(indexData) {
       const id = Array.from(indexData)
-      return id.filter(i=>i===0).length / id.length > 0.2 ?
-        'quiet' :
-        'voice'
+      return id.filter((i) => i === 0).length / id.length > 0.2
+        ? 'quiet'
+        : 'voice'
     }
     const data = await this.core.get(i)
     const { dynamics } = opts
