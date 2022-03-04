@@ -1491,20 +1491,36 @@ class AudioEnvironment {
    */
 
 
-  async instantiateMic(profile = 0) {
+  async instantiateMic(profile = 0, opts = {
+    stream: null
+  }) {
     try {
       await this._initCtx();
-      await this._getMic();
+      let micInputStream = null;
+      const {
+        stream
+      } = opts;
+
+      if (stream) {
+        micInputStream = stream;
+      } else {
+        await this._getMic();
+        micInputStream = this.audioInput.stream;
+      }
+
       const signalFlow = new SignalFlow();
-      signalFlow.attachInput(new MediaStreamAudioSourceNode(this.audioCtx, {
-        mediaStream: this.audioInput.stream
+      signalFlow.attachInput(new MediaStreamAudioSourceNode(this.audioCtx, // { mediaStream: this.audioInput.stream }
+      {
+        mediaStream: micInputStream
       }));
       signalFlow.attachOutput(new Gain(this.audioCtx));
 
       switch (profile) {
         case 0:
           // Full Web Audio input mixing support
-          signalFlow.addPatch(new Highpass(this.audioCtx)).addPatch(new Lowpass(this.audioCtx)).addPatch(new Limiter(this.audioCtx)).patchConnections();
+          signalFlow.addPatch(new Highpass(this.audioCtx)).addPatch(new Lowpass(this.audioCtx)).addPatch(new Gain(this.audioCtx, {
+            gain: 3.0
+          })).addPatch(new Compressor(this.audioCtx)).addPatch(new Limiter(this.audioCtx)).patchConnections();
           this.audioMix = {
             input: signalFlow.input,
             inputLimiter: signalFlow.patches.get(3),
