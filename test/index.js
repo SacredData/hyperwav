@@ -405,6 +405,15 @@ describe('Wavecore', function () {
       core35.recStream(rs)
     })
   })
+  describe('#classify', function () {
+    const source = new Source(path.join(__dirname, 'test.wav'))
+    const core39 = new Wavecore({ source })
+    it('should classify index 0 as quiet', async function () {
+      await Promise.resolve(core39.open())
+      const classification = await core39.classify(0)
+      expect(classification).to.equal('quiet')
+    })
+  })
   describe('#liveStream', function () {
     const source = new Source(path.join(__dirname, 'test.wav'))
     const core29 = new Wavecore({ source })

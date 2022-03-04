@@ -363,6 +363,26 @@ class Wavecore {
     }
   }
   /**
+   * Classify the type of audio data. Currently supports dynamics
+   * classification, i.e., whether the audio is quiet or a voice.
+   * @arg {Number} i - Index number to classify
+   * @arg {Object} [opts={}] - Options object
+   * @arg {Boolean} [opts.dynamics=true] - Enable dynamics classification
+   * @returns {String}
+   */
+  async classify(i, opts = { dynamics: true }) {
+    function dyn(indexData) {
+      const id = Array.from(indexData)
+      return id.filter((i) => i === 0).length / id.length > 0.2
+        ? 'quiet'
+        : 'voice'
+    }
+    const data = await this.core.get(i)
+    const { dynamics } = opts
+    if (dynamics) return dyn(data)
+    return
+  }
+  /**
    * Completely close the Wavecore's underlying Hypercore, making it immutable.
    * If a Wavecore's hypercore is closed, it cannot have any further work done
    * to it and its data cannot be accessed.
