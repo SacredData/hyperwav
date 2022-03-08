@@ -864,8 +864,7 @@ class Wavecore {
       if (!length || !length instanceof Number) return
       if (length > this.core.length) throw new Error('Must be a shorter length')
       if (opts.snapshot) this.snapshot()
-      await this.core.truncate(length)
-      return
+      return await this.core.truncate(length)
     } catch (err) {
       console.error(err)
     }
