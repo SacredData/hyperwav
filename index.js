@@ -535,16 +535,10 @@ class Wavecore {
 
       const srcArr = Array.from(source || this.source || null)
 
-      while (srcArr.length > 0) {
-        await this.core.append(Buffer.from(srcArr.splice(0, this.indexSize)))
+      for (let i = 0; i < srcArr.length; i += this.indexSize) {
+        await this.core.append(Buffer.from(srcArr.slice(i, i+this.indexSize)))
       }
-      /*
-      for await (const block of fs.createReadStream(this.source.pathname, {
-        highWaterMark: this.indexSize,
-      })) {
-        await this.core.append(block)
-      }
-      */
+
       await this.core.update()
       return this.core
     } catch (err) {
