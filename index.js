@@ -1,6 +1,5 @@
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
-const fs = require('fs')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
