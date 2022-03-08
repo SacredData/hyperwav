@@ -1,6 +1,5 @@
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
-const fs = require('fs')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
@@ -8,7 +7,6 @@ const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')
 const process = require('process')
 const ram = require('random-access-memory')
-const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
 const WAVE_FORMAT = {
@@ -58,38 +56,6 @@ class Wavecore {
     if (core instanceof Hypercore) return new this({ core, parent, source })
   }
   /**
-   * Get new Wavecore from a raw audio asset - either its URI string or its
-   * `Source` instance.
-   * @arg {String|Source} rawFile - The raw audio file to copy from
-   * @returns {Wavecore} newCore - The new Wavecore
-   */
-  static fromRaw(rawFile, opts = { indexSize: null }) {
-    let source = null
-    const { indexSize } = opts
-
-    if (typeof rawFile == 'string') source = new Source(rawFile)
-    if (rawFile instanceof Source) source = rawFile
-    if (!source) return
-
-    return new this({ source, indexSize })
-  }
-  /**
-   * Start recording via the `rec` CLI application, then create a new Wavecore
-   * instance from the resulting audio data.
-   * @arg {String} [dur="30:00"] - Duration of the recording to capture
-   * @arg {Object} [opts={}] - Options
-   * @arg {Number} [opts.indexSize=76800] - Size of each index in bytes
-   * @returns {Wavecore}
-   */
-  static fromRec(dur = '30:00', opts = { indexSize: 16384 }) {
-    let source = new Source()
-    const { indexSize } = opts
-
-    const newWavecore = new this({ source, indexSize })
-    newWavecore._rec(dur)
-    return newWavecore
-  }
-  /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
    * @arg {Hypercore} [opts.core=null] - Provide a previously-made hypercore.
@@ -121,11 +87,11 @@ class Wavecore {
     const { core, encryptionKey, indexSize, parent, source } = opts
     if (parent) {
       this.parent = parent
-      this.source = Source.from(parent.source) || null
+      this.source = parent.source || null
       if (core instanceof Hypercore) this.core = core
     } else {
-      // Instantiate stream for appending WAV file data to hypercore
-      if (source instanceof Source) this.source = Source.from(source)
+      if (source)
+        this.source = source instanceof Buffer ? source : Buffer.from(source)
       // Assign to a hypercore provided via constructor arguments
       if (core instanceof Hypercore) this.core = core
     }
@@ -196,21 +162,6 @@ class Wavecore {
    */
   get discoveryKey() {
     return this.core.discoveryKey
-  }
-  /**
-   * Returns a `Promise` containing a `Buffer` of the source audio file.
-   * Used internally to read the source WAV asset into a Hypercore v10 data
-   * structure.
-   * @returns {Promise} buffer
-   */
-  _fileBuffer() {
-    return new Promise((resolve, reject) => {
-      if (!this.source) reject(new Error('Add a source first'))
-      this.source.open((err) => {
-        if (err) reject(err)
-        resolve(fs.readFileSync(this.source.pathname))
-      })
-    })
   }
   /**
    * Return the fork ID of the Wavecore.
@@ -576,18 +527,24 @@ class Wavecore {
     if (this.core.length > 0 && this.core.opened) return
 
     const { source } = opts
-    if (source instanceof Source) this.source = Source.from(source)
 
     try {
+      if (!source && !this.source) throw new Error('No usable source!')
       await this.core.ready()
       this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
 
+      const srcArr = Array.from(source || this.source || null)
+
+      while (srcArr.length > 0) {
+        await this.core.append(Buffer.from(srcArr.splice(0, this.indexSize)))
+      }
+      /*
       for await (const block of fs.createReadStream(this.source.pathname, {
         highWaterMark: this.indexSize,
       })) {
         await this.core.append(block)
       }
-
+      */
       await this.core.update()
       return this.core
     } catch (err) {

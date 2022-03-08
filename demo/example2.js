@@ -3,7 +3,7 @@ const path = require('path')
 const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('..')
 
-const source = new Source(path.join(__dirname, '..', './test/test.wav'))
+const source = fs.readFileSync(path.join(__dirname, '..', './test/test.wav'))
 const w = new Wavecore({ source })
 
 async function main() {

@@ -11,9 +11,9 @@ const Wavecore = require('../')
  * Converts to a conformant WAV file, the show is now ready to listen.
  */
 async function main() {
-  const source = new Source('./music.wav')
+  const source = fs.readFileSync('./music.wav')
   const [ head, tail ] = [ new Wavecore({ source }), new Wavecore({ source }) ]
-  const source2 = new Source('./clip.wav')
+  const source2 = fs.readFileSync('./clip.wav')
   const middle = new Wavecore( { source: source2 })
 
   await Promise.all([ head.open(), middle.open(), tail.open()])
