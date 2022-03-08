@@ -8,7 +8,6 @@ const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')
 const process = require('process')
 const ram = require('random-access-memory')
-const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
 const WAVE_FORMAT = {
