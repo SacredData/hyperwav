@@ -536,7 +536,7 @@ class Wavecore {
       const srcArr = Array.from(source || this.source || null)
 
       for (let i = 0; i < srcArr.length; i += this.indexSize) {
-        await this.core.append(Buffer.from(srcArr.slice(i, i+this.indexSize)))
+        await this.core.append(Buffer.from(srcArr.slice(i, i + this.indexSize)))
       }
 
       await this.core.update()
