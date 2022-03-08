@@ -632,7 +632,9 @@ class Wavecore {
   recStream(st, opts = { indexSize: null }) {
     if (!st) return
     const { indexSize } = opts
-    const pt = new PassThrough({ highWaterMark: Number(indexSize) || this.indexSize })
+    const pt = new PassThrough({
+      highWaterMark: Number(indexSize) || this.indexSize,
+    })
     const ws = this.core.createWriteStream({ highWaterMark: this.indexSize })
     st.pipe(pt).pipe(ws)
     if (this.source === null) this.source = st
