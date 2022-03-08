@@ -107,7 +107,6 @@
   <article>
     <pre class="prettyprint source linenums"><code>const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
-const fs = require('fs')
 const Hypercore = require('hypercore')
 const Hyperswarm = require('hyperswarm')
 const MultiStream = require('multistream')
@@ -115,7 +114,6 @@ const nanoprocess = require('nanoprocess')
 const { PassThrough, Readable } = require('stream')
 const process = require('process')
 const ram = require('random-access-memory')
-const { Source } = require('@storyboard-fm/little-media-box')
 const WaveFile = require('wavefile').WaveFile
 
 const WAVE_FORMAT = {
@@ -199,7 +197,8 @@ class Wavecore {
       this.source = parent.source || null
       if (core instanceof Hypercore) this.core = core
     } else {
-      if (source) this.source = source instanceof Buffer ? source : Buffer.from(source)
+      if (source)
+        this.source = source instanceof Buffer ? source : Buffer.from(source)
       // Assign to a hypercore provided via constructor arguments
       if (core instanceof Hypercore) this.core = core
     }
@@ -643,18 +642,10 @@ class Wavecore {
 
       const srcArr = Array.from(source || this.source || null)
 
-      while (srcArr.length > 0) {
-        await this.core.append(
-          Buffer.from(srcArr.splice(0, this.indexSize))
-        )
+      for (let i = 0; i &lt; srcArr.length; i += this.indexSize) {
+        await this.core.append(Buffer.from(srcArr.slice(i, i + this.indexSize)))
       }
-      /*
-      for await (const block of fs.createReadStream(this.source.pathname, {
-        highWaterMark: this.indexSize,
-      })) {
-        await this.core.append(block)
-      }
-      */
+
       await this.core.update()
       return this.core
     } catch (err) {
@@ -745,10 +736,14 @@ class Wavecore {
    * Record a stream of data into the Wavecore's hypercore.
    * @arg {Stream} st - The stream to record into the Wavecore.
    */
-  recStream(st) {
+  recStream(st, opts = { indexSize: null }) {
     if (!st) return
-    const ws = this.core.createWriteStream()
-    st.pipe(ws)
+    const { indexSize } = opts
+    const pt = new PassThrough({
+      highWaterMark: Number(indexSize) || this.indexSize,
+    })
+    const ws = this.core.createWriteStream({ highWaterMark: this.indexSize })
+    st.pipe(pt).pipe(ws)
     if (this.source === null) this.source = st
     return
   }
@@ -980,8 +975,7 @@ class Wavecore {
       if (!length || !length instanceof Number) return
       if (length > this.core.length) throw new Error('Must be a shorter length')
       if (opts.snapshot) this.snapshot()
-      await this.core.truncate(length)
-      return
+      return await this.core.truncate(length)
     } catch (err) {
       console.error(err)
     }
