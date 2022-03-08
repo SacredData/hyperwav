@@ -4,7 +4,6 @@ const Hypercore = require('hypercore')
 const path = require('path')
 const ram = require('random-access-memory')
 const { Readable } = require('stream')
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
 const WaveFile = require('wavefile').WaveFile
 
