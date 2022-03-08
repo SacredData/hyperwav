@@ -8,34 +8,18 @@ const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
 const WaveFile = require('wavefile').WaveFile
 
+const source = fs.readFileSync(path.join(__dirname, 'test.wav.raw'))
+
 describe('Wavecore', function () {
-  describe('#from', function () {
-    const source = new Source(path.join(__dirname, 'test.wav.raw'))
-    const core0 = new Wavecore({ source })
-    it('should create a Wavecore from another Wavecore', function () {
-      const newCore = Wavecore.fromCore(new Hypercore(ram), {parent: core0, source})
-      expect(newCore).to.be.instanceof(Wavecore)
-    })
-  })
-  describe('#fromRaw', function () {
-    const source = path.join(__dirname, 'test.wav.raw')
-    it('should construct from a raw file', async function () {
-      const core34 = Wavecore.fromRaw(source)
-      await Promise.resolve(core34.open())
-      expect(core34.length).to.equal(57)
-    })
-  })
   describe('#fromCore', function () {
-    const source = path.join(__dirname, 'test.wav.raw')
     it('should return a new Wavecore from a parent Wavecore', async function () {
-      const core38 = Wavecore.fromRaw(source)
+      const core38 = new Wavecore({source})
       await Promise.resolve(core38.open())
       const newCore = Wavecore.fromCore(core38.core, core38)
       expect(newCore).to.be.instanceof(Wavecore)
     })
   })
   describe('#constructor', function() {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a new instance of a Wavecore', function () {
       const core1 = new Wavecore({ source })
       expect(core1).to.be.instanceof(Wavecore)
@@ -54,14 +38,50 @@ describe('Wavecore', function () {
       expect(customStorage).to.be.instanceof(Wavecore)
     })
   })
+  describe('#discoveryKey', function () {
+    it('should return a Buffer containing the hypercore discovery key', async function() {
+      const core9 = new Wavecore()
+      await core9.core.update()
+      const dk = core9.discoveryKey
+      expect(dk).to.be.instanceof(Buffer)
+    })
+  })
+  describe('#fork', function () {
+    it('should return the hypercore fork number', async function () {
+      const core10 = new Wavecore()
+      const forkId = core10.fork
+      expect(typeof(forkId)).to.equal('number') &&
+        expect(forkId).to.equal(0)
+    })
+  })
+  describe('#keyPair', function() {
+    it('should return public and secret keys', async function() {
+      const core12 = new Wavecore()
+      const kp = core12.keyPair
+      expect(typeof(kp)).to.equal('object')
+    })
+  })
   describe('#open', function() {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     it('should read the WAV into a new Hypercore', async function () {
       const core4 = new Wavecore({ source })
       const returnedCore = await Promise.resolve(core4.open())
       expect(returnedCore).to.be.instanceof(Hypercore) &&
         expect(core4.core).to.be.instanceof(Hypercore) &&
         expect(core4.core.length).to.equal(57)
+    })
+  })
+  describe('#length', function () {
+    const core11 = new Wavecore({ source })
+    it('should return a length of 0 before the WAV is read into the core', function () {
+      const length = core11.length
+      expect(length).to.not.equal(null) &&
+        expect(length).to.equal(0)
+    })
+    it('should return a length of 58 after the WAV is read into the core', async function () {
+      await Promise.resolve(core11.open())
+      const newLength = core11.length
+      expect(newLength).to.not.equal(null) &&
+        expect(newLength).to.equal(57)
     })
   })
   describe('#has', function () {
@@ -73,7 +93,6 @@ describe('Wavecore', function () {
     })
   })
   describe('#truncate', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     it('should truncate the hypercore', async function () {
       const core5 = new Wavecore({ source })
       await Promise.resolve(core5.open())
@@ -103,8 +122,20 @@ describe('Wavecore', function () {
       expect(results).to.be.undefined
     })
   })
+  describe('#_nextZero', function () {
+    const core22 = new Wavecore({ source })
+    it('should find the next zero crossing after 741444 bytes', async function () {
+      await Promise.resolve(core22.open())
+      const nzArr = await Promise.resolve(core22._nextZero(741444))
+      expect(nzArr).to.be.instanceof(Array).that.includes(9).that.includes(50321)
+    })
+    it('should accept a seek() return value', async function () {
+      const seekVal = await core22.seek(741444)
+      const nz = await core22._nextZero(seekVal)
+      expect(nz).to.be.instanceof(Array)
+    })
+  })
   describe('#seek', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core6 = new Wavecore({ source })
     it('should provide index and relative offset values', async function () {
       await Promise.resolve(core6.open())
@@ -117,25 +148,7 @@ describe('Wavecore', function () {
       expect(byteOffset).to.equal(20001)
     })
   })
-  describe('#_fileBuffer', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    it('should return a buffer of the full source file', async function () {
-      const core7 = new Wavecore({ source })
-      await Promise.resolve(core7.open())
-      const buffer = await core7._fileBuffer()
-      expect(buffer).to.be.instanceof(Buffer)
-    })
-    it('should fail with no source added', async function () {
-      const core7b = new Wavecore()
-      try {
-        await Promise.resolve(core7.open())
-      } catch (err) {
-        expect(err).to.not.equal(null)
-      }
-    })
-  })
   describe('#_rawStream', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     it('should return a readStream containing the test file', async function () {
       const core8 = new Wavecore({ source })
       await Promise.resolve(core8.open())
@@ -144,50 +157,7 @@ describe('Wavecore', function () {
         expect(rs.readable).to.be.true
     })
   })
-  describe('#discoveryKey', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    it('should return a Buffer containing the hypercore discovery key', async function() {
-      const core9 = new Wavecore({ source })
-      await Promise.resolve(core9.open())
-      const dk = core9.discoveryKey
-      expect(dk).to.be.instanceof(Buffer)
-    })
-  })
-  describe('#fork', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    it('should return the hypercore fork number', async function () {
-      const core10 = new Wavecore({ source })
-      await Promise.resolve(core10.open())
-      const forkId = core10.fork
-      expect(typeof(forkId)).to.equal('number') &&
-        expect(forkId).to.equal(0)
-    })
-  })
-  describe('#length', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core11 = new Wavecore({ source })
-    it('should return a length of 0 before the WAV is read into the core', function () {
-      const length = core11.length
-      expect(length).to.not.equal(null) &&
-        expect(length).to.equal(0)
-    })
-    it('should return a length of 58 after the WAV is read into the core', async function () {
-      await Promise.resolve(core11.open())
-      const newLength = core11.length
-      expect(newLength).to.not.equal(null) &&
-        expect(newLength).to.equal(57)
-    })
-  })
-  describe('#keyPair', function() {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    it('should return public and secret keys', async function() {
-      const core12 = new Wavecore({ source })
-      const kp = core12.keyPair
-      expect(typeof(kp)).to.equal('object')
-    })
-  })
   describe('#split', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core13 = new Wavecore({ source })
     it('should split at index 20 and return two new Wavecores', async function () {
       await Promise.resolve(core13.open())
@@ -203,16 +173,6 @@ describe('Wavecore', function () {
       } catch (err) {
         expect(err).to.not.equal(null)
       }
-    })
-  })
-  describe('#gain', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core31 = new Wavecore({ source })
-    it('should increase gain by 2.0dBFS', async function () {
-      await Promise.resolve(core31.open())
-      const gainInc = await core31.gain(2)
-      const gainStats = await gainInc.stats()
-      expect(gainStats.split('\n')[3]).to.equal('Pk lev dB       0.00')
     })
   })
   describe('#addBlank', function () {
@@ -238,7 +198,6 @@ describe('Wavecore', function () {
     })
   })
   describe('#shift', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core18 = new Wavecore({ source })
     it('should return a new wavecore with index 0 removed', async function () {
       await Promise.resolve(core18.open())
@@ -247,7 +206,6 @@ describe('Wavecore', function () {
     })
   })
   describe('#close', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core19 = new Wavecore({ source })
     it('should close the hypercore', async function () {
       await Promise.resolve(core19.open())
@@ -256,16 +214,14 @@ describe('Wavecore', function () {
     })
   })
   describe('#lastIndexSize', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core20 = new Wavecore({ source })
     it('should return the last index size in bytes', async function () {
       await Promise.resolve(core20.open())
       const result = core20.lastIndexSize
-      expect(result).to.equal(26156)
+      expect(result).to.equal(26112)
     })
   })
   describe('#audioBuffer', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core21 = new Wavecore({ source })
     it('should produce an audiobuffer from the PCM data', async function () {
       await Promise.resolve(core21.open())
@@ -287,43 +243,89 @@ describe('Wavecore', function () {
       expect(core21).to.have.property('audioBuffer')
     })
   })
-  describe('#_nextZero', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core22 = new Wavecore({ source })
-    it('should find the next zero crossing after 741444 bytes', async function () {
-      await Promise.resolve(core22.open())
-      const nzArr = await Promise.resolve(core22._nextZero(741444))
-      expect(nzArr).to.be.instanceof(Array).that.includes(9).that.includes(50365)
-    })
-    it('should accept a seek() return value', async function () {
-      const seekVal = await core22.seek(741444)
-      const nz = await core22._nextZero(seekVal)
-      expect(nz).to.be.instanceof(Array)
+  describe('#concat', function () {
+    const core30 = new Wavecore({ source })
+    it('should concat the cores to the source and make a new wavecore', async function () {
+      await Promise.resolve(core30.open())
+      const splits = await core30.split(20)
+      const concatCore = await core30.concat(splits)
+      expect(concatCore).to.not.equal(null) &&
+        expect(concatCore.length).to.equal(114)
     })
   })
-  describe('#wav', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core23 = new Wavecore({ source })
-    const core24 = new Wavecore({ source })
-    const core24b = new Wavecore({ source })
-    it('should produce a buffer of the WAV file output', async function () {
-      await Promise.resolve(core23.open())
-      const wavBuf = await Promise.resolve(core23.wav())
-      expect(wavBuf).to.be.instanceof(Buffer)
+  describe('#recStream', function () {
+    it('should record a readable stream into the hypercore', async function () {
+      const core35 = new Wavecore()
+      const rs = Readable.from(source)
+      rs.on('close', async function () {
+        await core35.core.update()
+        expect(core35.length).to.equal(67)
+      })
+      core35.recStream(rs)
     })
-    it('should store the buffer in the wavecore class instance', async function () {
-      await Promise.resolve(core24.open())
-      await Promise.resolve(core24.wav({store: true}))
-      expect(core24.wavBuffer).to.be.instanceof(Buffer)
+  })
+  describe('#classify', function () {
+    const core39 = new Wavecore({ source })
+    it('should classify index 0 as quiet', async function () {
+      await Promise.resolve(core39.open())
+      const classification = await core39.classify(0)
+      expect(classification).to.equal('quiet')
     })
-    it('should create a wavefile instance when storing the buffer', async function () {
-      await Promise.resolve(core24b.open())
-      await Promise.resolve(core24b.wav({store:true}))
-      expect(core24b.wavFile).to.be.instanceof(WaveFile)
+    it('should classify index 1 as voice', async function () {
+      const classification = await core39.classify(1)
+      expect(classification).to.equal('voice')
+    })
+  })
+  describe('#liveStream', function () {
+    const core29 = new Wavecore({ source })
+    it('should return a live ReadableStream of the audio input', async function () {
+      await Promise.resolve(core29.open())
+      const ls = core29.liveStream
+      expect(ls).to.be.instanceof(Object).that.has.any.key('live')
+    })
+  })
+  describe('#tag', function () {
+    const core33 = new Wavecore()
+    it('should allow user to write a RIFF tag to the core', async function () {
+      core33.tag('TEST', '1234')
+      expect(core33.tags.size).to.equal(1)
+    })
+  })
+  describe('#session', function () {
+    const core36 = new Wavecore({ source })
+    it('should return a new session', async function () {
+      await Promise.resolve(core36.open())
+      const newCore = core36.session()
+      expect(newCore).to.be.instanceof(Hypercore)
+    })
+  })
+  describe('#stats', function () {
+      const core26 = new Wavecore({ source })
+    it('should get sox stats and stat output on the audio data', async function () {
+      await Promise.resolve(core26.open())
+      const statsOut = await core26.stats()
+      expect(statsOut).to.not.equal(null)
+    })
+  })
+  describe('#_volAdjust', function () {
+    const core27 = new Wavecore({ source })
+    it('should get the max volume adjustment without clipping', async function () {
+      await Promise.resolve(core27.open())
+      const vol = await core27._volAdjust()
+      // expect(vol).to.equal(1.076)
+      expect(vol).to.equal(1.189)
+    })
+  })
+  describe('#gain', function () {
+    const core31 = new Wavecore({ source })
+    it('should increase gain by 2.0dBFS', async function () {
+      await Promise.resolve(core31.open())
+      const gainInc = await core31.gain(2)
+      const gainStats = await gainInc.stats()
+      expect(gainStats.split('\n')[3]).to.equal('Pk lev dB       0.00')
     })
   })
   describe('#tempo', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core25 = new Wavecore({ source })
     it('should slow down the audio by 50%', async function () {
       await Promise.resolve(core25.open())
@@ -342,49 +344,18 @@ describe('Wavecore', function () {
     })
     it('should provide stats', async function () {
       const statsTest = await core25.tempo(2.0, { stats: true })
-      expect(statsTest.core.byteLength).to.equal(2163478)
-    })
-  })
-  describe('#stats', function () {
-      const source = new Source(path.join(__dirname, 'test.wav'))
-      const core26 = new Wavecore({ source })
-    it('should get sox stats and stat output on the audio data', async function () {
-      await Promise.resolve(core26.open())
-      const statsOut = await core26.stats()
-      expect(statsOut).to.not.equal(null)
-    })
-  })
-  describe('#_volAdjust', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core27 = new Wavecore({ source })
-    it('should get the max volume adjustment without clipping', async function () {
-      await Promise.resolve(core27.open())
-      const vol = await core27._volAdjust()
-      expect(vol).to.equal(1.076)
-    })
-  })
-  describe('#concat', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core30 = new Wavecore({ source })
-    it('should concat the cores to the source and make a new wavecore', async function () {
-      await Promise.resolve(core30.open())
-      const splits = await core30.split(20)
-      const concatCore = await core30.concat(splits)
-      expect(concatCore).to.not.equal(null) &&
-        expect(concatCore.length).to.equal(114)
+      expect(statsTest.core.byteLength).to.equal(2163456)
     })
   })
   describe('#vad', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core32 = new Wavecore({ source })
     it('should remove excessive silence from the recording', async function () {
       await Promise.resolve(core32.open())
       const vadCore = await core32.vad()
-      expect(vadCore.core.byteLength).to.equal(4298156)
+      expect(vadCore.core.byteLength).to.equal(4298112)
     })
   })
   describe('#norm', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
     const core28 = new Wavecore({ source })
     it('should normalize the audio to 0dBFS', async function () {
       await Promise.resolve(core28.open())
@@ -393,56 +364,24 @@ describe('Wavecore', function () {
       expect(stats.split('\n')[3]).to.equal('Pk lev dB      -0.00')
     })
   })
-  describe('#recStream', function () {
-    it('should record a readable stream into the hypercore', async function () {
-      const source = path.join(__dirname, 'test.wav.raw')
-      const core35 = new Wavecore()
-      const rs = fs.createReadStream(source)
-      rs.on('close', async function () {
-        await core35.core.update()
-        expect(core35.length).to.equal(67)
-      })
-      core35.recStream(rs)
+  describe('#wav', function () {
+    const core23 = new Wavecore({ source })
+    const core24 = new Wavecore({ source })
+    const core24b = new Wavecore({ source })
+    it('should produce a buffer of the WAV file output', async function () {
+      await Promise.resolve(core23.open())
+      const wavBuf = await Promise.resolve(core23.wav())
+      expect(wavBuf).to.be.instanceof(Buffer)
     })
-  })
-  describe('#classify', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core39 = new Wavecore({ source })
-    it('should classify index 0 as quiet', async function () {
-      await Promise.resolve(core39.open())
-      const classification = await core39.classify(0)
-      expect(classification).to.equal('quiet')
+    it('should store the buffer in the wavecore class instance', async function () {
+      await Promise.resolve(core24.open())
+      await Promise.resolve(core24.wav({store: true}))
+      expect(core24.wavBuffer).to.be.instanceof(Buffer)
     })
-    it('should classify index 1 as voice', async function () {
-      const classification = await core39.classify(1)
-      expect(classification).to.equal('voice')
-    })
-  })
-  describe('#liveStream', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core29 = new Wavecore({ source })
-    it('should return a live ReadableStream of the audio input', async function () {
-      await Promise.resolve(core29.open())
-      const ls = core29.liveStream
-      expect(ls).to.be.instanceof(Object).that.has.any.key('live')
-    })
-  })
-  describe('#tag', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core33 = new Wavecore({ source })
-    it('should allow user to write a RIFF tag to the core', async function () {
-      await Promise.resolve(core33.open())
-      core33.tag('TEST', '1234')
-      expect(core33.tags.size).to.equal(1)
-    })
-  })
-  describe('#session', function () {
-    const source = new Source(path.join(__dirname, 'test.wav'))
-    const core36 = new Wavecore({ source })
-    it('should return a new session', async function () {
-      await Promise.resolve(core36.open())
-      const newCore = core36.session()
-      expect(newCore).to.be.instanceof(Hypercore)
+    it('should create a wavefile instance when storing the buffer', async function () {
+      await Promise.resolve(core24b.open())
+      await Promise.resolve(core24b.wav({store:true}))
+      expect(core24b.wavFile).to.be.instanceof(WaveFile)
     })
   })
 })
