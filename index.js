@@ -92,7 +92,8 @@ class Wavecore {
       this.source = parent.source || null
       if (core instanceof Hypercore) this.core = core
     } else {
-      if (source) this.source = source instanceof Buffer ? source : Buffer.from(source)
+      if (source)
+        this.source = source instanceof Buffer ? source : Buffer.from(source)
       // Assign to a hypercore provided via constructor arguments
       if (core instanceof Hypercore) this.core = core
     }
@@ -537,9 +538,7 @@ class Wavecore {
       const srcArr = Array.from(source || this.source || null)
 
       while (srcArr.length > 0) {
-        await this.core.append(
-          Buffer.from(srcArr.splice(0, this.indexSize))
-        )
+        await this.core.append(Buffer.from(srcArr.splice(0, this.indexSize)))
       }
       /*
       for await (const block of fs.createReadStream(this.source.pathname, {
