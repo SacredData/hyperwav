@@ -131,11 +131,10 @@ class Wavecore {
   ) {
     const { dcOffset, mix, normalize, store } = opts
     const bufs = []
-    const rs = this.core.createReadStream()
-    const pt = new PassThrough()
-    pt.on('data', (d) => bufs.push(d))
+    const rs = this._rawStream()
+    rs.on('data', (d) => bufs.push(d))
     const prom = new Promise((resolve, reject) => {
-      pt.on('end', () => {
+      rs.on('end', () => {
         try {
           let audioBuffer = abf(
             Buffer.concat(bufs),
@@ -150,7 +149,6 @@ class Wavecore {
           reject(err)
         }
       })
-      rs.pipe(pt)
     })
     return await Promise.resolve(prom)
   }
@@ -497,7 +495,7 @@ class Wavecore {
           // TODO figure out why number of indeces higher in new wavecore
           const newCore = new Hypercore(ram)
 
-          const pt = new PassThrough()
+          const pt = new PassThrough({ highWaterMark: this.indexSize })
           pt.on('error', (err) => reject(err))
           pt.on('data', (d) => newCore.append(d))
 
