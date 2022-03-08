@@ -629,10 +629,12 @@ class Wavecore {
    * Record a stream of data into the Wavecore's hypercore.
    * @arg {Stream} st - The stream to record into the Wavecore.
    */
-  recStream(st) {
+  recStream(st, opts = { indexSize: null }) {
     if (!st) return
-    const ws = this.core.createWriteStream()
-    st.pipe(ws)
+    const { indexSize } = opts
+    const pt = new PassThrough({ highWaterMark: Number(indexSize) || this.indexSize })
+    const ws = this.core.createWriteStream({ highWaterMark: this.indexSize })
+    st.pipe(pt).pipe(ws)
     if (this.source === null) this.source = st
     return
   }

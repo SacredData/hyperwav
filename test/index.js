@@ -258,7 +258,7 @@ describe('Wavecore', function () {
       const rs = Readable.from(source)
       rs.on('close', async function () {
         await core35.core.update()
-        expect(core35.length).to.equal(67)
+        expect(core35.length).to.equal(57)
       })
       core35.recStream(rs)
     })
