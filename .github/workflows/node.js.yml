@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 env:
-  NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.WAVECORE_PAT }}
 
 jobs:
   build:
