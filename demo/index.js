@@ -1,4 +1,4 @@
-const Wavecore = require('../web')
+const Wavecore = require('../')
 const MicrophoneStream = require('microphone-stream').default
 const toWav = require('audiobuffer-to-wav')
 const {
