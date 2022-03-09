@@ -126,6 +126,8 @@ class Wavecore {
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
    * the resulting output
+   * @arg {Number} [opts.start=0] - Index to start from.
+   * @arg {Number} [opts.end=-1] - Index to end on.
    * @returns {AudioBuffer}
    * @see {@link
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
