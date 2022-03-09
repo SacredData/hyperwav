@@ -78,8 +78,6 @@ occur on each channel of audio without worrying about data interleaving.
 const mr = new MediaRecorder(stream)
 const wave = new Wavecore()
 wave.recStream(mr.stream)
-// Optionally, monitor the Wavecore's input as it streams in:
-// wave.monitor()
 ```
 ##### Event-based
 ```js
@@ -91,17 +89,10 @@ mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
 ```
-#### CLI
-```js
-// Will record your microphone for 30 minutes
-const recording = Wavecore.fromRec("30:00")
-// Write the audio to your local disk and listen in real-time!
-recording.liveStream.pipe(fs.createWriteStream('liverecording.wav'))
-```
 ### Playing A Wavecore
-#### Play Indexed Audio Data
+#### Play Indexed Audio Data (SoX)
 ```js
-const wavecore = new Wavecore({ source })
+const wavecore = new WavecoreSox({ source })
 await wavecore.open()
 wavecore.play({start: 5, end: 13}) // Play indeces 5 through 13
 ```
@@ -123,7 +114,6 @@ audio in-tact, enabling non-destructive editing with no additional memory
 allocation necessary!
 ```js
 const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test/test.wav.raw')
 
 const wave = new Wavecore({ source })
 await wave.open()
@@ -138,9 +128,7 @@ console.log(snapshot.core.length) // 58
 ##### Trim From Beginning
 The following trims a Wavecore to start on the 20th index.
 ```js
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
 await wave.open()
@@ -151,9 +139,7 @@ console.log(shiftedCore.length) // 38
 ##### Trim From End
 The following truncates a Wavecore to the first 20 indeces.
 ```js
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
 const wave = new Wavecore({ source })
 
 await wave.open()
@@ -166,10 +152,8 @@ console.log(wave.core.length) // 20
 Execute this script at `example2.js`.
 
 ```js
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('.')
 
-const source = new Source('./test/test.wav')
 const w = new Wavecore({ source })
 
 async function main() {
@@ -182,24 +166,31 @@ async function main() {
 main()
 ```
 ### Signal Processing
-#### Gain (+ Limiting)
+#### Gain (+ Limiting) via SoX
 > Increase gain by +6dBFS and add a limiter to prevent clipping
 ```js
-const wave = new Wavecore({ source })
+const wave = new WavecoreSox({ source })
 await wave.open()
 const gainUp = await wave.gain('+6', {limiter:true})
 ```
 #### Normalization
-> Increase gain so that the peak dBFS value = 0
+##### `AudioBuffer`
 ```js
 const wave = new Wavecore({ source })
 await wave.open()
-await wave.norm()
+const audioBufferNorm = await wave.audioBuffer({ normalize: true })
 ```
-#### Playback Rate
+##### SoX
+> Increase gain so that the peak dBFS value = 0
+```js
+const wave = new WavecoreSox({ source })
+await wave.open()
+const normCore = await wave.norm()
+```
+#### Playback Rate (SoX)
 > Change the "tempo" of the audio without changing the pitch
 ```js
-const wave = new Wavecore({ source })
+const wave = new WavecoreSox({ source })
 await wave.open()
 const snap = wave.snapshot() // save copy of original audio
 const slowerWave = await Promise.resolve(wave.tempo(0.8)) // 20% slower
