@@ -5,11 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.0] - 2022-03-09
 ### Added
 - start and end opts for audioBuffer
 
 ### Fixed
 - failing unit tests due to sox lib
+
+### Removed
+- WaveFile dependency
 
 ## [0.1.9] - 2022-03-09
 ### Changed
@@ -95,7 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.9...v0.2.0
 [0.1.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.6...v0.1.7

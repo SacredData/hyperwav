@@ -1,6 +1,6 @@
 {
   "name": "@storyboard-fm/wavecore",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
