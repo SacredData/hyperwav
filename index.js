@@ -55,6 +55,11 @@ class Wavecore {
     const { source } = opts
     if (core instanceof Hypercore) return new this({ core, parent, source })
   }
+  static fromStream(st) {
+    const w = new this({ source: st })
+    w.recStream(st)
+    return w
+  }
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
@@ -91,7 +96,11 @@ class Wavecore {
       if (core instanceof Hypercore) this.core = core
     } else {
       if (source)
-        this.source = source instanceof Buffer ? source : Buffer.from(source)
+        this.source = source instanceof Buffer ||
+          source instanceof Readable ||
+          source instanceof PassThrough ?
+            source :
+            Buffer.from(source)
       // Assign to a hypercore provided via constructor arguments
       if (core instanceof Hypercore) this.core = core
     }
