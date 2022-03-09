@@ -9,12 +9,6 @@ $ npm install git+ssh://git@github.com:storyboard-fm/wavecore.git
 ```
 ### Status
 > WIP, expect breaking changes
-### Notes
-- As designed, some of this library's functionalities depend upon the `sox` and
-  `play` command-line tools. Installing [SoX][sox] is recommended.
-- The browser-compatible version of this module is in the `dev/web` branch.
-- Use signed 16-bit fixed integer mono PCM samples at 48kHz sampling rate
-- Raw and WAV both supported (for now) as inputs
 ## Background
 This library's intent is to enable real-time peer-to-peer recording, editing, and
 remixing of audio content without sacrificing fidelity, privacy, nor speed.
