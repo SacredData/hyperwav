@@ -25,7 +25,7 @@
       }
   },
   "source": {
-    "include": ["index.js", "README.md"],
+    "include": ["index.js", "README.md", "sox.js"],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs|demo)"
   }
