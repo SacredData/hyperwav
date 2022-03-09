@@ -206,8 +206,6 @@ occur on each channel of audio without worrying about data interleaving.</p>
 <pre class="prettyprint source lang-js"><code>const mr = new MediaRecorder(stream)
 const wave = new Wavecore()
 wave.recStream(mr.stream)
-// Optionally, monitor the Wavecore's input as it streams in:
-// wave.monitor()
 </code></pre>
 <h5>Event-based</h5>
 <pre class="prettyprint source lang-js"><code>const core = new Hypercore(ram)
@@ -218,15 +216,9 @@ mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
 </code></pre>
-<h4>CLI</h4>
-<pre class="prettyprint source lang-js"><code>// Will record your microphone for 30 minutes
-const recording = Wavecore.fromRec(&quot;30:00&quot;)
-// Write the audio to your local disk and listen in real-time!
-recording.liveStream.pipe(fs.createWriteStream('liverecording.wav'))
-</code></pre>
 <h3>Playing A Wavecore</h3>
-<h4>Play Indexed Audio Data</h4>
-<pre class="prettyprint source lang-js"><code>const wavecore = new Wavecore({ source })
+<h4>Play Indexed Audio Data (SoX)</h4>
+<pre class="prettyprint source lang-js"><code>const wavecore = new WavecoreSox({ source })
 await wavecore.open()
 wavecore.play({start: 5, end: 13}) // Play indeces 5 through 13
 </code></pre>
@@ -248,7 +240,6 @@ audio. By using our new session to test the edit we leave the original Wavecore
 audio in-tact, enabling non-destructive editing with no additional memory
 allocation necessary!</p>
 <pre class="prettyprint source lang-js"><code>const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test/test.wav.raw')
 
 const wave = new Wavecore({ source })
 await wave.open()
@@ -262,9 +253,7 @@ console.log(snapshot.core.length) // 58
 <h4>Trimming Audio</h4>
 <h5>Trim From Beginning</h5>
 <p>The following trims a Wavecore to start on the 20th index.</p>
-<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
+<pre class="prettyprint source lang-js"><code>const Wavecore = require('@storyboard-fm/wavecore')
 const wave = new Wavecore({ source })
 
 await wave.open()
@@ -274,9 +263,7 @@ console.log(shiftedCore.length) // 38
 </code></pre>
 <h5>Trim From End</h5>
 <p>The following truncates a Wavecore to the first 20 indeces.</p>
-<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('@storyboard-fm/wavecore')
-const source = new Source('./test.wav')
+<pre class="prettyprint source lang-js"><code>const Wavecore = require('@storyboard-fm/wavecore')
 const wave = new Wavecore({ source })
 
 await wave.open()
@@ -286,10 +273,8 @@ console.log(wave.core.length) // 20
 </code></pre>
 <h4>Splitting Audio</h4>
 <p>Execute this script at <code>example2.js</code>.</p>
-<pre class="prettyprint source lang-js"><code>const { Source } = require('@storyboard-fm/little-media-box')
-const Wavecore = require('.')
+<pre class="prettyprint source lang-js"><code>const Wavecore = require('.')
 
-const source = new Source('./test/test.wav')
 const w = new Wavecore({ source })
 
 async function main() {
@@ -302,27 +287,33 @@ async function main() {
 main()
 </code></pre>
 <h3>Signal Processing</h3>
-<h4>Gain (+ Limiting)</h4>
+<h4>Gain (+ Limiting) via SoX</h4>
 <blockquote>
 <p>Increase gain by +6dBFS and add a limiter to prevent clipping</p>
 </blockquote>
-<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+<pre class="prettyprint source lang-js"><code>const wave = new WavecoreSox({ source })
 await wave.open()
 const gainUp = await wave.gain('+6', {limiter:true})
 </code></pre>
 <h4>Normalization</h4>
+<h5><code>AudioBuffer</code></h5>
+<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+await wave.open()
+const audioBufferNorm = await wave.audioBuffer({ normalize: true })
+</code></pre>
+<h5>SoX</h5>
 <blockquote>
 <p>Increase gain so that the peak dBFS value = 0</p>
 </blockquote>
-<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+<pre class="prettyprint source lang-js"><code>const wave = new WavecoreSox({ source })
 await wave.open()
-await wave.norm()
+const normCore = await wave.norm()
 </code></pre>
-<h4>Playback Rate</h4>
+<h4>Playback Rate (SoX)</h4>
 <blockquote>
 <p>Change the &quot;tempo&quot; of the audio without changing the pitch</p>
 </blockquote>
-<pre class="prettyprint source lang-js"><code>const wave = new Wavecore({ source })
+<pre class="prettyprint source lang-js"><code>const wave = new WavecoreSox({ source })
 await wave.open()
 const snap = wave.snapshot() // save copy of original audio
 const slowerWave = await Promise.resolve(wave.tempo(0.8)) // 20% slower
