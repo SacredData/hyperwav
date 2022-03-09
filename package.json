@@ -20,8 +20,7 @@
     "hyperswarm": "^3.0.1",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
-    "random-access-memory": "^4.0.0",
-    "wavefile": "^11.0.0"
+    "random-access-memory": "^4.0.0"
   },
   "devDependencies": {
     "@storyboard-fm/soapbox": "^0.5.6",
