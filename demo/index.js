@@ -27,7 +27,7 @@ async function main() {
   var abNorm = null
   var audioCtx = new AudioContext()
 
-  const wave = new Wavecore()
+  const wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
   const s = await getMedia({audio:true,video:false})
   console.log(s)

@@ -28,7 +28,7 @@ async function main() {
   var abNorm = null
   var audioCtx = new AudioContext()
 
-  const wave = new Wavecore()
+  const wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
   const s = await getMedia({audio:true,video:false})
   console.log(s)
@@ -154,6 +154,7 @@ class Wavecore {
   constructor(
     opts = {
       core: null,
+      ctx: null,
       encryptionKey: null,
       indexSize: null,
       parent: null,
@@ -162,6 +163,7 @@ class Wavecore {
     }
   ) {
     this.core = null
+    this.ctx = null
     this.source = null
     let storage = null
     // Declaring a specific storage supercedes defining a specific hypercore
@@ -170,7 +172,8 @@ class Wavecore {
     } else {
       storage = ram
     }
-    const { core, encryptionKey, indexSize, parent, source } = opts
+    const { core, ctx, encryptionKey, indexSize, parent, source } = opts
+    if (ctx) this.ctx = ctx
     if (parent) {
       this.parent = parent
       this.source = parent.source || null
@@ -207,6 +210,8 @@ class Wavecore {
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
    * the resulting output
+   * @arg {Number} [opts.start=0] - Index to start from.
+   * @arg {Number} [opts.end=-1] - Index to end on.
    * @returns {AudioBuffer}
    * @see {@link
    * https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer|AudioBuffer -
@@ -217,13 +222,16 @@ class Wavecore {
       dcOffset: true,
       mix: false,
       normalize: false,
+      start: 0,
+      end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, store } = opts
+    const { dcOffset, mix, normalize, start, end, store } = opts
     const bufs = []
-    const rs = this._rawStream()
+    const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
+
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
