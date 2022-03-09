@@ -9,6 +9,7 @@ const WaveFile = require('wavefile').WaveFile
 /**
  * The `WavecoreSox` class provides a SoX interface for Wavecore.
  * @class
+ * @extends {Wavecore}
  */
 class WavecoreSox extends Wavecore {
   /**
