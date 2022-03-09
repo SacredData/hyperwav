@@ -136,17 +136,19 @@ class Wavecore {
       dcOffset: true,
       mix: false,
       normalize: false,
+      start: 0,
+      end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, store } = opts
+    const { dcOffset, mix, normalize, start, end, store } = opts
     const bufs = []
-    const rs = this._rawStream()
+    const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
+          let audioBuffer = abf(Buffer.concat(bufs), 'mono uint16 le 48000')
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
