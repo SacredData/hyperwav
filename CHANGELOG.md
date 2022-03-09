@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2022-03-09
+### Changed
+- class structure so that sox commands are in a class extension, WavecoreSox
+
 ## [0.1.8] - 2022-03-08
 ### Changed
 - stream recording to use same indeces as raw buffers
@@ -86,7 +90,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.5...v0.1.6
