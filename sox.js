@@ -11,6 +11,17 @@ const WaveFile = require('wavefile').WaveFile
  * @class
  */
 class WavecoreSox extends Wavecore {
+  /**
+   * The `WavecoreSox` class constructor.
+   * @arg {Object} [opts={}] - Options
+   * @arg {Hypercore} [opts.core=null] - Provide a previously-made hypercore.
+   * @arg {Integer} [opts.indexSize=null] - Declare an alternate index size.
+   * @arg {Buffer|Readable|PassThrough|Array|ArrayBuffer} [opts.source] - PCM
+   * source.
+   * @arg {Buffer} [opts.encryptionKey=null] - Encryption key
+   * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
+   * @returns {WavecoreSox} wavecoreSox - The new Wavecore with SoX methods.
+   */
   constructor(opts) {
     super(opts)
   }
