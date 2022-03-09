@@ -31,7 +31,8 @@ describe('WavecoreSox', function () {
     const core31 = new WavecoreSox({ source })
     it('should increase gain by 2.0dBFS', async function () {
       await Promise.resolve(core31.open())
-      const gainInc = await core31.gain(2)
+      const gainIncCore = await core31.gain(2)
+      const gainInc = WavecoreSox.fromCore(gainIncCore.core, core31)
       const gainStats = await gainInc.stats()
       expect(gainStats.split('\n')[3]).to.equal('Pk lev dB       0.00')
     })
@@ -70,7 +71,8 @@ describe('WavecoreSox', function () {
     const core28 = new WavecoreSox({ source })
     it('should normalize the audio to 0dBFS', async function () {
       await Promise.resolve(core28.open())
-      const norm = await core28.norm()
+      const normCore = await core28.norm()
+      const norm = WavecoreSox.fromCore(normCore.core, core28)
       const stats = await norm.stats()
       expect(stats.split('\n')[3]).to.equal('Pk lev dB      -0.00')
     })
