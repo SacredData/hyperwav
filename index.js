@@ -73,6 +73,7 @@ class Wavecore {
   constructor(
     opts = {
       core: null,
+      ctx: null,
       encryptionKey: null,
       indexSize: null,
       parent: null,
@@ -81,6 +82,7 @@ class Wavecore {
     }
   ) {
     this.core = null
+    this.ctx = null
     this.source = null
     let storage = null
     // Declaring a specific storage supercedes defining a specific hypercore
@@ -89,7 +91,8 @@ class Wavecore {
     } else {
       storage = ram
     }
-    const { core, encryptionKey, indexSize, parent, source } = opts
+    const { core, ctx, encryptionKey, indexSize, parent, source } = opts
+    if (ctx) this.ctx = ctx
     if (parent) {
       this.parent = parent
       this.source = parent.source || null
@@ -147,10 +150,11 @@ class Wavecore {
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
+
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono uint16 le 48000')
+          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
