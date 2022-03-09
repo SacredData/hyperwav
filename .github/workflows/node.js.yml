@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 env:
-  NPM_AUTH_TOKEN: ${{ secrets.WAVECORE_PAT }}
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   build:
@@ -33,7 +33,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm i
+    - run: npm ci
     - run: npm test
-    - run: npm run make-badges
-    - run: npm run docs
