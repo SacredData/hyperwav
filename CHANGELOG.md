@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - start and end opts for audioBuffer
 
+### Fixed
+- failing unit tests due to sox lib
+
 ## [0.1.9] - 2022-03-09
 ### Changed
 - class structure so that sox commands are in a class extension, WavecoreSox
