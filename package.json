@@ -4,7 +4,8 @@
   "description": "Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
-    "build": "node_modules/.bin/browserify ./demo/index.js -o bundle.js && cp bundle.js demo/bundle.js && cp bundle.js docs/",
+    "build": "node_modules/.bin/browserify ./index.js -s Wavecore -o bundle.js && cp bundle.js docs/",
+    "build-demo": "node_modules/.bin/browserify demo/index.js -o demo/bundle.js",
     "demo": "npx parcel serve demo/index.html --no-cache",
     "docs": "node_modules/.bin/jsdoc --configure jsdoc.json --verbose",
     "lint": "node_modules/.bin/prettier -w index.js",
