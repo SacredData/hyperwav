@@ -18,6 +18,13 @@ describe('Wavecore', function () {
       expect(newCore).to.be.instanceof(Wavecore)
     })
   })
+  describe('#fromStream', function () {
+    it('should construct from a stream', async function () {
+      const core40 = Wavecore.fromStream(fs.createReadStream(path.join(__dirname, 'test.wav.raw')))
+      await core40.core.update()
+      expect(core40).to.be.instanceof(Wavecore)
+    })
+  })
   describe('#constructor', function() {
     it('should return a new instance of a Wavecore', function () {
       const core1 = new Wavecore({ source })
