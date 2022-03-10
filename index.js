@@ -55,7 +55,10 @@ class Wavecore {
     if (core instanceof Hypercore) return new this({ core, parent, source })
   }
   static fromStream(st) {
-    const w = new this({ source: st, indexSize: st._readableState.highWaterMark || 65536 })
+    const w = new this({
+      source: st,
+      indexSize: st._readableState.highWaterMark || 65536,
+    })
     w.recStream(st)
     return w
   }
