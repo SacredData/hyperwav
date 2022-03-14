@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2022-03-14
+### Changed
+- hypercore10 to latest version with stabilised replicator code
+
 ## [0.2.0] - 2022-03-09
 ### Added
 - start and end opts for audioBuffer
@@ -100,7 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.9...v0.2.0
 [0.1.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/Storyboard-fm/wavecore/compare/v0.1.7...v0.1.8
