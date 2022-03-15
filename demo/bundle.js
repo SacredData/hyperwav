@@ -136,7 +136,10 @@ class Wavecore {
     if (core instanceof Hypercore) return new this({ core, parent, source })
   }
   static fromStream(st) {
-    const w = new this({ source: st })
+    const w = new this({
+      source: st,
+      indexSize: st._readableState.highWaterMark || 65536,
+    })
     w.recStream(st)
     return w
   }
@@ -17804,7 +17807,7 @@ exports.WriteStream = WriteStream
 },{"streamx":241}],118:[function(require,module,exports){
 module.exports={
   "name": "hypercore",
-  "version": "10.0.0-alpha.24",
+  "version": "10.0.0-alpha.25",
   "description": "Hypercore 10",
   "main": "index.js",
   "scripts": {
