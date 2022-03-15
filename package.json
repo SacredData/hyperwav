@@ -1,6 +1,6 @@
 {
   "name": "@storyboard-fm/wavecore",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,8 @@
     "nyc": "^15.1.0",
     "parcel": "^2.2.0",
     "prettier": "^2.5.1",
-    "random-access-file": "github:random-access-storage/random-access-file"
+    "random-access-file": "github:random-access-storage/random-access-file",
+    "web-audio-api": "^0.2.2"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
