@@ -47,10 +47,10 @@ async function main() {
   <h2><b>Core</b></h2>
 
   <h4>INDEX LENGTH</h4>
-  ${wave.core.length}
+  ${wave.length}
 
 <h4>BYTELENGTH</h4>
-  ${wave.core.byteLength}
+  ${wave.byteLength}
 `
     abOrig = await wave.audioBuffer({dcOffset:false})
     abNorm = await wave.audioBuffer({dcOffset: true, normalize: true})

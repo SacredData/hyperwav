@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('..')
 
 const source = fs.readFileSync(path.join(__dirname, '..', './test/test.wav'))
@@ -14,8 +13,8 @@ async function main() {
   const headWrite = fs.createWriteStream('head.wav')
   // TODO function to convert split WAV audio from RAW to WAV
   const tailWrite = fs.createWriteStream('tail.raw')
-  head.core.createReadStream().pipe(headWrite)
-  tail.core.createReadStream().pipe(tailWrite)
+  head.createReadStream().pipe(headWrite)
+  tail.createReadStream().pipe(tailWrite)
   console.log('piped for writing...')
   headWrite.on('done', () => {
     tailWrite.on('done', () => {
