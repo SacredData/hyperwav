@@ -16,12 +16,13 @@ const WAVE_FORMAT = {
   type: 'raw',
 }
 const INDEX_SIZE = 76800 // 800ms
-// const INDEX_SIZE = 57600 // 600ms
+
 
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
  * audio files in a real-time, peer-to-peer context.
  * @class
+ * @extends external:Hypercore
  */
 class Wavecore extends Hypercore {
   /**
@@ -52,7 +53,6 @@ class Wavecore extends Hypercore {
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
-   * @arg {Hypercore} [opts.core=null] - Provide a previously-made hypercore.
    * @arg {Integer} [opts.indexSize=null] - Declare alternate index size.
    * @arg {Source} [opts.source=null] - Provide `little-media-box` source.
    * @arg {Buffer} [opts.encryptionKey=null] - Provide an optional encryption key.
@@ -402,3 +402,9 @@ class Wavecore extends Hypercore {
 }
 
 module.exports = Wavecore
+
+/**
+ * Hypercore 10
+ * @external Hypercore
+ * @see {@link https://github.com/hypercore-protocol/hypercore-next|Hypercore}
+ */
