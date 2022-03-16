@@ -367,7 +367,7 @@ class Wavecore extends Hypercore {
           ptHead.on('error', (err) => reject(err))
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
-            resolve([ headCore, tailCore ])
+            resolve([headCore, tailCore])
             /*
             const wavecores = [headCore, tailCore].map((c) =>
               Wavecore.fromCore(c, this)
