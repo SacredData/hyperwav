@@ -1,9 +1,10 @@
+const { AudioContext } = require('web-audio-api')
 const expect = require('chai').expect
 const fs = require('fs')
 const Hypercore = require('hypercore')
 const path = require('path')
 const ram = require('random-access-memory')
-const { Readable } = require('stream')
+const { Readable, PassThrough } = require('stream')
 const Wavecore = require('../')
 const WaveFile = require('wavefile').WaveFile
 
@@ -27,6 +28,35 @@ describe('Wavecore', function () {
     it('should accept a custom random-access-storage interface', async function () {
       const customStorage = new Wavecore({ storage: new require('random-access-file')('./testy') })
       expect(customStorage).to.be.instanceof(Wavecore)
+    })
+    it('should accept an AudioContext', async function () {
+      const ctx = new AudioContext()
+      const contextTest = new Wavecore({ ctx })
+      expect(contextTest).to.be.instanceof(Wavecore)
+    })
+    it('should accept a parent', async function () {
+      const parent = new Wavecore()
+      await parent.open({ source })
+      const child = new Wavecore({ parent })
+      expect(child).to.be.instanceof(Wavecore) &&
+        expect(child).to.have.property('parent') &&
+        expect(child.parent).to.be.instanceof(Wavecore)
+    })
+    it('should accept a Readable source', async function () {
+      const streamSource = Readable.from(source)
+      const streamTest = new Wavecore({ source: streamSource })
+      expect(streamTest).to.be.instanceof(Wavecore)
+    })
+    it('should accept a PassThrough source', async function () {
+      const streamSource2 = PassThrough.from(source)
+      const streamTest2 = new Wavecore({ source: streamSource2 })
+      expect(streamTest2).to.be.instanceof(Wavecore)
+    })
+    it('should accept a custom index size', async function () {
+      const indexSize = 4096
+      const sizeTest = new Wavecore({ indexSize, source })
+      expect(sizeTest).to.have.property('indexSize') &&
+        expect(sizeTest.indexSize).to.equal(4096)
     })
   })
   describe('#open', function() {
@@ -141,6 +171,13 @@ describe('Wavecore', function () {
     it('should store the buffer in the class instance', async function () {
       await Promise.resolve(core21.audioBuffer({ store: true }))
       expect(core21).to.have.property('audioBuffer')
+    })
+    it('should mix audio if given another audiobuffer', async function () {
+      const ab = core21.audioBuffer
+      const mixTest = new Wavecore({ source })
+      await mixTest.open()
+      const mixedAudio = await mixTest.audioBuffer({mix:ab})
+      expect(mixedAudio).to.not.equal(null)
     })
   })
   describe('#concat', function () {
