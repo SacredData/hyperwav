@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      Hypercore - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      Wavecore
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/hypercore-protocol/hypercore-next">hypercore v10</a>
+      
+        <a href="https://github.com/random-access-storage">random-access-storage</a>
+      
+        <a href="https://github.com/little-core-labs/nanoprocess">nanoprocess</a>
+      
+        <a href="https://github.com/storyboard-fm/little-media-box">little-media-box</a>
+      
+    
+
+    <h3>Classes</h3><ul><li id="Wavecore-nav"><a href="Wavecore.html">Wavecore</a><ul class='methods'><li data-type="method" id="Wavecore-coreOpts-nav"><a href="Wavecore.html#.coreOpts">coreOpts</a></li><li data-type="method" id="Wavecore-_nextZero-nav"><a href="Wavecore.html#_nextZero">_nextZero</a></li><li data-type="method" id="Wavecore-_rawStream-nav"><a href="Wavecore.html#_rawStream">_rawStream</a></li><li data-type="method" id="Wavecore-_seek-nav"><a href="Wavecore.html#_seek">_seek</a></li><li data-type="method" id="Wavecore-addBlank-nav"><a href="Wavecore.html#addBlank">addBlank</a></li><li data-type="method" id="Wavecore-audioBuffer-nav"><a href="Wavecore.html#audioBuffer">audioBuffer</a></li><li data-type="method" id="Wavecore-classify-nav"><a href="Wavecore.html#classify">classify</a></li><li data-type="method" id="Wavecore-concat-nav"><a href="Wavecore.html#concat">concat</a></li><li data-type="method" id="Wavecore-open-nav"><a href="Wavecore.html#open">open</a></li><li data-type="method" id="Wavecore-recStream-nav"><a href="Wavecore.html#recStream">recStream</a></li><li data-type="method" id="Wavecore-shift-nav"><a href="Wavecore.html#shift">shift</a></li><li data-type="method" id="Wavecore-split-nav"><a href="Wavecore.html#split">split</a></li><li data-type="method" id="Wavecore-tag-nav"><a href="Wavecore.html#tag">tag</a></li></ul></li><li id="WavecoreSox-nav"><a href="WavecoreSox.html">WavecoreSox</a><ul class='methods'><li data-type="method" id="WavecoreSox-_nextZero-nav"><a href="WavecoreSox.html#_nextZero">_nextZero</a></li><li data-type="method" id="WavecoreSox-_rawStream-nav"><a href="WavecoreSox.html#_rawStream">_rawStream</a></li><li data-type="method" id="WavecoreSox-_rec-nav"><a href="WavecoreSox.html#_rec">_rec</a></li><li data-type="method" id="WavecoreSox-_seek-nav"><a href="WavecoreSox.html#_seek">_seek</a></li><li data-type="method" id="WavecoreSox-_volAdjust-nav"><a href="WavecoreSox.html#_volAdjust">_volAdjust</a></li><li data-type="method" id="WavecoreSox-addBlank-nav"><a href="WavecoreSox.html#addBlank">addBlank</a></li><li data-type="method" id="WavecoreSox-audioBuffer-nav"><a href="WavecoreSox.html#audioBuffer">audioBuffer</a></li><li data-type="method" id="WavecoreSox-classify-nav"><a href="WavecoreSox.html#classify">classify</a></li><li data-type="method" id="WavecoreSox-concat-nav"><a href="WavecoreSox.html#concat">concat</a></li><li data-type="method" id="WavecoreSox-gain-nav"><a href="WavecoreSox.html#gain">gain</a></li><li data-type="method" id="WavecoreSox-monitor-nav"><a href="WavecoreSox.html#monitor">monitor</a></li><li data-type="method" id="WavecoreSox-norm-nav"><a href="WavecoreSox.html#norm">norm</a></li><li data-type="method" id="WavecoreSox-open-nav"><a href="WavecoreSox.html#open">open</a></li><li data-type="method" id="WavecoreSox-play-nav"><a href="WavecoreSox.html#play">play</a></li><li data-type="method" id="WavecoreSox-recStream-nav"><a href="WavecoreSox.html#recStream">recStream</a></li><li data-type="method" id="WavecoreSox-shift-nav"><a href="WavecoreSox.html#shift">shift</a></li><li data-type="method" id="WavecoreSox-split-nav"><a href="WavecoreSox.html#split">split</a></li><li data-type="method" id="WavecoreSox-stats-nav"><a href="WavecoreSox.html#stats">stats</a></li><li data-type="method" id="WavecoreSox-tag-nav"><a href="WavecoreSox.html#tag">tag</a></li><li data-type="method" id="WavecoreSox-tempo-nav"><a href="WavecoreSox.html#tempo">tempo</a></li><li data-type="method" id="WavecoreSox-vad-nav"><a href="WavecoreSox.html#vad">vad</a></li><li data-type="method" id="WavecoreSox-wav-nav"><a href="WavecoreSox.html#wav">wav</a></li></ul></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        Hypercore
+      </h1>
+    
+
+    
+
+<section>
+  <header>
+    
+      <h2>
+        
+        Hypercore
+        
+      </h2>
+
+      
+    
+  </header>
+
+  <article>
+    <div class="container-overview">
+      
+        
+            <div class="description">
+              <p>Hypercore 10</p>
+            </div>
+        
+
+        
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line406">line 406</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/hypercore-protocol/hypercore-next">Hypercore</a>
+          </li>
+        
+      </ul>
+    </dd>
+  
+
+  
+</dl>
+
+
+        
+      
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+  </article>
+</section>
+
+
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>
