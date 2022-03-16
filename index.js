@@ -17,7 +17,6 @@ const WAVE_FORMAT = {
 }
 const INDEX_SIZE = 76800 // 800ms
 
-
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
  * audio files in a real-time, peer-to-peer context.
