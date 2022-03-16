@@ -23,7 +23,7 @@ const INDEX_SIZE = 76800 // 800ms
  * audio files in a real-time, peer-to-peer context.
  * @class
  */
-class Wavecore {
+class Wavecore extends Hypercore {
   /**
    * Get the default hypercore instantiation options with optional hypercore
    * opts applied
@@ -40,19 +40,6 @@ class Wavecore {
     }
     if (encryptionKey) baseOpts.encryptionKey = encryptionKey
     return baseOpts
-  }
-  /**
-   * Get new Wavecore from a previously-instantiated hypercore and its parent
-   * Wavecore.
-   * @arg {Wavecore} core - The Hypercore to copy from
-   * @arg {Wavecore} [parent=null] - The Wavecore from which the core derives
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Source} [opts.source=null] - The Source from which the core derives
-   * @returns {Wavecore} newCore - The new Wavecore
-   */
-  static fromCore(core, parent, opts = { source: null }) {
-    const { source } = opts
-    if (core instanceof Hypercore) return new this({ core, parent, source })
   }
   static fromStream(st) {
     const w = new this({
@@ -77,15 +64,13 @@ class Wavecore {
       core: null,
       ctx: null,
       encryptionKey: null,
+      hypercoreOpts: null,
       indexSize: null,
       parent: null,
       source: null,
       storage: null,
     }
   ) {
-    this.core = null
-    this.ctx = null
-    this.source = null
     let storage = null
     // Declaring a specific storage supercedes defining a specific hypercore
     if (opts.storage) {
@@ -93,12 +78,14 @@ class Wavecore {
     } else {
       storage = ram
     }
-    const { core, ctx, encryptionKey, indexSize, parent, source } = opts
+    super(storage, Wavecore.coreOpts())
+    this.ctx = null
+    this.source = null
+    const { ctx, encryptionKey, indexSize, parent, source } = opts
     if (ctx) this.ctx = ctx
     if (parent) {
       this.parent = parent
       this.source = parent.source || null
-      if (core instanceof Hypercore) this.core = core
     } else {
       if (source)
         this.source =
@@ -107,18 +94,9 @@ class Wavecore {
           source instanceof PassThrough
             ? source
             : Buffer.from(source)
-      // Assign to a hypercore provided via constructor arguments
-      if (core instanceof Hypercore) this.core = core
     }
-    // If there is still no hypercore lets just make a sane default one
-    if (!this.core)
-      this.core = new Hypercore(storage, Wavecore.coreOpts({ encryptionKey }))
-    this.core.ready().then(
-      process.nextTick(() => {
-        this.indexSize = indexSize ? indexSize : INDEX_SIZE
-        this.tags = new Map()
-      })
-    )
+    this.indexSize = indexSize ? indexSize : INDEX_SIZE
+    this.tags = new Map()
   }
   /**
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
@@ -170,42 +148,12 @@ class Wavecore {
     return await Promise.resolve(prom)
   }
   /**
-   * Get the Wavecore's discovery key so the hypercore can be found by others.
-   * @returns {Buffer} discoveryKey
-   * @see {@link
-   * https://github.com/hypercore-protocol/hypercore#feeddiscoverykey|discoveryKey}
-   */
-  get discoveryKey() {
-    return this.core.discoveryKey
-  }
-  /**
-   * Return the fork ID of the Wavecore.
-   * @returns {Number} forkId
-   */
-  get fork() {
-    return this.core.fork
-  }
-  /**
-   * Returns an `Object` with the public and secret keys for the Wavecore.
-   * @returns {Object} keyPair
-   */
-  get keyPair() {
-    return this.core.keyPair
-  }
-  /**
    * Returns the byte length of the last index in the hypercore. This is useful
    * when it is known that the last index does not contain a buffer that matches
    * the declared `indexSize` of the Wavecore.
    */
   get lastIndexSize() {
-    return this.core.byteLength - (this.core.length - 1) * this.indexSize
-  }
-  /**
-   * Returns the current length of the Wavecore's hypercore.
-   * @returns {Number} length
-   */
-  get length() {
-    return this.core.length
+    return this.byteLength - (this.length - 1) * this.indexSize
   }
   /**
    * Returns a `Readable` stream that continually reads for appended data. A
@@ -213,7 +161,7 @@ class Wavecore {
    * @returns {Readable} liveStream
    */
   get liveStream() {
-    return this.core.createReadStream({ live: true, snapshot: false })
+    return this.createReadStream({ live: true, snapshot: false })
   }
   /**
    * Returns the index number and relative byte offset of the next zero-crossing
@@ -228,8 +176,8 @@ class Wavecore {
   async _nextZero(b) {
     let sv = b
     if (b instanceof Array) sv = b[0] * this.indexSize + b[1]
-    const [i, rel] = await this.core.seek(sv)
-    const idData = await this.core.get(i)
+    const [i, rel] = await this._seek(sv)
+    const idData = await this.get(i)
     const idArr = Array.from(idData)
     const nextZ = idArr.indexOf(0, rel)
     return [i, nextZ]
@@ -243,16 +191,10 @@ class Wavecore {
    * @returns {Readable} readStream
    */
   _rawStream(start = 0, end = -1) {
-    return this.core.createReadStream(
+    return this.createReadStream(
       { start, end },
       { highWaterMark: this.indexSize }
     )
-  }
-  /**
-   * Get a list of the sessions on this Wavecore's hypercore.
-   */
-  get sessions() {
-    return this.core.sessions
   }
   /**
    * Append blank data to the tail of the wavecore. If no index count is
@@ -265,22 +207,9 @@ class Wavecore {
     try {
       let counter = n || 1
       while (counter > 0) {
-        await this.core.append(Buffer.alloc(this.indexSize))
+        await this.append(Buffer.alloc(this.indexSize))
         counter--
       }
-    } catch (err) {
-      throw err
-    }
-  }
-  /**
-   * Add a Buffer of new data to the tail of the Wavecore.
-   * @arg {Buffer} data
-   * @returns {Number} index - The index number for the first block written.
-   */
-  async append(data) {
-    try {
-      const index = await this.core.append(data)
-      return index
     } catch (err) {
       throw err
     }
@@ -300,27 +229,10 @@ class Wavecore {
         ? 'quiet'
         : 'voice'
     }
-    const data = await this.core.get(i)
+    const data = await this.get(i)
     const { dynamics } = opts
     if (dynamics) return dyn(data)
     return
-  }
-  /**
-   * Completely close the Wavecore's underlying Hypercore, making it immutable.
-   * If a Wavecore's hypercore is closed, it cannot have any further work done
-   * to it and its data cannot be accessed.
-   * @async
-   * @returns {Promise}
-   */
-  async close() {
-    if (this.core.closing) return
-    await this.core.close()
-    return new Promise((resolve, reject) => {
-      if (!this.core.closed) {
-        reject('could not close hypercore!')
-      }
-      resolve(true)
-    })
   }
   /**
    * Join one or more wavecores to the end of this wavecore. Creates and returns
@@ -332,27 +244,15 @@ class Wavecore {
     try {
       const allCores = [this, ...wavecores]
       const coreStreams = new MultiStream(allCores.map((c) => c._rawStream()))
-      const concatCore = new Hypercore(ram)
+      const concatCore = new Wavecore(ram)
       const prom = new Promise((resolve, reject) => {
         const concatWriter = concatCore.createWriteStream()
         concatWriter.on('close', () => {
-          resolve(Wavecore.fromCore(concatCore, this))
+          resolve(concatCore)
         })
         coreStreams.pipe(concatWriter)
       })
       return await Promise.resolve(prom)
-    } catch (err) {
-      throw err
-    }
-  }
-  /**
-   * Check if the Wavecore has the block at the provided index number.
-   * @arg {Number} i - The index number to check for
-   * @returns {Boolean} - Does the wavecore have that index?
-   */
-  async has(i) {
-    try {
-      return await this.core.has(i)
     } catch (err) {
       throw err
     }
@@ -366,23 +266,23 @@ class Wavecore {
    * @see {@link https://github.com/hypercore-protocol/hypercore|Hypercore}
    */
   async open(opts = { source: null }) {
-    if (this.core.length > 0 && this.core.opened) return
+    if (this.length > 0 && this.opened) return
 
     const { source } = opts
 
     try {
       if (!source && !this.source) throw new Error('No usable source!')
-      await this.core.ready()
+      await this.ready()
       this.waveFormat = Buffer.from(JSON.stringify(WAVE_FORMAT))
 
       const srcArr = Array.from(source || this.source || null)
 
       for (let i = 0; i < srcArr.length; i += this.indexSize) {
-        await this.core.append(Buffer.from(srcArr.slice(i, i + this.indexSize)))
+        await this.append(Buffer.from(srcArr.slice(i, i + this.indexSize)))
       }
 
-      await this.core.update()
-      return this.core
+      await this.update()
+      return this
     } catch (err) {
       throw err
     }
@@ -397,7 +297,7 @@ class Wavecore {
     const pt = new PassThrough({
       highWaterMark: Number(indexSize) || this.indexSize,
     })
-    const ws = this.core.createWriteStream({ highWaterMark: this.indexSize })
+    const ws = this.createWriteStream({ highWaterMark: this.indexSize })
     st.pipe(pt).pipe(ws)
     if (this.source === null) this.source = st
     return
@@ -408,10 +308,10 @@ class Wavecore {
    * @arg {Number} byteOffset - Number of bytes to seek from beginning of file
    * @returns {Array} seekData - `[index, relativeOffset]`
    */
-  async seek(byteOffset, opts = { zero: false }) {
+  async _seek(byteOffset, opts = { zero: false }) {
     try {
       const sa = []
-      const [index, relativeOffset] = await this.core.seek(byteOffset)
+      const [index, relativeOffset] = await this.seek(byteOffset)
       sa.push(index, relativeOffset)
       if (opts.zero) {
         const zeroCross = await this._nextZero(byteOffset)
@@ -425,31 +325,18 @@ class Wavecore {
     }
   }
   /**
-   * Start a new `session` for this Wavecore.
-   */
-  session() {
-    return this.core.session()
-  }
-  /**
-   * Snapshot the current session and begin a new one.
-   * @returns {Wavecore} - A new Wavecore to continue working from
-   */
-  snapshot() {
-    return Wavecore.fromCore(this.core.snapshot(), this)
-  }
-  /**
    * Returns a Promise which resolve a Wavecore that begins at the provided
    * index number. Use this to trim the Wavecore from the beginning of the file.
    * @returns {Wavecore} newCore
    */
   shift(index = 1) {
     return new Promise((resolve, reject) => {
-      const shiftedRs = this.core.createReadStream({ start: index })
-      const newCore = new Hypercore(ram)
+      const shiftedRs = this.createReadStream({ start: index })
+      const newCore = new Wavecore(ram)
       const writer = newCore.createWriteStream()
       writer
         .on('close', () => {
-          resolve(Wavecore.fromCore(newCore, this))
+          resolve(newCore)
         })
         .on('error', (err) => reject(err))
 
@@ -464,15 +351,15 @@ class Wavecore {
    */
   split(index) {
     return new Promise((resolve, reject) => {
-      if (Number(index) > this.core.length)
+      if (Number(index) > this.length)
         reject(new Error('Index greater than core size!'))
-      const [headCore, tailCore] = [new Hypercore(ram), new Hypercore(ram)]
+      const [headCore, tailCore] = [new Wavecore(ram), new Wavecore(ram)]
       const ptTail = new PassThrough()
       ptTail.on('error', (err) => reject(err))
       ptTail.on('data', (d) => tailCore.append(d))
       ptTail.on('close', async () => {
         try {
-          const headStream = this.core.createReadStream({
+          const headStream = this.createReadStream({
             start: 0,
             end: index,
           })
@@ -480,17 +367,20 @@ class Wavecore {
           ptHead.on('error', (err) => reject(err))
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
+            resolve([ headCore, tailCore ])
+            /*
             const wavecores = [headCore, tailCore].map((c) =>
               Wavecore.fromCore(c, this)
             )
             resolve(wavecores)
+            */
           })
           headStream.pipe(ptHead)
         } catch (err) {
           reject(err)
         }
       })
-      const splitStream = this.core.createReadStream({ start: index })
+      const splitStream = this.createReadStream({ start: index })
       splitStream.pipe(ptTail)
     })
   }
@@ -507,25 +397,6 @@ class Wavecore {
     } catch (err) {
       console.error(err)
       return err
-    }
-  }
-  /**
-   * Truncate the Hypercore to a shorter length.
-   * @async
-   * @arg {Number} length - The new length. Must be shorter than current length.
-   * @arg {Object} [opts={}] - Optional options object
-   * @arg {Boolean} [opts.snapshot=false] - Whether to snapshot the Wavecore
-   * before truncation occurs. This is recommended if you may want to undo this
-   * operation later on.
-   */
-  async truncate(length, opts = { snapshot: false }) {
-    try {
-      if (!length || !length instanceof Number) return
-      if (length > this.core.length) throw new Error('Must be a shorter length')
-      if (opts.snapshot) this.snapshot()
-      return await this.core.truncate(length)
-    } catch (err) {
-      console.error(err)
     }
   }
 }
