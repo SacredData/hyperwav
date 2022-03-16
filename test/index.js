@@ -10,14 +10,7 @@ const WaveFile = require('wavefile').WaveFile
 const source = fs.readFileSync(path.join(__dirname, 'test.wav.raw'))
 
 describe('Wavecore', function () {
-  describe('#fromCore', function () {
-    it('should return a new Wavecore from a parent Wavecore', async function () {
-      const core38 = new Wavecore({source})
-      await Promise.resolve(core38.open())
-      const newCore = Wavecore.fromCore(core38.core, core38)
-      expect(newCore).to.be.instanceof(Wavecore)
-    })
-  })
+  /*
   describe('#fromStream', function () {
     it('should construct from a stream', async function () {
       const core40 = Wavecore.fromStream(fs.createReadStream(path.join(__dirname, 'test.wav.raw')))
@@ -25,107 +18,36 @@ describe('Wavecore', function () {
       expect(core40).to.be.instanceof(Wavecore)
     })
   })
+  */
   describe('#constructor', function() {
     it('should return a new instance of a Wavecore', function () {
-      const core1 = new Wavecore({ source })
+      const core1 = new Wavecore()
       expect(core1).to.be.instanceof(Wavecore)
-    })
-    it('should work if no source is provided', () => {
-      const core2 = new Wavecore()
-      expect(core2).to.be.instanceof(Wavecore)
-    })
-    it('should work if a hypercore is provided as an argument', function () {
-      const hypercore = new Hypercore(ram)
-      const core3 = new Wavecore({ core: hypercore })
-      expect(core3).to.be.instanceof(Wavecore)
     })
     it('should accept a custom random-access-storage interface', async function () {
       const customStorage = new Wavecore({ storage: new require('random-access-file')('./testy') })
       expect(customStorage).to.be.instanceof(Wavecore)
     })
   })
-  describe('#discoveryKey', function () {
-    it('should return a Buffer containing the hypercore discovery key', async function() {
-      const core9 = new Wavecore()
-      await core9.core.update()
-      const dk = core9.discoveryKey
-      expect(dk).to.be.instanceof(Buffer)
-    })
-  })
-  describe('#fork', function () {
-    it('should return the hypercore fork number', async function () {
-      const core10 = new Wavecore()
-      const forkId = core10.fork
-      expect(typeof(forkId)).to.equal('number') &&
-        expect(forkId).to.equal(0)
-    })
-  })
-  describe('#keyPair', function() {
-    it('should return public and secret keys', async function() {
-      const core12 = new Wavecore()
-      const kp = core12.keyPair
-      expect(typeof(kp)).to.equal('object')
-    })
-  })
   describe('#open', function() {
     it('should read the WAV into a new Hypercore', async function () {
-      const core4 = new Wavecore({ source })
-      const returnedCore = await Promise.resolve(core4.open())
-      expect(returnedCore).to.be.instanceof(Hypercore) &&
-        expect(core4.core).to.be.instanceof(Hypercore) &&
-        expect(core4.core.length).to.equal(57)
+      const core4 = new Wavecore()
+      await Promise.resolve(core4.open({ source }))
+      expect(core4).to.be.instanceof(Wavecore) &&
+        expect(core4.length).to.equal(57)
     })
   })
-  describe('#length', function () {
-    const core11 = new Wavecore({ source })
-    it('should return a length of 0 before the WAV is read into the core', function () {
-      const length = core11.length
-      expect(length).to.not.equal(null) &&
-        expect(length).to.equal(0)
+  describe('#_seek', function () {
+    const core6 = new Wavecore()
+    it('should provide index and relative offset values', async function () {
+      await Promise.resolve(core6.open({ source }))
+      const [index, relative] = await core6._seek(20000)
+      expect(index).to.equal(0) &&
+        expect(relative).to.equal(20000)
     })
-    it('should return a length of 58 after the WAV is read into the core', async function () {
-      await Promise.resolve(core11.open())
-      const newLength = core11.length
-      expect(newLength).to.not.equal(null) &&
-        expect(newLength).to.equal(57)
-    })
-  })
-  describe('#has', function () {
-    const core37 = new Wavecore()
-    it('should have index 1', async function () {
-      await core37.addBlank(3)
-      const has = await core37.has(1)
-      expect(has).to.equal(true)
-    })
-  })
-  describe('#truncate', function () {
-    it('should truncate the hypercore', async function () {
-      const core5 = new Wavecore({ source })
-      await Promise.resolve(core5.open())
-      await core5.truncate(20)
-      expect(core5.core.length).to.equal(20)
-    })
-    it('should snapshot the wavecore if that option is passed', async function () {
-      const core5b = new Wavecore({ source })
-      await Promise.resolve(core5b.open())
-      await core5b.truncate(19, { snapshot: true })
-      expect(core5b.core.length).to.equal(19) &&
-        expect(core5b.sessions[1].length).to.equal(57) &&
-        expect(core5b.sessions.length).to.equal(2)
-    })
-    it('should not succeed if new length is greater than old length', async function () {
-      const core5c = new Wavecore()
-      try {
-        await core5c.truncate(2)
-      } catch (err) {
-        expect(err).to.not.equal(null)
-      }
-    })
-    it('should not accept a non-number', async function () {
-      let results = null
-      const core5d = new Wavecore()
-      results = await core5d.truncate('hello')
-      expect(results).to.be.undefined
+    it('should provide the next zeroCrossing', async function () {
+      const [index, relative, byteOffset] = await core6._seek(20000, {zero:true})
+      expect(byteOffset).to.equal(20001)
     })
   })
   describe('#_nextZero', function () {
@@ -139,19 +61,6 @@ describe('Wavecore', function () {
       const seekVal = await core22.seek(741444)
       const nz = await core22._nextZero(seekVal)
       expect(nz).to.be.instanceof(Array)
-    })
-  })
-  describe('#seek', function () {
-    const core6 = new Wavecore({ source })
-    it('should provide index and relative offset values', async function () {
-      await Promise.resolve(core6.open())
-      const [index, relative] = await core6.seek(20000)
-      expect(index).to.equal(0) &&
-        expect(relative).to.equal(20000)
-    })
-    it('should provide the next zeroCrossing', async function () {
-      const [index, relative, byteOffset] = await core6.seek(20000, {zero:true})
-      expect(byteOffset).to.equal(20001)
     })
   })
   describe('#_rawStream', function () {
@@ -185,22 +94,15 @@ describe('Wavecore', function () {
     const core14 = new Wavecore()
     it('should produce 3 indeces of blank data and append to the end', async function() {
       await core14.addBlank(3)
-      expect(core14.core.length).to.equal(3)
+      expect(core14.length).to.equal(3)
     })
     it('should produce 1 index of blank data by default', async function () {
       await core14.addBlank()
-      expect(core14.core.length).to.equal(4)
+      expect(core14.length).to.equal(4)
     })
     it('should not add anything when n=0', async function () {
       await core14.addBlank(0)
-      expect(core14.core.length).to.equal(4)
-    })
-  })
-  describe('#append', async function () {
-    const core15 = new Wavecore()
-    it('should add the buffer to the hypercore at index 0', async function () {
-      await core15.append(Buffer.from('hello'))
-      expect(core15.core.length).to.equal(1)
+      expect(core14.length).to.equal(4)
     })
   })
   describe('#shift', function () {
@@ -208,15 +110,7 @@ describe('Wavecore', function () {
     it('should return a new wavecore with index 0 removed', async function () {
       await Promise.resolve(core18.open())
       const newCore = await Promise.resolve(core18.shift(1))
-      expect(newCore.core.length).to.equal(56)
-    })
-  })
-  describe('#close', function () {
-    const core19 = new Wavecore({ source })
-    it('should close the hypercore', async function () {
-      await Promise.resolve(core19.open())
-      const result = await core19.close()
-      expect(result).to.equal(true)
+      expect(newCore.length).to.equal(56)
     })
   })
   describe('#lastIndexSize', function () {
@@ -264,7 +158,7 @@ describe('Wavecore', function () {
       const core35 = new Wavecore()
       const rs = Readable.from(source)
       rs.on('close', async function () {
-        await core35.core.update()
+        await core35.update()
         expect(core35.length).to.equal(57)
       })
       core35.recStream(rs)
@@ -295,14 +189,6 @@ describe('Wavecore', function () {
     it('should allow user to write a RIFF tag to the core', async function () {
       core33.tag('TEST', '1234')
       expect(core33.tags.size).to.equal(1)
-    })
-  })
-  describe('#session', function () {
-    const core36 = new Wavecore({ source })
-    it('should return a new session', async function () {
-      await Promise.resolve(core36.open())
-      const newCore = core36.session()
-      expect(newCore).to.be.instanceof(Hypercore)
     })
   })
 })

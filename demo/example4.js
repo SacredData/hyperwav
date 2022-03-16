@@ -1,6 +1,4 @@
 const fs = require('fs')
-const nanoprocess = require('nanoprocess')
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
 
 
@@ -14,7 +12,7 @@ function silentOrVoice(data) {
 }
 
 async function main(num=0) {
-  const source = new Source('./clip.wav')
+  const source = fs.readFileSync('./clip.wav')
   const wavecore = new Wavecore({ source })
 
   const INDEX_MS = 800

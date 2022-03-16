@@ -1,6 +1,4 @@
 const fs = require('fs')
-const nanoprocess = require('nanoprocess')
-const { Source } = require('@storyboard-fm/little-media-box')
 const Wavecore = require('../')
 
 
@@ -18,13 +16,10 @@ async function main() {
 
   await Promise.all([ head.open(), middle.open(), tail.open()])
 
-  console.log(head.core.length, middle.core.length, tail.core.length)
+  console.log(head.length, middle.length, tail.length)
 
   const template = await Promise.resolve(head.concat([middle, tail]))
   console.log('template', template)
-
-  console.log('about to play the template...')
-  template.play()
 }
 
 main()
