@@ -107,14 +107,14 @@ class WavecoreSox extends Wavecore {
       gainCmd.open((err) => {
         if (err) reject(err)
 
-        const newGainCore = new Hypercore(ram)
+        const newGainCore = new WavecoreSox(ram)
         const ws = newGainCore.createWriteStream({
           highWaterMark: this.indexSize,
         })
         ws.on('close', () => {
           newGainCore
             .update()
-            .then(() => resolve(Wavecore.fromCore(newGainCore, this)))
+            .then(() => resolve(newGainCore))
         })
         gainCmd.stdout.pipe(ws)
         rs.pipe(gainCmd.stdin)
@@ -179,7 +179,7 @@ class WavecoreSox extends Wavecore {
           if (err) reject(err)
 
           // TODO figure out why number of indeces higher in new wavecore
-          const newCore = new Hypercore(ram)
+          const newCore = new WavecoreSox(ram)
 
           const pt = new PassThrough({ highWaterMark: this.indexSize })
           pt.on('error', (err) => reject(err))
@@ -187,7 +187,7 @@ class WavecoreSox extends Wavecore {
 
           normCmd.on('close', (code) => {
             if (code !== 0) reject(new Error('Non-zero exit code'))
-            resolve(Wavecore.fromCore(newCore, this))
+            resolve(newCore)
           })
           normCmd.stdout.pipe(pt)
 
@@ -268,11 +268,11 @@ class WavecoreSox extends Wavecore {
         recCmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-Zero exit code!', code))
 
-          this.core.update().then(() => resolve())
+          this.update().then(() => resolve())
         })
 
         recCmd.stdout.pipe(
-          this.core.createWriteStream({ highWaterMark: this.indexSize })
+          this.createWriteStream({ highWaterMark: this.indexSize })
         )
       })
     })
@@ -323,7 +323,7 @@ class WavecoreSox extends Wavecore {
         if (index !== null) {
           rs = this._rawStream(index, index + 1)
         } else {
-          rs = this.core.createReadStream()
+          rs = this.createReadStream()
         }
 
         rs.pipe(statsCmd.stdin)
@@ -368,14 +368,14 @@ class WavecoreSox extends Wavecore {
       tempoCmd.open((err) => {
         if (err) reject(err)
 
-        const newCore = new Hypercore(ram)
+        const newCore = new WavecoreSox(ram)
 
         const pt = new PassThrough()
         pt.on('data', (d) => newCore.append(d))
 
         tempoCmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-zero exit code'))
-          resolve(Wavecore.fromCore(newCore, this))
+          resolve(newCore)
         })
         tempoCmd.stdout.pipe(pt)
         if (stats) tempoCmd.stderr.pipe(process.stdout)
@@ -408,7 +408,7 @@ class WavecoreSox extends Wavecore {
       'vad',
     ]
     const cmd = nanoprocess('sox', cmdOpts)
-    const newCore = new Hypercore(ram)
+    const newCore = new WavecoreSox(ram)
     const normCore = await this.norm()
     const prom = new Promise((resolve, reject) => {
       cmd.open((err) => {
@@ -416,7 +416,7 @@ class WavecoreSox extends Wavecore {
 
         cmd.on('close', (code) => {
           if (code !== 0) reject(new Error('Non-zero exit!', code))
-          resolve(Wavecore.fromCore(newCore, this))
+          resolve(newCore)
         })
 
         cmd.stdout.pipe(
@@ -473,7 +473,7 @@ class WavecoreSox extends Wavecore {
           resolve(wavBuf)
         })
         soxCmd.stdout.pipe(pt)
-        const rs = this.core.createReadStream()
+        const rs = this.createReadStream()
         rs.pipe(soxCmd.stdin)
       })
     })
