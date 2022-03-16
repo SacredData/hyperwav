@@ -58,6 +58,13 @@ describe('Wavecore', function () {
       expect(sizeTest).to.have.property('indexSize') &&
         expect(sizeTest.indexSize).to.equal(4096)
     })
+    it('should accept an Array source', async function () {
+      const srcArr = Array.from(source)
+      const arrTest = new Wavecore({ source: srcArr })
+      await arrTest.open()
+      expect(arrTest).to.be.instanceof(Wavecore) &&
+        expect(arrTest.length).to.equal(57)
+    })
   })
   describe('#open', function() {
     it('should read the WAV into a new Hypercore', async function () {
