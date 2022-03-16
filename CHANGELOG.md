@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 2022-03-16
+### Fixed
+- the Wavecore class namespace bundle to be up to date with latest source
+
 ## [0.2.4] - 2022-03-16
 ### Changed
 - release version because i fuxed up the release process
@@ -119,7 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.1...v0.2.2
