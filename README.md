@@ -40,6 +40,7 @@ applications, and web apps all from one codebase.
 #### Timeline Operations
 - [x] [Playback][play]
 - [x] [Seeking][seek]
+- [x] [Zero-cross detection][zero]
 #### DSP Operations
 - [x] [Gain][gain]
 - [x] [Normalization][norm]
@@ -225,3 +226,4 @@ $ npm run test
 [tag]: https://storyboard-fm.github.io/wavecore/Wavecore.html#tag
 [tempo]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#tempo
 [trunc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate
+[zero]: https://storyboard-fm.github.io/wavecore/Wavecore.html#_nextZero
