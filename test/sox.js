@@ -18,6 +18,11 @@ describe('WavecoreSox', function () {
       const statsOut = await core26.stats()
       expect(statsOut).to.not.equal(null)
     })
+    it('should get stats for an index', async function () {
+      await Promise.resolve(core26.open({ source }))
+      const statsOut = await core26.stats({ index: 2 })
+      expect(statsOut).to.not.equal(null)
+    })
   })
   describe('#_volAdjust', function () {
     const core27 = new WavecoreSox({ source })
@@ -33,6 +38,13 @@ describe('WavecoreSox', function () {
       await Promise.resolve(core31.open())
       const gainIncCore = await core31.gain(2)
       expect(gainIncCore).to.be.instanceof(Wavecore)
+    })
+    it('should apply limiting', async function () {
+      const limitCore = await core31.gain(20, { limiter: true })
+      const stats = await limitCore.stats()
+      const pk = stats.split('\n')[3]
+      expect(limitCore).to.be.instanceof(Wavecore) &&
+        expect(pk).to.equal('Pk lev dB      -0.16')
     })
   })
   describe('#tempo', function () {
