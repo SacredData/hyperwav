@@ -18,7 +18,6 @@
     "audio-buffer-from": "^1.1.1",
     "audio-buffer-utils": "^5.1.2",
     "hypercore": "^10.0.0-alpha.25",
-    "hyperswarm": "^3.0.1",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
     "random-access-memory": "^4.0.0"
