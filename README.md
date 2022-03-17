@@ -208,13 +208,13 @@ $ npm run test
 ```
 
 [concat]: https://storyboard-fm.github.io/wavecore/Wavecore.html#concat
-[gain]: https://storyboard-fm.github.io/wavecore/Wavecore.html#gain
+[gain]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#gain
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [mdnarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 [mr]: https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
-[norm]: https://storyboard-fm.github.io/wavecore/Wavecore.html#norm
-[play]:  https://storyboard-fm.github.io/wavecore/Wavecore.html#play
+[norm]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#norm
+[play]:  https://storyboard-fm.github.io/wavecore/WavecoreSox.html#play
 [ras]: https://github.com/random-access-storage
 [seek]: https://storyboard-fm.github.io/wavecore/Wavecore.html#seek
 [session]: https://storyboard-fm.github.io/wavecore/Wavecore.html#session
@@ -223,5 +223,5 @@ $ npm run test
 [sox]: http://sox.sourceforge.net/
 [split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
 [tag]: https://storyboard-fm.github.io/wavecore/Wavecore.html#tag
-[tempo]: https://storyboard-fm.github.io/wavecore/Wavecore.html#tempo
+[tempo]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#tempo
 [trunc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate
