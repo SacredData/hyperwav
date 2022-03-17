@@ -90,6 +90,7 @@ describe('WavecoreSox', function () {
     const core23 = new WavecoreSox({ source })
     const core24 = new WavecoreSox({ source })
     const core24b = new WavecoreSox({ source })
+    const core24c = new WavecoreSox({ source })
     it('should produce a buffer of the WAV file output', async function () {
       await Promise.resolve(core23.open())
       const wavBuf = await Promise.resolve(core23.wav())
@@ -104,6 +105,14 @@ describe('WavecoreSox', function () {
       await Promise.resolve(core24b.open())
       await Promise.resolve(core24b.wav({store:true}))
       expect(core24b.wavFile).to.be.instanceof(WaveFile)
+    })
+    it('should tag the WAV', async function () {
+      core24c.tag('TEST','helloworld')
+      await core24c.open()
+      await core24c.wav({store: true})
+      const wavTags = core24c.wavFile.listTags()
+      expect(core24c.wavFile).to.be.instanceof(WaveFile) &&
+        expect(wavTags).to.have.property('TEST')
     })
   })
 })
