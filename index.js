@@ -61,6 +61,7 @@ class Wavecore extends Hypercore {
     opts = {
       core: null,
       ctx: null,
+      key: null,
       encryptionKey: null,
       hypercoreOpts: null,
       indexSize: null,
@@ -69,14 +70,19 @@ class Wavecore extends Hypercore {
       storage: null,
     }
   ) {
-    let storage = null
+    const { key, storage, hypercoreOpts } = opts
     // Declaring a specific storage supercedes defining a specific hypercore
-    if (opts.storage) {
+    /*if (storage) {
       storage = opts.storage
     } else {
       storage = ram
-    }
-    super(storage, Wavecore.coreOpts())
+    }*/
+    super(
+      storage || ram,
+      key || undefined,
+      hypercoreOpts || Wavecore.coreOpts()
+    )
+
     this.ctx = null
     this.source = null
     const { ctx, encryptionKey, indexSize, parent, source } = opts
