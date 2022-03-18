@@ -51,8 +51,14 @@ class Wavecore extends Hypercore {
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
+   * @arg {AudioContext} [opts.ctx=null] - AudioContext instance for the Wavecore.
+   * @arg {Buffer} [opts.key=null] - Pass a key for the Wavecore
+   * @arg {Object} [opts.hypercoreOpts=null] - Declare hypercore options
+   * @arg {Wavecore|WavecoreSox} [opts.parent] - Indicate the Wavecore deriving
+   * this new Wavecore.
    * @arg {Integer} [opts.indexSize=null] - Declare alternate index size.
-   * @arg {Source} [opts.source=null] - Provide `little-media-box` source.
+   * @arg {Buffer|Readable|PassThrough|Array} [opts.source=null] - The audio
+   * data source.
    * @arg {Buffer} [opts.encryptionKey=null] - Provide an optional encryption key.
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {Wavecore}
@@ -71,12 +77,6 @@ class Wavecore extends Hypercore {
     }
   ) {
     const { key, storage, hypercoreOpts } = opts
-    // Declaring a specific storage supercedes defining a specific hypercore
-    /*if (storage) {
-      storage = opts.storage
-    } else {
-      storage = ram
-    }*/
     super(
       storage || ram,
       key || undefined,
