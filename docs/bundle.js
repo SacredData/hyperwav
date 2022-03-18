@@ -130,6 +130,22 @@ async function main() {
     }
     document.getElementById("append").innerHTML = appending ? "STOP" : "APPEND"
   }
+
+  document.getElementById("norm").onclick = async function () {
+    if (concatCore) {
+      playBuf(audioCtx, await concatCore.audioBuffer({normalize:true}))
+    } else {
+      playBuf(audioCtx, await wave.audioBuffer({normalize:true}))
+    }
+  }
+
+  document.getElementById("play").onclick = async function () {
+    if (concatCore) {
+      playBuf(audioCtx, await concatCore.audioBuffer())
+    } else {
+      playBuf(audioCtx, await wave.audioBuffer())
+    }
+  }
 }
 
 document.getElementById("launch").onclick = async function () {
