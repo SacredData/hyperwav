@@ -1,13 +1,8 @@
-const Wavecore = require('../')
+const Wavecore = require('../index')
 const MicrophoneStream = require('microphone-stream').default
 const toWav = require('audiobuffer-to-wav')
 const {
-  AudioEnvironment,
-  Gain,
-  Highpass,
-  Lowpass,
-  Limiter,
-  SignalFlow
+  AudioEnvironment
 } = require('@storyboard-fm/soapbox')
 
 async function getMedia(constraints) {
@@ -30,14 +25,39 @@ function playBuf(ctx, buf) {
 async function main() {
   var abOrig = null
   var abNorm = null
+  var s = null
   var audioCtx = new AudioContext()
 
   const wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
-  const s = await getMedia({audio:true,video:false})
-  console.log(s)
-  wave.recStream(s)
 
+  let recording = false
+
+  document.getElementById("rec").onclick = async function() {
+    if (!recording) {
+      s = await getMedia({audio:true,video:false})
+      console.log(s)
+      wave.recStream(s)
+      recording = true
+    } else {
+      s.stop()
+      recording = false
+      console.log(wave)
+      document.getElementById("info").innerHTML=`
+      <h2><b>Core</b></h2>
+
+      <h4>INDEX LENGTH</h4>
+      ${wave.length}
+
+      <h4>BYTELENGTH</h4>
+        ${wave.byteLength}
+      `
+      abOrig = await wave.audioBuffer({dcOffset:false})
+    }
+    document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
+  }
+
+  /*
   document.getElementById("norm").onclick = function () {
     playBuf(audioCtx, abNorm)
   }
@@ -62,9 +82,11 @@ async function main() {
     playBuf(audioCtx, abOrig)
   }
 
+  */
   document.getElementById("wav").onclick = async function () {
-    const wav = toWav(abOrig, { float32: true })
-    console.log(wav)
+    const wavAb = concatCore ? await concatCore.audioBuffer() : abOrig
+    const wav = toWav(wavAb || abOrig, { float32: true })
+    console.log(wav, wavAb)
     const blob = new Blob([wav], {type:'audio/wav'})
     console.log(blob)
     console.log(URL.createObjectURL(blob))
@@ -109,6 +131,6 @@ async function main() {
   }
 }
 
-document.getElementById("start").onclick = async function () {
+document.getElementById("launch").onclick = async function () {
   main()
 }

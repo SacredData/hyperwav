@@ -1,14 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const Wavecore = require('../')
+const Wavecore = require('../index')
 const MicrophoneStream = require('microphone-stream').default
 const toWav = require('audiobuffer-to-wav')
 const {
-  AudioEnvironment,
-  Gain,
-  Highpass,
-  Lowpass,
-  Limiter,
-  SignalFlow
+  AudioEnvironment
 } = require('@storyboard-fm/soapbox')
 
 async function getMedia(constraints) {
@@ -31,14 +26,39 @@ function playBuf(ctx, buf) {
 async function main() {
   var abOrig = null
   var abNorm = null
+  var s = null
   var audioCtx = new AudioContext()
 
   const wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
-  const s = await getMedia({audio:true,video:false})
-  console.log(s)
-  wave.recStream(s)
 
+  let recording = false
+
+  document.getElementById("rec").onclick = async function() {
+    if (!recording) {
+      s = await getMedia({audio:true,video:false})
+      console.log(s)
+      wave.recStream(s)
+      recording = true
+    } else {
+      s.stop()
+      recording = false
+      console.log(wave)
+      document.getElementById("info").innerHTML=`
+      <h2><b>Core</b></h2>
+
+      <h4>INDEX LENGTH</h4>
+      ${wave.length}
+
+      <h4>BYTELENGTH</h4>
+        ${wave.byteLength}
+      `
+      abOrig = await wave.audioBuffer({dcOffset:false})
+    }
+    document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
+  }
+
+  /*
   document.getElementById("norm").onclick = function () {
     playBuf(audioCtx, abNorm)
   }
@@ -63,9 +83,11 @@ async function main() {
     playBuf(audioCtx, abOrig)
   }
 
+  */
   document.getElementById("wav").onclick = async function () {
-    const wav = toWav(abOrig, { float32: true })
-    console.log(wav)
+    const wavAb = concatCore ? await concatCore.audioBuffer() : abOrig
+    const wav = toWav(wavAb || abOrig, { float32: true })
+    console.log(wav, wavAb)
     const blob = new Blob([wav], {type:'audio/wav'})
     console.log(blob)
     console.log(URL.createObjectURL(blob))
@@ -110,11 +132,11 @@ async function main() {
   }
 }
 
-document.getElementById("start").onclick = async function () {
+document.getElementById("launch").onclick = async function () {
   main()
 }
 
-},{"../":2,"@storyboard-fm/soapbox":29,"audiobuffer-to-wav":72,"microphone-stream":123}],2:[function(require,module,exports){
+},{"../index":2,"@storyboard-fm/soapbox":29,"audiobuffer-to-wav":72,"microphone-stream":123}],2:[function(require,module,exports){
 (function (Buffer){(function (){
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
@@ -169,8 +191,14 @@ class Wavecore extends Hypercore {
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
+   * @arg {AudioContext} [opts.ctx=null] - AudioContext instance for the Wavecore.
+   * @arg {Buffer} [opts.key=null] - Pass a key for the Wavecore
+   * @arg {Object} [opts.hypercoreOpts=null] - Declare hypercore options
+   * @arg {Wavecore|WavecoreSox} [opts.parent] - Indicate the Wavecore deriving
+   * this new Wavecore.
    * @arg {Integer} [opts.indexSize=null] - Declare alternate index size.
-   * @arg {Source} [opts.source=null] - Provide `little-media-box` source.
+   * @arg {Buffer|Readable|PassThrough|Array} [opts.source=null] - The audio
+   * data source.
    * @arg {Buffer} [opts.encryptionKey=null] - Provide an optional encryption key.
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {Wavecore}
@@ -179,6 +207,7 @@ class Wavecore extends Hypercore {
     opts = {
       core: null,
       ctx: null,
+      key: null,
       encryptionKey: null,
       hypercoreOpts: null,
       indexSize: null,
@@ -187,14 +216,13 @@ class Wavecore extends Hypercore {
       storage: null,
     }
   ) {
-    let storage = null
-    // Declaring a specific storage supercedes defining a specific hypercore
-    if (opts.storage) {
-      storage = opts.storage
-    } else {
-      storage = ram
-    }
-    super(storage, Wavecore.coreOpts())
+    const { key, storage, hypercoreOpts } = opts
+    super(
+      storage || ram,
+      key || undefined,
+      hypercoreOpts || Wavecore.coreOpts()
+    )
+
     this.ctx = null
     this.source = null
     const { ctx, encryptionKey, indexSize, parent, source } = opts
