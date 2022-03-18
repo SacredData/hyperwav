@@ -23,13 +23,28 @@ function playBuf(ctx, buf) {
   s2.start()
 }
 
+function setInfo(core) {
+      document.getElementById("info").innerHTML=`
+    <h2><b>Core</b></h2>
+  <h4>Fork</h4>
+    ${core.fork}
+
+    <h4>INDEX LENGTH</h4>
+    ${core.length}
+
+  <h4>BYTELENGTH</h4>
+    ${core.byteLength}
+  `
+}
+
 async function main() {
   var abOrig = null
   var abNorm = null
+  var wave = null
   var s = null
   var audioCtx = new AudioContext()
 
-  const wave = new Wavecore({ ctx: audioCtx })
+  wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
 
   let recording = false
@@ -44,46 +59,12 @@ async function main() {
       s.stop()
       recording = false
       console.log(wave)
-      document.getElementById("info").innerHTML=`
-      <h2><b>Core</b></h2>
-
-      <h4>INDEX LENGTH</h4>
-      ${wave.length}
-
-      <h4>BYTELENGTH</h4>
-        ${wave.byteLength}
-      `
+      setInfo(wave)
       abOrig = await wave.audioBuffer({dcOffset:false})
     }
     document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
   }
 
-  /*
-  document.getElementById("norm").onclick = function () {
-    playBuf(audioCtx, abNorm)
-  }
-
-  document.getElementById("stop").onclick = async function () {
-    s.stop()
-    console.log(wave)
-    document.getElementById("info").innerHTML=`
-  <h2><b>Core</b></h2>
-
-  <h4>INDEX LENGTH</h4>
-  ${wave.length}
-
-<h4>BYTELENGTH</h4>
-  ${wave.byteLength}
-`
-    abOrig = await wave.audioBuffer({dcOffset:false})
-    abNorm = await wave.audioBuffer({dcOffset: true, normalize: true})
-  }
-
-  document.getElementById("orig").onclick = async function () {
-    playBuf(audioCtx, abOrig)
-  }
-
-  */
   document.getElementById("wav").onclick = async function () {
     const wavAb = concatCore ? await concatCore.audioBuffer() : abOrig
     const wav = toWav(wavAb || abOrig, { float32: true })
@@ -93,7 +74,7 @@ async function main() {
     console.log(URL.createObjectURL(blob))
   }
 
-  let concatCore = null
+  var concatCore = null
   let appCore = null
   let appending = false
   let appSt = null
@@ -111,16 +92,8 @@ async function main() {
       }
       console.log(concatCore)
       await appCore.close()
-      document.getElementById("info").innerHTML=`
-    <h2><b>Core</b></h2>
-
-    <h4>INDEX LENGTH</h4>
-    ${concatCore.length}
-
-  <h4>BYTELENGTH</h4>
-    ${concatCore.byteLength}
-  `
-      playBuf(audioCtx, await concatCore.audioBuffer())
+      setInfo(concatCore)
+      // playBuf(audioCtx, await concatCore.audioBuffer())
     } else {
       appSt = await getMedia({audio:true,video:false})
       console.log(appSt)
@@ -144,6 +117,22 @@ async function main() {
       playBuf(audioCtx, await concatCore.audioBuffer())
     } else {
       playBuf(audioCtx, await wave.audioBuffer())
+    }
+  }
+
+  document.getElementById("trun").onclick = async function () {
+    if (concatCore) {
+      const trunLength = concatCore.length - 1
+      console.log(concatCore.length, trunLength)
+      await concatCore.truncate(trunLength)
+      console.log(concatCore)
+      setInfo(concatCore)
+    } else {
+      const trunLength = wave.length - 1
+      console.log(wave.length, trunLength)
+      await wave.truncate(trunLength)
+      console.log(wave)
+      setInfo(wave)
     }
   }
 }
@@ -383,9 +372,11 @@ class Wavecore extends Hypercore {
    * @returns {String}
    */
   async classify(i, opts = { dynamics: true }) {
+    // const ZERO = 0
+    const ZERO = 127
     function dyn(indexData) {
       const id = Array.from(indexData)
-      return id.filter((i) => i === 0).length / id.length > 0.2
+      return id.filter((i) => i === ZERO).length / id.length > 0.2
         ? 'quiet'
         : 'voice'
     }
