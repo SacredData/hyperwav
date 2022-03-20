@@ -61,6 +61,7 @@ async function main() {
       console.log(wave)
       setInfo(wave)
       abOrig = await wave.audioBuffer({dcOffset:false})
+      document.getElementById("rec").style.display = "none"
     }
     document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
   }
@@ -139,6 +140,7 @@ async function main() {
 
 document.getElementById("launch").onclick = async function () {
   main()
+  document.getElementById("demo").style.display = "block"
 }
 
 },{"../index":2,"@storyboard-fm/soapbox":29,"audiobuffer-to-wav":72,"microphone-stream":123}],2:[function(require,module,exports){
@@ -372,11 +374,9 @@ class Wavecore extends Hypercore {
    * @returns {String}
    */
   async classify(i, opts = { dynamics: true }) {
-    // const ZERO = 0
-    const ZERO = 127
     function dyn(indexData) {
       const id = Array.from(indexData)
-      return id.filter((i) => i === ZERO).length / id.length > 0.2
+      return id.filter((i) => i === 0).length / id.length > 0.2
         ? 'quiet'
         : 'voice'
     }
@@ -12966,7 +12966,7 @@ module.exports = class Hypercore extends EventEmitter {
 
     this.replicator = new Replicator(this.core, this.key, {
       eagerUpdate: true,
-      allowFork: true,
+      allowFork: opts.allowFork !== false,
       onpeerupdate: this._onpeerupdate.bind(this),
       onupload: this._onupload.bind(this)
     })
@@ -13425,8 +13425,9 @@ module.exports = class Bitfield {
     this.pages = new BigSparseArray()
     this.unflushed = []
     this.storage = storage
+    this.resumed = !!(buf && buf.byteLength >= 4)
 
-    const all = (buf && buf.byteLength >= 4)
+    const all = this.resumed
       ? new Uint32Array(buf.buffer, buf.byteOffset, Math.floor(buf.byteLength / 4))
       : new Uint32Array(1024)
 
@@ -13477,8 +13478,10 @@ module.exports = class Bitfield {
   clear () {
     return new Promise((resolve, reject) => {
       this.storage.del(0, Infinity, (err) => {
-        if (err) reject(err)
-        else resolve()
+        if (err) return reject(err)
+        this.pages = new BigSparseArray()
+        this.unflushed = []
+        resolve()
       })
     })
   }
@@ -13818,6 +13821,9 @@ module.exports = class Core {
       await blocks.clear()
       await bitfield.clear()
       entries = []
+    } else if (bitfield.resumed && header.tree.length === 0) {
+      // If this was an old bitfield, reset it since it loads based on disk size atm (TODO: change that)
+      await bitfield.clear()
     }
 
     const sign = opts.sign || (header.signer.secretKey ? this.createSigner(crypto, header.signer) : null)

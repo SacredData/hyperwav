@@ -60,6 +60,7 @@ async function main() {
       console.log(wave)
       setInfo(wave)
       abOrig = await wave.audioBuffer({dcOffset:false})
+      document.getElementById("rec").style.display = "none"
     }
     document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
   }
@@ -138,4 +139,5 @@ async function main() {
 
 document.getElementById("launch").onclick = async function () {
   main()
+  document.getElementById("demo").style.display = "block"
 }
