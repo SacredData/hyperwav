@@ -23,7 +23,16 @@ class WavecoreSox extends Wavecore {
    * @arg {random-access-storage} [opts.storage=ram] - Provide storage instance.
    * @returns {WavecoreSox} wavecoreSox - The new Wavecore with SoX methods.
    */
-  constructor(opts) {
+  constructor(opts={
+    core: null,
+    key: null,
+    encryptionKey: null,
+    hypercoreOpts: null,
+    indexSize: 96000,
+    parent: null,
+    source: null,
+    storage: null
+  }) {
     super(opts)
   }
   /**
