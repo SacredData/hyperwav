@@ -19,6 +19,8 @@ buffer, on S3 as a remote cloud URI, or as a file on the local file system. This
 means it is functional on local offline-first client applications, server-side
 applications, and web apps all from one codebase.
 ### Functionality
+> ***ANYTHING YOU CAN DO IN HYPERCORE, YOU CAN DO IN WAVECORE.***
+> [Start here!][h]
 #### Create Operations
 > A Wavecore can be created from a number of inputs and sources; with no
 > arguments provided at all, a new Wavecore with sane defaults is provided.
