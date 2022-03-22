@@ -12748,7 +12748,7 @@ module.exports = class Hypercore extends EventEmitter {
     this.core = null
     this.replicator = null
     this.encryption = null
-    this.extensions = opts.extensions || new Map()
+    this.extensions = new Map()
     this.cache = opts.cache === true ? new Xache({ maxSize: 65536, maxAge: 0 }) : (opts.cache || null)
 
     this.valueEncoding = null
@@ -12791,8 +12791,8 @@ module.exports = class Hypercore extends EventEmitter {
       indent + ')'
   }
 
-  static protomux (stream, opts) {
-    return stream.noiseStream.userData.open(opts)
+  static getProtocolMuxer (stream) {
+    return stream.noiseStream.userData
   }
 
   static createProtocolStream (isInitiator, opts = {}) {
@@ -12854,7 +12854,6 @@ module.exports = class Hypercore extends EventEmitter {
     const Clz = opts.class || Hypercore
     const s = new Clz(this.storage, this.key, {
       ...opts,
-      extensions: this.extensions,
       _opening: this.opening,
       _sessions: this.sessions
     })
@@ -12879,12 +12878,7 @@ module.exports = class Hypercore extends EventEmitter {
   async _openFromExisting (from, opts) {
     await from.opening
 
-    for (const [name, ext] of this.extensions) {
-      from.extensions.register(name, null, ext)
-    }
-
     this._passCapabilities(from)
-    this.extensions = from.extensions
     this.sessions = from.sessions
     this.storage = from.storage
 
@@ -13089,7 +13083,7 @@ module.exports = class Hypercore extends EventEmitter {
         }
       }
 
-      this.replicator.signalUpgrade()
+      this.replicator.localUpgrade()
     }
 
     if (bitfield) {
@@ -13108,14 +13102,14 @@ module.exports = class Hypercore extends EventEmitter {
   _onpeerupdate (added, peer) {
     const name = added ? 'peer-add' : 'peer-remove'
 
-    if (added) {
-      for (const ext of this.extensions.values()) {
-        peer.extensions.set(ext.name, ext)
-      }
-    }
-
     for (let i = 0; i < this.sessions.length; i++) {
       this.sessions[i].emit(name, peer)
+
+      if (added) {
+        for (const ext of this.sessions[i].extensions.values()) {
+          peer.extensions.set(ext.name, ext)
+        }
+      }
     }
   }
 
@@ -13307,7 +13301,7 @@ module.exports = class Hypercore extends EventEmitter {
       },
       destroy () {
         for (const peer of this.session.peers) {
-          peer.extensions.delete(name)
+          if (peer.extensions.get(name) === ext) peer.extensions.delete(name)
         }
         this.session.extensions.delete(name)
       },
@@ -16527,6 +16521,10 @@ class BlockTracker {
     yield * this._additional
   }
 
+  isEmpty () {
+    return this._indexed.size === 0 && this._additional.length === 0
+  }
+
   has (fork, index) {
     return this.get(fork, index) !== null
   }
@@ -17177,12 +17175,14 @@ module.exports = class Replicator {
     for (const peer of this.peers) peer.protomux.uncork()
   }
 
-  signalUpgrade () {
-    for (const peer of this.peers) peer.signalUpgrade()
-  }
-
   broadcastRange (start, length, drop = false) {
     for (const peer of this.peers) peer.broadcastRange(start, length, drop)
+  }
+
+  localUpgrade () {
+    for (const peer of this.peers) peer.signalUpgrade()
+    if (this._blocks.isEmpty() === false) this._resolveBlocksLocally()
+    if (this._upgrade !== null) this._resolveUpgradeRequest(null)
   }
 
   addUpgrade (session) {
@@ -17377,6 +17377,34 @@ module.exports = class Replicator {
     if (b.queued === true) return
     b.queued = true
     this._queued.push(b)
+  }
+
+  // Runs in the background - not allowed to throw
+  async _resolveBlocksLocally () {
+    // TODO: check if fork compat etc. Requires that we pass down truncation info
+
+    let clear = null
+
+    for (const b of this._blocks) {
+      if (this.core.bitfield.get(b.index) === false) continue
+
+      try {
+        b.resolve(await this.core.blocks.get(b.index))
+      } catch (err) {
+        b.reject(err)
+      }
+
+      if (clear === null) clear = []
+      clear.push(b)
+    }
+
+    if (clear === null) return
+
+    // Currently the block tracker does not support deletes during iteration, so we make
+    // sure to clear them afterwards.
+    for (const b of clear) {
+      this._blocks.remove(b.fork, b.index)
+    }
   }
 
   _resolveBlockRequest (tracker, fork, index, value, req) {
