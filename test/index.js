@@ -63,7 +63,7 @@ describe('Wavecore', function () {
       const arrTest = new Wavecore({ source: srcArr })
       await arrTest.open()
       expect(arrTest).to.be.instanceof(Wavecore) &&
-        expect(arrTest.length).to.equal(57)
+        expect(arrTest.length).to.equal(197)
     })
   })
   describe('#open', function() {
@@ -71,7 +71,7 @@ describe('Wavecore', function () {
       const core4 = new Wavecore()
       await Promise.resolve(core4.open({ source }))
       expect(core4).to.be.instanceof(Wavecore) &&
-        expect(core4.length).to.equal(57)
+        expect(core4.length).to.equal(197)
     })
   })
   describe('#_seek', function () {
@@ -92,7 +92,7 @@ describe('Wavecore', function () {
     it('should find the next zero crossing after 741444 bytes', async function () {
       await Promise.resolve(core22.open())
       const nzArr = await Promise.resolve(core22._nextZero(741444))
-      expect(nzArr).to.be.instanceof(Array).that.includes(9).that.includes(50321)
+      expect(nzArr).to.be.instanceof(Array).that.includes(33).that.includes(13871)
     })
     it('should accept a seek() return value', async function () {
       const seekVal = await core22.seek(741444)
@@ -147,7 +147,7 @@ describe('Wavecore', function () {
     it('should return a new wavecore with index 0 removed', async function () {
       await Promise.resolve(core18.open())
       const newCore = await Promise.resolve(core18.shift(1))
-      expect(newCore.length).to.equal(56)
+      expect(newCore.length).to.equal(196)
     })
   })
   describe('#lastIndexSize', function () {
@@ -155,7 +155,7 @@ describe('Wavecore', function () {
     it('should return the last index size in bytes', async function () {
       await Promise.resolve(core20.open())
       const result = core20.lastIndexSize
-      expect(result).to.equal(26112)
+      expect(result).to.equal(5112)
     })
   })
   describe('#audioBuffer', function () {
@@ -194,7 +194,7 @@ describe('Wavecore', function () {
       const splits = await core30.split(20)
       const concatCore = await core30.concat(splits)
       expect(concatCore).to.not.equal(null) &&
-        expect(concatCore.length).to.equal(114)
+        expect(concatCore.length).to.equal(394)
     })
   })
   describe('#recStream', function () {
@@ -215,8 +215,8 @@ describe('Wavecore', function () {
       const classification = await core39.classify(0)
       expect(classification).to.equal('quiet')
     })
-    it('should classify index 1 as voice', async function () {
-      const classification = await core39.classify(1)
+    it('should classify index 10 as voice', async function () {
+      const classification = await core39.classify(10)
       expect(classification).to.equal('voice')
     })
   })
