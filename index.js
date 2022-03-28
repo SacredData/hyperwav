@@ -251,7 +251,7 @@ class Wavecore extends Hypercore {
       const concatCore = new Wavecore(ram)
       const prom = new Promise((resolve, reject) => {
         const concatWriter = concatCore.createWriteStream()
-        concatWriter.on('error', err => reject(err))
+        concatWriter.on('error', (err) => reject(err))
         concatWriter.on('close', () => {
           resolve(concatCore)
         })
