@@ -14,7 +14,6 @@ const WAVE_FORMAT = {
   rate: 44100,
   type: 'raw',
 }
-// const INDEX_SIZE = 76800 // 800ms
 const INDEX_SIZE = 22050 // 100ms
 
 /**
@@ -252,6 +251,7 @@ class Wavecore extends Hypercore {
       const concatCore = new Wavecore(ram)
       const prom = new Promise((resolve, reject) => {
         const concatWriter = concatCore.createWriteStream()
+        concatWriter.on('error', err => reject(err))
         concatWriter.on('close', () => {
           resolve(concatCore)
         })
@@ -373,12 +373,6 @@ class Wavecore extends Hypercore {
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             resolve([headCore, tailCore])
-            /*
-            const wavecores = [headCore, tailCore].map((c) =>
-              Wavecore.fromCore(c, this)
-            )
-            resolve(wavecores)
-            */
           })
           headStream.pipe(ptHead)
         } catch (err) {
