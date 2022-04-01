@@ -1,6 +1,6 @@
 {
   "name": "@storyboard-fm/wavecore",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   "dependencies": {
     "audio-buffer-from": "^1.1.1",
     "audio-buffer-utils": "^5.1.2",
-    "hypercore": "^10.0.0-alpha.32",
+    "hypercore": "^10.0.0-alpha.34",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
     "random-access-memory": "^4.0.0"

@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.9] - 2022-04-01
 ### Changed
+- hypercore10 to latest version
 - hypercore10 to latest version
 
 ## [0.2.7] - 2022-03-22
@@ -133,7 +136,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - the return of the snapshot method from a hypercore to a wavecore
 
-[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.7...HEAD
+[Unreleased]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.9...HEAD
+[0.2.9]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.7...v0.2.9
 [0.2.7]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/Storyboard-fm/wavecore/compare/v0.2.4...v0.2.5
