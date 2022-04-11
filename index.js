@@ -140,7 +140,10 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), `mono float32 le ${rate || 44100}`)
+          let audioBuffer = abf(
+            Buffer.concat(bufs),
+            `mono float32 le ${rate || 44100}`
+          )
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
