@@ -16,7 +16,6 @@ const WAVE_FORMAT = {
   rate: 44100,
   type: 'raw',
 }
-// const INDEX_SIZE = 76800 // 800ms
 const INDEX_SIZE = 22050 // 100ms
 
 /**
@@ -112,6 +111,7 @@ class Wavecore extends Hypercore {
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
    * @arg {Boolean} [opts.normalize=false] - Normalize the audio
+   * @arg {Integer} [opts.rate=null] - Use custom sample rate
    * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
@@ -128,12 +128,13 @@ class Wavecore extends Hypercore {
       dcOffset: true,
       mix: false,
       normalize: false,
+      rate: null,
       start: 0,
       end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, start, end, store } = opts
+    const { dcOffset, mix, normalize, rate, start, end, store } = opts
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
@@ -141,7 +142,10 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
+          let audioBuffer = abf(
+            Buffer.concat(bufs),
+            `mono float32 le ${rate || 44100}`
+          )
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
@@ -254,6 +258,7 @@ class Wavecore extends Hypercore {
       const concatCore = new Wavecore(ram)
       const prom = new Promise((resolve, reject) => {
         const concatWriter = concatCore.createWriteStream()
+        concatWriter.on('error', (err) => reject(err))
         concatWriter.on('close', () => {
           resolve(concatCore)
         })
@@ -375,12 +380,6 @@ class Wavecore extends Hypercore {
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             resolve([headCore, tailCore])
-            /*
-            const wavecores = [headCore, tailCore].map((c) =>
-              Wavecore.fromCore(c, this)
-            )
-            resolve(wavecores)
-            */
           })
           headStream.pipe(ptHead)
         } catch (err) {
@@ -8427,7 +8426,7 @@ module.exports = class Hypercore extends EventEmitter {
     this.opened = false
     this.closed = false
     this.sessions = opts._sessions || [this]
-    this.sign = opts.sign || null
+    this.auth = opts.auth || null
     this.autoClose = !!opts.autoClose
 
     this.closing = null
@@ -8436,6 +8435,7 @@ module.exports = class Hypercore extends EventEmitter {
 
     this._preappend = preappend.bind(this)
     this._snapshot = opts.snapshot || null
+    this._findingPeers = 0
   }
 
   [inspect] (depth, opts) {
@@ -8530,13 +8530,13 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   _passCapabilities (o) {
-    if (!this.sign) this.sign = o.sign
+    if (!this.auth) this.auth = o.auth
     this.crypto = o.crypto
     this.key = o.key
     this.core = o.core
     this.replicator = o.replicator
     this.encryption = o.encryption
-    this.writable = !!this.sign
+    this.writable = !!(this.auth && this.auth.sign)
     this.autoClose = o.autoClose
   }
 
@@ -8546,6 +8546,7 @@ module.exports = class Hypercore extends EventEmitter {
     this._passCapabilities(from)
     this.sessions = from.sessions
     this.storage = from.storage
+    this.replicator.findingPeers += this._findingPeers
 
     this.sessions.push(this)
   }
@@ -8566,10 +8567,12 @@ module.exports = class Hypercore extends EventEmitter {
     // but we only do this to validate the keypair to help catch bugs so yolo
     if (this.key && keyPair) keyPair.publicKey = this.key
 
-    if (opts.sign) {
-      this.sign = opts.sign
+    if (opts.auth) {
+      this.auth = opts.auth
+    } else if (opts.sign) {
+      this.auth = Core.createAuth(this.crypto, keyPair, opts)
     } else if (keyPair && keyPair.secretKey) {
-      this.sign = Core.createSigner(this.crypto, keyPair)
+      this.auth = Core.createAuth(this.crypto, keyPair)
     }
 
     if (isFirst) {
@@ -8581,8 +8584,8 @@ module.exports = class Hypercore extends EventEmitter {
       }
     }
 
-    if (!this.sign) this.sign = this.core.defaultSign
-    this.writable = !!this.sign
+    if (!this.auth) this.auth = this.core.defaultAuth
+    this.writable = !!this.auth.sign
 
     if (opts.valueEncoding) {
       this.valueEncoding = c.from(codecs(opts.valueEncoding))
@@ -8611,6 +8614,7 @@ module.exports = class Hypercore extends EventEmitter {
       keyPair,
       crypto: this.crypto,
       legacy: opts.legacy,
+      auth: opts.auth,
       onupdate: this._oncoreupdate.bind(this)
     })
 
@@ -8629,6 +8633,8 @@ module.exports = class Hypercore extends EventEmitter {
       onpeerupdate: this._onpeerupdate.bind(this),
       onupload: this._onupload.bind(this)
     })
+
+    this.replicator.findingPeers += this._findingPeers
 
     if (!this.encryption && opts.encryptionKey) {
       this.encryption = new BlockEncryption(opts.encryptionKey, this.key)
@@ -8660,8 +8666,11 @@ module.exports = class Hypercore extends EventEmitter {
     for (const ext of gc) ext.destroy()
 
     if (this.replicator !== null) {
+      this.replicator.findingPeers -= this._findingPeers
       this.replicator.clearRequests(this.activeRequests)
     }
+
+    this._findingPeers = 0
 
     if (this.sessions.length) {
       // if this is the last session and we are auto closing, trigger that first to enforce error handling
@@ -8791,6 +8800,22 @@ module.exports = class Hypercore extends EventEmitter {
     return null
   }
 
+  findingPeers () {
+    this._findingPeers++
+    if (this.replicator !== null && !this.closing) this.replicator.findingPeers++
+
+    let once = true
+
+    return () => {
+      if (this.closing || !once) return
+      once = false
+      this._findingPeers--
+      if (this.replicator !== null && --this.replicator.findingPeers === 0) {
+        this.replicator.updateAll()
+      }
+    }
+  }
+
   async update (opts) {
     if (this.opened === false) await this.opening
 
@@ -8800,6 +8825,7 @@ module.exports = class Hypercore extends EventEmitter {
     const activeRequests = (opts && opts.activeRequests) || this.activeRequests
     const req = this.replicator.addUpgrade(activeRequests)
 
+    // TODO: if snapshot, also update the length/byteLength to latest
     return req.promise
   }
 
@@ -8905,7 +8931,7 @@ module.exports = class Hypercore extends EventEmitter {
     if (this.writable === false) throw new Error('Core is not writable')
 
     if (fork === -1) fork = this.core.tree.fork + 1
-    await this.core.truncate(newLength, fork, this.sign)
+    await this.core.truncate(newLength, fork, this.auth)
 
     // TODO: Should propagate from an event triggered by the oplog
     this.replicator.updateAll()
@@ -8927,7 +8953,7 @@ module.exports = class Hypercore extends EventEmitter {
       }
     }
 
-    return await this.core.append(buffers, this.sign, { preappend })
+    return await this.core.append(buffers, this.auth, { preappend })
   }
 
   async treeHash (length) {
@@ -9377,7 +9403,7 @@ const Bitfield = require('./bitfield')
 const m = require('./messages')
 
 module.exports = class Core {
-  constructor (header, crypto, oplog, tree, blocks, bitfield, sign, legacy, onupdate) {
+  constructor (header, crypto, oplog, tree, blocks, bitfield, auth, legacy, onupdate) {
     this.onupdate = onupdate
     this.header = header
     this.crypto = crypto
@@ -9385,7 +9411,7 @@ module.exports = class Core {
     this.tree = tree
     this.blocks = blocks
     this.bitfield = bitfield
-    this.defaultSign = sign
+    this.defaultAuth = auth
     this.truncating = 0
 
     this._maxOplogSize = 65536
@@ -9420,10 +9446,21 @@ module.exports = class Core {
     }
   }
 
-  // TODO: we should prob have a general "auth" abstraction instead somewhere?
-  static createSigner (crypto, { publicKey, secretKey }) {
-    if (!crypto.validateKeyPair({ publicKey, secretKey })) throw new Error('Invalid key pair')
-    return signable => crypto.sign(signable, secretKey)
+  static createAuth (crypto, { publicKey, secretKey }, opts = {}) {
+    if (secretKey && !crypto.validateKeyPair({ publicKey, secretKey })) throw new Error('Invalid key pair')
+
+    const sign = opts.sign
+      ? opts.sign
+      : secretKey
+        ? (signable) => crypto.sign(signable, secretKey)
+        : undefined
+
+    return {
+      sign,
+      verify (signable, signature) {
+        return crypto.verify(signable, signature, publicKey)
+      }
+    }
   }
 
   static async resume (oplogFile, treeFile, bitfieldFile, dataFile, opts) {
@@ -9485,7 +9522,7 @@ module.exports = class Core {
       await bitfield.clear()
     }
 
-    const sign = opts.sign || (header.signer.secretKey ? this.createSigner(crypto, header.signer) : null)
+    const auth = opts.auth || this.createAuth(crypto, header.signer)
 
     for (const e of entries) {
       if (e.userData) {
@@ -9516,7 +9553,7 @@ module.exports = class Core {
       }
     }
 
-    return new this(header, crypto, oplog, tree, blocks, bitfield, sign, !!opts.legacy, opts.onupdate || noop)
+    return new this(header, crypto, oplog, tree, blocks, bitfield, auth, !!opts.legacy, opts.onupdate || noop)
   }
 
   _shouldFlush () {
@@ -9581,13 +9618,13 @@ module.exports = class Core {
     }
   }
 
-  async truncate (length, fork, sign = this.defaultSign) {
+  async truncate (length, fork, auth = this.defaultAuth) {
     this.truncating++
     await this._mutex.lock()
 
     try {
       const batch = await this.tree.truncate(length, fork)
-      batch.signature = await sign(batch.signable())
+      batch.signature = await auth.sign(batch.signable())
       await this._truncate(batch, null)
     } finally {
       this.truncating--
@@ -9595,7 +9632,7 @@ module.exports = class Core {
     }
   }
 
-  async append (values, sign = this.defaultSign, hooks = {}) {
+  async append (values, auth = this.defaultAuth, hooks = {}) {
     await this._mutex.lock()
 
     try {
@@ -9607,7 +9644,7 @@ module.exports = class Core {
       for (const val of values) batch.append(val)
 
       const hash = batch.hash()
-      batch.signature = await sign(this._legacy ? batch.signableLegacy(hash) : batch.signable(hash))
+      batch.signature = await auth.sign(this._legacy ? batch.signableLegacy(hash) : batch.signable(hash))
 
       const entry = {
         userData: null,
@@ -9639,9 +9676,9 @@ module.exports = class Core {
     }
   }
 
-  _signed (batch, hash) {
+  _signed (batch, hash, auth = this.defaultAuth) {
     const signable = this._legacy ? batch.signableLegacy(hash) : batch.signable(hash)
-    return this.crypto.verify(signable, batch.signature, this.header.signer.publicKey)
+    return auth.verify(signable, batch.signature)
   }
 
   async _verifyExclusive ({ batch, bitfield, value, from }) {
@@ -12021,8 +12058,8 @@ class Attachable {
     const rh = this.refs.pop()
     const sh = r.session.pop()
 
-    if (r.rindex < this.refs.length - 1) this.refs[rh.rindex = r.rindex] = rh
-    if (r.sindex < r.session.length - 1) r.session[sh.sindex = r.sindex] = sh
+    if (r.rindex < this.refs.length) this.refs[rh.rindex = r.rindex] = rh
+    if (r.sindex < r.session.length) r.session[sh.sindex = r.sindex] = sh
 
     r.context = null
 
@@ -12815,6 +12852,7 @@ module.exports = class Replicator {
     this.onpeerupdate = onpeerupdate
     this.onupload = onupload
     this.peers = []
+    this.findingPeers = 0 // updateable from the outside
 
     this._inflight = new InflightTracker()
     this._blocks = new BlockTracker(core)
@@ -12827,6 +12865,7 @@ module.exports = class Replicator {
     this._reorgs = []
     this._ranges = []
 
+    this._hadPeers = false
     this._ifAvailable = 0
     this._updatesPending = 0
     this._applyingReorg = false
@@ -12932,6 +12971,7 @@ module.exports = class Replicator {
   // Do this when we have more tests.
   _checkUpgradeIfAvailable () {
     if (this._ifAvailable > 0 || this._upgrade === null || this._upgrade.refs.length === 0) return
+    if (this._hadPeers === false && this.findingPeers > 0) return
 
     // check if a peer can upgrade us
 
@@ -13020,6 +13060,7 @@ module.exports = class Replicator {
   }
 
   _addPeer (peer) {
+    this._hadPeers = true
     this.peers.push(peer)
     this.updatePeer(peer)
     this.onpeerupdate(true, peer)
@@ -13097,11 +13138,13 @@ module.exports = class Replicator {
   }
 
   _clearInflightBlock (tracker, req) {
-    const b = tracker.get(req.fork, req.block.index)
+    const isBlock = tracker === this._blocks
+    const index = isBlock === true ? req.block.index : req.hash.index / 2
+    const b = tracker.get(req.fork, index)
 
     if (b === null || removeInflight(b.inflight, req) === false) return
 
-    if (b.refs.length > 0 && tracker === this._blocks) {
+    if (b.refs.length > 0 && isBlock === true) {
       this._queueBlock(b)
       return
     }
@@ -13353,6 +13396,10 @@ module.exports = class Replicator {
   }
 
   _updatePeerNonPrimary (peer) {
+    if (peer.inflight >= peer.maxInflight) {
+      return false
+    }
+
     const ranges = new RandomIterator(this._ranges)
 
     for (const r of ranges) {
