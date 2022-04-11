@@ -121,7 +121,7 @@ const WAVE_FORMAT = {
   rate: 44100,
   type: 'raw',
 }
-const INDEX_SIZE = 76800 // 800ms
+const INDEX_SIZE = 22050 // 100ms
 
 /**
  * The `Wavecore` class provides a Hypercore v10 interface for working with WAV
@@ -216,6 +216,7 @@ class Wavecore extends Hypercore {
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
    * @arg {Boolean} [opts.normalize=false] - Normalize the audio
+   * @arg {Integer} [opts.rate=null] - Use custom sample rate
    * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
@@ -232,12 +233,13 @@ class Wavecore extends Hypercore {
       dcOffset: true,
       mix: false,
       normalize: false,
+      rate: null,
       start: 0,
       end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, start, end, store } = opts
+    const { dcOffset, mix, normalize, rate, start, end, store } = opts
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
@@ -245,7 +247,7 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
+          let audioBuffer = abf(Buffer.concat(bufs), `mono float32 le ${rate || 44100}`)
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
@@ -358,6 +360,7 @@ class Wavecore extends Hypercore {
       const concatCore = new Wavecore(ram)
       const prom = new Promise((resolve, reject) => {
         const concatWriter = concatCore.createWriteStream()
+        concatWriter.on('error', (err) => reject(err))
         concatWriter.on('close', () => {
           resolve(concatCore)
         })
@@ -479,12 +482,6 @@ class Wavecore extends Hypercore {
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             resolve([headCore, tailCore])
-            /*
-            const wavecores = [headCore, tailCore].map((c) =>
-              Wavecore.fromCore(c, this)
-            )
-            resolve(wavecores)
-            */
           })
           headStream.pipe(ptHead)
         } catch (err) {

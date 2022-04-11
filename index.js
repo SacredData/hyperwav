@@ -109,6 +109,7 @@ class Wavecore extends Hypercore {
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
    * @arg {Boolean} [opts.normalize=false] - Normalize the audio
+   * @arg {Integer} [opts.rate=null] - Use custom sample rate
    * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
@@ -125,12 +126,13 @@ class Wavecore extends Hypercore {
       dcOffset: true,
       mix: false,
       normalize: false,
+      rate: null,
       start: 0,
       end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, start, end, store } = opts
+    const { dcOffset, mix, normalize, rate, start, end, store } = opts
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
@@ -138,7 +140,7 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
+          let audioBuffer = abf(Buffer.concat(bufs), `mono float32 le ${rate || 44100}`)
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
