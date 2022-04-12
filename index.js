@@ -106,9 +106,13 @@ class Wavecore extends Hypercore {
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
    * @arg {Object} [opts={}] - Options object
+   * @arg {Integer} [opts.channels=1] - Channel count for the audio source
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
    * @arg {Boolean} [opts.normalize=false] - Normalize the audio
+   * @arg {Integer} [opts.rate=null] - Use custom sample rate
+   * @arg {String} [opts.sampling='float32'] - Use custom `audio-format`
+   * sampling string.
    * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
@@ -122,15 +126,30 @@ class Wavecore extends Hypercore {
    */
   async audioBuffer(
     opts = {
+      channels: 1,
       dcOffset: true,
+      endianness: 'le',
       mix: false,
       normalize: false,
+      rate: null,
+      sampling: 'float32',
       start: 0,
       end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, start, end, store } = opts
+    const {
+      channels,
+      dcOffset,
+      endianness,
+      mix,
+      normalize,
+      rate,
+      sampling,
+      start,
+      end,
+      store,
+    } = opts
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
@@ -138,7 +157,11 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
+          let audioBuffer = abf(
+            Buffer.concat(bufs),
+            `${channels !== 1 ? 'stereo' : 'mono'} ${sampling || 'float32'}
+            ${endianness || 'le'} ${rate || 44100}`
+          )
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)

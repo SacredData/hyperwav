@@ -186,6 +186,24 @@ describe('Wavecore', function () {
       const mixedAudio = await mixTest.audioBuffer({mix:ab})
       expect(mixedAudio).to.not.equal(null)
     })
+    it('should use a custom sampling rate', async function () {
+      const rateTest = new Wavecore({ source })
+      await rateTest.open()
+      const rateAudio = await rateTest.audioBuffer({ rate: 48000 })
+      expect(rateAudio.sampleRate).to.equal(48000)
+    })
+    it('should use a custom channel count', async function () {
+      const chanTest = new Wavecore({ source })
+      await chanTest.open()
+      const chanAudio = await chanTest.audioBuffer({ rate: 48000, channels: 1 })
+      expect(chanAudio.numberOfChannels).to.equal(1)
+    })
+    it('should use a custom sampling format', async function () {
+      const fmtTest = new Wavecore({ source })
+      await fmtTest.open()
+      const fmtAudio = await fmtTest.audioBuffer({ channels: 1, sampling: 'uint16', rate: 48000 })
+      expect(fmtAudio.duration).to.equal(45.072)
+    })
   })
   describe('#concat', function () {
     const core30 = new Wavecore({ source })
