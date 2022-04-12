@@ -106,10 +106,13 @@ class Wavecore extends Hypercore {
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
    * @arg {Object} [opts={}] - Options object
+   * @arg {Integer} [opts.channels=1] - Channel count for the audio source
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
    * @arg {Boolean} [opts.normalize=false] - Normalize the audio
    * @arg {Integer} [opts.rate=null] - Use custom sample rate
+   * @arg {String} [opts.sampling='float32'] - Use custom `audio-format`
+   * sampling string.
    * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
@@ -145,7 +148,7 @@ class Wavecore extends Hypercore {
       sampling,
       start,
       end,
-      store
+      store,
     } = opts
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
