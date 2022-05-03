@@ -434,7 +434,7 @@ module.exports = Wavecore
  */
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"audio-buffer-from":10,"audio-buffer-utils":11,"buffer":28,"hypercore":41,"multistream":62,"random-access-memory":95,"stream":137}],2:[function(require,module,exports){
+},{"audio-buffer-from":10,"audio-buffer-utils":11,"buffer":28,"hypercore":41,"multistream":63,"random-access-memory":96,"stream":138}],2:[function(require,module,exports){
 const { Pull, Push, HEADERBYTES, KEYBYTES, ABYTES } = require('sodium-secretstream')
 const sodium = require('sodium-universal')
 const { Duplex } = require('streamx')
@@ -940,7 +940,7 @@ function sendKeepAlive () {
   this.write(empty)
 }
 
-},{"./lib/bridge":3,"./lib/handshake":4,"b4a":16,"sodium-secretstream":112,"sodium-universal":131,"streamx":152,"timeout-refresh":155}],3:[function(require,module,exports){
+},{"./lib/bridge":3,"./lib/handshake":4,"b4a":16,"sodium-secretstream":113,"sodium-universal":132,"streamx":153,"timeout-refresh":156}],3:[function(require,module,exports){
 const { Duplex } = require('streamx')
 
 class ReversePassThrough extends Duplex {
@@ -1014,7 +1014,7 @@ module.exports = class Bridge extends Duplex {
   }
 }
 
-},{"streamx":152}],4:[function(require,module,exports){
+},{"streamx":153}],4:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const curve = require('noise-curve-ed')
 const Noise = require('noise-handshake')
@@ -1094,7 +1094,7 @@ function writeUint24le (n, buf) {
   buf[2] = (n >>> 16) & 255
 }
 
-},{"b4a":16,"noise-curve-ed":79,"noise-handshake":83,"sodium-universal":131}],5:[function(require,module,exports){
+},{"b4a":16,"noise-curve-ed":80,"noise-handshake":84,"sodium-universal":132}],5:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -1604,7 +1604,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":85,"util/":8}],6:[function(require,module,exports){
+},{"object-assign":86,"util/":8}],6:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2226,7 +2226,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":7,"_process":91,"inherits":6}],9:[function(require,module,exports){
+},{"./support/isBuffer":7,"_process":92,"inherits":6}],9:[function(require,module,exports){
 module.exports = function _atob(str) {
   return atob(str)
 }
@@ -2382,7 +2382,7 @@ function getFormat (arg) {
 	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
 }
 
-},{"audio-buffer":12,"audio-context":13,"audio-format":14,"is-audio-buffer":56,"is-plain-obj":61,"pcm-convert":88,"pick-by-alias":90,"string-to-arraybuffer":153}],11:[function(require,module,exports){
+},{"audio-buffer":12,"audio-context":13,"audio-format":14,"is-audio-buffer":57,"is-plain-obj":62,"pcm-convert":89,"pick-by-alias":91,"string-to-arraybuffer":154}],11:[function(require,module,exports){
 /**
  * @module  audio-buffer-utils
  */
@@ -3084,7 +3084,7 @@ function data (buffer, data) {
 	return data;
 }
 
-},{"audio-buffer":12,"audio-buffer-from":10,"audio-context":13,"clamp":30,"is-audio-buffer":56,"is-browser":58,"is-buffer":59}],12:[function(require,module,exports){
+},{"audio-buffer":12,"audio-buffer-from":10,"audio-context":13,"clamp":30,"is-audio-buffer":57,"is-browser":59,"is-buffer":60}],12:[function(require,module,exports){
 /**
  * AudioBuffer class
  *
@@ -3422,7 +3422,7 @@ function getType (arg) {
 	if (arg instanceof Uint32Array) return 'uint32'
 }
 
-},{"is-audio-buffer":56,"is-buffer":15,"is-plain-obj":61,"os":87,"pick-by-alias":90,"sample-rate":100}],15:[function(require,module,exports){
+},{"is-audio-buffer":57,"is-buffer":15,"is-plain-obj":62,"os":88,"pick-by-alias":91,"sample-rate":101}],15:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -4563,7 +4563,7 @@ Blake2b.prototype.setPartialHash = function (ph) {
 
 function noop () {}
 
-},{"./blake2b":24,"b4a":16,"nanoassert":78}],26:[function(require,module,exports){
+},{"./blake2b":24,"b4a":16,"nanoassert":79}],26:[function(require,module,exports){
 var assert = require('nanoassert')
 var b2wasm = require('blake2b-wasm')
 
@@ -4888,7 +4888,7 @@ b2wasm.ready(function (err) {
   }
 })
 
-},{"blake2b-wasm":25,"nanoassert":78}],27:[function(require,module,exports){
+},{"blake2b-wasm":25,"nanoassert":79}],27:[function(require,module,exports){
 
 },{}],28:[function(require,module,exports){
 (function (Buffer){(function (){
@@ -6671,7 +6671,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":22,"buffer":28,"ieee754":54}],29:[function(require,module,exports){
+},{"base64-js":22,"buffer":28,"ieee754":55}],29:[function(require,module,exports){
 const assert = require('nanoassert')
 
 module.exports = Chacha20
@@ -6808,7 +6808,7 @@ function QR (obj, a, b, c, d) {
   obj[b] = rotl(obj[b], 7)
 }
 
-},{"nanoassert":78}],30:[function(require,module,exports){
+},{"nanoassert":79}],30:[function(require,module,exports){
 module.exports = clamp
 
 function clamp(value, min, max) {
@@ -8226,7 +8226,7 @@ module.exports = function hmac (out, data, key) {
 module.exports.BYTES = HASHLEN
 module.exports.KEYBYTES = BLOCKLEN
 
-},{"nanoassert":39,"sodium-universal/crypto_generichash":116,"sodium-universal/memory":135}],39:[function(require,module,exports){
+},{"nanoassert":39,"sodium-universal/crypto_generichash":117,"sodium-universal/memory":136}],39:[function(require,module,exports){
 assert.notEqual = notEqual
 assert.notOk = notOk
 assert.equal = equal
@@ -8376,7 +8376,7 @@ exports.namespace = function (name, count) {
   return list
 }
 
-},{"b4a":16,"compact-encoding":32,"sodium-universal":131}],41:[function(require,module,exports){
+},{"b4a":16,"compact-encoding":32,"sodium-universal":132}],41:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const raf = require('random-access-file')
 const isOptions = require('is-options')
@@ -8394,6 +8394,7 @@ const Replicator = require('./lib/replicator')
 const Core = require('./lib/core')
 const BlockEncryption = require('./lib/block-encryption')
 const { ReadStream, WriteStream } = require('./lib/streams')
+const { BAD_ARGUMENT, SESSION_CLOSED, SESSION_NOT_WRITABLE, SNAPSHOT_NOT_AVAILABLE } = require('./lib/errors')
 
 const promises = Symbol.for('hypercore.promises')
 const inspect = Symbol.for('nodejs.util.inspect.custom')
@@ -8418,7 +8419,7 @@ module.exports = class Hypercore extends EventEmitter {
     if (!opts) opts = {}
 
     if (!opts.crypto && key && key.byteLength !== 32) {
-      throw new Error('Hypercore key should be 32 bytes')
+      throw BAD_ARGUMENT('Hypercore key should be 32 bytes')
     }
 
     if (!storage) storage = opts.storage
@@ -8443,6 +8444,7 @@ module.exports = class Hypercore extends EventEmitter {
     this.writable = false
     this.opened = false
     this.closed = false
+    this.snapshotted = !!opts.snapshot
     this.sessions = opts._sessions || [this]
     this.auth = opts.auth || null
     this.autoClose = !!opts.autoClose
@@ -8452,7 +8454,7 @@ module.exports = class Hypercore extends EventEmitter {
     this.opening.catch(noop)
 
     this._preappend = preappend.bind(this)
-    this._snapshot = opts.snapshot || null
+    this._snapshot = null
     this._findingPeers = 0
   }
 
@@ -8462,15 +8464,40 @@ module.exports = class Hypercore extends EventEmitter {
       while (indent.length < opts.indentationLvl) indent += ' '
     }
 
+    let peers = ''
+    const min = Math.min(this.peers.length, 5)
+
+    for (let i = 0; i < min; i++) {
+      const peer = this.peers[i]
+
+      peers += indent + '    Peer(\n'
+      peers += indent + '      remotePublicKey: ' + opts.stylize(toHex(peer.remotePublicKey), 'string') + '\n'
+      peers += indent + '      remoteLength: ' + opts.stylize(peer.remoteLength, 'number') + '\n'
+      peers += indent + '      remoteFork: ' + opts.stylize(peer.remoteFork, 'number') + '\n'
+      peers += indent + '      remoteCanUpgrade: ' + opts.stylize(peer.remoteCanUpgrade, 'boolean') + '\n'
+      peers += indent + '    )' + '\n'
+    }
+
+    if (this.peers.length > 5) {
+      peers += indent + '  ... and ' + (this.peers.length - 5) + ' more\n'
+    }
+
+    if (peers) peers = '[\n' + peers + indent + '  ]'
+    else peers = '[ ' + opts.stylize(0, 'number') + ' ]'
+
     return this.constructor.name + '(\n' +
-      indent + '  key: ' + opts.stylize((toHex(this.key)), 'string') + '\n' +
+      indent + '  key: ' + opts.stylize(toHex(this.key), 'string') + '\n' +
       indent + '  discoveryKey: ' + opts.stylize(toHex(this.discoveryKey), 'string') + '\n' +
       indent + '  opened: ' + opts.stylize(this.opened, 'boolean') + '\n' +
+      indent + '  closed: ' + opts.stylize(this.closed, 'boolean') + '\n' +
+      indent + '  snapshotted: ' + opts.stylize(this.snapshotted, 'boolean') + '\n' +
       indent + '  writable: ' + opts.stylize(this.writable, 'boolean') + '\n' +
-      indent + '  sessions: ' + opts.stylize(this.sessions.length, 'number') + '\n' +
-      indent + '  peers: [ ' + opts.stylize(this.peers.length, 'number') + ' ]\n' +
       indent + '  length: ' + opts.stylize(this.length, 'number') + '\n' +
       indent + '  byteLength: ' + opts.stylize(this.byteLength, 'number') + '\n' +
+      indent + '  fork: ' + opts.stylize(this.fork, 'number') + '\n' +
+      indent + '  sessions: [ ' + opts.stylize(this.sessions.length, 'number') + ' ]\n' +
+      indent + '  activeRequests: [ ' + opts.stylize(this.activeRequests.length, 'number') + ' ]\n' +
+      indent + '  peers: ' + peers + '\n' +
       indent + ')'
   }
 
@@ -8493,7 +8520,7 @@ module.exports = class Hypercore extends EventEmitter {
       noiseStream = new NoiseSecretStream(isInitiator, null, opts)
       outerStream = noiseStream.rawStream
     }
-    if (!noiseStream) throw new Error('Invalid stream')
+    if (!noiseStream) throw BAD_ARGUMENT('Invalid stream')
 
     if (!noiseStream.userData) {
       const protocol = new Protomux(noiseStream)
@@ -8503,7 +8530,7 @@ module.exports = class Hypercore extends EventEmitter {
       }
       if (opts.keepAlive !== false) {
         noiseStream.setKeepAlive(5000)
-        noiseStream.setTimeout(7000)
+        noiseStream.setTimeout(10000)
       }
       noiseStream.userData = protocol
     }
@@ -8523,15 +8550,15 @@ module.exports = class Hypercore extends EventEmitter {
     }
   }
 
-  snapshot () {
-    return this.session({ snapshot: { length: this.length, byteLength: this.byteLength, fork: this.fork } })
+  snapshot (opts) {
+    return this.session({ ...opts, snapshot: true })
   }
 
   session (opts = {}) {
     if (this.closing) {
       // This makes the closing logic alot easier. If this turns out to be a problem
       // in practive, open an issue and we'll try to make a solution for it.
-      throw new Error('Cannot make sessions on a closing core')
+      throw SESSION_CLOSED('Cannot make sessions on a closing core')
     }
 
     const Clz = opts.class || Hypercore
@@ -8549,6 +8576,7 @@ module.exports = class Hypercore extends EventEmitter {
 
   _passCapabilities (o) {
     if (!this.auth) this.auth = o.auth
+
     this.crypto = o.crypto
     this.key = o.key
     this.core = o.core
@@ -8556,6 +8584,8 @@ module.exports = class Hypercore extends EventEmitter {
     this.encryption = o.encryption
     this.writable = !!(this.auth && this.auth.sign)
     this.autoClose = o.autoClose
+
+    if (this.snapshotted && this.core && !this._snapshot) this._updateSnapshot()
   }
 
   async _openFromExisting (from, opts) {
@@ -8659,6 +8689,19 @@ module.exports = class Hypercore extends EventEmitter {
     }
   }
 
+  _updateSnapshot () {
+    const prev = this._snapshot
+    const next = this._snapshot = {
+      length: this.core.tree.length,
+      byteLength: this.core.tree.byteLength,
+      fork: this.core.tree.fork,
+      compatLength: this.core.tree.length
+    }
+
+    if (!prev) return true
+    return prev.length !== next.length || prev.fork !== next.fork
+  }
+
   close () {
     if (this.closing) return this.closing
     this.closing = this._close()
@@ -8708,6 +8751,13 @@ module.exports = class Hypercore extends EventEmitter {
     const noiseStream = protocolStream.noiseStream
     const protocol = noiseStream.userData
 
+    // If the user wants to, we can make this replication run in a session
+    // that way the core wont close "under them" during replication
+    if (opts.session) {
+      const s = this.session()
+      protocolStream.on('close', () => s.close().catch(noop))
+    }
+
     if (this.opened) {
       this.replicator.attachTo(protocol)
     } else {
@@ -8734,9 +8784,7 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   get fork () {
-    return this._snapshot
-      ? this._snapshot.fork
-      : (this.core === null ? 0 : this.core.tree.fork)
+    return this.core === null ? 0 : this.core.tree.fork
   }
 
   get peers () {
@@ -8765,21 +8813,33 @@ module.exports = class Hypercore extends EventEmitter {
 
   _oncoreupdate (status, bitfield, value, from) {
     if (status !== 0) {
+      const truncated = (status & 0b10) !== 0
+      const appended = (status & 0b01) !== 0
+
+      if (truncated) {
+        this.replicator.ontruncate(bitfield.start)
+      }
+
       for (let i = 0; i < this.sessions.length; i++) {
-        if ((status & 0b10) !== 0) {
-          if (this.cache) this.cache.clear()
-          this.sessions[i].emit('truncate', bitfield.start, this.core.tree.fork)
+        const s = this.sessions[i]
+
+        if (truncated) {
+          if (s.cache) s.cache.clear()
+          s.emit('truncate', bitfield.start, this.core.tree.fork)
+          // If snapshotted, make sure to update our compat so we can fail gets
+          if (s._snapshot && bitfield.start < s._snapshot.compatLength) s._snapshot.compatLength = bitfield.start
         }
-        if ((status & 0b01) !== 0) {
-          this.sessions[i].emit('append')
+
+        if (appended) {
+          s.emit('append')
         }
       }
 
-      this.replicator.localUpgrade()
+      this.replicator.onupgrade()
     }
 
     if (bitfield) {
-      this.replicator.broadcastRange(bitfield.start, bitfield.length, bitfield.drop)
+      this.replicator.onhave(bitfield.start, bitfield.length, bitfield.drop)
     }
 
     if (value) {
@@ -8836,15 +8896,21 @@ module.exports = class Hypercore extends EventEmitter {
 
   async update (opts) {
     if (this.opened === false) await this.opening
+    if (this.closing !== null) return false
 
     // TODO: add an option where a writer can bootstrap it's state from the network also
-    if (this.writable || this.closing !== null) return false
+    if (this.writable) {
+      if (!this.snapshotted) return false
+      return this._updateSnapshot()
+    }
 
     const activeRequests = (opts && opts.activeRequests) || this.activeRequests
     const req = this.replicator.addUpgrade(activeRequests)
 
-    // TODO: if snapshot, also update the length/byteLength to latest
-    return req.promise
+    if (!this.snapshotted) return req.promise
+    if (!(await req.promise)) return false
+
+    return this._updateSnapshot()
   }
 
   async seek (bytes, opts) {
@@ -8855,7 +8921,7 @@ module.exports = class Hypercore extends EventEmitter {
     const offset = await s.update()
     if (offset) return offset
 
-    if (this.closing !== null) throw new Error('Session is closed')
+    if (this.closing !== null) throw SESSION_CLOSED()
 
     const activeRequests = (opts && opts.activeRequests) || this.activeRequests
     const req = this.replicator.addSeek(activeRequests, s)
@@ -8871,7 +8937,8 @@ module.exports = class Hypercore extends EventEmitter {
 
   async get (index, opts) {
     if (this.opened === false) await this.opening
-    if (this.closing !== null) throw new Error('Session is closed')
+    if (this.closing !== null) throw SESSION_CLOSED()
+    if (this._snapshot !== null && index >= this._snapshot.compatLength) throw SNAPSHOT_NOT_AVAILABLE()
 
     const c = this.cache && this.cache.get(index)
     if (c) return c
@@ -8946,7 +9013,7 @@ module.exports = class Hypercore extends EventEmitter {
 
   async truncate (newLength = 0, fork = -1) {
     if (this.opened === false) await this.opening
-    if (this.writable === false) throw new Error('Core is not writable')
+    if (this.writable === false) throw SESSION_NOT_WRITABLE()
 
     if (fork === -1) fork = this.core.tree.fork + 1
     await this.core.truncate(newLength, fork, this.auth)
@@ -8957,7 +9024,7 @@ module.exports = class Hypercore extends EventEmitter {
 
   async append (blocks) {
     if (this.opened === false) await this.opening
-    if (this.writable === false) throw new Error('Core is not writable')
+    if (this.writable === false) throw SESSION_NOT_WRITABLE()
 
     blocks = Array.isArray(blocks) ? blocks : [blocks]
 
@@ -9084,7 +9151,7 @@ function preappend (blocks) {
   }
 }
 
-},{"./lib/block-encryption":43,"./lib/core":46,"./lib/replicator":52,"./lib/streams":53,"@hyperswarm/secret-stream":2,"b4a":16,"codecs":31,"compact-encoding":32,"events":34,"hypercore-crypto":40,"is-options":60,"protomux":92,"random-access-file":94,"xache":158}],42:[function(require,module,exports){
+},{"./lib/block-encryption":43,"./lib/core":46,"./lib/errors":47,"./lib/replicator":53,"./lib/streams":54,"@hyperswarm/secret-stream":2,"b4a":16,"codecs":31,"compact-encoding":32,"events":34,"hypercore-crypto":40,"is-options":61,"protomux":93,"random-access-file":95,"xache":159}],42:[function(require,module,exports){
 // TODO: needs massive improvements obvs
 
 const BigSparseArray = require('big-sparse-array')
@@ -9314,7 +9381,7 @@ module.exports = class BlockEncryption {
   }
 }
 
-},{"b4a":16,"compact-encoding":32,"sodium-universal":131}],44:[function(require,module,exports){
+},{"b4a":16,"compact-encoding":32,"sodium-universal":132}],44:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = class BlockStore {
@@ -9410,7 +9477,7 @@ exports.treeSignableLegacy = function (hash, length, fork) {
   return state.buffer
 }
 
-},{"b4a":16,"compact-encoding":32,"hypercore-crypto":40,"sodium-universal":131}],46:[function(require,module,exports){
+},{"b4a":16,"compact-encoding":32,"hypercore-crypto":40,"sodium-universal":132}],46:[function(require,module,exports){
 const hypercoreCrypto = require('hypercore-crypto')
 const b4a = require('b4a')
 const Oplog = require('./oplog')
@@ -9418,6 +9485,7 @@ const Mutex = require('./mutex')
 const MerkleTree = require('./merkle-tree')
 const BlockStore = require('./block-store')
 const Bitfield = require('./bitfield')
+const { BAD_ARGUMENT, STORAGE_EMPTY, STORAGE_CONFLICT, INVALID_SIGNATURE } = require('./errors')
 const m = require('./messages')
 
 module.exports = class Core {
@@ -9465,7 +9533,9 @@ module.exports = class Core {
   }
 
   static createAuth (crypto, { publicKey, secretKey }, opts = {}) {
-    if (secretKey && !crypto.validateKeyPair({ publicKey, secretKey })) throw new Error('Invalid key pair')
+    if (secretKey && !crypto.validateKeyPair({ publicKey, secretKey })) {
+      throw BAD_ARGUMENT('Invalid key pair')
+    }
 
     const sign = opts.sign
       ? opts.sign
@@ -9501,7 +9571,7 @@ module.exports = class Core {
 
     if (!header || overwrite) {
       if (!createIfMissing) {
-        throw new Error('No hypercore is stored here')
+        throw STORAGE_EMPTY('No Hypercore is stored here')
       }
 
       header = {
@@ -9523,7 +9593,7 @@ module.exports = class Core {
     }
 
     if (opts.keyPair && !b4a.equals(header.signer.publicKey, opts.keyPair.publicKey)) {
-      throw new Error('Another hypercore is stored here')
+      throw STORAGE_CONFLICT('Another Hypercore is stored here')
     }
 
     const tree = await MerkleTree.open(treeFile, { crypto, ...header.tree })
@@ -9703,7 +9773,7 @@ module.exports = class Core {
     // TODO: move this to tree.js
     const hash = batch.hash()
     if (!batch.signature || !this._signed(batch, hash)) {
-      throw new Error('Remote signature does not match')
+      throw INVALID_SIGNATURE('Proof contains an invalid signature')
     }
 
     await this._mutex.lock()
@@ -9908,7 +9978,51 @@ function updateUserData (list, key, value) {
 
 function noop () {}
 
-},{"./bitfield":42,"./block-store":44,"./merkle-tree":47,"./messages":48,"./mutex":49,"./oplog":50,"b4a":16,"hypercore-crypto":40}],47:[function(require,module,exports){
+},{"./bitfield":42,"./block-store":44,"./errors":47,"./merkle-tree":48,"./messages":49,"./mutex":50,"./oplog":51,"b4a":16,"hypercore-crypto":40}],47:[function(require,module,exports){
+module.exports = class HypercoreError extends Error {
+  constructor (msg, code) {
+    super(msg)
+    this.code = code
+  }
+
+  static BAD_ARGUMENT (msg) {
+    return new HypercoreError(msg, 'BAD_ARGUMENT')
+  }
+
+  static STORAGE_EMPTY (msg) {
+    return new HypercoreError(msg, 'STORAGE_EMPTY')
+  }
+
+  static STORAGE_CONFLICT (msg) {
+    return new HypercoreError(msg, 'STORAGE_CONFLICT')
+  }
+
+  static INVALID_SIGNATURE (msg) {
+    return new HypercoreError(msg, 'INVALID_SIGNATURE')
+  }
+
+  static INVALID_CAPABILITY (msg) {
+    return new HypercoreError(msg, 'INVALID_CAPABILITY')
+  }
+
+  static SNAPSHOT_NOT_AVAILABLE (msg = 'Snapshot is not available') {
+    return new HypercoreError(msg, 'SNAPSHOT_NOT_AVAILABLE')
+  }
+
+  static REQUEST_CANCELLED (msg = 'Request was cancelled') {
+    return new HypercoreError(msg, 'REQUEST_CANCELLED')
+  }
+
+  static SESSION_NOT_WRITABLE (msg = 'Session is not writable') {
+    return new HypercoreError(msg, 'SESSION_NOT_WRITABLE')
+  }
+
+  static SESSION_CLOSED (msg = 'Session is closed') {
+    return new HypercoreError(msg, 'SESSION_CLOSED')
+  }
+}
+
+},{}],48:[function(require,module,exports){
 const flat = require('flat-tree')
 const crypto = require('hypercore-crypto')
 const c = require('compact-encoding')
@@ -10139,6 +10253,7 @@ class ReorgBatch extends MerkleTreeBatch {
 
     let diff = null
     const ite = flat.iterator(this.diff.index)
+    const startingDiff = this.diff
 
     while ((ite.index & 1) !== 0) {
       const left = n.get(ite.leftChild())
@@ -10154,6 +10269,7 @@ class ReorgBatch extends MerkleTreeBatch {
 
     if ((this.diff.index & 1) === 0) return true
     if (diff === null) return false
+    if (startingDiff !== this.diff) return false
 
     return this._updateDiffRoot(diff)
   }
@@ -10165,10 +10281,6 @@ class ReorgBatch extends MerkleTreeBatch {
     const start = spans[0] / 2
     const end = Math.min(this.treeLength, spans[1] / 2 + 1)
     const len = end - start
-
-    if (this.diff !== null && len >= this.want.end - this.want.start) {
-      return false
-    }
 
     this.ancestors = start
     this.diff = diff
@@ -11081,7 +11193,7 @@ async function settleProof (p) {
   }
 }
 
-},{"./caps":45,"b4a":16,"compact-encoding":32,"flat-tree":37,"hypercore-crypto":40}],48:[function(require,module,exports){
+},{"./caps":45,"b4a":16,"compact-encoding":32,"flat-tree":37,"hypercore-crypto":40}],49:[function(require,module,exports){
 const c = require('compact-encoding')
 const b4a = require('b4a')
 
@@ -11732,7 +11844,7 @@ oplog.header = {
   }
 }
 
-},{"b4a":16,"compact-encoding":32}],49:[function(require,module,exports){
+},{"b4a":16,"compact-encoding":32}],50:[function(require,module,exports){
 module.exports = class Mutex {
   constructor () {
     this.locked = false
@@ -11773,7 +11885,7 @@ module.exports = class Mutex {
   }
 }
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const crc32 = require('crc32-universal')
@@ -11999,7 +12111,7 @@ module.exports = class Oplog {
   }
 }
 
-},{"b4a":16,"compact-encoding":32,"crc32-universal":33}],51:[function(require,module,exports){
+},{"b4a":16,"compact-encoding":32,"crc32-universal":33}],52:[function(require,module,exports){
 const BigSparseArray = require('big-sparse-array')
 
 module.exports = class RemoteBitfield {
@@ -12025,11 +12137,12 @@ module.exports = class RemoteBitfield {
   }
 }
 
-},{"big-sparse-array":23}],52:[function(require,module,exports){
+},{"big-sparse-array":23}],53:[function(require,module,exports){
 const b4a = require('b4a')
 const safetyCatch = require('safety-catch')
 const RandomIterator = require('random-array-iterator')
 const RemoteBitfield = require('./remote-bitfield')
+const { REQUEST_CANCELLED, INVALID_CAPABILITY, SNAPSHOT_NOT_AVAILABLE } = require('./errors')
 const m = require('./messages')
 const caps = require('./caps')
 
@@ -12047,6 +12160,7 @@ class Attachable {
       session,
       sindex: 0,
       rindex: 0,
+      snapshot: true,
       resolve: null,
       reject: null,
       promise: null
@@ -12062,11 +12176,11 @@ class Attachable {
     return r
   }
 
-  detach (r) {
+  detach (r, err = null) {
     if (r.context !== this) return false
 
     this._detach(r)
-    this._cancel(r)
+    this._cancel(r, err)
     this.gc()
 
     return true
@@ -12088,8 +12202,8 @@ class Attachable {
     if (this.refs.length === 0) this._unref()
   }
 
-  _cancel (r) {
-    r.reject(new Error('Request cancelled'))
+  _cancel (r, err) {
+    r.reject(err || REQUEST_CANCELLED())
   }
 
   _unref () {
@@ -12112,10 +12226,9 @@ class Attachable {
 }
 
 class BlockRequest extends Attachable {
-  constructor (tracker, fork, index) {
+  constructor (tracker, index) {
     super()
 
-    this.fork = fork
     this.index = index
     this.inflight = []
     this.queued = false
@@ -12124,15 +12237,14 @@ class BlockRequest extends Attachable {
 
   _unref () {
     if (this.inflight.length > 0) return
-    this.tracker.remove(this.fork, this.index)
+    this.tracker.remove(this.index)
   }
 }
 
 class RangeRequest extends Attachable {
-  constructor (ranges, fork, start, end, linear, blocks) {
+  constructor (ranges, start, end, linear, blocks) {
     super()
 
-    this.fork = fork
     this.start = start
     this.end = end
     this.linear = linear
@@ -12177,10 +12289,9 @@ class UpgradeRequest extends Attachable {
 }
 
 class SeekRequest extends Attachable {
-  constructor (seeks, fork, seeker) {
+  constructor (seeks, seeker) {
     super()
 
-    this.fork = fork
     this.seeker = seeker
     this.inflight = []
     this.seeks = seeks
@@ -12228,87 +12339,40 @@ class InflightTracker {
 }
 
 class BlockTracker {
-  constructor (core) {
-    this._core = core
-    this._fork = core.tree.fork
-
-    this._indexed = new Map()
-    this._additional = []
+  constructor () {
+    this._map = new Map()
   }
 
-  * [Symbol.iterator] () {
-    yield * this._indexed.values()
-    yield * this._additional
+  [Symbol.iterator] () {
+    return this._map.values()
   }
 
   isEmpty () {
-    return this._indexed.size === 0 && this._additional.length === 0
+    return this._map.size === 0
   }
 
-  has (fork, index) {
-    return this.get(fork, index) !== null
+  has (index) {
+    return this._map.has(index)
   }
 
-  get (fork, index) {
-    if (this._fork === fork) return this._indexed.get(index) || null
-    for (const b of this._additional) {
-      if (b.index === index && b.fork === fork) return b
-    }
-    return null
+  get (index) {
+    return this._map.get(index) || null
   }
 
-  add (fork, index) {
-    // TODO: just rely on someone calling .update(fork) instead
-    if (this._fork !== this._core.tree.fork) this.update(this._core.tree.fork)
-
-    let b = this.get(fork, index)
+  add (index) {
+    let b = this._map.get(index)
     if (b) return b
 
-    b = new BlockRequest(this, fork, index)
-
-    if (fork === this._fork) this._indexed.set(index, b)
-    else this._additional.push(b)
+    b = new BlockRequest(this, index)
+    this._map.set(index, b)
 
     return b
   }
 
-  remove (fork, index) {
-    if (this._fork === fork) {
-      const b = this._indexed.get(index)
-      this._indexed.delete(index)
-      return b || null
-    }
-
-    for (let i = 0; i < this._additional.length; i++) {
-      const b = this._additional[i]
-      if (b.index !== index || b.fork !== fork) continue
-      if (i === this._additional.length - 1) this._additional.pop()
-      else this._additional[i] = this._additional.pop()
-      return b
-    }
-
-    return null
-  }
-
-  update (fork) {
-    if (this._fork === fork) return
-
-    const additional = this._additional
-    this._additional = []
-
-    for (const b of this._indexed.values()) {
-      // TODO: this is only needed cause we hot patch the fork ids below, revert that later
-      if (b.fork !== this._fork) additional.push(b)
-      else this._additional.push(b)
-    }
-    this._indexed.clear()
-
-    for (const b of additional) {
-      if (b.fork === fork) this._indexed.set(b.index, b)
-      else this._additional.push(b)
-    }
-
-    this._fork = fork
+  remove (index) {
+    const b = this.get(index)
+    this._map.delete(index)
+    return b
   }
 }
 
@@ -12318,6 +12382,7 @@ class Peer {
     this.replicator = replicator
     this.stream = protomux.stream
     this.protomux = protomux
+    this.remotePublicKey = this.stream.remotePublicKey
 
     this.channel = channel
     this.channel.userData = this
@@ -12415,7 +12480,7 @@ class Peer {
     const expected = caps.replicate(this.stream.isInitiator === false, this.replicator.key, this.stream.handshakeHash)
 
     if (b4a.equals(capability, expected) !== true) { // TODO: change this to a rejection instead, less leakage
-      throw new Error('Remote sent an invalid capability')
+      throw INVALID_CAPABILITY('Remote sent an invalid replication capability')
     }
 
     if (this.remoteOpened === true) return
@@ -12453,7 +12518,7 @@ class Peer {
 
   async onsync ({ fork, length, remoteLength, canUpgrade, uploading, downloading }) {
     const lengthChanged = length !== this.remoteLength
-    const sameFork = (fork === this.core.tree.fork)
+    const sameFork = fork === this.core.tree.fork
 
     this.remoteSynced = true
     this.remoteFork = fork
@@ -12496,12 +12561,11 @@ class Peer {
   }
 
   async _updateCanUpgradeAndSync () {
-    const len = this.core.tree.length
-    const fork = this.core.tree.fork
+    const { length, fork } = this.core.tree
 
     const canUpgrade = await this._canUpgrade(this.remoteLength, this.remoteFork)
 
-    if (this.syncsProcessing > 0 || len !== this.core.tree.length || fork !== this.core.tree.fork) {
+    if (this.syncsProcessing > 0 || length !== this.core.tree.length || fork !== this.core.tree.fork) {
       return
     }
     if (canUpgrade === this.canUpgrade) {
@@ -12660,19 +12724,19 @@ class Peer {
     this.replicator.updatePeer(this)
   }
 
-  _makeRequest (fork, needsUpgrade) {
+  _makeRequest (needsUpgrade) {
     if (needsUpgrade === true && this.replicator._shouldUpgrade(this) === false) {
       return null
     }
 
-    if (needsUpgrade === false && fork === this.core.tree.fork && this.replicator._autoUpgrade(this) === true) {
+    if (needsUpgrade === false && this.replicator._autoUpgrade(this) === true) {
       needsUpgrade = true
     }
 
     return {
       peer: this,
       id: 0,
-      fork,
+      fork: this.remoteFork,
       block: null,
       hash: null,
       seek: null,
@@ -12683,7 +12747,7 @@ class Peer {
   }
 
   _requestUpgrade (u) {
-    const req = this._makeRequest(u.fork, true)
+    const req = this._makeRequest(true)
     if (req === null) return false
 
     this._send(req)
@@ -12692,8 +12756,12 @@ class Peer {
   }
 
   _requestSeek (s) {
-    if (s.seeker.start >= this.core.tree.length) {
-      const req = this._makeRequest(s.fork, true)
+    const { length, fork } = this.core.tree
+
+    if (fork !== this.remoteFork) return false
+
+    if (s.seeker.start >= length) {
+      const req = this._makeRequest(true)
 
       // We need an upgrade for the seek, if non can be provided, skip
       if (req === null) return false
@@ -12717,14 +12785,14 @@ class Peer {
       if (this.core.bitfield.get(index) === true) continue
 
       // Check if this block is currently inflight - if so pick another
-      const b = this.replicator._blocks.get(s.fork, index)
+      const b = this.replicator._blocks.get(index)
       if (b !== null && b.inflight.length > 0) continue
 
       // Block is not inflight, but we only want the hash, check if that is inflight
-      const h = this.replicator._hashes.add(s.fork, index)
+      const h = this.replicator._hashes.add(index)
       if (h.inflight.length > 0) continue
 
-      const req = this._makeRequest(s.fork, false)
+      const req = this._makeRequest(false)
 
       req.hash = { index: 2 * index, nodes: 0 }
       req.seek = { bytes: s.seeker.bytes }
@@ -12745,9 +12813,11 @@ class Peer {
   }
 
   _requestBlock (b) {
-    if (this.remoteBitfield.get(b.index) === false) return false
+    const { length, fork } = this.core.tree
 
-    const req = this._makeRequest(b.fork, b.index >= this.core.tree.length)
+    if (this.remoteBitfield.get(b.index) === false || fork !== this.remoteFork) return false
+
+    const req = this._makeRequest(b.index >= length)
     if (req === null) return false
 
     req.block = { index: b.index, nodes: 0 }
@@ -12759,8 +12829,10 @@ class Peer {
   }
 
   _requestRange (r) {
+    const { length, fork } = this.core.tree
+
     const end = Math.min(r.end === -1 ? this.remoteLength : r.end, this.remoteLength)
-    if (end < r.start || r.fork !== this.remoteFork) return false
+    if (end < r.start || fork !== this.remoteFork) return false
 
     const len = end - r.start
     const off = r.start + (r.linear ? 0 : Math.floor(Math.random() * len))
@@ -12778,10 +12850,10 @@ class Peer {
       if (this.remoteBitfield.get(index) === false) continue
       if (this.core.bitfield.get(index) === true) continue
 
-      const b = this.replicator._blocks.add(r.fork, index)
+      const b = this.replicator._blocks.add(index)
       if (b.inflight.length > 0) continue
 
-      const req = this._makeRequest(r.fork, index >= this.core.tree.length)
+      const req = this._makeRequest(index >= length)
 
       // If the request cannot be satisfied, dealloc the block request if no one is subscribed to it
       if (req === null) {
@@ -12801,7 +12873,7 @@ class Peer {
   }
 
   _requestForkProof (f) {
-    const req = this._makeRequest(f.fork, false)
+    const req = this._makeRequest(false)
 
     req.upgrade = { start: 0, length: this.remoteLength }
 
@@ -12824,7 +12896,7 @@ class Peer {
 
       if (this.remoteBitfield.get(index) === false) continue
 
-      const req = this._makeRequest(f.fork, false)
+      const req = this._makeRequest(false)
 
       req.hash = { index: 2 * index, nodes: f.batch.want.nodes }
 
@@ -12849,8 +12921,12 @@ class Peer {
     }
 
     try {
-      if (req.block !== null && req.fork === fork) req.block.nodes = await this.core.tree.missingNodes(2 * req.block.index)
-      if (req.hash !== null && req.fork === fork) req.hash.nodes = await this.core.tree.missingNodes(req.hash.index)
+      if (req.block !== null && req.fork === fork) {
+        req.block.nodes = await this.core.tree.missingNodes(2 * req.block.index)
+      }
+      if (req.hash !== null && req.fork === fork) {
+        req.hash.nodes = await this.core.tree.missingNodes(req.hash.index)
+      }
     } catch (err) {
       this.stream.destroy(err)
       return
@@ -12873,8 +12949,8 @@ module.exports = class Replicator {
     this.findingPeers = 0 // updateable from the outside
 
     this._inflight = new InflightTracker()
-    this._blocks = new BlockTracker(core)
-    this._hashes = new BlockTracker(core)
+    this._blocks = new BlockTracker()
+    this._hashes = new BlockTracker()
 
     this._queued = []
 
@@ -12897,14 +12973,34 @@ module.exports = class Replicator {
     for (const peer of this.peers) peer.protomux.uncork()
   }
 
-  broadcastRange (start, length, drop = false) {
+  // Called externally when a range of new blocks has been processed/removed
+  onhave (start, length, drop = false) {
     for (const peer of this.peers) peer.broadcastRange(start, length, drop)
   }
 
-  localUpgrade () {
+  // Called externally when a truncation upgrade has been processed
+  ontruncate (newLength) {
+    const notify = []
+
+    for (const blk of this._blocks) {
+      if (blk.index < newLength) continue
+      notify.push(blk)
+    }
+
+    for (const blk of notify) {
+      for (const r of blk.refs) {
+        if (r.snapshot === false) continue
+        blk.detach(r, SNAPSHOT_NOT_AVAILABLE())
+      }
+    }
+  }
+
+  // Called externally when a upgrade has been processed
+  onupgrade () {
     for (const peer of this.peers) peer.signalUpgrade()
     if (this._blocks.isEmpty() === false) this._resolveBlocksLocally()
     if (this._upgrade !== null) this._resolveUpgradeRequest(null)
+    if (this._ranges.length !== 0 || this._seeks.length !== 0) this._updateNonPrimary()
   }
 
   addUpgrade (session) {
@@ -12929,8 +13025,8 @@ module.exports = class Replicator {
     return ref
   }
 
-  addBlock (session, index, fork = this.core.tree.fork) {
-    const b = this._blocks.add(fork, index)
+  addBlock (session, index) {
+    const b = this._blocks.add(index)
     const ref = b.attach(session)
 
     this._queueBlock(b)
@@ -12940,7 +13036,7 @@ module.exports = class Replicator {
   }
 
   addSeek (session, seeker) {
-    const s = new SeekRequest(this._seeks, this.core.tree.fork, seeker)
+    const s = new SeekRequest(this._seeks, seeker)
     const ref = s.attach(session)
 
     this._seeks.push(s)
@@ -12955,7 +13051,7 @@ module.exports = class Replicator {
       if (length === -1 || start + length > blocks.length) length = blocks.length - start
     }
 
-    const r = new RangeRequest(this._ranges, this.core.tree.fork, start, length === -1 ? -1 : start + length, linear, blocks)
+    const r = new RangeRequest(this._ranges, start, length === -1 ? -1 : start + length, linear, blocks)
     const ref = r.attach(session)
 
     this._ranges.push(r)
@@ -12968,13 +13064,13 @@ module.exports = class Replicator {
   }
 
   cancel (ref) {
-    ref.context.detach(ref)
+    ref.context.detach(ref, null)
   }
 
   clearRequests (session) {
     while (session.length > 0) {
       const ref = session[session.length - 1]
-      ref.context.detach(ref)
+      ref.context.detach(ref, null)
     }
 
     this.updateAll()
@@ -13074,7 +13170,7 @@ module.exports = class Replicator {
   }
 
   _autoUpgrade (peer) {
-    return this._upgrade !== null && this._shouldUpgrade(peer)
+    return this._upgrade !== null && peer.remoteFork === this.core.tree.fork && this._shouldUpgrade(peer)
   }
 
   _addPeer (peer) {
@@ -13127,12 +13223,12 @@ module.exports = class Replicator {
     // Currently the block tracker does not support deletes during iteration, so we make
     // sure to clear them afterwards.
     for (const b of clear) {
-      this._blocks.remove(b.fork, b.index)
+      this._blocks.remove(b.index)
     }
   }
 
-  _resolveBlockRequest (tracker, fork, index, value, req) {
-    const b = tracker.remove(fork, index)
+  _resolveBlockRequest (tracker, index, value, req) {
+    const b = tracker.remove(index)
     if (b === null) return false
 
     removeInflight(b.inflight, req)
@@ -13158,7 +13254,7 @@ module.exports = class Replicator {
   _clearInflightBlock (tracker, req) {
     const isBlock = tracker === this._blocks
     const index = isBlock === true ? req.block.index : req.hash.index / 2
-    const b = tracker.get(req.fork, index)
+    const b = tracker.get(index)
 
     if (b === null || removeInflight(b.inflight, req) === false) return
 
@@ -13279,11 +13375,11 @@ module.exports = class Replicator {
 
   _ondata (peer, req, data) {
     if (data.block !== null) {
-      this._resolveBlockRequest(this._blocks, data.fork, data.block.index, data.block.value, req)
+      this._resolveBlockRequest(this._blocks, data.block.index, data.block.value, req)
     }
 
     if (data.hash !== null && (data.hash.index & 1) === 0) {
-      this._resolveBlockRequest(this._hashes, data.fork, data.hash.index / 2, null, req)
+      this._resolveBlockRequest(this._hashes, data.hash.index / 2, null, req)
     }
 
     if (this._upgrade !== null) {
@@ -13314,14 +13410,14 @@ module.exports = class Replicator {
 
     if (f.batch) {
       await f.batch.update(data)
-    } else {
+    } else if (data.upgrade) {
       f.batch = await this.core.tree.reorg(data)
 
       // Remove "older" reorgs in progress as we just verified this one.
       this._clearOldReorgs(f.fork)
     }
 
-    if (f.batch.finished) {
+    if (f.batch && f.batch.finished) {
       if (this._addUpgradeMaybe() !== null) {
         await this._applyReorg(f)
       }
@@ -13330,6 +13426,7 @@ module.exports = class Replicator {
     this.updateAll()
   }
 
+  // Never throws, allowed to run in the background
   async _applyReorg (f) {
     // TODO: more optimal here to check if potentially a better reorg
     // is available, ie higher fork, and request that one first.
@@ -13358,13 +13455,10 @@ module.exports = class Replicator {
 
     // TODO: all the remaining is a tmp workaround until we have a flag/way for ANY_FORK
     for (const r of this._ranges) {
-      r.fork = this.core.tree.fork
       r.start = r.userStart
       r.end = r.userEnd
     }
-    for (const s of this._seeks) s.fork = this.core.tree.fork
-    for (const b of this._blocks) b.fork = this.core.tree.fork
-    this._blocks.update(this.core.tree.fork)
+
     this.updateAll()
   }
 
@@ -13609,7 +13703,7 @@ function onwireextension (m, c) {
   return c.userData.onextension(m)
 }
 
-},{"./caps":45,"./messages":48,"./remote-bitfield":51,"b4a":16,"random-array-iterator":97,"safety-catch":99}],53:[function(require,module,exports){
+},{"./caps":45,"./errors":47,"./messages":49,"./remote-bitfield":52,"b4a":16,"random-array-iterator":98,"safety-catch":100}],54:[function(require,module,exports){
 const { Writable, Readable } = require('streamx')
 
 class ReadStream extends Readable {
@@ -13667,7 +13761,7 @@ class WriteStream extends Writable {
 
 exports.WriteStream = WriteStream
 
-},{"streamx":152}],54:[function(require,module,exports){
+},{"streamx":153}],55:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -13754,7 +13848,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -13783,7 +13877,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /**
  * @module  is-audio-buffer
  */
@@ -13800,7 +13894,7 @@ module.exports = function isAudioBuffer (buffer) {
 	&& typeof buffer.duration === 'number'
 };
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function(root) {
   'use strict';
 
@@ -13842,9 +13936,9 @@ module.exports = function isAudioBuffer (buffer) {
   }
 })(this);
 
-},{}],58:[function(require,module,exports){
-module.exports = true;
 },{}],59:[function(require,module,exports){
+module.exports = true;
+},{}],60:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -13857,14 +13951,14 @@ module.exports = function isBuffer (obj) {
     typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = function isOptions (opts) {
   return typeof opts === 'object' && opts && !b4a.isBuffer(opts)
 }
 
-},{"b4a":16}],61:[function(require,module,exports){
+},{"b4a":16}],62:[function(require,module,exports){
 'use strict';
 var toString = Object.prototype.toString;
 
@@ -13873,7 +13967,7 @@ module.exports = function (x) {
 	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
 };
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*! multistream. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 const stream = require('readable-stream')
 const once = require('once')
@@ -14041,7 +14135,7 @@ function destroy (stream, err, cb) {
   }
 }
 
-},{"once":86,"readable-stream":77}],63:[function(require,module,exports){
+},{"once":87,"readable-stream":78}],64:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -14170,7 +14264,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -14312,7 +14406,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":66,"./_stream_writable":68,"_process":91,"inherits":55}],65:[function(require,module,exports){
+},{"./_stream_readable":67,"./_stream_writable":69,"_process":92,"inherits":56}],66:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14352,7 +14446,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":67,"inherits":55}],66:[function(require,module,exports){
+},{"./_stream_transform":68,"inherits":56}],67:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15479,7 +15573,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":63,"./_stream_duplex":64,"./internal/streams/async_iterator":69,"./internal/streams/buffer_list":70,"./internal/streams/destroy":71,"./internal/streams/from":73,"./internal/streams/state":75,"./internal/streams/stream":76,"_process":91,"buffer":28,"events":34,"inherits":55,"string_decoder/":154,"util":27}],67:[function(require,module,exports){
+},{"../errors":64,"./_stream_duplex":65,"./internal/streams/async_iterator":70,"./internal/streams/buffer_list":71,"./internal/streams/destroy":72,"./internal/streams/from":74,"./internal/streams/state":76,"./internal/streams/stream":77,"_process":92,"buffer":28,"events":34,"inherits":56,"string_decoder/":155,"util":27}],68:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15681,7 +15775,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":63,"./_stream_duplex":64,"inherits":55}],68:[function(require,module,exports){
+},{"../errors":64,"./_stream_duplex":65,"inherits":56}],69:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16381,7 +16475,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":63,"./_stream_duplex":64,"./internal/streams/destroy":71,"./internal/streams/state":75,"./internal/streams/stream":76,"_process":91,"buffer":28,"inherits":55,"util-deprecate":156}],69:[function(require,module,exports){
+},{"../errors":64,"./_stream_duplex":65,"./internal/streams/destroy":72,"./internal/streams/state":76,"./internal/streams/stream":77,"_process":92,"buffer":28,"inherits":56,"util-deprecate":157}],70:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -16591,7 +16685,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":72,"_process":91}],70:[function(require,module,exports){
+},{"./end-of-stream":73,"_process":92}],71:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -16802,7 +16896,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":28,"util":27}],71:[function(require,module,exports){
+},{"buffer":28,"util":27}],72:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -16910,7 +17004,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":91}],72:[function(require,module,exports){
+},{"_process":92}],73:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -17015,12 +17109,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":63}],73:[function(require,module,exports){
+},{"../../../errors":64}],74:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -17118,7 +17212,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":63,"./end-of-stream":72}],75:[function(require,module,exports){
+},{"../../../errors":64,"./end-of-stream":73}],76:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -17146,10 +17240,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":63}],76:[function(require,module,exports){
+},{"../../../errors":64}],77:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":34}],77:[function(require,module,exports){
+},{"events":34}],78:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -17160,7 +17254,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":64,"./lib/_stream_passthrough.js":65,"./lib/_stream_readable.js":66,"./lib/_stream_transform.js":67,"./lib/_stream_writable.js":68,"./lib/internal/streams/end-of-stream.js":72,"./lib/internal/streams/pipeline.js":74}],78:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":65,"./lib/_stream_passthrough.js":66,"./lib/_stream_readable.js":67,"./lib/_stream_transform.js":68,"./lib/_stream_writable.js":69,"./lib/internal/streams/end-of-stream.js":73,"./lib/internal/streams/pipeline.js":75}],79:[function(require,module,exports){
 module.exports = assert
 
 class AssertionError extends Error {}
@@ -17180,7 +17274,7 @@ function assert (t, m) {
   }
 }
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
@@ -17243,7 +17337,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":16,"nanoassert":78,"sodium-universal":131}],80:[function(require,module,exports){
+},{"b4a":16,"nanoassert":79,"sodium-universal":132}],81:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -17336,7 +17430,7 @@ function decryptWithAD (key, counter, additionalData, ciphertext) {
   return plaintext
 }
 
-},{"b4a":16,"sodium-universal":131}],81:[function(require,module,exports){
+},{"b4a":16,"sodium-universal":132}],82:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_kx_SEEDBYTES, crypto_kx_keypair, crypto_kx_seed_keypair } = require('sodium-universal/crypto_kx')
 const { crypto_scalarmult_BYTES, crypto_scalarmult_SCALARBYTES, crypto_scalarmult, crypto_scalarmult_base } = require('sodium-universal/crypto_scalarmult')
@@ -17402,7 +17496,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":16,"nanoassert":78,"sodium-universal/crypto_kx":120,"sodium-universal/crypto_scalarmult":122}],82:[function(require,module,exports){
+},{"b4a":16,"nanoassert":79,"sodium-universal/crypto_kx":121,"sodium-universal/crypto_scalarmult":123}],83:[function(require,module,exports){
 const assert = require('nanoassert')
 const hmacBlake2b = require('hmac-blake2b')
 const b4a = require('b4a')
@@ -17451,7 +17545,7 @@ function hmacDigest (key, input) {
   return hmac
 }
 
-},{"b4a":16,"hmac-blake2b":38,"nanoassert":78}],83:[function(require,module,exports){
+},{"b4a":16,"hmac-blake2b":38,"nanoassert":79}],84:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -17712,7 +17806,7 @@ function keyPattern (pattern, initiator) {
   }
 }
 
-},{"./hkdf":82,"./symmetric-state":84,"b4a":16,"nanoassert":78}],84:[function(require,module,exports){
+},{"./hkdf":83,"./symmetric-state":85,"b4a":16,"nanoassert":79}],85:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
 const b4a = require('b4a')
@@ -17791,7 +17885,7 @@ function accumulateDigest (digest, input) {
   sodium.crypto_generichash(digest, toHash)
 }
 
-},{"./cipher":80,"./dh":81,"./hkdf":82,"b4a":16,"nanoassert":78,"sodium-universal":131}],85:[function(require,module,exports){
+},{"./cipher":81,"./dh":82,"./hkdf":83,"b4a":16,"nanoassert":79,"sodium-universal":132}],86:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -17883,7 +17977,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var wrappy = require('wrappy')
 module.exports = wrappy(once)
 module.exports.strict = wrappy(onceStrict)
@@ -17927,7 +18021,7 @@ function onceStrict (fn) {
   return f
 }
 
-},{"wrappy":157}],87:[function(require,module,exports){
+},{"wrappy":158}],88:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -17978,7 +18072,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 /**
  * @module pcm-convert
  */
@@ -18265,9 +18359,9 @@ function normalize (obj) {
 	return obj
 }
 
-},{"assert":5,"audio-format":14,"is-audio-buffer":56,"is-buffer":89,"object-assign":85}],89:[function(require,module,exports){
+},{"assert":5,"audio-format":14,"is-audio-buffer":57,"is-buffer":90,"object-assign":86}],90:[function(require,module,exports){
 arguments[4][15][0].apply(exports,arguments)
-},{"dup":15}],90:[function(require,module,exports){
+},{"dup":15}],91:[function(require,module,exports){
 'use strict'
 
 
@@ -18346,7 +18440,7 @@ function toList(arg) {
 	return arg
 }
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -18532,7 +18626,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 const b4a = require('b4a')
 const c = require('compact-encoding')
 const queueTick = require('queue-tick')
@@ -19177,15 +19271,15 @@ function encodingLength (enc, val) {
   return state.end
 }
 
-},{"b4a":16,"compact-encoding":32,"queue-tick":93,"safety-catch":99}],93:[function(require,module,exports){
+},{"b4a":16,"compact-encoding":32,"queue-tick":94,"safety-catch":100}],94:[function(require,module,exports){
 module.exports = typeof queueMicrotask === 'function' ? queueMicrotask : (fn) => Promise.resolve().then(fn)
 
-},{}],94:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module.exports = function () {
   throw new Error('random-access-file is not supported in the browser')
 }
 
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 const RandomAccess = require('random-access-storage')
 const isOptions = require('is-options')
 const inherits = require('inherits')
@@ -19321,7 +19415,7 @@ RAM.prototype.toBuffer = function () {
   return buf
 }
 
-},{"b4a":16,"inherits":55,"is-options":60,"random-access-storage":96}],96:[function(require,module,exports){
+},{"b4a":16,"inherits":56,"is-options":61,"random-access-storage":97}],97:[function(require,module,exports){
 var events = require('events')
 var inherits = require('inherits')
 var queueTick = require('queue-tick')
@@ -19593,7 +19687,7 @@ function nextTick (req, err, val) {
   queueTick(() => req.callback(err, val))
 }
 
-},{"events":34,"inherits":55,"queue-tick":93}],97:[function(require,module,exports){
+},{"events":34,"inherits":56,"queue-tick":94}],98:[function(require,module,exports){
 module.exports = class RandomArrayIterator {
   constructor (values) {
     this.values = values
@@ -19641,7 +19735,7 @@ module.exports = class RandomArrayIterator {
   }
 }
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -19708,7 +19802,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":28}],99:[function(require,module,exports){
+},{"buffer":28}],100:[function(require,module,exports){
 module.exports = safetyCatch
 
 function isActuallyUncaught (err) {
@@ -19732,7 +19826,7 @@ function safetyCatch (err) {
   }
 }
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 module.exports={
 "8000": 8000,
 "11025": 11025,
@@ -19748,7 +19842,7 @@ module.exports={
 "384000": 384000
 }
 
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 const js = require('./sha256.js')
 const wasm = require('sha256-wasm')
 
@@ -19776,7 +19870,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha256.js":102,"sha256-wasm":103}],102:[function(require,module,exports){
+},{"./sha256.js":103,"sha256-wasm":104}],103:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -20013,7 +20107,7 @@ function bswap (a) {
   return r | l
 }
 
-},{"b4a":16,"nanoassert":78}],103:[function(require,module,exports){
+},{"b4a":16,"nanoassert":79}],104:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -20184,7 +20278,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha256.js":104,"b4a":16,"nanoassert":78}],104:[function(require,module,exports){
+},{"./sha256.js":105,"b4a":16,"nanoassert":79}],105:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -20220,7 +20314,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],105:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 const js = require('./sha512.js')
 const wasm = require('sha512-wasm')
 
@@ -20248,7 +20342,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha512.js":106,"sha512-wasm":107}],106:[function(require,module,exports){
+},{"./sha512.js":107,"sha512-wasm":108}],107:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -20808,7 +20902,7 @@ HMAC.prototype.digest = function (enc, offset = 0) {
 
 Sha512.HMAC = HMAC
 
-},{"b4a":16,"nanoassert":78}],107:[function(require,module,exports){
+},{"b4a":16,"nanoassert":79}],108:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -20981,7 +21075,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha512.js":108,"b4a":16,"nanoassert":78}],108:[function(require,module,exports){
+},{"./sha512.js":109,"b4a":16,"nanoassert":79}],109:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -21017,7 +21111,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],109:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 module.exports = fallback
 
 function _add (a, b) {
@@ -21139,7 +21233,7 @@ function fallback (out, m, key) { // modified from https://github.com/jedisct1/s
   out[7] = (h.h >> 24) & 0xff
 }
 
-},{}],110:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 var assert = require('nanoassert')
 var wasm = typeof WebAssembly !== 'undefined' && require('./siphash24')()
 var fallback = require('./fallback')
@@ -21180,7 +21274,7 @@ function realloc (size) {
   memory = new Uint8Array(wasm.memory.buffer)
 }
 
-},{"./fallback":109,"./siphash24":111,"nanoassert":78}],111:[function(require,module,exports){
+},{"./fallback":110,"./siphash24":112,"nanoassert":79}],112:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -21216,7 +21310,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -21287,7 +21381,7 @@ module.exports = {
   Pull
 }
 
-},{"b4a":16,"sodium-universal":131}],113:[function(require,module,exports){
+},{"b4a":16,"sodium-universal":132}],114:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_stream_chacha20_ietf, crypto_stream_chacha20_ietf_xor_ic } = require('./crypto_stream_chacha20')
 const { crypto_verify_16 } = require('./crypto_verify')
@@ -21449,7 +21543,7 @@ module.exports = {
   crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX
 }
 
-},{"./crypto_stream_chacha20":128,"./crypto_verify":129,"./internal/poly1305":134,"nanoassert":78}],114:[function(require,module,exports){
+},{"./crypto_stream_chacha20":129,"./crypto_verify":130,"./internal/poly1305":135,"nanoassert":79}],115:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_verify_32 } = require('./crypto_verify')
 const Sha512 = require('sha512-universal')
@@ -21486,7 +21580,7 @@ module.exports = {
   crypto_auth_verify
 }
 
-},{"./crypto_verify":129,"nanoassert":78,"sha512-universal":105}],115:[function(require,module,exports){
+},{"./crypto_verify":130,"nanoassert":79,"sha512-universal":106}],116:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_hash_sha512 } = require('./crypto_hash')
 const { crypto_scalarmult, crypto_scalarmult_base } = require('./crypto_scalarmult')
@@ -21688,7 +21782,7 @@ function cleanup (arr) {
   for (let i = 0; i < arr.length; i++) arr[i] = 0
 }
 
-},{"./crypto_generichash":116,"./crypto_hash":117,"./crypto_scalarmult":122,"./crypto_secretbox":123,"./crypto_stream":127,"./randombytes":136,"nanoassert":78,"xsalsa20":159}],116:[function(require,module,exports){
+},{"./crypto_generichash":117,"./crypto_hash":118,"./crypto_scalarmult":123,"./crypto_secretbox":124,"./crypto_stream":128,"./randombytes":137,"nanoassert":79,"xsalsa20":160}],117:[function(require,module,exports){
 var blake2b = require('blake2b')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -21726,7 +21820,7 @@ blake2b.ready(function (_) {
   module.exports.crypto_generichash_WASM_LOADED = blake2b.WASM_LOADED
 })
 
-},{"blake2b":26}],117:[function(require,module,exports){
+},{"blake2b":26}],118:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha512 = require('sha512-universal')
 const assert = require('nanoassert')
@@ -21754,7 +21848,7 @@ module.exports = {
   crypto_hash_BYTES
 }
 
-},{"nanoassert":78,"sha512-universal":105}],118:[function(require,module,exports){
+},{"nanoassert":79,"sha512-universal":106}],119:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha256 = require('sha256-universal')
 const assert = require('nanoassert')
@@ -21775,7 +21869,7 @@ module.exports = {
   crypto_hash_sha256_BYTES
 }
 
-},{"nanoassert":78,"sha256-universal":101}],119:[function(require,module,exports){
+},{"nanoassert":79,"sha256-universal":102}],120:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const randombytes_buf = require('./randombytes').randombytes_buf
@@ -21817,7 +21911,7 @@ module.exports.crypto_kdf_keygen = function crypto_kdf_keygen (out) {
   randombytes_buf(out.subarray(0, module.exports.crypto_kdf_KEYBYTES))
 }
 
-},{"./randombytes":136,"blake2b":26,"nanoassert":78}],120:[function(require,module,exports){
+},{"./randombytes":137,"blake2b":26,"nanoassert":79}],121:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_scalarmult_base } = require('./crypto_scalarmult')
 const { crypto_generichash } = require('./crypto_generichash')
@@ -21853,7 +21947,7 @@ module.exports = {
   crypto_kx_PUBLICKEYBYTES
 }
 
-},{"./crypto_generichash":116,"./crypto_scalarmult":122,"./randombytes":136,"nanoassert":78}],121:[function(require,module,exports){
+},{"./crypto_generichash":117,"./crypto_scalarmult":123,"./randombytes":137,"nanoassert":79}],122:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const Poly1305 = require('./internal/poly1305')
@@ -21891,7 +21985,7 @@ function crypto_onetimeauth_verify (mac, msg, key) {
   return crypto_verify_16(mac, 0, tmp, 0)
 }
 
-},{"./crypto_verify":129,"./internal/poly1305":134,"nanoassert":78}],122:[function(require,module,exports){
+},{"./crypto_verify":130,"./internal/poly1305":135,"nanoassert":79}],123:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { _9, _121665, gf, inv25519, pack25519, unpack25519, sel25519, A, M, Z, S } = require('./internal/ed25519')
 
@@ -21969,7 +22063,7 @@ function check (buf, len) {
   if (!buf || (len && buf.length < len)) throw new Error('Argument must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./internal/ed25519":132}],123:[function(require,module,exports){
+},{"./internal/ed25519":133}],124:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { crypto_stream, crypto_stream_xor } = require('./crypto_stream')
@@ -22082,7 +22176,7 @@ function crypto_secretbox_open_easy (msg, box, n, k) {
   return true
 }
 
-},{"./crypto_onetimeauth":121,"./crypto_stream":127,"nanoassert":78}],124:[function(require,module,exports){
+},{"./crypto_onetimeauth":122,"./crypto_stream":128,"nanoassert":79}],125:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { randombytes_buf } = require('./randombytes')
@@ -22355,7 +22449,7 @@ module.exports = {
   crypto_secretstream_xchacha20poly1305_TAG_FINAL
 }
 
-},{"./crypto_stream_chacha20":128,"./helpers":130,"./internal/hchacha20":133,"./internal/poly1305":134,"./randombytes":136,"nanoassert":78}],125:[function(require,module,exports){
+},{"./crypto_stream_chacha20":129,"./helpers":131,"./internal/hchacha20":134,"./internal/poly1305":135,"./randombytes":137,"nanoassert":79}],126:[function(require,module,exports){
 var siphash = require('siphash24')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -22371,7 +22465,7 @@ function shorthash (out, data, key, noAssert) {
   siphash(data, key, out, noAssert)
 }
 
-},{"siphash24":110}],126:[function(require,module,exports){
+},{"siphash24":111}],127:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { crypto_verify_32 } = require('./crypto_verify')
 const { crypto_hash } = require('./crypto_hash')
@@ -22842,7 +22936,7 @@ function check (buf, len, arg = 'Argument') {
   if (!buf || (len && buf.length < len)) throw new Error(arg + ' must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./crypto_hash":117,"./crypto_hash.js":117,"./crypto_scalarmult.js":122,"./crypto_verify":129,"./internal/ed25519":132,"./randombytes":136,"nanoassert":78}],127:[function(require,module,exports){
+},{"./crypto_hash":118,"./crypto_hash.js":118,"./crypto_scalarmult.js":123,"./crypto_verify":130,"./internal/ed25519":133,"./randombytes":137,"nanoassert":79}],128:[function(require,module,exports){
 /* eslint-disable camelcase */
 const xsalsa20 = require('xsalsa20')
 
@@ -22882,7 +22976,7 @@ XOR.prototype.final = function () {
   this._instance = null
 }
 
-},{"xsalsa20":159}],128:[function(require,module,exports){
+},{"xsalsa20":160}],129:[function(require,module,exports){
 const assert = require('nanoassert')
 const Chacha20 = require('chacha20-universal')
 
@@ -22968,7 +23062,7 @@ exports.crypto_stream_chacha20_ietf_xor_instance = function (n, k) {
   return new Chacha20(n, k)
 }
 
-},{"chacha20-universal":29,"nanoassert":78}],129:[function(require,module,exports){
+},{"chacha20-universal":29,"nanoassert":79}],130:[function(require,module,exports){
 /* eslint-disable camelcase */
 module.exports = {
   crypto_verify_16,
@@ -22999,7 +23093,7 @@ function crypto_verify_64 (x, xi, y, yi) {
   return vn(x, xi, y, yi, 64) === 0
 }
 
-},{}],130:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { vn } = require('./crypto_verify')
@@ -23032,7 +23126,7 @@ module.exports = {
   sodium_is_zero
 }
 
-},{"./crypto_verify":129,"nanoassert":78}],131:[function(require,module,exports){
+},{"./crypto_verify":130,"nanoassert":79}],132:[function(require,module,exports){
 'use strict'
 
 // Based on https://github.com/dchest/tweetnacl-js/blob/6dcbcaf5f5cbfd313f2dcfe763db35c828c8ff5b/nacl-fast.js.
@@ -23070,7 +23164,7 @@ function forward (submodule) {
   })
 }
 
-},{"./crypto_aead":113,"./crypto_auth":114,"./crypto_box":115,"./crypto_generichash":116,"./crypto_hash":117,"./crypto_hash_sha256":118,"./crypto_kdf":119,"./crypto_kx":120,"./crypto_onetimeauth":121,"./crypto_scalarmult":122,"./crypto_secretbox":123,"./crypto_secretstream":124,"./crypto_shorthash":125,"./crypto_sign":126,"./crypto_stream":127,"./crypto_stream_chacha20":128,"./crypto_verify":129,"./helpers":130,"./memory":135,"./randombytes":136}],132:[function(require,module,exports){
+},{"./crypto_aead":114,"./crypto_auth":115,"./crypto_box":116,"./crypto_generichash":117,"./crypto_hash":118,"./crypto_hash_sha256":119,"./crypto_kdf":120,"./crypto_kx":121,"./crypto_onetimeauth":122,"./crypto_scalarmult":123,"./crypto_secretbox":124,"./crypto_secretstream":125,"./crypto_shorthash":126,"./crypto_sign":127,"./crypto_stream":128,"./crypto_stream_chacha20":129,"./crypto_verify":130,"./helpers":131,"./memory":136,"./randombytes":137}],133:[function(require,module,exports){
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
 
 var gf = function(init) {
@@ -23555,7 +23649,7 @@ module.exports = {
   I
 }
 
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { sodium_malloc } = require('../memory')
 const assert = require('nanoassert')
@@ -23685,7 +23779,7 @@ module.exports = {
   crypto_core_hchacha20_constbytes
 }
 
-},{"../memory":135,"nanoassert":78}],134:[function(require,module,exports){
+},{"../memory":136,"nanoassert":79}],135:[function(require,module,exports){
 /*
 * Port of Andrew Moon's Poly1305-donna-16. Public domain.
 * https://github.com/floodyberry/poly1305-donna
@@ -24047,7 +24141,7 @@ poly1305.prototype.update = function(m, mpos, bytes) {
 
 module.exports = poly1305
 
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 /* eslint-disable camelcase */
 
 function sodium_malloc (n) {
@@ -24079,7 +24173,7 @@ module.exports = {
   sodium_memzero
 }
 
-},{}],136:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 var assert = require('nanoassert')
 
 var randombytes = (function () {
@@ -24121,7 +24215,7 @@ module.exports.randombytes_buf = function (out) {
   randombytes(out, out.byteLength)
 }
 
-},{"nanoassert":78}],137:[function(require,module,exports){
+},{"nanoassert":79}],138:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -24252,35 +24346,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":34,"inherits":55,"readable-stream/lib/_stream_duplex.js":139,"readable-stream/lib/_stream_passthrough.js":140,"readable-stream/lib/_stream_readable.js":141,"readable-stream/lib/_stream_transform.js":142,"readable-stream/lib/_stream_writable.js":143,"readable-stream/lib/internal/streams/end-of-stream.js":147,"readable-stream/lib/internal/streams/pipeline.js":149}],138:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"dup":63}],139:[function(require,module,exports){
+},{"events":34,"inherits":56,"readable-stream/lib/_stream_duplex.js":140,"readable-stream/lib/_stream_passthrough.js":141,"readable-stream/lib/_stream_readable.js":142,"readable-stream/lib/_stream_transform.js":143,"readable-stream/lib/_stream_writable.js":144,"readable-stream/lib/internal/streams/end-of-stream.js":148,"readable-stream/lib/internal/streams/pipeline.js":150}],139:[function(require,module,exports){
 arguments[4][64][0].apply(exports,arguments)
-},{"./_stream_readable":141,"./_stream_writable":143,"_process":91,"dup":64,"inherits":55}],140:[function(require,module,exports){
+},{"dup":64}],140:[function(require,module,exports){
 arguments[4][65][0].apply(exports,arguments)
-},{"./_stream_transform":142,"dup":65,"inherits":55}],141:[function(require,module,exports){
+},{"./_stream_readable":142,"./_stream_writable":144,"_process":92,"dup":65,"inherits":56}],141:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
-},{"../errors":138,"./_stream_duplex":139,"./internal/streams/async_iterator":144,"./internal/streams/buffer_list":145,"./internal/streams/destroy":146,"./internal/streams/from":148,"./internal/streams/state":150,"./internal/streams/stream":151,"_process":91,"buffer":28,"dup":66,"events":34,"inherits":55,"string_decoder/":154,"util":27}],142:[function(require,module,exports){
+},{"./_stream_transform":143,"dup":66,"inherits":56}],142:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
-},{"../errors":138,"./_stream_duplex":139,"dup":67,"inherits":55}],143:[function(require,module,exports){
+},{"../errors":139,"./_stream_duplex":140,"./internal/streams/async_iterator":145,"./internal/streams/buffer_list":146,"./internal/streams/destroy":147,"./internal/streams/from":149,"./internal/streams/state":151,"./internal/streams/stream":152,"_process":92,"buffer":28,"dup":67,"events":34,"inherits":56,"string_decoder/":155,"util":27}],143:[function(require,module,exports){
 arguments[4][68][0].apply(exports,arguments)
-},{"../errors":138,"./_stream_duplex":139,"./internal/streams/destroy":146,"./internal/streams/state":150,"./internal/streams/stream":151,"_process":91,"buffer":28,"dup":68,"inherits":55,"util-deprecate":156}],144:[function(require,module,exports){
+},{"../errors":139,"./_stream_duplex":140,"dup":68,"inherits":56}],144:[function(require,module,exports){
 arguments[4][69][0].apply(exports,arguments)
-},{"./end-of-stream":147,"_process":91,"dup":69}],145:[function(require,module,exports){
+},{"../errors":139,"./_stream_duplex":140,"./internal/streams/destroy":147,"./internal/streams/state":151,"./internal/streams/stream":152,"_process":92,"buffer":28,"dup":69,"inherits":56,"util-deprecate":157}],145:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
-},{"buffer":28,"dup":70,"util":27}],146:[function(require,module,exports){
+},{"./end-of-stream":148,"_process":92,"dup":70}],146:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"_process":91,"dup":71}],147:[function(require,module,exports){
+},{"buffer":28,"dup":71,"util":27}],147:[function(require,module,exports){
 arguments[4][72][0].apply(exports,arguments)
-},{"../../../errors":138,"dup":72}],148:[function(require,module,exports){
+},{"_process":92,"dup":72}],148:[function(require,module,exports){
 arguments[4][73][0].apply(exports,arguments)
-},{"dup":73}],149:[function(require,module,exports){
+},{"../../../errors":139,"dup":73}],149:[function(require,module,exports){
 arguments[4][74][0].apply(exports,arguments)
-},{"../../../errors":138,"./end-of-stream":147,"dup":74}],150:[function(require,module,exports){
+},{"dup":74}],150:[function(require,module,exports){
 arguments[4][75][0].apply(exports,arguments)
-},{"../../../errors":138,"dup":75}],151:[function(require,module,exports){
+},{"../../../errors":139,"./end-of-stream":148,"dup":75}],151:[function(require,module,exports){
 arguments[4][76][0].apply(exports,arguments)
-},{"dup":76,"events":34}],152:[function(require,module,exports){
+},{"../../../errors":139,"dup":76}],152:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"dup":77,"events":34}],153:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const STREAM_DESTROYED = new Error('Stream was destroyed')
 const PREMATURE_CLOSE = new Error('Premature close')
@@ -25273,7 +25367,7 @@ module.exports = {
   PassThrough
 }
 
-},{"events":34,"fast-fifo":36,"queue-tick":93}],153:[function(require,module,exports){
+},{"events":34,"fast-fifo":36,"queue-tick":94}],154:[function(require,module,exports){
 /**
  * @module  string-to-arraybuffer
  */
@@ -25337,7 +25431,7 @@ function decode(uri) {
 	return abuf
 }
 
-},{"atob-lite":9,"is-base64":57}],154:[function(require,module,exports){
+},{"atob-lite":9,"is-base64":58}],155:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25634,7 +25728,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":98}],155:[function(require,module,exports){
+},{"safe-buffer":99}],156:[function(require,module,exports){
 module.exports = class TimerBrowser {
   constructor (ms, fn, ctx = null, interval = false) {
     this.ms = ms
@@ -25694,7 +25788,7 @@ function callInterval (self) {
   self.ontimeout.call(self.context)
 }
 
-},{}],156:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -25765,7 +25859,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],157:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
@@ -25800,7 +25894,7 @@ function wrappy (fn, cb) {
   }
 }
 
-},{}],158:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 module.exports = class MaxCache {
   constructor ({ maxSize, maxAge }) {
     this.maxSize = maxSize
@@ -25901,7 +25995,7 @@ class Iterator {
   }
 }
 
-},{}],159:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 var xsalsa20 = typeof WebAssembly !== "undefined" && require('./xsalsa20')()
 
 var SIGMA = new Uint8Array([101, 120, 112, 97, 110, 100, 32, 51, 50, 45, 98, 121, 116, 101, 32, 107])
@@ -26358,7 +26452,7 @@ function core_hsalsa20(o,p,k,c) {
   o[31] = x9 >>> 24 & 0xff
 }
 
-},{"./xsalsa20":160}],160:[function(require,module,exports){
+},{"./xsalsa20":161}],161:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };

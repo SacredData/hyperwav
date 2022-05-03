@@ -143,7 +143,7 @@ document.getElementById("launch").onclick = async function () {
   document.getElementById("demo").style.display = "block"
 }
 
-},{"../index":2,"@storyboard-fm/soapbox":29,"audiobuffer-to-wav":72,"microphone-stream":123}],2:[function(require,module,exports){
+},{"../index":2,"@storyboard-fm/soapbox":29,"audiobuffer-to-wav":72,"microphone-stream":124}],2:[function(require,module,exports){
 (function (Buffer){(function (){
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
@@ -161,7 +161,6 @@ const WAVE_FORMAT = {
   rate: 44100,
   type: 'raw',
 }
-// const INDEX_SIZE = 76800 // 800ms
 const INDEX_SIZE = 22050 // 100ms
 
 /**
@@ -254,9 +253,13 @@ class Wavecore extends Hypercore {
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
    * @arg {Object} [opts={}] - Options object
+   * @arg {Integer} [opts.channels=1] - Channel count for the audio source
    * @arg {Boolean} [opts.dcOffset=true] - Whether to apply DC offset to the
    * signal. (Recommended)
    * @arg {Boolean} [opts.normalize=false] - Normalize the audio
+   * @arg {Integer} [opts.rate=null] - Use custom sample rate
+   * @arg {String} [opts.sampling='float32'] - Use custom `audio-format`
+   * sampling string.
    * @arg {Boolean} [opts.store=false] - Store the audioBuffer in the class
    * instance
    * @arg {AudioBuffer|Boolean} [opts.mix=false] - An `AudioBuffer` to mix in to
@@ -270,15 +273,30 @@ class Wavecore extends Hypercore {
    */
   async audioBuffer(
     opts = {
+      channels: 1,
       dcOffset: true,
+      endianness: 'le',
       mix: false,
       normalize: false,
+      rate: null,
+      sampling: 'float32',
       start: 0,
       end: -1,
       store: false,
     }
   ) {
-    const { dcOffset, mix, normalize, start, end, store } = opts
+    const {
+      channels,
+      dcOffset,
+      endianness,
+      mix,
+      normalize,
+      rate,
+      sampling,
+      start,
+      end,
+      store,
+    } = opts
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
@@ -286,7 +304,11 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(Buffer.concat(bufs), 'mono float32 le 44100')
+          let audioBuffer = abf(
+            Buffer.concat(bufs),
+            `${channels !== 1 ? 'stereo' : 'mono'} ${sampling || 'float32'}
+            ${endianness || 'le'} ${rate || 44100}`
+          )
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
@@ -399,6 +421,7 @@ class Wavecore extends Hypercore {
       const concatCore = new Wavecore(ram)
       const prom = new Promise((resolve, reject) => {
         const concatWriter = concatCore.createWriteStream()
+        concatWriter.on('error', (err) => reject(err))
         concatWriter.on('close', () => {
           resolve(concatCore)
         })
@@ -520,12 +543,6 @@ class Wavecore extends Hypercore {
           ptHead.on('data', (d) => headCore.append(d))
           ptHead.on('close', () => {
             resolve([headCore, tailCore])
-            /*
-            const wavecores = [headCore, tailCore].map((c) =>
-              Wavecore.fromCore(c, this)
-            )
-            resolve(wavecores)
-            */
           })
           headStream.pipe(ptHead)
         } catch (err) {
@@ -562,7 +579,7 @@ module.exports = Wavecore
  */
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"audio-buffer-from":66,"audio-buffer-utils":67,"buffer":87,"hypercore":102,"multistream":139,"random-access-memory":172,"stream":216}],3:[function(require,module,exports){
+},{"audio-buffer-from":66,"audio-buffer-utils":67,"buffer":87,"hypercore":102,"multistream":140,"random-access-memory":173,"stream":217}],3:[function(require,module,exports){
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
@@ -885,7 +902,7 @@ module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, 
 },{"./arrayLikeToArray.js":3}],25:[function(require,module,exports){
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":175}],26:[function(require,module,exports){
+},{"regenerator-runtime":176}],26:[function(require,module,exports){
 const { Pull, Push, HEADERBYTES, KEYBYTES, ABYTES } = require('sodium-secretstream')
 const sodium = require('sodium-universal')
 const { Duplex } = require('streamx')
@@ -1391,7 +1408,7 @@ function sendKeepAlive () {
   this.write(empty)
 }
 
-},{"./lib/bridge":27,"./lib/handshake":28,"b4a":74,"sodium-secretstream":190,"sodium-universal":209,"streamx":231,"timeout-refresh":234}],27:[function(require,module,exports){
+},{"./lib/bridge":27,"./lib/handshake":28,"b4a":74,"sodium-secretstream":191,"sodium-universal":210,"streamx":232,"timeout-refresh":235}],27:[function(require,module,exports){
 const { Duplex } = require('streamx')
 
 class ReversePassThrough extends Duplex {
@@ -1465,7 +1482,7 @@ module.exports = class Bridge extends Duplex {
   }
 }
 
-},{"streamx":231}],28:[function(require,module,exports){
+},{"streamx":232}],28:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const curve = require('noise-curve-ed')
 const Noise = require('noise-handshake')
@@ -1545,7 +1562,7 @@ function writeUint24le (n, buf) {
   buf[2] = (n >>> 16) & 255
 }
 
-},{"b4a":74,"noise-curve-ed":156,"noise-handshake":160,"sodium-universal":209}],29:[function(require,module,exports){
+},{"b4a":74,"noise-curve-ed":157,"noise-handshake":161,"sodium-universal":210}],29:[function(require,module,exports){
 const AnalyserOptions = require('./lib/analyser/analyserOptions');
 
 const AudioAnalyser = require('./lib/analyser/analyser');
@@ -1658,7 +1675,7 @@ class AudioAnalyser extends AnalyserNode {
 
 module.exports = AudioAnalyser;
 
-},{"standardized-audio-context":215}],31:[function(require,module,exports){
+},{"standardized-audio-context":216}],31:[function(require,module,exports){
 const defaultProps = {
   audioSource: null,
   fftSize: 2048,
@@ -2155,7 +2172,7 @@ class AudioEnvironment {
 
 module.exports = AudioEnvironment;
 
-},{"./constraints":32,"./device":33,"./filter/compressor":35,"./filter/gain":37,"./filter/highpass":38,"./filter/limiter":39,"./filter/lowpass":40,"./signalFlow":44,"./userMedia":45,"detectrtc":93,"standardized-audio-context":215}],35:[function(require,module,exports){
+},{"./constraints":32,"./device":33,"./filter/compressor":35,"./filter/gain":37,"./filter/highpass":38,"./filter/limiter":39,"./filter/lowpass":40,"./signalFlow":44,"./userMedia":45,"detectrtc":93,"standardized-audio-context":216}],35:[function(require,module,exports){
 const {
   DynamicsCompressorNode
 } = require('standardized-audio-context');
@@ -2214,7 +2231,7 @@ class Compressor extends DynamicsCompressorNode {
 
 module.exports = Compressor;
 
-},{"standardized-audio-context":215}],36:[function(require,module,exports){
+},{"standardized-audio-context":216}],36:[function(require,module,exports){
 /**
  * Abstract ES6 class for filter-based AudioNodes.
  * @public
@@ -2330,7 +2347,7 @@ class Gain extends GainNode {
 
 module.exports = Gain;
 
-},{"standardized-audio-context":215}],38:[function(require,module,exports){
+},{"standardized-audio-context":216}],38:[function(require,module,exports){
 const {
   BiquadFilterNode
 } = require('standardized-audio-context');
@@ -2365,7 +2382,7 @@ class Highpass extends BiquadFilterNode {
 
 module.exports = Highpass;
 
-},{"standardized-audio-context":215}],39:[function(require,module,exports){
+},{"standardized-audio-context":216}],39:[function(require,module,exports){
 const Compressor = require('./compressor');
 /**
  * A Limiter AudioNode filter.
@@ -2446,7 +2463,7 @@ class Lowpass extends BiquadFilterNode {
 
 module.exports = Lowpass;
 
-},{"standardized-audio-context":215}],41:[function(require,module,exports){
+},{"standardized-audio-context":216}],41:[function(require,module,exports){
 const AudioAnalyzer = require('../analyser/analyser');
 /**
  * ES6 class abstraction of a Web Audio API audio input.
@@ -2574,7 +2591,7 @@ module.exports = {
   Playback
 };
 
-},{"standardized-audio-context":215,"uuid":46}],44:[function(require,module,exports){
+},{"standardized-audio-context":216,"uuid":46}],44:[function(require,module,exports){
 const Mic = require('./input/mic');
 /**
  * A class for designing an audio signal flow. Signal flows route an audio input
@@ -4105,7 +4122,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":162,"util/":64}],62:[function(require,module,exports){
+},{"object-assign":163,"util/":64}],62:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -4727,7 +4744,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":63,"_process":168,"inherits":62}],65:[function(require,module,exports){
+},{"./support/isBuffer":63,"_process":169,"inherits":62}],65:[function(require,module,exports){
 module.exports = function _atob(str) {
   return atob(str)
 }
@@ -4883,7 +4900,7 @@ function getFormat (arg) {
 	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
 }
 
-},{"audio-buffer":68,"audio-context":69,"audio-format":70,"is-audio-buffer":117,"is-plain-obj":122,"pcm-convert":165,"pick-by-alias":167,"string-to-arraybuffer":232}],67:[function(require,module,exports){
+},{"audio-buffer":68,"audio-context":69,"audio-format":70,"is-audio-buffer":118,"is-plain-obj":123,"pcm-convert":166,"pick-by-alias":168,"string-to-arraybuffer":233}],67:[function(require,module,exports){
 /**
  * @module  audio-buffer-utils
  */
@@ -5585,7 +5602,7 @@ function data (buffer, data) {
 	return data;
 }
 
-},{"audio-buffer":68,"audio-buffer-from":66,"audio-context":69,"clamp":89,"is-audio-buffer":117,"is-browser":119,"is-buffer":120}],68:[function(require,module,exports){
+},{"audio-buffer":68,"audio-buffer-from":66,"audio-context":69,"clamp":89,"is-audio-buffer":118,"is-browser":120,"is-buffer":121}],68:[function(require,module,exports){
 /**
  * AudioBuffer class
  *
@@ -5923,7 +5940,7 @@ function getType (arg) {
 	if (arg instanceof Uint32Array) return 'uint32'
 }
 
-},{"is-audio-buffer":117,"is-buffer":71,"is-plain-obj":122,"os":164,"pick-by-alias":167,"sample-rate":178}],71:[function(require,module,exports){
+},{"is-audio-buffer":118,"is-buffer":71,"is-plain-obj":123,"os":165,"pick-by-alias":168,"sample-rate":179}],71:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -7523,7 +7540,7 @@ Blake2b.prototype.setPartialHash = function (ph) {
 
 function noop () {}
 
-},{"./blake2b":82,"b4a":74,"nanoassert":155}],84:[function(require,module,exports){
+},{"./blake2b":82,"b4a":74,"nanoassert":156}],84:[function(require,module,exports){
 var assert = require('nanoassert')
 var b2wasm = require('blake2b-wasm')
 
@@ -7848,7 +7865,7 @@ b2wasm.ready(function (err) {
   }
 })
 
-},{"blake2b-wasm":83,"nanoassert":155}],85:[function(require,module,exports){
+},{"blake2b-wasm":83,"nanoassert":156}],85:[function(require,module,exports){
 
 },{}],86:[function(require,module,exports){
 (function (Buffer){(function (){
@@ -9707,7 +9724,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":80,"buffer":87,"ieee754":115}],88:[function(require,module,exports){
+},{"base64-js":80,"buffer":87,"ieee754":116}],88:[function(require,module,exports){
 const assert = require('nanoassert')
 
 module.exports = Chacha20
@@ -9844,7 +9861,7 @@ function QR (obj, a, b, c, d) {
   obj[b] = rotl(obj[b], 7)
 }
 
-},{"nanoassert":155}],89:[function(require,module,exports){
+},{"nanoassert":156}],89:[function(require,module,exports){
 module.exports = clamp
 
 function clamp(value, min, max) {
@@ -11561,7 +11578,7 @@ function crc32 (d) {
 })();
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":168}],94:[function(require,module,exports){
+},{"_process":169}],94:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12545,7 +12562,7 @@ module.exports = function hmac (out, data, key) {
 module.exports.BYTES = HASHLEN
 module.exports.KEYBYTES = BLOCKLEN
 
-},{"nanoassert":100,"sodium-universal/crypto_generichash":194,"sodium-universal/memory":213}],100:[function(require,module,exports){
+},{"nanoassert":100,"sodium-universal/crypto_generichash":195,"sodium-universal/memory":214}],100:[function(require,module,exports){
 assert.notEqual = notEqual
 assert.notOk = notOk
 assert.equal = equal
@@ -12695,7 +12712,7 @@ exports.namespace = function (name, count) {
   return list
 }
 
-},{"b4a":74,"compact-encoding":91,"sodium-universal":209}],102:[function(require,module,exports){
+},{"b4a":74,"compact-encoding":91,"sodium-universal":210}],102:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const raf = require('random-access-file')
 const isOptions = require('is-options')
@@ -12713,6 +12730,7 @@ const Replicator = require('./lib/replicator')
 const Core = require('./lib/core')
 const BlockEncryption = require('./lib/block-encryption')
 const { ReadStream, WriteStream } = require('./lib/streams')
+const { BAD_ARGUMENT, SESSION_CLOSED, SESSION_NOT_WRITABLE, SNAPSHOT_NOT_AVAILABLE } = require('./lib/errors')
 
 const promises = Symbol.for('hypercore.promises')
 const inspect = Symbol.for('nodejs.util.inspect.custom')
@@ -12737,7 +12755,7 @@ module.exports = class Hypercore extends EventEmitter {
     if (!opts) opts = {}
 
     if (!opts.crypto && key && key.byteLength !== 32) {
-      throw new Error('Hypercore key should be 32 bytes')
+      throw BAD_ARGUMENT('Hypercore key should be 32 bytes')
     }
 
     if (!storage) storage = opts.storage
@@ -12762,8 +12780,9 @@ module.exports = class Hypercore extends EventEmitter {
     this.writable = false
     this.opened = false
     this.closed = false
+    this.snapshotted = !!opts.snapshot
     this.sessions = opts._sessions || [this]
-    this.sign = opts.sign || null
+    this.auth = opts.auth || null
     this.autoClose = !!opts.autoClose
 
     this.closing = null
@@ -12771,7 +12790,8 @@ module.exports = class Hypercore extends EventEmitter {
     this.opening.catch(noop)
 
     this._preappend = preappend.bind(this)
-    this._snapshot = opts.snapshot || null
+    this._snapshot = null
+    this._findingPeers = 0
   }
 
   [inspect] (depth, opts) {
@@ -12780,15 +12800,40 @@ module.exports = class Hypercore extends EventEmitter {
       while (indent.length < opts.indentationLvl) indent += ' '
     }
 
+    let peers = ''
+    const min = Math.min(this.peers.length, 5)
+
+    for (let i = 0; i < min; i++) {
+      const peer = this.peers[i]
+
+      peers += indent + '    Peer(\n'
+      peers += indent + '      remotePublicKey: ' + opts.stylize(toHex(peer.remotePublicKey), 'string') + '\n'
+      peers += indent + '      remoteLength: ' + opts.stylize(peer.remoteLength, 'number') + '\n'
+      peers += indent + '      remoteFork: ' + opts.stylize(peer.remoteFork, 'number') + '\n'
+      peers += indent + '      remoteCanUpgrade: ' + opts.stylize(peer.remoteCanUpgrade, 'boolean') + '\n'
+      peers += indent + '    )' + '\n'
+    }
+
+    if (this.peers.length > 5) {
+      peers += indent + '  ... and ' + (this.peers.length - 5) + ' more\n'
+    }
+
+    if (peers) peers = '[\n' + peers + indent + '  ]'
+    else peers = '[ ' + opts.stylize(0, 'number') + ' ]'
+
     return this.constructor.name + '(\n' +
-      indent + '  key: ' + opts.stylize((toHex(this.key)), 'string') + '\n' +
+      indent + '  key: ' + opts.stylize(toHex(this.key), 'string') + '\n' +
       indent + '  discoveryKey: ' + opts.stylize(toHex(this.discoveryKey), 'string') + '\n' +
       indent + '  opened: ' + opts.stylize(this.opened, 'boolean') + '\n' +
+      indent + '  closed: ' + opts.stylize(this.closed, 'boolean') + '\n' +
+      indent + '  snapshotted: ' + opts.stylize(this.snapshotted, 'boolean') + '\n' +
       indent + '  writable: ' + opts.stylize(this.writable, 'boolean') + '\n' +
-      indent + '  sessions: ' + opts.stylize(this.sessions.length, 'number') + '\n' +
-      indent + '  peers: [ ' + opts.stylize(this.peers.length, 'number') + ' ]\n' +
       indent + '  length: ' + opts.stylize(this.length, 'number') + '\n' +
       indent + '  byteLength: ' + opts.stylize(this.byteLength, 'number') + '\n' +
+      indent + '  fork: ' + opts.stylize(this.fork, 'number') + '\n' +
+      indent + '  sessions: [ ' + opts.stylize(this.sessions.length, 'number') + ' ]\n' +
+      indent + '  activeRequests: [ ' + opts.stylize(this.activeRequests.length, 'number') + ' ]\n' +
+      indent + '  peers: ' + peers + '\n' +
       indent + ')'
   }
 
@@ -12811,7 +12856,7 @@ module.exports = class Hypercore extends EventEmitter {
       noiseStream = new NoiseSecretStream(isInitiator, null, opts)
       outerStream = noiseStream.rawStream
     }
-    if (!noiseStream) throw new Error('Invalid stream')
+    if (!noiseStream) throw BAD_ARGUMENT('Invalid stream')
 
     if (!noiseStream.userData) {
       const protocol = new Protomux(noiseStream)
@@ -12821,7 +12866,7 @@ module.exports = class Hypercore extends EventEmitter {
       }
       if (opts.keepAlive !== false) {
         noiseStream.setKeepAlive(5000)
-        noiseStream.setTimeout(7000)
+        noiseStream.setTimeout(10000)
       }
       noiseStream.userData = protocol
     }
@@ -12841,15 +12886,15 @@ module.exports = class Hypercore extends EventEmitter {
     }
   }
 
-  snapshot () {
-    return this.session({ snapshot: { length: this.length, byteLength: this.byteLength, fork: this.fork } })
+  snapshot (opts) {
+    return this.session({ ...opts, snapshot: true })
   }
 
   session (opts = {}) {
     if (this.closing) {
       // This makes the closing logic alot easier. If this turns out to be a problem
       // in practive, open an issue and we'll try to make a solution for it.
-      throw new Error('Cannot make sessions on a closing core')
+      throw SESSION_CLOSED('Cannot make sessions on a closing core')
     }
 
     const Clz = opts.class || Hypercore
@@ -12866,14 +12911,17 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   _passCapabilities (o) {
-    if (!this.sign) this.sign = o.sign
+    if (!this.auth) this.auth = o.auth
+
     this.crypto = o.crypto
     this.key = o.key
     this.core = o.core
     this.replicator = o.replicator
     this.encryption = o.encryption
-    this.writable = !!this.sign
+    this.writable = !!(this.auth && this.auth.sign)
     this.autoClose = o.autoClose
+
+    if (this.snapshotted && this.core && !this._snapshot) this._updateSnapshot()
   }
 
   async _openFromExisting (from, opts) {
@@ -12882,6 +12930,7 @@ module.exports = class Hypercore extends EventEmitter {
     this._passCapabilities(from)
     this.sessions = from.sessions
     this.storage = from.storage
+    this.replicator.findingPeers += this._findingPeers
 
     this.sessions.push(this)
   }
@@ -12902,10 +12951,12 @@ module.exports = class Hypercore extends EventEmitter {
     // but we only do this to validate the keypair to help catch bugs so yolo
     if (this.key && keyPair) keyPair.publicKey = this.key
 
-    if (opts.sign) {
-      this.sign = opts.sign
+    if (opts.auth) {
+      this.auth = opts.auth
+    } else if (opts.sign) {
+      this.auth = Core.createAuth(this.crypto, keyPair, opts)
     } else if (keyPair && keyPair.secretKey) {
-      this.sign = Core.createSigner(this.crypto, keyPair)
+      this.auth = Core.createAuth(this.crypto, keyPair)
     }
 
     if (isFirst) {
@@ -12917,8 +12968,8 @@ module.exports = class Hypercore extends EventEmitter {
       }
     }
 
-    if (!this.sign) this.sign = this.core.defaultSign
-    this.writable = !!this.sign
+    if (!this.auth) this.auth = this.core.defaultAuth
+    this.writable = !!this.auth.sign
 
     if (opts.valueEncoding) {
       this.valueEncoding = c.from(codecs(opts.valueEncoding))
@@ -12947,6 +12998,7 @@ module.exports = class Hypercore extends EventEmitter {
       keyPair,
       crypto: this.crypto,
       legacy: opts.legacy,
+      auth: opts.auth,
       onupdate: this._oncoreupdate.bind(this)
     })
 
@@ -12966,9 +13018,24 @@ module.exports = class Hypercore extends EventEmitter {
       onupload: this._onupload.bind(this)
     })
 
+    this.replicator.findingPeers += this._findingPeers
+
     if (!this.encryption && opts.encryptionKey) {
       this.encryption = new BlockEncryption(opts.encryptionKey, this.key)
     }
+  }
+
+  _updateSnapshot () {
+    const prev = this._snapshot
+    const next = this._snapshot = {
+      length: this.core.tree.length,
+      byteLength: this.core.tree.byteLength,
+      fork: this.core.tree.fork,
+      compatLength: this.core.tree.length
+    }
+
+    if (!prev) return true
+    return prev.length !== next.length || prev.fork !== next.fork
   }
 
   close () {
@@ -12996,8 +13063,11 @@ module.exports = class Hypercore extends EventEmitter {
     for (const ext of gc) ext.destroy()
 
     if (this.replicator !== null) {
+      this.replicator.findingPeers -= this._findingPeers
       this.replicator.clearRequests(this.activeRequests)
     }
+
+    this._findingPeers = 0
 
     if (this.sessions.length) {
       // if this is the last session and we are auto closing, trigger that first to enforce error handling
@@ -13016,6 +13086,13 @@ module.exports = class Hypercore extends EventEmitter {
     const protocolStream = Hypercore.createProtocolStream(isInitiator, opts)
     const noiseStream = protocolStream.noiseStream
     const protocol = noiseStream.userData
+
+    // If the user wants to, we can make this replication run in a session
+    // that way the core wont close "under them" during replication
+    if (opts.session) {
+      const s = this.session()
+      protocolStream.on('close', () => s.close().catch(noop))
+    }
 
     if (this.opened) {
       this.replicator.attachTo(protocol)
@@ -13043,9 +13120,7 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   get fork () {
-    return this._snapshot
-      ? this._snapshot.fork
-      : (this.core === null ? 0 : this.core.tree.fork)
+    return this.core === null ? 0 : this.core.tree.fork
   }
 
   get peers () {
@@ -13074,21 +13149,33 @@ module.exports = class Hypercore extends EventEmitter {
 
   _oncoreupdate (status, bitfield, value, from) {
     if (status !== 0) {
+      const truncated = (status & 0b10) !== 0
+      const appended = (status & 0b01) !== 0
+
+      if (truncated) {
+        this.replicator.ontruncate(bitfield.start)
+      }
+
       for (let i = 0; i < this.sessions.length; i++) {
-        if ((status & 0b10) !== 0) {
-          if (this.cache) this.cache.clear()
-          this.sessions[i].emit('truncate', bitfield.start, this.core.tree.fork)
+        const s = this.sessions[i]
+
+        if (truncated) {
+          if (s.cache) s.cache.clear()
+          s.emit('truncate', bitfield.start, this.core.tree.fork)
+          // If snapshotted, make sure to update our compat so we can fail gets
+          if (s._snapshot && bitfield.start < s._snapshot.compatLength) s._snapshot.compatLength = bitfield.start
         }
-        if ((status & 0b01) !== 0) {
-          this.sessions[i].emit('append')
+
+        if (appended) {
+          s.emit('append')
         }
       }
 
-      this.replicator.localUpgrade()
+      this.replicator.onupgrade()
     }
 
     if (bitfield) {
-      this.replicator.broadcastRange(bitfield.start, bitfield.length, bitfield.drop)
+      this.replicator.onhave(bitfield.start, bitfield.length, bitfield.drop)
     }
 
     if (value) {
@@ -13127,16 +13214,39 @@ module.exports = class Hypercore extends EventEmitter {
     return null
   }
 
+  findingPeers () {
+    this._findingPeers++
+    if (this.replicator !== null && !this.closing) this.replicator.findingPeers++
+
+    let once = true
+
+    return () => {
+      if (this.closing || !once) return
+      once = false
+      this._findingPeers--
+      if (this.replicator !== null && --this.replicator.findingPeers === 0) {
+        this.replicator.updateAll()
+      }
+    }
+  }
+
   async update (opts) {
     if (this.opened === false) await this.opening
+    if (this.closing !== null) return false
 
     // TODO: add an option where a writer can bootstrap it's state from the network also
-    if (this.writable || this.closing !== null) return false
+    if (this.writable) {
+      if (!this.snapshotted) return false
+      return this._updateSnapshot()
+    }
 
     const activeRequests = (opts && opts.activeRequests) || this.activeRequests
     const req = this.replicator.addUpgrade(activeRequests)
 
-    return req.promise
+    if (!this.snapshotted) return req.promise
+    if (!(await req.promise)) return false
+
+    return this._updateSnapshot()
   }
 
   async seek (bytes, opts) {
@@ -13147,7 +13257,7 @@ module.exports = class Hypercore extends EventEmitter {
     const offset = await s.update()
     if (offset) return offset
 
-    if (this.closing !== null) throw new Error('Session is closed')
+    if (this.closing !== null) throw SESSION_CLOSED()
 
     const activeRequests = (opts && opts.activeRequests) || this.activeRequests
     const req = this.replicator.addSeek(activeRequests, s)
@@ -13163,7 +13273,8 @@ module.exports = class Hypercore extends EventEmitter {
 
   async get (index, opts) {
     if (this.opened === false) await this.opening
-    if (this.closing !== null) throw new Error('Session is closed')
+    if (this.closing !== null) throw SESSION_CLOSED()
+    if (this._snapshot !== null && index >= this._snapshot.compatLength) throw SNAPSHOT_NOT_AVAILABLE()
 
     const c = this.cache && this.cache.get(index)
     if (c) return c
@@ -13238,10 +13349,10 @@ module.exports = class Hypercore extends EventEmitter {
 
   async truncate (newLength = 0, fork = -1) {
     if (this.opened === false) await this.opening
-    if (this.writable === false) throw new Error('Core is not writable')
+    if (this.writable === false) throw SESSION_NOT_WRITABLE()
 
     if (fork === -1) fork = this.core.tree.fork + 1
-    await this.core.truncate(newLength, fork, this.sign)
+    await this.core.truncate(newLength, fork, this.auth)
 
     // TODO: Should propagate from an event triggered by the oplog
     this.replicator.updateAll()
@@ -13249,7 +13360,7 @@ module.exports = class Hypercore extends EventEmitter {
 
   async append (blocks) {
     if (this.opened === false) await this.opening
-    if (this.writable === false) throw new Error('Core is not writable')
+    if (this.writable === false) throw SESSION_NOT_WRITABLE()
 
     blocks = Array.isArray(blocks) ? blocks : [blocks]
 
@@ -13263,7 +13374,7 @@ module.exports = class Hypercore extends EventEmitter {
       }
     }
 
-    return await this.core.append(buffers, this.sign, { preappend })
+    return await this.core.append(buffers, this.auth, { preappend })
   }
 
   async treeHash (length) {
@@ -13376,7 +13487,7 @@ function preappend (blocks) {
   }
 }
 
-},{"./lib/block-encryption":104,"./lib/core":107,"./lib/replicator":113,"./lib/streams":114,"@hyperswarm/secret-stream":26,"b4a":74,"codecs":90,"compact-encoding":91,"events":94,"hypercore-crypto":101,"is-options":121,"protomux":169,"random-access-file":171,"xache":237}],103:[function(require,module,exports){
+},{"./lib/block-encryption":104,"./lib/core":107,"./lib/errors":108,"./lib/replicator":114,"./lib/streams":115,"@hyperswarm/secret-stream":26,"b4a":74,"codecs":90,"compact-encoding":91,"events":94,"hypercore-crypto":101,"is-options":122,"protomux":170,"random-access-file":172,"xache":238}],103:[function(require,module,exports){
 // TODO: needs massive improvements obvs
 
 const BigSparseArray = require('big-sparse-array')
@@ -13606,7 +13717,7 @@ module.exports = class BlockEncryption {
   }
 }
 
-},{"b4a":74,"compact-encoding":91,"sodium-universal":209}],105:[function(require,module,exports){
+},{"b4a":74,"compact-encoding":91,"sodium-universal":210}],105:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = class BlockStore {
@@ -13702,7 +13813,7 @@ exports.treeSignableLegacy = function (hash, length, fork) {
   return state.buffer
 }
 
-},{"b4a":74,"compact-encoding":91,"hypercore-crypto":101,"sodium-universal":209}],107:[function(require,module,exports){
+},{"b4a":74,"compact-encoding":91,"hypercore-crypto":101,"sodium-universal":210}],107:[function(require,module,exports){
 const hypercoreCrypto = require('hypercore-crypto')
 const b4a = require('b4a')
 const Oplog = require('./oplog')
@@ -13710,10 +13821,11 @@ const Mutex = require('./mutex')
 const MerkleTree = require('./merkle-tree')
 const BlockStore = require('./block-store')
 const Bitfield = require('./bitfield')
+const { BAD_ARGUMENT, STORAGE_EMPTY, STORAGE_CONFLICT, INVALID_SIGNATURE } = require('./errors')
 const m = require('./messages')
 
 module.exports = class Core {
-  constructor (header, crypto, oplog, tree, blocks, bitfield, sign, legacy, onupdate) {
+  constructor (header, crypto, oplog, tree, blocks, bitfield, auth, legacy, onupdate) {
     this.onupdate = onupdate
     this.header = header
     this.crypto = crypto
@@ -13721,7 +13833,7 @@ module.exports = class Core {
     this.tree = tree
     this.blocks = blocks
     this.bitfield = bitfield
-    this.defaultSign = sign
+    this.defaultAuth = auth
     this.truncating = 0
 
     this._maxOplogSize = 65536
@@ -13756,10 +13868,23 @@ module.exports = class Core {
     }
   }
 
-  // TODO: we should prob have a general "auth" abstraction instead somewhere?
-  static createSigner (crypto, { publicKey, secretKey }) {
-    if (!crypto.validateKeyPair({ publicKey, secretKey })) throw new Error('Invalid key pair')
-    return signable => crypto.sign(signable, secretKey)
+  static createAuth (crypto, { publicKey, secretKey }, opts = {}) {
+    if (secretKey && !crypto.validateKeyPair({ publicKey, secretKey })) {
+      throw BAD_ARGUMENT('Invalid key pair')
+    }
+
+    const sign = opts.sign
+      ? opts.sign
+      : secretKey
+        ? (signable) => crypto.sign(signable, secretKey)
+        : undefined
+
+    return {
+      sign,
+      verify (signable, signature) {
+        return crypto.verify(signable, signature, publicKey)
+      }
+    }
   }
 
   static async resume (oplogFile, treeFile, bitfieldFile, dataFile, opts) {
@@ -13782,7 +13907,7 @@ module.exports = class Core {
 
     if (!header || overwrite) {
       if (!createIfMissing) {
-        throw new Error('No hypercore is stored here')
+        throw STORAGE_EMPTY('No Hypercore is stored here')
       }
 
       header = {
@@ -13804,7 +13929,7 @@ module.exports = class Core {
     }
 
     if (opts.keyPair && !b4a.equals(header.signer.publicKey, opts.keyPair.publicKey)) {
-      throw new Error('Another hypercore is stored here')
+      throw STORAGE_CONFLICT('Another Hypercore is stored here')
     }
 
     const tree = await MerkleTree.open(treeFile, { crypto, ...header.tree })
@@ -13821,7 +13946,7 @@ module.exports = class Core {
       await bitfield.clear()
     }
 
-    const sign = opts.sign || (header.signer.secretKey ? this.createSigner(crypto, header.signer) : null)
+    const auth = opts.auth || this.createAuth(crypto, header.signer)
 
     for (const e of entries) {
       if (e.userData) {
@@ -13852,7 +13977,7 @@ module.exports = class Core {
       }
     }
 
-    return new this(header, crypto, oplog, tree, blocks, bitfield, sign, !!opts.legacy, opts.onupdate || noop)
+    return new this(header, crypto, oplog, tree, blocks, bitfield, auth, !!opts.legacy, opts.onupdate || noop)
   }
 
   _shouldFlush () {
@@ -13917,13 +14042,13 @@ module.exports = class Core {
     }
   }
 
-  async truncate (length, fork, sign = this.defaultSign) {
+  async truncate (length, fork, auth = this.defaultAuth) {
     this.truncating++
     await this._mutex.lock()
 
     try {
       const batch = await this.tree.truncate(length, fork)
-      batch.signature = await sign(batch.signable())
+      batch.signature = await auth.sign(batch.signable())
       await this._truncate(batch, null)
     } finally {
       this.truncating--
@@ -13931,7 +14056,7 @@ module.exports = class Core {
     }
   }
 
-  async append (values, sign = this.defaultSign, hooks = {}) {
+  async append (values, auth = this.defaultAuth, hooks = {}) {
     await this._mutex.lock()
 
     try {
@@ -13943,7 +14068,7 @@ module.exports = class Core {
       for (const val of values) batch.append(val)
 
       const hash = batch.hash()
-      batch.signature = await sign(this._legacy ? batch.signableLegacy(hash) : batch.signable(hash))
+      batch.signature = await auth.sign(this._legacy ? batch.signableLegacy(hash) : batch.signable(hash))
 
       const entry = {
         userData: null,
@@ -13975,16 +14100,16 @@ module.exports = class Core {
     }
   }
 
-  _signed (batch, hash) {
+  _signed (batch, hash, auth = this.defaultAuth) {
     const signable = this._legacy ? batch.signableLegacy(hash) : batch.signable(hash)
-    return this.crypto.verify(signable, batch.signature, this.header.signer.publicKey)
+    return auth.verify(signable, batch.signature)
   }
 
   async _verifyExclusive ({ batch, bitfield, value, from }) {
     // TODO: move this to tree.js
     const hash = batch.hash()
     if (!batch.signature || !this._signed(batch, hash)) {
-      throw new Error('Remote signature does not match')
+      throw INVALID_SIGNATURE('Proof contains an invalid signature')
     }
 
     await this._mutex.lock()
@@ -14189,7 +14314,51 @@ function updateUserData (list, key, value) {
 
 function noop () {}
 
-},{"./bitfield":103,"./block-store":105,"./merkle-tree":108,"./messages":109,"./mutex":110,"./oplog":111,"b4a":74,"hypercore-crypto":101}],108:[function(require,module,exports){
+},{"./bitfield":103,"./block-store":105,"./errors":108,"./merkle-tree":109,"./messages":110,"./mutex":111,"./oplog":112,"b4a":74,"hypercore-crypto":101}],108:[function(require,module,exports){
+module.exports = class HypercoreError extends Error {
+  constructor (msg, code) {
+    super(msg)
+    this.code = code
+  }
+
+  static BAD_ARGUMENT (msg) {
+    return new HypercoreError(msg, 'BAD_ARGUMENT')
+  }
+
+  static STORAGE_EMPTY (msg) {
+    return new HypercoreError(msg, 'STORAGE_EMPTY')
+  }
+
+  static STORAGE_CONFLICT (msg) {
+    return new HypercoreError(msg, 'STORAGE_CONFLICT')
+  }
+
+  static INVALID_SIGNATURE (msg) {
+    return new HypercoreError(msg, 'INVALID_SIGNATURE')
+  }
+
+  static INVALID_CAPABILITY (msg) {
+    return new HypercoreError(msg, 'INVALID_CAPABILITY')
+  }
+
+  static SNAPSHOT_NOT_AVAILABLE (msg = 'Snapshot is not available') {
+    return new HypercoreError(msg, 'SNAPSHOT_NOT_AVAILABLE')
+  }
+
+  static REQUEST_CANCELLED (msg = 'Request was cancelled') {
+    return new HypercoreError(msg, 'REQUEST_CANCELLED')
+  }
+
+  static SESSION_NOT_WRITABLE (msg = 'Session is not writable') {
+    return new HypercoreError(msg, 'SESSION_NOT_WRITABLE')
+  }
+
+  static SESSION_CLOSED (msg = 'Session is closed') {
+    return new HypercoreError(msg, 'SESSION_CLOSED')
+  }
+}
+
+},{}],109:[function(require,module,exports){
 const flat = require('flat-tree')
 const crypto = require('hypercore-crypto')
 const c = require('compact-encoding')
@@ -14420,6 +14589,7 @@ class ReorgBatch extends MerkleTreeBatch {
 
     let diff = null
     const ite = flat.iterator(this.diff.index)
+    const startingDiff = this.diff
 
     while ((ite.index & 1) !== 0) {
       const left = n.get(ite.leftChild())
@@ -14435,6 +14605,7 @@ class ReorgBatch extends MerkleTreeBatch {
 
     if ((this.diff.index & 1) === 0) return true
     if (diff === null) return false
+    if (startingDiff !== this.diff) return false
 
     return this._updateDiffRoot(diff)
   }
@@ -14446,10 +14617,6 @@ class ReorgBatch extends MerkleTreeBatch {
     const start = spans[0] / 2
     const end = Math.min(this.treeLength, spans[1] / 2 + 1)
     const len = end - start
-
-    if (this.diff !== null && len >= this.want.end - this.want.start) {
-      return false
-    }
 
     this.ancestors = start
     this.diff = diff
@@ -15362,7 +15529,7 @@ async function settleProof (p) {
   }
 }
 
-},{"./caps":106,"b4a":74,"compact-encoding":91,"flat-tree":97,"hypercore-crypto":101}],109:[function(require,module,exports){
+},{"./caps":106,"b4a":74,"compact-encoding":91,"flat-tree":97,"hypercore-crypto":101}],110:[function(require,module,exports){
 const c = require('compact-encoding')
 const b4a = require('b4a')
 
@@ -16013,7 +16180,7 @@ oplog.header = {
   }
 }
 
-},{"b4a":74,"compact-encoding":91}],110:[function(require,module,exports){
+},{"b4a":74,"compact-encoding":91}],111:[function(require,module,exports){
 module.exports = class Mutex {
   constructor () {
     this.locked = false
@@ -16054,7 +16221,7 @@ module.exports = class Mutex {
   }
 }
 
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const crc32 = require('crc32-universal')
@@ -16280,7 +16447,7 @@ module.exports = class Oplog {
   }
 }
 
-},{"b4a":74,"compact-encoding":91,"crc32-universal":92}],112:[function(require,module,exports){
+},{"b4a":74,"compact-encoding":91,"crc32-universal":92}],113:[function(require,module,exports){
 const BigSparseArray = require('big-sparse-array')
 
 module.exports = class RemoteBitfield {
@@ -16306,11 +16473,12 @@ module.exports = class RemoteBitfield {
   }
 }
 
-},{"big-sparse-array":81}],113:[function(require,module,exports){
+},{"big-sparse-array":81}],114:[function(require,module,exports){
 const b4a = require('b4a')
 const safetyCatch = require('safety-catch')
 const RandomIterator = require('random-array-iterator')
 const RemoteBitfield = require('./remote-bitfield')
+const { REQUEST_CANCELLED, INVALID_CAPABILITY, SNAPSHOT_NOT_AVAILABLE } = require('./errors')
 const m = require('./messages')
 const caps = require('./caps')
 
@@ -16328,6 +16496,7 @@ class Attachable {
       session,
       sindex: 0,
       rindex: 0,
+      snapshot: true,
       resolve: null,
       reject: null,
       promise: null
@@ -16343,11 +16512,11 @@ class Attachable {
     return r
   }
 
-  detach (r) {
+  detach (r, err = null) {
     if (r.context !== this) return false
 
     this._detach(r)
-    this._cancel(r)
+    this._cancel(r, err)
     this.gc()
 
     return true
@@ -16357,8 +16526,8 @@ class Attachable {
     const rh = this.refs.pop()
     const sh = r.session.pop()
 
-    if (r.rindex < this.refs.length - 1) this.refs[rh.rindex = r.rindex] = rh
-    if (r.sindex < r.session.length - 1) r.session[sh.sindex = r.sindex] = sh
+    if (r.rindex < this.refs.length) this.refs[rh.rindex = r.rindex] = rh
+    if (r.sindex < r.session.length) r.session[sh.sindex = r.sindex] = sh
 
     r.context = null
 
@@ -16369,8 +16538,8 @@ class Attachable {
     if (this.refs.length === 0) this._unref()
   }
 
-  _cancel (r) {
-    r.reject(new Error('Request cancelled'))
+  _cancel (r, err) {
+    r.reject(err || REQUEST_CANCELLED())
   }
 
   _unref () {
@@ -16393,10 +16562,9 @@ class Attachable {
 }
 
 class BlockRequest extends Attachable {
-  constructor (tracker, fork, index) {
+  constructor (tracker, index) {
     super()
 
-    this.fork = fork
     this.index = index
     this.inflight = []
     this.queued = false
@@ -16405,15 +16573,14 @@ class BlockRequest extends Attachable {
 
   _unref () {
     if (this.inflight.length > 0) return
-    this.tracker.remove(this.fork, this.index)
+    this.tracker.remove(this.index)
   }
 }
 
 class RangeRequest extends Attachable {
-  constructor (ranges, fork, start, end, linear, blocks) {
+  constructor (ranges, start, end, linear, blocks) {
     super()
 
-    this.fork = fork
     this.start = start
     this.end = end
     this.linear = linear
@@ -16458,10 +16625,9 @@ class UpgradeRequest extends Attachable {
 }
 
 class SeekRequest extends Attachable {
-  constructor (seeks, fork, seeker) {
+  constructor (seeks, seeker) {
     super()
 
-    this.fork = fork
     this.seeker = seeker
     this.inflight = []
     this.seeks = seeks
@@ -16509,87 +16675,40 @@ class InflightTracker {
 }
 
 class BlockTracker {
-  constructor (core) {
-    this._core = core
-    this._fork = core.tree.fork
-
-    this._indexed = new Map()
-    this._additional = []
+  constructor () {
+    this._map = new Map()
   }
 
-  * [Symbol.iterator] () {
-    yield * this._indexed.values()
-    yield * this._additional
+  [Symbol.iterator] () {
+    return this._map.values()
   }
 
   isEmpty () {
-    return this._indexed.size === 0 && this._additional.length === 0
+    return this._map.size === 0
   }
 
-  has (fork, index) {
-    return this.get(fork, index) !== null
+  has (index) {
+    return this._map.has(index)
   }
 
-  get (fork, index) {
-    if (this._fork === fork) return this._indexed.get(index) || null
-    for (const b of this._additional) {
-      if (b.index === index && b.fork === fork) return b
-    }
-    return null
+  get (index) {
+    return this._map.get(index) || null
   }
 
-  add (fork, index) {
-    // TODO: just rely on someone calling .update(fork) instead
-    if (this._fork !== this._core.tree.fork) this.update(this._core.tree.fork)
-
-    let b = this.get(fork, index)
+  add (index) {
+    let b = this._map.get(index)
     if (b) return b
 
-    b = new BlockRequest(this, fork, index)
-
-    if (fork === this._fork) this._indexed.set(index, b)
-    else this._additional.push(b)
+    b = new BlockRequest(this, index)
+    this._map.set(index, b)
 
     return b
   }
 
-  remove (fork, index) {
-    if (this._fork === fork) {
-      const b = this._indexed.get(index)
-      this._indexed.delete(index)
-      return b || null
-    }
-
-    for (let i = 0; i < this._additional.length; i++) {
-      const b = this._additional[i]
-      if (b.index !== index || b.fork !== fork) continue
-      if (i === this._additional.length - 1) this._additional.pop()
-      else this._additional[i] = this._additional.pop()
-      return b
-    }
-
-    return null
-  }
-
-  update (fork) {
-    if (this._fork === fork) return
-
-    const additional = this._additional
-    this._additional = []
-
-    for (const b of this._indexed.values()) {
-      // TODO: this is only needed cause we hot patch the fork ids below, revert that later
-      if (b.fork !== this._fork) additional.push(b)
-      else this._additional.push(b)
-    }
-    this._indexed.clear()
-
-    for (const b of additional) {
-      if (b.fork === fork) this._indexed.set(b.index, b)
-      else this._additional.push(b)
-    }
-
-    this._fork = fork
+  remove (index) {
+    const b = this.get(index)
+    this._map.delete(index)
+    return b
   }
 }
 
@@ -16599,6 +16718,7 @@ class Peer {
     this.replicator = replicator
     this.stream = protomux.stream
     this.protomux = protomux
+    this.remotePublicKey = this.stream.remotePublicKey
 
     this.channel = channel
     this.channel.userData = this
@@ -16696,7 +16816,7 @@ class Peer {
     const expected = caps.replicate(this.stream.isInitiator === false, this.replicator.key, this.stream.handshakeHash)
 
     if (b4a.equals(capability, expected) !== true) { // TODO: change this to a rejection instead, less leakage
-      throw new Error('Remote sent an invalid capability')
+      throw INVALID_CAPABILITY('Remote sent an invalid replication capability')
     }
 
     if (this.remoteOpened === true) return
@@ -16734,7 +16854,7 @@ class Peer {
 
   async onsync ({ fork, length, remoteLength, canUpgrade, uploading, downloading }) {
     const lengthChanged = length !== this.remoteLength
-    const sameFork = (fork === this.core.tree.fork)
+    const sameFork = fork === this.core.tree.fork
 
     this.remoteSynced = true
     this.remoteFork = fork
@@ -16777,12 +16897,11 @@ class Peer {
   }
 
   async _updateCanUpgradeAndSync () {
-    const len = this.core.tree.length
-    const fork = this.core.tree.fork
+    const { length, fork } = this.core.tree
 
     const canUpgrade = await this._canUpgrade(this.remoteLength, this.remoteFork)
 
-    if (this.syncsProcessing > 0 || len !== this.core.tree.length || fork !== this.core.tree.fork) {
+    if (this.syncsProcessing > 0 || length !== this.core.tree.length || fork !== this.core.tree.fork) {
       return
     }
     if (canUpgrade === this.canUpgrade) {
@@ -16941,19 +17060,19 @@ class Peer {
     this.replicator.updatePeer(this)
   }
 
-  _makeRequest (fork, needsUpgrade) {
+  _makeRequest (needsUpgrade) {
     if (needsUpgrade === true && this.replicator._shouldUpgrade(this) === false) {
       return null
     }
 
-    if (needsUpgrade === false && fork === this.core.tree.fork && this.replicator._autoUpgrade(this) === true) {
+    if (needsUpgrade === false && this.replicator._autoUpgrade(this) === true) {
       needsUpgrade = true
     }
 
     return {
       peer: this,
       id: 0,
-      fork,
+      fork: this.remoteFork,
       block: null,
       hash: null,
       seek: null,
@@ -16964,7 +17083,7 @@ class Peer {
   }
 
   _requestUpgrade (u) {
-    const req = this._makeRequest(u.fork, true)
+    const req = this._makeRequest(true)
     if (req === null) return false
 
     this._send(req)
@@ -16973,8 +17092,12 @@ class Peer {
   }
 
   _requestSeek (s) {
-    if (s.seeker.start >= this.core.tree.length) {
-      const req = this._makeRequest(s.fork, true)
+    const { length, fork } = this.core.tree
+
+    if (fork !== this.remoteFork) return false
+
+    if (s.seeker.start >= length) {
+      const req = this._makeRequest(true)
 
       // We need an upgrade for the seek, if non can be provided, skip
       if (req === null) return false
@@ -16998,14 +17121,14 @@ class Peer {
       if (this.core.bitfield.get(index) === true) continue
 
       // Check if this block is currently inflight - if so pick another
-      const b = this.replicator._blocks.get(s.fork, index)
+      const b = this.replicator._blocks.get(index)
       if (b !== null && b.inflight.length > 0) continue
 
       // Block is not inflight, but we only want the hash, check if that is inflight
-      const h = this.replicator._hashes.add(s.fork, index)
+      const h = this.replicator._hashes.add(index)
       if (h.inflight.length > 0) continue
 
-      const req = this._makeRequest(s.fork, false)
+      const req = this._makeRequest(false)
 
       req.hash = { index: 2 * index, nodes: 0 }
       req.seek = { bytes: s.seeker.bytes }
@@ -17026,9 +17149,11 @@ class Peer {
   }
 
   _requestBlock (b) {
-    if (this.remoteBitfield.get(b.index) === false) return false
+    const { length, fork } = this.core.tree
 
-    const req = this._makeRequest(b.fork, b.index >= this.core.tree.length)
+    if (this.remoteBitfield.get(b.index) === false || fork !== this.remoteFork) return false
+
+    const req = this._makeRequest(b.index >= length)
     if (req === null) return false
 
     req.block = { index: b.index, nodes: 0 }
@@ -17040,8 +17165,10 @@ class Peer {
   }
 
   _requestRange (r) {
+    const { length, fork } = this.core.tree
+
     const end = Math.min(r.end === -1 ? this.remoteLength : r.end, this.remoteLength)
-    if (end < r.start || r.fork !== this.remoteFork) return false
+    if (end < r.start || fork !== this.remoteFork) return false
 
     const len = end - r.start
     const off = r.start + (r.linear ? 0 : Math.floor(Math.random() * len))
@@ -17059,10 +17186,10 @@ class Peer {
       if (this.remoteBitfield.get(index) === false) continue
       if (this.core.bitfield.get(index) === true) continue
 
-      const b = this.replicator._blocks.add(r.fork, index)
+      const b = this.replicator._blocks.add(index)
       if (b.inflight.length > 0) continue
 
-      const req = this._makeRequest(r.fork, index >= this.core.tree.length)
+      const req = this._makeRequest(index >= length)
 
       // If the request cannot be satisfied, dealloc the block request if no one is subscribed to it
       if (req === null) {
@@ -17082,7 +17209,7 @@ class Peer {
   }
 
   _requestForkProof (f) {
-    const req = this._makeRequest(f.fork, false)
+    const req = this._makeRequest(false)
 
     req.upgrade = { start: 0, length: this.remoteLength }
 
@@ -17105,7 +17232,7 @@ class Peer {
 
       if (this.remoteBitfield.get(index) === false) continue
 
-      const req = this._makeRequest(f.fork, false)
+      const req = this._makeRequest(false)
 
       req.hash = { index: 2 * index, nodes: f.batch.want.nodes }
 
@@ -17130,8 +17257,12 @@ class Peer {
     }
 
     try {
-      if (req.block !== null && req.fork === fork) req.block.nodes = await this.core.tree.missingNodes(2 * req.block.index)
-      if (req.hash !== null && req.fork === fork) req.hash.nodes = await this.core.tree.missingNodes(req.hash.index)
+      if (req.block !== null && req.fork === fork) {
+        req.block.nodes = await this.core.tree.missingNodes(2 * req.block.index)
+      }
+      if (req.hash !== null && req.fork === fork) {
+        req.hash.nodes = await this.core.tree.missingNodes(req.hash.index)
+      }
     } catch (err) {
       this.stream.destroy(err)
       return
@@ -17151,10 +17282,11 @@ module.exports = class Replicator {
     this.onpeerupdate = onpeerupdate
     this.onupload = onupload
     this.peers = []
+    this.findingPeers = 0 // updateable from the outside
 
     this._inflight = new InflightTracker()
-    this._blocks = new BlockTracker(core)
-    this._hashes = new BlockTracker(core)
+    this._blocks = new BlockTracker()
+    this._hashes = new BlockTracker()
 
     this._queued = []
 
@@ -17163,6 +17295,7 @@ module.exports = class Replicator {
     this._reorgs = []
     this._ranges = []
 
+    this._hadPeers = false
     this._ifAvailable = 0
     this._updatesPending = 0
     this._applyingReorg = false
@@ -17176,14 +17309,34 @@ module.exports = class Replicator {
     for (const peer of this.peers) peer.protomux.uncork()
   }
 
-  broadcastRange (start, length, drop = false) {
+  // Called externally when a range of new blocks has been processed/removed
+  onhave (start, length, drop = false) {
     for (const peer of this.peers) peer.broadcastRange(start, length, drop)
   }
 
-  localUpgrade () {
+  // Called externally when a truncation upgrade has been processed
+  ontruncate (newLength) {
+    const notify = []
+
+    for (const blk of this._blocks) {
+      if (blk.index < newLength) continue
+      notify.push(blk)
+    }
+
+    for (const blk of notify) {
+      for (const r of blk.refs) {
+        if (r.snapshot === false) continue
+        blk.detach(r, SNAPSHOT_NOT_AVAILABLE())
+      }
+    }
+  }
+
+  // Called externally when a upgrade has been processed
+  onupgrade () {
     for (const peer of this.peers) peer.signalUpgrade()
     if (this._blocks.isEmpty() === false) this._resolveBlocksLocally()
     if (this._upgrade !== null) this._resolveUpgradeRequest(null)
+    if (this._ranges.length !== 0 || this._seeks.length !== 0) this._updateNonPrimary()
   }
 
   addUpgrade (session) {
@@ -17208,8 +17361,8 @@ module.exports = class Replicator {
     return ref
   }
 
-  addBlock (session, index, fork = this.core.tree.fork) {
-    const b = this._blocks.add(fork, index)
+  addBlock (session, index) {
+    const b = this._blocks.add(index)
     const ref = b.attach(session)
 
     this._queueBlock(b)
@@ -17219,7 +17372,7 @@ module.exports = class Replicator {
   }
 
   addSeek (session, seeker) {
-    const s = new SeekRequest(this._seeks, this.core.tree.fork, seeker)
+    const s = new SeekRequest(this._seeks, seeker)
     const ref = s.attach(session)
 
     this._seeks.push(s)
@@ -17234,7 +17387,7 @@ module.exports = class Replicator {
       if (length === -1 || start + length > blocks.length) length = blocks.length - start
     }
 
-    const r = new RangeRequest(this._ranges, this.core.tree.fork, start, length === -1 ? -1 : start + length, linear, blocks)
+    const r = new RangeRequest(this._ranges, start, length === -1 ? -1 : start + length, linear, blocks)
     const ref = r.attach(session)
 
     this._ranges.push(r)
@@ -17247,13 +17400,13 @@ module.exports = class Replicator {
   }
 
   cancel (ref) {
-    ref.context.detach(ref)
+    ref.context.detach(ref, null)
   }
 
   clearRequests (session) {
     while (session.length > 0) {
       const ref = session[session.length - 1]
-      ref.context.detach(ref)
+      ref.context.detach(ref, null)
     }
 
     this.updateAll()
@@ -17268,6 +17421,7 @@ module.exports = class Replicator {
   // Do this when we have more tests.
   _checkUpgradeIfAvailable () {
     if (this._ifAvailable > 0 || this._upgrade === null || this._upgrade.refs.length === 0) return
+    if (this._hadPeers === false && this.findingPeers > 0) return
 
     // check if a peer can upgrade us
 
@@ -17352,10 +17506,11 @@ module.exports = class Replicator {
   }
 
   _autoUpgrade (peer) {
-    return this._upgrade !== null && this._shouldUpgrade(peer)
+    return this._upgrade !== null && peer.remoteFork === this.core.tree.fork && this._shouldUpgrade(peer)
   }
 
   _addPeer (peer) {
+    this._hadPeers = true
     this.peers.push(peer)
     this.updatePeer(peer)
     this.onpeerupdate(true, peer)
@@ -17404,12 +17559,12 @@ module.exports = class Replicator {
     // Currently the block tracker does not support deletes during iteration, so we make
     // sure to clear them afterwards.
     for (const b of clear) {
-      this._blocks.remove(b.fork, b.index)
+      this._blocks.remove(b.index)
     }
   }
 
-  _resolveBlockRequest (tracker, fork, index, value, req) {
-    const b = tracker.remove(fork, index)
+  _resolveBlockRequest (tracker, index, value, req) {
+    const b = tracker.remove(index)
     if (b === null) return false
 
     removeInflight(b.inflight, req)
@@ -17433,11 +17588,13 @@ module.exports = class Replicator {
   }
 
   _clearInflightBlock (tracker, req) {
-    const b = tracker.get(req.fork, req.block.index)
+    const isBlock = tracker === this._blocks
+    const index = isBlock === true ? req.block.index : req.hash.index / 2
+    const b = tracker.get(index)
 
     if (b === null || removeInflight(b.inflight, req) === false) return
 
-    if (b.refs.length > 0 && tracker === this._blocks) {
+    if (b.refs.length > 0 && isBlock === true) {
       this._queueBlock(b)
       return
     }
@@ -17554,11 +17711,11 @@ module.exports = class Replicator {
 
   _ondata (peer, req, data) {
     if (data.block !== null) {
-      this._resolveBlockRequest(this._blocks, data.fork, data.block.index, data.block.value, req)
+      this._resolveBlockRequest(this._blocks, data.block.index, data.block.value, req)
     }
 
     if (data.hash !== null && (data.hash.index & 1) === 0) {
-      this._resolveBlockRequest(this._hashes, data.fork, data.hash.index / 2, null, req)
+      this._resolveBlockRequest(this._hashes, data.hash.index / 2, null, req)
     }
 
     if (this._upgrade !== null) {
@@ -17589,14 +17746,14 @@ module.exports = class Replicator {
 
     if (f.batch) {
       await f.batch.update(data)
-    } else {
+    } else if (data.upgrade) {
       f.batch = await this.core.tree.reorg(data)
 
       // Remove "older" reorgs in progress as we just verified this one.
       this._clearOldReorgs(f.fork)
     }
 
-    if (f.batch.finished) {
+    if (f.batch && f.batch.finished) {
       if (this._addUpgradeMaybe() !== null) {
         await this._applyReorg(f)
       }
@@ -17605,6 +17762,7 @@ module.exports = class Replicator {
     this.updateAll()
   }
 
+  // Never throws, allowed to run in the background
   async _applyReorg (f) {
     // TODO: more optimal here to check if potentially a better reorg
     // is available, ie higher fork, and request that one first.
@@ -17633,13 +17791,10 @@ module.exports = class Replicator {
 
     // TODO: all the remaining is a tmp workaround until we have a flag/way for ANY_FORK
     for (const r of this._ranges) {
-      r.fork = this.core.tree.fork
       r.start = r.userStart
       r.end = r.userEnd
     }
-    for (const s of this._seeks) s.fork = this.core.tree.fork
-    for (const b of this._blocks) b.fork = this.core.tree.fork
-    this._blocks.update(this.core.tree.fork)
+
     this.updateAll()
   }
 
@@ -17689,6 +17844,10 @@ module.exports = class Replicator {
   }
 
   _updatePeerNonPrimary (peer) {
+    if (peer.inflight >= peer.maxInflight) {
+      return false
+    }
+
     const ranges = new RandomIterator(this._ranges)
 
     for (const r of ranges) {
@@ -17880,7 +18039,7 @@ function onwireextension (m, c) {
   return c.userData.onextension(m)
 }
 
-},{"./caps":106,"./messages":109,"./remote-bitfield":112,"b4a":74,"random-array-iterator":174,"safety-catch":177}],114:[function(require,module,exports){
+},{"./caps":106,"./errors":108,"./messages":110,"./remote-bitfield":113,"b4a":74,"random-array-iterator":175,"safety-catch":178}],115:[function(require,module,exports){
 const { Writable, Readable } = require('streamx')
 
 class ReadStream extends Readable {
@@ -17938,7 +18097,7 @@ class WriteStream extends Writable {
 
 exports.WriteStream = WriteStream
 
-},{"streamx":231}],115:[function(require,module,exports){
+},{"streamx":232}],116:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -18025,7 +18184,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],116:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -18054,7 +18213,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 /**
  * @module  is-audio-buffer
  */
@@ -18071,7 +18230,7 @@ module.exports = function isAudioBuffer (buffer) {
 	&& typeof buffer.duration === 'number'
 };
 
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 (function(root) {
   'use strict';
 
@@ -18113,9 +18272,9 @@ module.exports = function isAudioBuffer (buffer) {
   }
 })(this);
 
-},{}],119:[function(require,module,exports){
-module.exports = true;
 },{}],120:[function(require,module,exports){
+module.exports = true;
+},{}],121:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -18128,14 +18287,14 @@ module.exports = function isBuffer (obj) {
     typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
 
-},{}],121:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = function isOptions (opts) {
   return typeof opts === 'object' && opts && !b4a.isBuffer(opts)
 }
 
-},{"b4a":74}],122:[function(require,module,exports){
+},{"b4a":74}],123:[function(require,module,exports){
 'use strict';
 var toString = Object.prototype.toString;
 
@@ -18144,7 +18303,7 @@ module.exports = function (x) {
 	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
 };
 
-},{}],123:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -18326,7 +18485,7 @@ var MicrophoneStream = /** @class */ (function (_super) {
 }(readable_stream_1.Readable));
 exports.default = MicrophoneStream;
 
-},{"buffer-from":86,"readable-stream":138}],124:[function(require,module,exports){
+},{"buffer-from":86,"readable-stream":139}],125:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -18455,7 +18614,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],125:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18597,7 +18756,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":127,"./_stream_writable":129,"_process":168,"inherits":116}],126:[function(require,module,exports){
+},{"./_stream_readable":128,"./_stream_writable":130,"_process":169,"inherits":117}],127:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18637,7 +18796,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":128,"inherits":116}],127:[function(require,module,exports){
+},{"./_stream_transform":129,"inherits":117}],128:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -19764,7 +19923,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":124,"./_stream_duplex":125,"./internal/streams/async_iterator":130,"./internal/streams/buffer_list":131,"./internal/streams/destroy":132,"./internal/streams/from":134,"./internal/streams/state":136,"./internal/streams/stream":137,"_process":168,"buffer":87,"events":94,"inherits":116,"string_decoder/":233,"util":85}],128:[function(require,module,exports){
+},{"../errors":125,"./_stream_duplex":126,"./internal/streams/async_iterator":131,"./internal/streams/buffer_list":132,"./internal/streams/destroy":133,"./internal/streams/from":135,"./internal/streams/state":137,"./internal/streams/stream":138,"_process":169,"buffer":87,"events":94,"inherits":117,"string_decoder/":234,"util":85}],129:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19966,7 +20125,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":124,"./_stream_duplex":125,"inherits":116}],129:[function(require,module,exports){
+},{"../errors":125,"./_stream_duplex":126,"inherits":117}],130:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20666,7 +20825,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":124,"./_stream_duplex":125,"./internal/streams/destroy":132,"./internal/streams/state":136,"./internal/streams/stream":137,"_process":168,"buffer":87,"inherits":116,"util-deprecate":235}],130:[function(require,module,exports){
+},{"../errors":125,"./_stream_duplex":126,"./internal/streams/destroy":133,"./internal/streams/state":137,"./internal/streams/stream":138,"_process":169,"buffer":87,"inherits":117,"util-deprecate":236}],131:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -20876,7 +21035,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":133,"_process":168}],131:[function(require,module,exports){
+},{"./end-of-stream":134,"_process":169}],132:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -21087,7 +21246,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":87,"util":85}],132:[function(require,module,exports){
+},{"buffer":87,"util":85}],133:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -21195,7 +21354,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":168}],133:[function(require,module,exports){
+},{"_process":169}],134:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -21300,12 +21459,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":124}],134:[function(require,module,exports){
+},{"../../../errors":125}],135:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -21403,7 +21562,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":124,"./end-of-stream":133}],136:[function(require,module,exports){
+},{"../../../errors":125,"./end-of-stream":134}],137:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -21431,10 +21590,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":124}],137:[function(require,module,exports){
+},{"../../../errors":125}],138:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":94}],138:[function(require,module,exports){
+},{"events":94}],139:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -21445,7 +21604,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":125,"./lib/_stream_passthrough.js":126,"./lib/_stream_readable.js":127,"./lib/_stream_transform.js":128,"./lib/_stream_writable.js":129,"./lib/internal/streams/end-of-stream.js":133,"./lib/internal/streams/pipeline.js":135}],139:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":126,"./lib/_stream_passthrough.js":127,"./lib/_stream_readable.js":128,"./lib/_stream_transform.js":129,"./lib/_stream_writable.js":130,"./lib/internal/streams/end-of-stream.js":134,"./lib/internal/streams/pipeline.js":136}],140:[function(require,module,exports){
 /*! multistream. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 const stream = require('readable-stream')
 const once = require('once')
@@ -21613,37 +21772,37 @@ function destroy (stream, err, cb) {
   }
 }
 
-},{"once":163,"readable-stream":154}],140:[function(require,module,exports){
-arguments[4][124][0].apply(exports,arguments)
-},{"dup":124}],141:[function(require,module,exports){
+},{"once":164,"readable-stream":155}],141:[function(require,module,exports){
 arguments[4][125][0].apply(exports,arguments)
-},{"./_stream_readable":143,"./_stream_writable":145,"_process":168,"dup":125,"inherits":116}],142:[function(require,module,exports){
+},{"dup":125}],142:[function(require,module,exports){
 arguments[4][126][0].apply(exports,arguments)
-},{"./_stream_transform":144,"dup":126,"inherits":116}],143:[function(require,module,exports){
+},{"./_stream_readable":144,"./_stream_writable":146,"_process":169,"dup":126,"inherits":117}],143:[function(require,module,exports){
 arguments[4][127][0].apply(exports,arguments)
-},{"../errors":140,"./_stream_duplex":141,"./internal/streams/async_iterator":146,"./internal/streams/buffer_list":147,"./internal/streams/destroy":148,"./internal/streams/from":150,"./internal/streams/state":152,"./internal/streams/stream":153,"_process":168,"buffer":87,"dup":127,"events":94,"inherits":116,"string_decoder/":233,"util":85}],144:[function(require,module,exports){
+},{"./_stream_transform":145,"dup":127,"inherits":117}],144:[function(require,module,exports){
 arguments[4][128][0].apply(exports,arguments)
-},{"../errors":140,"./_stream_duplex":141,"dup":128,"inherits":116}],145:[function(require,module,exports){
+},{"../errors":141,"./_stream_duplex":142,"./internal/streams/async_iterator":147,"./internal/streams/buffer_list":148,"./internal/streams/destroy":149,"./internal/streams/from":151,"./internal/streams/state":153,"./internal/streams/stream":154,"_process":169,"buffer":87,"dup":128,"events":94,"inherits":117,"string_decoder/":234,"util":85}],145:[function(require,module,exports){
 arguments[4][129][0].apply(exports,arguments)
-},{"../errors":140,"./_stream_duplex":141,"./internal/streams/destroy":148,"./internal/streams/state":152,"./internal/streams/stream":153,"_process":168,"buffer":87,"dup":129,"inherits":116,"util-deprecate":235}],146:[function(require,module,exports){
+},{"../errors":141,"./_stream_duplex":142,"dup":129,"inherits":117}],146:[function(require,module,exports){
 arguments[4][130][0].apply(exports,arguments)
-},{"./end-of-stream":149,"_process":168,"dup":130}],147:[function(require,module,exports){
+},{"../errors":141,"./_stream_duplex":142,"./internal/streams/destroy":149,"./internal/streams/state":153,"./internal/streams/stream":154,"_process":169,"buffer":87,"dup":130,"inherits":117,"util-deprecate":236}],147:[function(require,module,exports){
 arguments[4][131][0].apply(exports,arguments)
-},{"buffer":87,"dup":131,"util":85}],148:[function(require,module,exports){
+},{"./end-of-stream":150,"_process":169,"dup":131}],148:[function(require,module,exports){
 arguments[4][132][0].apply(exports,arguments)
-},{"_process":168,"dup":132}],149:[function(require,module,exports){
+},{"buffer":87,"dup":132,"util":85}],149:[function(require,module,exports){
 arguments[4][133][0].apply(exports,arguments)
-},{"../../../errors":140,"dup":133}],150:[function(require,module,exports){
+},{"_process":169,"dup":133}],150:[function(require,module,exports){
 arguments[4][134][0].apply(exports,arguments)
-},{"dup":134}],151:[function(require,module,exports){
+},{"../../../errors":141,"dup":134}],151:[function(require,module,exports){
 arguments[4][135][0].apply(exports,arguments)
-},{"../../../errors":140,"./end-of-stream":149,"dup":135}],152:[function(require,module,exports){
+},{"dup":135}],152:[function(require,module,exports){
 arguments[4][136][0].apply(exports,arguments)
-},{"../../../errors":140,"dup":136}],153:[function(require,module,exports){
+},{"../../../errors":141,"./end-of-stream":150,"dup":136}],153:[function(require,module,exports){
 arguments[4][137][0].apply(exports,arguments)
-},{"dup":137,"events":94}],154:[function(require,module,exports){
+},{"../../../errors":141,"dup":137}],154:[function(require,module,exports){
 arguments[4][138][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":141,"./lib/_stream_passthrough.js":142,"./lib/_stream_readable.js":143,"./lib/_stream_transform.js":144,"./lib/_stream_writable.js":145,"./lib/internal/streams/end-of-stream.js":149,"./lib/internal/streams/pipeline.js":151,"dup":138}],155:[function(require,module,exports){
+},{"dup":138,"events":94}],155:[function(require,module,exports){
+arguments[4][139][0].apply(exports,arguments)
+},{"./lib/_stream_duplex.js":142,"./lib/_stream_passthrough.js":143,"./lib/_stream_readable.js":144,"./lib/_stream_transform.js":145,"./lib/_stream_writable.js":146,"./lib/internal/streams/end-of-stream.js":150,"./lib/internal/streams/pipeline.js":152,"dup":139}],156:[function(require,module,exports){
 module.exports = assert
 
 class AssertionError extends Error {}
@@ -21663,7 +21822,7 @@ function assert (t, m) {
   }
 }
 
-},{}],156:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
@@ -21726,7 +21885,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":74,"nanoassert":155,"sodium-universal":209}],157:[function(require,module,exports){
+},{"b4a":74,"nanoassert":156,"sodium-universal":210}],158:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -21819,7 +21978,7 @@ function decryptWithAD (key, counter, additionalData, ciphertext) {
   return plaintext
 }
 
-},{"b4a":74,"sodium-universal":209}],158:[function(require,module,exports){
+},{"b4a":74,"sodium-universal":210}],159:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_kx_SEEDBYTES, crypto_kx_keypair, crypto_kx_seed_keypair } = require('sodium-universal/crypto_kx')
 const { crypto_scalarmult_BYTES, crypto_scalarmult_SCALARBYTES, crypto_scalarmult, crypto_scalarmult_base } = require('sodium-universal/crypto_scalarmult')
@@ -21885,7 +22044,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":74,"nanoassert":155,"sodium-universal/crypto_kx":198,"sodium-universal/crypto_scalarmult":200}],159:[function(require,module,exports){
+},{"b4a":74,"nanoassert":156,"sodium-universal/crypto_kx":199,"sodium-universal/crypto_scalarmult":201}],160:[function(require,module,exports){
 const assert = require('nanoassert')
 const hmacBlake2b = require('hmac-blake2b')
 const b4a = require('b4a')
@@ -21934,7 +22093,7 @@ function hmacDigest (key, input) {
   return hmac
 }
 
-},{"b4a":74,"hmac-blake2b":99,"nanoassert":155}],160:[function(require,module,exports){
+},{"b4a":74,"hmac-blake2b":99,"nanoassert":156}],161:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -22195,7 +22354,7 @@ function keyPattern (pattern, initiator) {
   }
 }
 
-},{"./hkdf":159,"./symmetric-state":161,"b4a":74,"nanoassert":155}],161:[function(require,module,exports){
+},{"./hkdf":160,"./symmetric-state":162,"b4a":74,"nanoassert":156}],162:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
 const b4a = require('b4a')
@@ -22274,7 +22433,7 @@ function accumulateDigest (digest, input) {
   sodium.crypto_generichash(digest, toHash)
 }
 
-},{"./cipher":157,"./dh":158,"./hkdf":159,"b4a":74,"nanoassert":155,"sodium-universal":209}],162:[function(require,module,exports){
+},{"./cipher":158,"./dh":159,"./hkdf":160,"b4a":74,"nanoassert":156,"sodium-universal":210}],163:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -22366,7 +22525,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],163:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 var wrappy = require('wrappy')
 module.exports = wrappy(once)
 module.exports.strict = wrappy(onceStrict)
@@ -22410,7 +22569,7 @@ function onceStrict (fn) {
   return f
 }
 
-},{"wrappy":236}],164:[function(require,module,exports){
+},{"wrappy":237}],165:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -22461,7 +22620,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],165:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 /**
  * @module pcm-convert
  */
@@ -22748,9 +22907,9 @@ function normalize (obj) {
 	return obj
 }
 
-},{"assert":61,"audio-format":70,"is-audio-buffer":117,"is-buffer":166,"object-assign":162}],166:[function(require,module,exports){
+},{"assert":61,"audio-format":70,"is-audio-buffer":118,"is-buffer":167,"object-assign":163}],167:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
-},{"dup":71}],167:[function(require,module,exports){
+},{"dup":71}],168:[function(require,module,exports){
 'use strict'
 
 
@@ -22829,7 +22988,7 @@ function toList(arg) {
 	return arg
 }
 
-},{}],168:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -23015,7 +23174,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],169:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 const b4a = require('b4a')
 const c = require('compact-encoding')
 const queueTick = require('queue-tick')
@@ -23660,15 +23819,15 @@ function encodingLength (enc, val) {
   return state.end
 }
 
-},{"b4a":74,"compact-encoding":91,"queue-tick":170,"safety-catch":177}],170:[function(require,module,exports){
+},{"b4a":74,"compact-encoding":91,"queue-tick":171,"safety-catch":178}],171:[function(require,module,exports){
 module.exports = typeof queueMicrotask === 'function' ? queueMicrotask : (fn) => Promise.resolve().then(fn)
 
-},{}],171:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 module.exports = function () {
   throw new Error('random-access-file is not supported in the browser')
 }
 
-},{}],172:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 const RandomAccess = require('random-access-storage')
 const isOptions = require('is-options')
 const inherits = require('inherits')
@@ -23804,7 +23963,7 @@ RAM.prototype.toBuffer = function () {
   return buf
 }
 
-},{"b4a":74,"inherits":116,"is-options":121,"random-access-storage":173}],173:[function(require,module,exports){
+},{"b4a":74,"inherits":117,"is-options":122,"random-access-storage":174}],174:[function(require,module,exports){
 var events = require('events')
 var inherits = require('inherits')
 var queueTick = require('queue-tick')
@@ -24076,7 +24235,7 @@ function nextTick (req, err, val) {
   queueTick(() => req.callback(err, val))
 }
 
-},{"events":94,"inherits":116,"queue-tick":170}],174:[function(require,module,exports){
+},{"events":94,"inherits":117,"queue-tick":171}],175:[function(require,module,exports){
 module.exports = class RandomArrayIterator {
   constructor (values) {
     this.values = values
@@ -24124,7 +24283,7 @@ module.exports = class RandomArrayIterator {
   }
 }
 
-},{}],175:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -24880,7 +25039,7 @@ try {
   }
 }
 
-},{}],176:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -24947,7 +25106,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":87}],177:[function(require,module,exports){
+},{"buffer":87}],178:[function(require,module,exports){
 module.exports = safetyCatch
 
 function isActuallyUncaught (err) {
@@ -24971,7 +25130,7 @@ function safetyCatch (err) {
   }
 }
 
-},{}],178:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 module.exports={
 "8000": 8000,
 "11025": 11025,
@@ -24987,7 +25146,7 @@ module.exports={
 "384000": 384000
 }
 
-},{}],179:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 const js = require('./sha256.js')
 const wasm = require('sha256-wasm')
 
@@ -25015,7 +25174,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha256.js":180,"sha256-wasm":181}],180:[function(require,module,exports){
+},{"./sha256.js":181,"sha256-wasm":182}],181:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -25252,7 +25411,7 @@ function bswap (a) {
   return r | l
 }
 
-},{"b4a":74,"nanoassert":155}],181:[function(require,module,exports){
+},{"b4a":74,"nanoassert":156}],182:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -25423,7 +25582,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha256.js":182,"b4a":74,"nanoassert":155}],182:[function(require,module,exports){
+},{"./sha256.js":183,"b4a":74,"nanoassert":156}],183:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -25459,7 +25618,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 const js = require('./sha512.js')
 const wasm = require('sha512-wasm')
 
@@ -25487,7 +25646,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha512.js":184,"sha512-wasm":185}],184:[function(require,module,exports){
+},{"./sha512.js":185,"sha512-wasm":186}],185:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -26047,7 +26206,7 @@ HMAC.prototype.digest = function (enc, offset = 0) {
 
 Sha512.HMAC = HMAC
 
-},{"b4a":74,"nanoassert":155}],185:[function(require,module,exports){
+},{"b4a":74,"nanoassert":156}],186:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -26220,7 +26379,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha512.js":186,"b4a":74,"nanoassert":155}],186:[function(require,module,exports){
+},{"./sha512.js":187,"b4a":74,"nanoassert":156}],187:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -26256,7 +26415,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],187:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 module.exports = fallback
 
 function _add (a, b) {
@@ -26378,7 +26537,7 @@ function fallback (out, m, key) { // modified from https://github.com/jedisct1/s
   out[7] = (h.h >> 24) & 0xff
 }
 
-},{}],188:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 var assert = require('nanoassert')
 var wasm = typeof WebAssembly !== 'undefined' && require('./siphash24')()
 var fallback = require('./fallback')
@@ -26419,7 +26578,7 @@ function realloc (size) {
   memory = new Uint8Array(wasm.memory.buffer)
 }
 
-},{"./fallback":187,"./siphash24":189,"nanoassert":155}],189:[function(require,module,exports){
+},{"./fallback":188,"./siphash24":190,"nanoassert":156}],190:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -26455,7 +26614,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],190:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -26526,7 +26685,7 @@ module.exports = {
   Pull
 }
 
-},{"b4a":74,"sodium-universal":209}],191:[function(require,module,exports){
+},{"b4a":74,"sodium-universal":210}],192:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_stream_chacha20_ietf, crypto_stream_chacha20_ietf_xor_ic } = require('./crypto_stream_chacha20')
 const { crypto_verify_16 } = require('./crypto_verify')
@@ -26688,7 +26847,7 @@ module.exports = {
   crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX
 }
 
-},{"./crypto_stream_chacha20":206,"./crypto_verify":207,"./internal/poly1305":212,"nanoassert":155}],192:[function(require,module,exports){
+},{"./crypto_stream_chacha20":207,"./crypto_verify":208,"./internal/poly1305":213,"nanoassert":156}],193:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_verify_32 } = require('./crypto_verify')
 const Sha512 = require('sha512-universal')
@@ -26725,7 +26884,7 @@ module.exports = {
   crypto_auth_verify
 }
 
-},{"./crypto_verify":207,"nanoassert":155,"sha512-universal":183}],193:[function(require,module,exports){
+},{"./crypto_verify":208,"nanoassert":156,"sha512-universal":184}],194:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_hash_sha512 } = require('./crypto_hash')
 const { crypto_scalarmult, crypto_scalarmult_base } = require('./crypto_scalarmult')
@@ -26927,7 +27086,7 @@ function cleanup (arr) {
   for (let i = 0; i < arr.length; i++) arr[i] = 0
 }
 
-},{"./crypto_generichash":194,"./crypto_hash":195,"./crypto_scalarmult":200,"./crypto_secretbox":201,"./crypto_stream":205,"./randombytes":214,"nanoassert":155,"xsalsa20":238}],194:[function(require,module,exports){
+},{"./crypto_generichash":195,"./crypto_hash":196,"./crypto_scalarmult":201,"./crypto_secretbox":202,"./crypto_stream":206,"./randombytes":215,"nanoassert":156,"xsalsa20":239}],195:[function(require,module,exports){
 var blake2b = require('blake2b')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -26965,7 +27124,7 @@ blake2b.ready(function (_) {
   module.exports.crypto_generichash_WASM_LOADED = blake2b.WASM_LOADED
 })
 
-},{"blake2b":84}],195:[function(require,module,exports){
+},{"blake2b":84}],196:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha512 = require('sha512-universal')
 const assert = require('nanoassert')
@@ -26993,7 +27152,7 @@ module.exports = {
   crypto_hash_BYTES
 }
 
-},{"nanoassert":155,"sha512-universal":183}],196:[function(require,module,exports){
+},{"nanoassert":156,"sha512-universal":184}],197:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha256 = require('sha256-universal')
 const assert = require('nanoassert')
@@ -27014,7 +27173,7 @@ module.exports = {
   crypto_hash_sha256_BYTES
 }
 
-},{"nanoassert":155,"sha256-universal":179}],197:[function(require,module,exports){
+},{"nanoassert":156,"sha256-universal":180}],198:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const randombytes_buf = require('./randombytes').randombytes_buf
@@ -27056,7 +27215,7 @@ module.exports.crypto_kdf_keygen = function crypto_kdf_keygen (out) {
   randombytes_buf(out.subarray(0, module.exports.crypto_kdf_KEYBYTES))
 }
 
-},{"./randombytes":214,"blake2b":84,"nanoassert":155}],198:[function(require,module,exports){
+},{"./randombytes":215,"blake2b":84,"nanoassert":156}],199:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_scalarmult_base } = require('./crypto_scalarmult')
 const { crypto_generichash } = require('./crypto_generichash')
@@ -27092,7 +27251,7 @@ module.exports = {
   crypto_kx_PUBLICKEYBYTES
 }
 
-},{"./crypto_generichash":194,"./crypto_scalarmult":200,"./randombytes":214,"nanoassert":155}],199:[function(require,module,exports){
+},{"./crypto_generichash":195,"./crypto_scalarmult":201,"./randombytes":215,"nanoassert":156}],200:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const Poly1305 = require('./internal/poly1305')
@@ -27130,7 +27289,7 @@ function crypto_onetimeauth_verify (mac, msg, key) {
   return crypto_verify_16(mac, 0, tmp, 0)
 }
 
-},{"./crypto_verify":207,"./internal/poly1305":212,"nanoassert":155}],200:[function(require,module,exports){
+},{"./crypto_verify":208,"./internal/poly1305":213,"nanoassert":156}],201:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { _9, _121665, gf, inv25519, pack25519, unpack25519, sel25519, A, M, Z, S } = require('./internal/ed25519')
 
@@ -27208,7 +27367,7 @@ function check (buf, len) {
   if (!buf || (len && buf.length < len)) throw new Error('Argument must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./internal/ed25519":210}],201:[function(require,module,exports){
+},{"./internal/ed25519":211}],202:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { crypto_stream, crypto_stream_xor } = require('./crypto_stream')
@@ -27321,7 +27480,7 @@ function crypto_secretbox_open_easy (msg, box, n, k) {
   return true
 }
 
-},{"./crypto_onetimeauth":199,"./crypto_stream":205,"nanoassert":155}],202:[function(require,module,exports){
+},{"./crypto_onetimeauth":200,"./crypto_stream":206,"nanoassert":156}],203:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { randombytes_buf } = require('./randombytes')
@@ -27594,7 +27753,7 @@ module.exports = {
   crypto_secretstream_xchacha20poly1305_TAG_FINAL
 }
 
-},{"./crypto_stream_chacha20":206,"./helpers":208,"./internal/hchacha20":211,"./internal/poly1305":212,"./randombytes":214,"nanoassert":155}],203:[function(require,module,exports){
+},{"./crypto_stream_chacha20":207,"./helpers":209,"./internal/hchacha20":212,"./internal/poly1305":213,"./randombytes":215,"nanoassert":156}],204:[function(require,module,exports){
 var siphash = require('siphash24')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -27610,7 +27769,7 @@ function shorthash (out, data, key, noAssert) {
   siphash(data, key, out, noAssert)
 }
 
-},{"siphash24":188}],204:[function(require,module,exports){
+},{"siphash24":189}],205:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { crypto_verify_32 } = require('./crypto_verify')
 const { crypto_hash } = require('./crypto_hash')
@@ -28081,7 +28240,7 @@ function check (buf, len, arg = 'Argument') {
   if (!buf || (len && buf.length < len)) throw new Error(arg + ' must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./crypto_hash":195,"./crypto_hash.js":195,"./crypto_scalarmult.js":200,"./crypto_verify":207,"./internal/ed25519":210,"./randombytes":214,"nanoassert":155}],205:[function(require,module,exports){
+},{"./crypto_hash":196,"./crypto_hash.js":196,"./crypto_scalarmult.js":201,"./crypto_verify":208,"./internal/ed25519":211,"./randombytes":215,"nanoassert":156}],206:[function(require,module,exports){
 /* eslint-disable camelcase */
 const xsalsa20 = require('xsalsa20')
 
@@ -28121,7 +28280,7 @@ XOR.prototype.final = function () {
   this._instance = null
 }
 
-},{"xsalsa20":238}],206:[function(require,module,exports){
+},{"xsalsa20":239}],207:[function(require,module,exports){
 const assert = require('nanoassert')
 const Chacha20 = require('chacha20-universal')
 
@@ -28207,7 +28366,7 @@ exports.crypto_stream_chacha20_ietf_xor_instance = function (n, k) {
   return new Chacha20(n, k)
 }
 
-},{"chacha20-universal":88,"nanoassert":155}],207:[function(require,module,exports){
+},{"chacha20-universal":88,"nanoassert":156}],208:[function(require,module,exports){
 /* eslint-disable camelcase */
 module.exports = {
   crypto_verify_16,
@@ -28238,7 +28397,7 @@ function crypto_verify_64 (x, xi, y, yi) {
   return vn(x, xi, y, yi, 64) === 0
 }
 
-},{}],208:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { vn } = require('./crypto_verify')
@@ -28271,7 +28430,7 @@ module.exports = {
   sodium_is_zero
 }
 
-},{"./crypto_verify":207,"nanoassert":155}],209:[function(require,module,exports){
+},{"./crypto_verify":208,"nanoassert":156}],210:[function(require,module,exports){
 'use strict'
 
 // Based on https://github.com/dchest/tweetnacl-js/blob/6dcbcaf5f5cbfd313f2dcfe763db35c828c8ff5b/nacl-fast.js.
@@ -28309,7 +28468,7 @@ function forward (submodule) {
   })
 }
 
-},{"./crypto_aead":191,"./crypto_auth":192,"./crypto_box":193,"./crypto_generichash":194,"./crypto_hash":195,"./crypto_hash_sha256":196,"./crypto_kdf":197,"./crypto_kx":198,"./crypto_onetimeauth":199,"./crypto_scalarmult":200,"./crypto_secretbox":201,"./crypto_secretstream":202,"./crypto_shorthash":203,"./crypto_sign":204,"./crypto_stream":205,"./crypto_stream_chacha20":206,"./crypto_verify":207,"./helpers":208,"./memory":213,"./randombytes":214}],210:[function(require,module,exports){
+},{"./crypto_aead":192,"./crypto_auth":193,"./crypto_box":194,"./crypto_generichash":195,"./crypto_hash":196,"./crypto_hash_sha256":197,"./crypto_kdf":198,"./crypto_kx":199,"./crypto_onetimeauth":200,"./crypto_scalarmult":201,"./crypto_secretbox":202,"./crypto_secretstream":203,"./crypto_shorthash":204,"./crypto_sign":205,"./crypto_stream":206,"./crypto_stream_chacha20":207,"./crypto_verify":208,"./helpers":209,"./memory":214,"./randombytes":215}],211:[function(require,module,exports){
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
 
 var gf = function(init) {
@@ -28794,7 +28953,7 @@ module.exports = {
   I
 }
 
-},{}],211:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { sodium_malloc } = require('../memory')
 const assert = require('nanoassert')
@@ -28924,7 +29083,7 @@ module.exports = {
   crypto_core_hchacha20_constbytes
 }
 
-},{"../memory":213,"nanoassert":155}],212:[function(require,module,exports){
+},{"../memory":214,"nanoassert":156}],213:[function(require,module,exports){
 /*
 * Port of Andrew Moon's Poly1305-donna-16. Public domain.
 * https://github.com/floodyberry/poly1305-donna
@@ -29286,7 +29445,7 @@ poly1305.prototype.update = function(m, mpos, bytes) {
 
 module.exports = poly1305
 
-},{}],213:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 /* eslint-disable camelcase */
 
 function sodium_malloc (n) {
@@ -29318,7 +29477,7 @@ module.exports = {
   sodium_memzero
 }
 
-},{}],214:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 var assert = require('nanoassert')
 
 var randombytes = (function () {
@@ -29360,7 +29519,7 @@ module.exports.randombytes_buf = function (out) {
   randombytes(out, out.byteLength)
 }
 
-},{"nanoassert":155}],215:[function(require,module,exports){
+},{"nanoassert":156}],216:[function(require,module,exports){
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('automation-events'), require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/createClass'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/typeof'), require('@babel/runtime/helpers/defineProperty'), require('@babel/runtime/helpers/inherits'), require('@babel/runtime/helpers/possibleConstructorReturn'), require('@babel/runtime/helpers/getPrototypeOf'), require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('@babel/runtime/helpers/assertThisInitialized'), require('@babel/runtime/helpers/toConsumableArray'), require('@babel/runtime/helpers/objectWithoutProperties')) :
     typeof define === 'function' && define.amd ? define(['exports', 'automation-events', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/createClass', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/typeof', '@babel/runtime/helpers/defineProperty', '@babel/runtime/helpers/inherits', '@babel/runtime/helpers/possibleConstructorReturn', '@babel/runtime/helpers/getPrototypeOf', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', '@babel/runtime/helpers/assertThisInitialized', '@babel/runtime/helpers/toConsumableArray', '@babel/runtime/helpers/objectWithoutProperties'], factory) :
@@ -41454,7 +41613,7 @@ module.exports.randombytes_buf = function (out) {
 
 }));
 
-},{"@babel/runtime/helpers/assertThisInitialized":6,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/classCallCheck":8,"@babel/runtime/helpers/createClass":9,"@babel/runtime/helpers/defineProperty":10,"@babel/runtime/helpers/getPrototypeOf":11,"@babel/runtime/helpers/inherits":12,"@babel/runtime/helpers/objectWithoutProperties":17,"@babel/runtime/helpers/possibleConstructorReturn":19,"@babel/runtime/helpers/slicedToArray":21,"@babel/runtime/helpers/toConsumableArray":22,"@babel/runtime/helpers/typeof":23,"@babel/runtime/regenerator":25,"automation-events":73}],216:[function(require,module,exports){
+},{"@babel/runtime/helpers/assertThisInitialized":6,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/classCallCheck":8,"@babel/runtime/helpers/createClass":9,"@babel/runtime/helpers/defineProperty":10,"@babel/runtime/helpers/getPrototypeOf":11,"@babel/runtime/helpers/inherits":12,"@babel/runtime/helpers/objectWithoutProperties":17,"@babel/runtime/helpers/possibleConstructorReturn":19,"@babel/runtime/helpers/slicedToArray":21,"@babel/runtime/helpers/toConsumableArray":22,"@babel/runtime/helpers/typeof":23,"@babel/runtime/regenerator":25,"automation-events":73}],217:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -41585,35 +41744,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":94,"inherits":116,"readable-stream/lib/_stream_duplex.js":218,"readable-stream/lib/_stream_passthrough.js":219,"readable-stream/lib/_stream_readable.js":220,"readable-stream/lib/_stream_transform.js":221,"readable-stream/lib/_stream_writable.js":222,"readable-stream/lib/internal/streams/end-of-stream.js":226,"readable-stream/lib/internal/streams/pipeline.js":228}],217:[function(require,module,exports){
-arguments[4][124][0].apply(exports,arguments)
-},{"dup":124}],218:[function(require,module,exports){
+},{"events":94,"inherits":117,"readable-stream/lib/_stream_duplex.js":219,"readable-stream/lib/_stream_passthrough.js":220,"readable-stream/lib/_stream_readable.js":221,"readable-stream/lib/_stream_transform.js":222,"readable-stream/lib/_stream_writable.js":223,"readable-stream/lib/internal/streams/end-of-stream.js":227,"readable-stream/lib/internal/streams/pipeline.js":229}],218:[function(require,module,exports){
 arguments[4][125][0].apply(exports,arguments)
-},{"./_stream_readable":220,"./_stream_writable":222,"_process":168,"dup":125,"inherits":116}],219:[function(require,module,exports){
+},{"dup":125}],219:[function(require,module,exports){
 arguments[4][126][0].apply(exports,arguments)
-},{"./_stream_transform":221,"dup":126,"inherits":116}],220:[function(require,module,exports){
+},{"./_stream_readable":221,"./_stream_writable":223,"_process":169,"dup":126,"inherits":117}],220:[function(require,module,exports){
 arguments[4][127][0].apply(exports,arguments)
-},{"../errors":217,"./_stream_duplex":218,"./internal/streams/async_iterator":223,"./internal/streams/buffer_list":224,"./internal/streams/destroy":225,"./internal/streams/from":227,"./internal/streams/state":229,"./internal/streams/stream":230,"_process":168,"buffer":87,"dup":127,"events":94,"inherits":116,"string_decoder/":233,"util":85}],221:[function(require,module,exports){
+},{"./_stream_transform":222,"dup":127,"inherits":117}],221:[function(require,module,exports){
 arguments[4][128][0].apply(exports,arguments)
-},{"../errors":217,"./_stream_duplex":218,"dup":128,"inherits":116}],222:[function(require,module,exports){
+},{"../errors":218,"./_stream_duplex":219,"./internal/streams/async_iterator":224,"./internal/streams/buffer_list":225,"./internal/streams/destroy":226,"./internal/streams/from":228,"./internal/streams/state":230,"./internal/streams/stream":231,"_process":169,"buffer":87,"dup":128,"events":94,"inherits":117,"string_decoder/":234,"util":85}],222:[function(require,module,exports){
 arguments[4][129][0].apply(exports,arguments)
-},{"../errors":217,"./_stream_duplex":218,"./internal/streams/destroy":225,"./internal/streams/state":229,"./internal/streams/stream":230,"_process":168,"buffer":87,"dup":129,"inherits":116,"util-deprecate":235}],223:[function(require,module,exports){
+},{"../errors":218,"./_stream_duplex":219,"dup":129,"inherits":117}],223:[function(require,module,exports){
 arguments[4][130][0].apply(exports,arguments)
-},{"./end-of-stream":226,"_process":168,"dup":130}],224:[function(require,module,exports){
+},{"../errors":218,"./_stream_duplex":219,"./internal/streams/destroy":226,"./internal/streams/state":230,"./internal/streams/stream":231,"_process":169,"buffer":87,"dup":130,"inherits":117,"util-deprecate":236}],224:[function(require,module,exports){
 arguments[4][131][0].apply(exports,arguments)
-},{"buffer":87,"dup":131,"util":85}],225:[function(require,module,exports){
+},{"./end-of-stream":227,"_process":169,"dup":131}],225:[function(require,module,exports){
 arguments[4][132][0].apply(exports,arguments)
-},{"_process":168,"dup":132}],226:[function(require,module,exports){
+},{"buffer":87,"dup":132,"util":85}],226:[function(require,module,exports){
 arguments[4][133][0].apply(exports,arguments)
-},{"../../../errors":217,"dup":133}],227:[function(require,module,exports){
+},{"_process":169,"dup":133}],227:[function(require,module,exports){
 arguments[4][134][0].apply(exports,arguments)
-},{"dup":134}],228:[function(require,module,exports){
+},{"../../../errors":218,"dup":134}],228:[function(require,module,exports){
 arguments[4][135][0].apply(exports,arguments)
-},{"../../../errors":217,"./end-of-stream":226,"dup":135}],229:[function(require,module,exports){
+},{"dup":135}],229:[function(require,module,exports){
 arguments[4][136][0].apply(exports,arguments)
-},{"../../../errors":217,"dup":136}],230:[function(require,module,exports){
+},{"../../../errors":218,"./end-of-stream":227,"dup":136}],230:[function(require,module,exports){
 arguments[4][137][0].apply(exports,arguments)
-},{"dup":137,"events":94}],231:[function(require,module,exports){
+},{"../../../errors":218,"dup":137}],231:[function(require,module,exports){
+arguments[4][138][0].apply(exports,arguments)
+},{"dup":138,"events":94}],232:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const STREAM_DESTROYED = new Error('Stream was destroyed')
 const PREMATURE_CLOSE = new Error('Premature close')
@@ -42606,7 +42765,7 @@ module.exports = {
   PassThrough
 }
 
-},{"events":94,"fast-fifo":96,"queue-tick":170}],232:[function(require,module,exports){
+},{"events":94,"fast-fifo":96,"queue-tick":171}],233:[function(require,module,exports){
 /**
  * @module  string-to-arraybuffer
  */
@@ -42670,7 +42829,7 @@ function decode(uri) {
 	return abuf
 }
 
-},{"atob-lite":65,"is-base64":118}],233:[function(require,module,exports){
+},{"atob-lite":65,"is-base64":119}],234:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -42967,7 +43126,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":176}],234:[function(require,module,exports){
+},{"safe-buffer":177}],235:[function(require,module,exports){
 module.exports = class TimerBrowser {
   constructor (ms, fn, ctx = null, interval = false) {
     this.ms = ms
@@ -43027,7 +43186,7 @@ function callInterval (self) {
   self.ontimeout.call(self.context)
 }
 
-},{}],235:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -43098,7 +43257,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],236:[function(require,module,exports){
+},{}],237:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
@@ -43133,7 +43292,7 @@ function wrappy (fn, cb) {
   }
 }
 
-},{}],237:[function(require,module,exports){
+},{}],238:[function(require,module,exports){
 module.exports = class MaxCache {
   constructor ({ maxSize, maxAge }) {
     this.maxSize = maxSize
@@ -43234,7 +43393,7 @@ class Iterator {
   }
 }
 
-},{}],238:[function(require,module,exports){
+},{}],239:[function(require,module,exports){
 var xsalsa20 = typeof WebAssembly !== "undefined" && require('./xsalsa20')()
 
 var SIGMA = new Uint8Array([101, 120, 112, 97, 110, 100, 32, 51, 50, 45, 98, 121, 116, 101, 32, 107])
@@ -43691,7 +43850,7 @@ function core_hsalsa20(o,p,k,c) {
   o[31] = x9 >>> 24 & 0xff
 }
 
-},{"./xsalsa20":239}],239:[function(require,module,exports){
+},{"./xsalsa20":240}],240:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
