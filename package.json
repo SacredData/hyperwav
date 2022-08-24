@@ -31,7 +31,7 @@
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "git-pre-hooks": "^1.2.1",
-    "istanbul-badges-readme": "^1.8.1",
+    "istanbul-badges-readme": "^1.8.2",
     "jsdoc": "^3.6.7",
     "jsdoc-template": "github:braintree/jsdoc-template",
     "microphone-stream": "^6.0.1",
