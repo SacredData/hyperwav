@@ -252,5 +252,9 @@ describe('Wavecore', function () {
       core33.tag('TEST', '1234')
       expect(core33.tags.size).to.equal(1)
     })
+    it('should accept an array as first argument to do multiple tags', async function () {
+      core33.tag([ ['ABCD', '4567'], ['HELO', 'WURLD'] ])
+      expect(core33.tags.size).to.equal(3)
+    })
   })
 })
