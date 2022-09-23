@@ -408,7 +408,9 @@ class Wavecore extends Hypercore {
   }
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
-   * @arg {String} id - The four-character RIFF tag ID
+   * @arg {String|Array[]} id - The four-character RIFF tag ID. If an array is
+   * passed it expects index 0 to be the id and index 1 to be the value. This
+   * allows multiple tags to be set at once.
    * @arg {String} value - The string value to assign the RIFF tag.
    * @see {@link https://exiftool.org/TagNames/RIFF.html|RIFF Tags}
    */
