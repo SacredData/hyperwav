@@ -412,9 +412,18 @@ class Wavecore extends Hypercore {
    * @arg {String} value - The string value to assign the RIFF tag.
    * @see {@link https://exiftool.org/TagNames/RIFF.html|RIFF Tags}
    */
-  tag(id, value) {
+  async tag(id, value) {
     try {
-      this.tags.set(`${id}`, `${value}`)
+      if (id instanceof Array) {
+        const allTags = id
+          .filter((t) => t.length === 2)
+          .map((t) => {
+            this.tags.set(`${t[0]}`, `${t[1]}`)
+          })
+        return await Promise.all(allTags)
+      } else {
+        this.tags.set(`${id}`, `${value}`)
+      }
       return
     } catch (err) {
       console.error(err)
