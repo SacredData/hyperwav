@@ -3501,7 +3501,7 @@ new <code>Wavecore</code> instances.</p>
       </svg>
     </a>
     <h4 class="name" id="tag">
-      <span class="type-signature"></span>tag<span class="signature">(id, value)</span><span class="type-signature"></span>
+      <span class="type-signature">(async) </span>tag<span class="signature">(id, value)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -3553,6 +3553,12 @@ new <code>Wavecore</code> instances.</p>
       String
     </span>
 
+    |
+
+    <span class="param-type">
+      Array.&lt;Array>
+    </span>
+
     
 
 
@@ -3564,7 +3570,9 @@ new <code>Wavecore</code> instances.</p>
         
 
         <td class="description last">
-          <p>The four-character RIFF tag ID</p>
+          <p>The four-character RIFF tag ID. If an array is
+passed it expects index 0 to be the id and index 1 to be the value. This
+allows multiple tags to be set at once.</p>
           
         </td>
       </tr>
@@ -3637,7 +3645,7 @@ new <code>Wavecore</code> instances.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="index.js.html">index.js</a>, <a href="index.js.html#line415">line 415</a>
+          <a href="index.js.html">index.js</a>, <a href="index.js.html#line417">line 417</a>
         </li>
       </ul>
     </dd>
