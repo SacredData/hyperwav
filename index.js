@@ -242,26 +242,6 @@ class Wavecore extends Hypercore {
     }
   }
   /**
-   * Classify the type of audio data. Currently supports dynamics
-   * classification, i.e., whether the audio is quiet or a voice.
-   * @arg {Number} i - Index number to classify
-   * @arg {Object} [opts={}] - Options object
-   * @arg {Boolean} [opts.dynamics=true] - Enable dynamics classification
-   * @returns {String}
-   */
-  async classify(i, opts = { dynamics: true }) {
-    function dyn(indexData) {
-      const id = Array.from(indexData)
-      return id.filter((i) => i === 0).length / id.length > 0.2
-        ? 'quiet'
-        : 'voice'
-    }
-    const data = await this.get(i)
-    const { dynamics } = opts
-    if (dynamics) return dyn(data)
-    return
-  }
-  /**
    * Join one or more wavecores to the end of this wavecore. Creates and returns
    * a new Wavecore instance with the concatenated results.
    * @arg {Wavecore[]} wavecores
