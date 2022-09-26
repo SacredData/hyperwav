@@ -1,6 +1,6 @@
 {
   "name": "@storyboard-fm/wavecore",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Distributed peer-to-peer WAV files",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,8 @@
     "hypercore": "^10.3.2",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
-    "random-access-memory": "^6.0.0"
+    "random-access-memory": "^6.0.0",
+    "wavefile": "^11.0.0"
   },
   "devDependencies": {
     "@storyboard-fm/soapbox": "github:storyboard-fm/soapbox",
