@@ -226,18 +226,6 @@ describe('Wavecore', function () {
       core35.recStream(rs)
     })
   })
-  describe('#classify', function () {
-    const core39 = new Wavecore({ source })
-    it('should classify index 0 as quiet', async function () {
-      await Promise.resolve(core39.open())
-      const classification = await core39.classify(0)
-      expect(classification).to.equal('quiet')
-    })
-    it('should classify index 10 as voice', async function () {
-      const classification = await core39.classify(10)
-      expect(classification).to.equal('voice')
-    })
-  })
   describe('#liveStream', function () {
     const core29 = new Wavecore({ source })
     it('should return a live ReadableStream of the audio input', async function () {
