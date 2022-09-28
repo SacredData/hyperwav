@@ -4,6 +4,10 @@ const toWav = require('audiobuffer-to-wav')
 const {
   AudioEnvironment
 } = require('@storyboard-fm/soapbox')
+const {
+  StreamAnalyserErrors
+} = require('@storyboard-fm/stream-analyser')
+const Hypercore = require('hypercore')
 
 async function getMedia(constraints) {
   const audioEnv = new AudioEnvironment()
@@ -17,6 +21,7 @@ async function getMedia(constraints) {
 
 function playBuf(ctx, buf) {
   const s2 = ctx.createBufferSource()
+  s2.playbackRate.value = 4.5
   s2.buffer = buf
   s2.connect(ctx.destination)
   s2.start()
@@ -36,6 +41,19 @@ function setInfo(core) {
   `
 }
 
+function createSplitPlayback(ctx, cores) {  
+  cores.map((core, idx) => {
+    let button = document.createElement('button')
+    button.innerHTML = `Play Part ${idx + 1}`
+    button.onclick = async () => {
+      playBuf(ctx, await core.audioBuffer())
+      return false
+    }
+    document.getElementById('playback').appendChild(button);
+  })
+  document.getElementById('split').disabled = false
+}
+
 async function main() {
   var abOrig = null
   var abNorm = null
@@ -46,18 +64,26 @@ async function main() {
   wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
 
+  const analyser = new StreamAnalyserErrors(audioCtx, {core: true})
+  console.log(analyser)
+
   let recording = false
 
   document.getElementById("rec").onclick = async function() {
     if (!recording) {
       s = await getMedia({audio:true,video:false})
-      console.log(s)
+      
+      analyser.metering(s.stream)
+      analyser.addEventListener('beginsilence', () => console.log('silence'))
+      analyser.addEventListener('endsilence', () => console.log('speech'))
+      analyser.addEventListener('clippingdetected', () => console.log('clipping'))
+
       wave.recStream(s)
       recording = true
     } else {
       s.stop()
+      analyser.stopListening()
       recording = false
-      console.log(wave)
       setInfo(wave)
       abOrig = await wave.audioBuffer({dcOffset:false})
       document.getElementById("rec").style.display = "none"
@@ -97,6 +123,7 @@ async function main() {
     } else {
       appSt = await getMedia({audio:true,video:false})
       console.log(appSt)
+      analyser.metering(appSt.stream)
       appCore = new Wavecore({ ctx: audioCtx })
       appCore.recStream(appSt)
       appending = true
@@ -133,6 +160,20 @@ async function main() {
       await wave.truncate(trunLength)
       console.log(wave)
       setInfo(wave)
+    }
+  }
+
+  document.getElementById("split").onclick = async function () {
+    document.getElementById('split').disabled = true
+    if (concatCore) {
+      let cores = await concatCore.split(analyser.core)
+      console.log(typeof cores)
+      createSplitPlayback(audioCtx, cores)
+
+    } else {
+      let cores = await wave.split(analyser.core)
+      console.log(cores)
+      createSplitPlayback(audioCtx, cores)
     }
   }
 }

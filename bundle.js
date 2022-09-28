@@ -356,37 +356,80 @@ class Wavecore extends Hypercore {
   /**
    * Splits the Wavecore at the provided index number, returning an array of two
    * new `Wavecore` instances.
-   * @arg {Number} index - Index number from which to split the Wavecore audio.
+   * @arg {Number | Hypercore} splitValue - Index number or Hypercore data from which to split the Wavecore audio.
    * @returns {Wavecore[]} cores - Array of the new head and tail hypercores
    */
-  split(index) {
-    return new Promise((resolve, reject) => {
-      if (Number(index) > this.length)
-        reject(new Error('Index greater than core size!'))
-      const [headCore, tailCore] = [new Wavecore(ram), new Wavecore(ram)]
-      const ptTail = new PassThrough()
-      ptTail.on('error', (err) => reject(err))
-      ptTail.on('data', (d) => tailCore.append(d))
-      ptTail.on('close', async () => {
+  split(splitValue) {
+    if (splitValue instanceof Hypercore) {
+      return new Promise((resolve, reject) => {
         try {
-          const headStream = this.createReadStream({
-            start: 0,
-            end: index,
-          })
-          const ptHead = new PassThrough()
-          ptHead.on('error', (err) => reject(err))
-          ptHead.on('data', (d) => headCore.append(d))
-          ptHead.on('close', () => {
-            resolve([headCore, tailCore])
-          })
-          headStream.pipe(ptHead)
+          let eventCores = []
+          for (let i = 0; i < splitValue.length; i++) {
+            console.log(i)
+            splitValue
+              .get(i, {valueEncoding: 'json'})
+              .then(async (block) => {
+                let start, end
+                // let splitBlock = await this.split(offset) // calling recursively is too time intensive
+                console.log('start', start, 'end', end)
+                const core = new Wavecore(ram)
+                const pt = new PassThrough()
+                pt.on('error', (err) => reject(err))
+                pt.on('data', (d) => core.append(d))
+                pt.on('end', () => {
+                  resolve(core)
+                  pt.destroy()
+                })
+                const splitStream = this.createReadStream({ start: start, end: end })
+                splitStream.pipe(pt)
+
+                await core.tag([
+                  ['TCOD', 'begin'],
+                  ['test', block.eventName],
+                  ['TCDO', 'end'],
+                  ['PRT1', i + 1],
+                  ['PRT2', splitValue.length],
+                  ['STAT', block.eventName === 'clipping' ? 0 : 1]
+                 ])
+                 eventCores.push(core)
+              })
+              .then(() => resolve(eventCores))
+          }
         } catch (err) {
           reject(err)
         }
       })
-      const splitStream = this.createReadStream({ start: index })
-      splitStream.pipe(ptTail)
-    })
+    } else {
+      return new Promise((resolve, reject) => {
+        if (Number(splitValue) > this.length)
+          reject(new Error('Index greater than core size!'))
+        const [headCore, tailCore] = [new Wavecore(ram), new Wavecore(ram)]
+        const ptTail = new PassThrough()
+        ptTail.on('error', (err) => reject(err))
+        ptTail.on('data', (d) => tailCore.append(d))
+        ptTail.on('end', () => {
+          splitStream.destroy()
+          try {
+            const headStream = this.createReadStream({
+              start: 0,
+              end: splitValue,
+            })
+            const ptHead = new PassThrough()
+            ptHead.on('error', (err) => reject(err))
+            ptHead.on('data', (d) => headCore.append(d))
+            ptHead.on('end', () => {
+              resolve([headCore, tailCore])
+              headStream.destroy()
+            })
+            headStream.pipe(ptHead)
+          } catch (err) {
+            reject(err)
+          }
+        })
+        const splitStream = this.createReadStream({ start: splitValue })
+        splitStream.pipe(ptTail)
+      })
+    }
   }
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.

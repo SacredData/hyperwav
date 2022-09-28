@@ -5,6 +5,10 @@ const toWav = require('audiobuffer-to-wav')
 const {
   AudioEnvironment
 } = require('@storyboard-fm/soapbox')
+const {
+  StreamAnalyserErrors
+} = require('@storyboard-fm/stream-analyser')
+const Hypercore = require('hypercore')
 
 async function getMedia(constraints) {
   const audioEnv = new AudioEnvironment()
@@ -18,6 +22,7 @@ async function getMedia(constraints) {
 
 function playBuf(ctx, buf) {
   const s2 = ctx.createBufferSource()
+  s2.playbackRate.value = 4.5
   s2.buffer = buf
   s2.connect(ctx.destination)
   s2.start()
@@ -37,6 +42,19 @@ function setInfo(core) {
   `
 }
 
+function createSplitPlayback(ctx, cores) {  
+  cores.map((core, idx) => {
+    let button = document.createElement('button')
+    button.innerHTML = `Play Part ${idx + 1}`
+    button.onclick = async () => {
+      playBuf(ctx, await core.audioBuffer())
+      return false
+    }
+    document.getElementById('playback').appendChild(button);
+  })
+  document.getElementById('split').disabled = false
+}
+
 async function main() {
   var abOrig = null
   var abNorm = null
@@ -47,18 +65,26 @@ async function main() {
   wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
 
+  const analyser = new StreamAnalyserErrors(audioCtx, {core: true})
+  console.log(analyser)
+
   let recording = false
 
   document.getElementById("rec").onclick = async function() {
     if (!recording) {
       s = await getMedia({audio:true,video:false})
-      console.log(s)
+      
+      analyser.metering(s.stream)
+      analyser.addEventListener('beginsilence', () => console.log('silence'))
+      analyser.addEventListener('endsilence', () => console.log('speech'))
+      analyser.addEventListener('clippingdetected', () => console.log('clipping'))
+
       wave.recStream(s)
       recording = true
     } else {
       s.stop()
+      analyser.stopListening()
       recording = false
-      console.log(wave)
       setInfo(wave)
       abOrig = await wave.audioBuffer({dcOffset:false})
       document.getElementById("rec").style.display = "none"
@@ -98,6 +124,7 @@ async function main() {
     } else {
       appSt = await getMedia({audio:true,video:false})
       console.log(appSt)
+      analyser.metering(appSt.stream)
       appCore = new Wavecore({ ctx: audioCtx })
       appCore.recStream(appSt)
       appending = true
@@ -136,14 +163,27 @@ async function main() {
       setInfo(wave)
     }
   }
+
+  document.getElementById("split").onclick = async function () {
+    document.getElementById('split').disabled = true
+    if (concatCore) {
+      let cores = await concatCore.split(analyser.core)
+      console.log(typeof cores)
+      createSplitPlayback(audioCtx, cores)
+
+    } else {
+      let cores = await wave.split(analyser.core)
+      console.log(cores)
+      createSplitPlayback(audioCtx, cores)
+    }
+  }
 }
 
 document.getElementById("launch").onclick = async function () {
   main()
   document.getElementById("demo").style.display = "block"
 }
-
-},{"../index":2,"@storyboard-fm/soapbox":29,"audiobuffer-to-wav":72,"microphone-stream":124}],2:[function(require,module,exports){
+},{"../index":2,"@storyboard-fm/soapbox":29,"@storyboard-fm/stream-analyser":61,"audiobuffer-to-wav":78,"hypercore":111,"microphone-stream":136}],2:[function(require,module,exports){
 (function (Buffer){(function (){
 const abf = require('audio-buffer-from')
 const abu = require('audio-buffer-utils')
@@ -389,26 +429,6 @@ class Wavecore extends Hypercore {
     }
   }
   /**
-   * Classify the type of audio data. Currently supports dynamics
-   * classification, i.e., whether the audio is quiet or a voice.
-   * @arg {Number} i - Index number to classify
-   * @arg {Object} [opts={}] - Options object
-   * @arg {Boolean} [opts.dynamics=true] - Enable dynamics classification
-   * @returns {String}
-   */
-  async classify(i, opts = { dynamics: true }) {
-    function dyn(indexData) {
-      const id = Array.from(indexData)
-      return id.filter((i) => i === 0).length / id.length > 0.2
-        ? 'quiet'
-        : 'voice'
-    }
-    const data = await this.get(i)
-    const { dynamics } = opts
-    if (dynamics) return dyn(data)
-    return
-  }
-  /**
    * Join one or more wavecores to the end of this wavecore. Creates and returns
    * a new Wavecore instance with the concatenated results.
    * @arg {Wavecore[]} wavecores
@@ -521,47 +541,101 @@ class Wavecore extends Hypercore {
   /**
    * Splits the Wavecore at the provided index number, returning an array of two
    * new `Wavecore` instances.
-   * @arg {Number} index - Index number from which to split the Wavecore audio.
+   * @arg {Number | Hypercore} splitValue - Index number or Hypercore data from which to split the Wavecore audio.
    * @returns {Wavecore[]} cores - Array of the new head and tail hypercores
    */
-  split(index) {
-    return new Promise((resolve, reject) => {
-      if (Number(index) > this.length)
-        reject(new Error('Index greater than core size!'))
-      const [headCore, tailCore] = [new Wavecore(ram), new Wavecore(ram)]
-      const ptTail = new PassThrough()
-      ptTail.on('error', (err) => reject(err))
-      ptTail.on('data', (d) => tailCore.append(d))
-      ptTail.on('close', async () => {
+  split(splitValue) {
+    if (splitValue instanceof Hypercore) {
+      return new Promise((resolve, reject) => {
         try {
-          const headStream = this.createReadStream({
-            start: 0,
-            end: index,
-          })
-          const ptHead = new PassThrough()
-          ptHead.on('error', (err) => reject(err))
-          ptHead.on('data', (d) => headCore.append(d))
-          ptHead.on('close', () => {
-            resolve([headCore, tailCore])
-          })
-          headStream.pipe(ptHead)
+          let eventCores = []
+          for (let i = 0; i < splitValue.length; i++) {
+            console.log(i)
+            splitValue
+              .get(i, {valueEncoding: 'json'})
+              .then(async (block) => {
+                let start, end
+                // let splitBlock = await this.split(offset) // calling recursively is too time intensive
+                console.log('start', start, 'end', end)
+                const core = new Wavecore(ram)
+                const pt = new PassThrough()
+                pt.on('error', (err) => reject(err))
+                pt.on('data', (d) => core.append(d))
+                pt.on('end', () => {
+                  resolve(core)
+                  pt.destroy()
+                })
+                const splitStream = this.createReadStream({ start: start, end: end })
+                splitStream.pipe(pt)
+
+                await core.tag([
+                  ['TCOD', 'begin'],
+                  ['test', block.eventName],
+                  ['TCDO', 'end'],
+                  ['PRT1', i + 1],
+                  ['PRT2', splitValue.length],
+                  ['STAT', block.eventName === 'clipping' ? 0 : 1]
+                 ])
+                 eventCores.push(core)
+              })
+              .then(() => resolve(eventCores))
+          }
         } catch (err) {
           reject(err)
         }
       })
-      const splitStream = this.createReadStream({ start: index })
-      splitStream.pipe(ptTail)
-    })
+    } else {
+      return new Promise((resolve, reject) => {
+        if (Number(splitValue) > this.length)
+          reject(new Error('Index greater than core size!'))
+        const [headCore, tailCore] = [new Wavecore(ram), new Wavecore(ram)]
+        const ptTail = new PassThrough()
+        ptTail.on('error', (err) => reject(err))
+        ptTail.on('data', (d) => tailCore.append(d))
+        ptTail.on('end', () => {
+          splitStream.destroy()
+          try {
+            const headStream = this.createReadStream({
+              start: 0,
+              end: splitValue,
+            })
+            const ptHead = new PassThrough()
+            ptHead.on('error', (err) => reject(err))
+            ptHead.on('data', (d) => headCore.append(d))
+            ptHead.on('end', () => {
+              resolve([headCore, tailCore])
+              headStream.destroy()
+            })
+            headStream.pipe(ptHead)
+          } catch (err) {
+            reject(err)
+          }
+        })
+        const splitStream = this.createReadStream({ start: splitValue })
+        splitStream.pipe(ptTail)
+      })
+    }
   }
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
-   * @arg {String} id - The four-character RIFF tag ID
+   * @arg {String|Array[]} id - The four-character RIFF tag ID. If an array is
+   * passed it expects index 0 to be the id and index 1 to be the value. This
+   * allows multiple tags to be set at once.
    * @arg {String} value - The string value to assign the RIFF tag.
    * @see {@link https://exiftool.org/TagNames/RIFF.html|RIFF Tags}
    */
-  tag(id, value) {
+  async tag(id, value) {
     try {
-      this.tags.set(`${id}`, `${value}`)
+      if (id instanceof Array) {
+        const allTags = id
+          .filter((t) => t.length === 2)
+          .map((t) => {
+            this.tags.set(`${t[0]}`, `${t[1]}`)
+          })
+        return await Promise.all(allTags)
+      } else {
+        this.tags.set(`${id}`, `${value}`)
+      }
       return
     } catch (err) {
       console.error(err)
@@ -579,7 +653,7 @@ module.exports = Wavecore
  */
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"audio-buffer-from":66,"audio-buffer-utils":67,"buffer":87,"hypercore":102,"multistream":140,"random-access-memory":173,"stream":217}],3:[function(require,module,exports){
+},{"audio-buffer-from":72,"audio-buffer-utils":73,"buffer":94,"hypercore":111,"multistream":152,"random-access-memory":184,"stream":228}],3:[function(require,module,exports){
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
@@ -902,9 +976,10 @@ module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, 
 },{"./arrayLikeToArray.js":3}],25:[function(require,module,exports){
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":176}],26:[function(require,module,exports){
+},{"regenerator-runtime":187}],26:[function(require,module,exports){
 const { Pull, Push, HEADERBYTES, KEYBYTES, ABYTES } = require('sodium-secretstream')
 const sodium = require('sodium-universal')
+const crypto = require('hypercore-crypto')
 const { Duplex } = require('streamx')
 const b4a = require('b4a')
 const Timeout = require('timeout-refresh')
@@ -912,16 +987,7 @@ const Bridge = require('./lib/bridge')
 const Handshake = require('./lib/handshake')
 
 const IDHEADERBYTES = HEADERBYTES + 32
-
-const slab = b4a.alloc(96)
-
-const NS = slab.subarray(0, 32)
-const NS_INITIATOR = slab.subarray(32, 64)
-const NS_RESPONDER = slab.subarray(64, 96)
-
-sodium.crypto_generichash(NS, b4a.from('hyperswarm/secret-stream'))
-sodium.crypto_generichash(NS_INITIATOR, b4a.from([0]), NS)
-sodium.crypto_generichash(NS_RESPONDER, b4a.from([1]), NS)
+const [NS_INITIATOR, NS_RESPONDER] = crypto.namespace('hyperswarm/secret-stream', 2)
 
 module.exports = class NoiseSecretStream extends Duplex {
   constructor (isInitiator, rawStream, opts = {}) {
@@ -1391,7 +1457,7 @@ function writeUint24le (n, buf) {
 }
 
 function streamId (handshakeHash, isInitiator, out = b4a.allocUnsafe(32)) {
-  sodium.crypto_generichash(out, handshakeHash, isInitiator ? NS_INITIATOR : NS_RESPONDER)
+  sodium.crypto_generichash(out, isInitiator ? NS_INITIATOR : NS_RESPONDER, handshakeHash)
   return out
 }
 
@@ -1408,7 +1474,7 @@ function sendKeepAlive () {
   this.write(empty)
 }
 
-},{"./lib/bridge":27,"./lib/handshake":28,"b4a":74,"sodium-secretstream":191,"sodium-universal":210,"streamx":232,"timeout-refresh":235}],27:[function(require,module,exports){
+},{"./lib/bridge":27,"./lib/handshake":28,"b4a":80,"hypercore-crypto":110,"sodium-secretstream":202,"sodium-universal":221,"streamx":243,"timeout-refresh":246}],27:[function(require,module,exports){
 const { Duplex } = require('streamx')
 
 class ReversePassThrough extends Duplex {
@@ -1482,7 +1548,7 @@ module.exports = class Bridge extends Duplex {
   }
 }
 
-},{"streamx":232}],28:[function(require,module,exports){
+},{"streamx":243}],28:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const curve = require('noise-curve-ed')
 const Noise = require('noise-handshake')
@@ -1562,7 +1628,7 @@ function writeUint24le (n, buf) {
   buf[2] = (n >>> 16) & 255
 }
 
-},{"b4a":74,"noise-curve-ed":157,"noise-handshake":161,"sodium-universal":210}],29:[function(require,module,exports){
+},{"b4a":80,"noise-curve-ed":169,"noise-handshake":173,"sodium-universal":221}],29:[function(require,module,exports){
 const AnalyserOptions = require('./lib/analyser/analyserOptions');
 
 const AudioAnalyser = require('./lib/analyser/analyser');
@@ -1675,7 +1741,7 @@ class AudioAnalyser extends AnalyserNode {
 
 module.exports = AudioAnalyser;
 
-},{"standardized-audio-context":216}],31:[function(require,module,exports){
+},{"standardized-audio-context":227}],31:[function(require,module,exports){
 const defaultProps = {
   audioSource: null,
   fftSize: 2048,
@@ -2172,7 +2238,7 @@ class AudioEnvironment {
 
 module.exports = AudioEnvironment;
 
-},{"./constraints":32,"./device":33,"./filter/compressor":35,"./filter/gain":37,"./filter/highpass":38,"./filter/limiter":39,"./filter/lowpass":40,"./signalFlow":44,"./userMedia":45,"detectrtc":93,"standardized-audio-context":216}],35:[function(require,module,exports){
+},{"./constraints":32,"./device":33,"./filter/compressor":35,"./filter/gain":37,"./filter/highpass":38,"./filter/limiter":39,"./filter/lowpass":40,"./signalFlow":44,"./userMedia":45,"detectrtc":102,"standardized-audio-context":227}],35:[function(require,module,exports){
 const {
   DynamicsCompressorNode
 } = require('standardized-audio-context');
@@ -2231,7 +2297,7 @@ class Compressor extends DynamicsCompressorNode {
 
 module.exports = Compressor;
 
-},{"standardized-audio-context":216}],36:[function(require,module,exports){
+},{"standardized-audio-context":227}],36:[function(require,module,exports){
 /**
  * Abstract ES6 class for filter-based AudioNodes.
  * @public
@@ -2347,7 +2413,7 @@ class Gain extends GainNode {
 
 module.exports = Gain;
 
-},{"standardized-audio-context":216}],38:[function(require,module,exports){
+},{"standardized-audio-context":227}],38:[function(require,module,exports){
 const {
   BiquadFilterNode
 } = require('standardized-audio-context');
@@ -2382,7 +2448,7 @@ class Highpass extends BiquadFilterNode {
 
 module.exports = Highpass;
 
-},{"standardized-audio-context":216}],39:[function(require,module,exports){
+},{"standardized-audio-context":227}],39:[function(require,module,exports){
 const Compressor = require('./compressor');
 /**
  * A Limiter AudioNode filter.
@@ -2463,7 +2529,7 @@ class Lowpass extends BiquadFilterNode {
 
 module.exports = Lowpass;
 
-},{"standardized-audio-context":216}],41:[function(require,module,exports){
+},{"standardized-audio-context":227}],41:[function(require,module,exports){
 const AudioAnalyzer = require('../analyser/analyser');
 /**
  * ES6 class abstraction of a Web Audio API audio input.
@@ -2591,7 +2657,7 @@ module.exports = {
   Playback
 };
 
-},{"standardized-audio-context":216,"uuid":46}],44:[function(require,module,exports){
+},{"standardized-audio-context":227,"uuid":46}],44:[function(require,module,exports){
 const Mic = require('./input/mic');
 /**
  * A class for designing an audio signal flow. Signal flows route an audio input
@@ -2773,7 +2839,7 @@ class UserMedia {
 
 module.exports = UserMedia;
 
-},{"./constraints":32,"./input/mic":42,"get-user-media-promise":98}],46:[function(require,module,exports){
+},{"./constraints":32,"./input/mic":42,"get-user-media-promise":107}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3613,6 +3679,889 @@ function version(uuid) {
 var _default = version;
 exports.default = _default;
 },{"./validate.js":59}],61:[function(require,module,exports){
+const StreamAnalyser = require('./lib/analyser')
+const StreamAnalyserCanvas = require('./lib/analyserCanvas')
+const StreamAnalyserErrors = require('./lib/analyserErrors')
+
+module.exports = {
+  StreamAnalyser,
+  StreamAnalyserCanvas,
+  StreamAnalyserErrors
+}
+
+},{"./lib/analyser":62,"./lib/analyserCanvas":63,"./lib/analyserErrors":64}],62:[function(require,module,exports){
+/**
+ * StreamAnalyser for audio analysis in frequency and time domains.
+ * @public
+ * @class
+ * @extends AnalyserNode
+ */
+class StreamAnalyser extends AnalyserNode {
+
+  /**
+     * Create a new StreamAnalyser.
+     * @param {AudioContext} ctx - The AudioContext to analyse.
+     * @param {Object} [opts={}] - Object to set different fftSize, smoothingTimeConstant
+     * @param {Integer} [opts.fftSize=2048] - Set a different fftSize
+     * @param {Float} [opts.smoothingTimeConstant=0.8] - Set a different smoothingTimeConstant
+     * @returns {StreamAnalyser}
+     */
+  constructor(ctx, opts={}) {
+    super(ctx, opts)
+
+    this.channelCount = 1
+    this.fftSize = opts.fftSize || StreamAnalyser.defaultFFTSize()
+    this.smoothingTimeConstant = opts.smoothingTimeConstant || StreamAnalyser.defaultSmoothingTimeConstant()
+    this.freqDataArray = new Uint8Array(this.frequencyBinCount)
+    this.timeDataArray = new Uint8Array(this.fftSize)
+  }
+
+  /**
+  * Returns the default `fftSize` for the class instance.
+  * @returns {Integer}
+  */
+  static defaultFFTSize() {
+    return 2048
+  }
+
+  /**
+  * Returns the default `smoothingTimeConstant` for the class instance.
+  * @returns {Float}
+  */
+  static defaultSmoothingTimeConstant() {
+    return 0.8
+  }
+}
+
+module.exports = StreamAnalyser
+
+},{}],63:[function(require,module,exports){
+let StreamAnalyser = require('./analyser')
+
+/**
+ * StreamAnalyserCanvas for audio visualization.
+ * @public
+ * @class
+ * @extends StreamAnalyser
+ */
+class StreamAnalyserCanvas extends StreamAnalyser {
+  /**
+   * Create a new StreamAnalyserCanvas.
+   * @param {AudioContext} ctx - The AudioContext to analyse.
+   * @param {Object} [opts={}] - Object to override default properties
+   * @param {Integer} [opts.fftSize=2048] - Set a different fftSize
+   * @param {Float} [opts.smoothingTimeConstant=1.0] - Set a different smoothingTimeConstant
+   * @param {Integer} [opts.minDecibels=-50] - Set a different minimum decibel value
+   * @param {Integer} [opts.maxDecibels=-20] - Set a different maximum decibel value
+   * @returns {StreamAnalyserCanvas}
+   */
+  constructor(ctx, opts = {}) {
+    super(ctx, opts)
+
+    this.channelCount = 1
+    this.fftSize = opts.fftSize || StreamAnalyserCanvas.defaultFFTSize()
+    this.smoothingTimeConstant =
+      opts.smoothingTimeConstant ||
+      StreamAnalyserCanvas.defaultSmoothingTimeConstant()
+    this.maxDecibels =
+      opts.maxDecibels || StreamAnalyserCanvas.defaultdBValues().maxDecibels
+    this.minDecibels =
+      opts.minDecibels || StreamAnalyserCanvas.defaultdBValues().minDecibels
+  }
+
+  /**
+   * Returns the default `fftSize` for the class instance.
+   * @returns {Integer}
+   */
+  static defaultFFTSize() {
+    return 2048
+  }
+
+  /**
+   * Returns the default `smoothingTimeConstant` for the class instance.
+   * @returns {Float}
+   */
+  static defaultSmoothingTimeConstant() {
+    return 1.0
+  }
+
+  /**
+   * Returns an object containing default `minDecibels` and `maxDecibels` for the class instance.
+   * @returns {Float}
+   */
+  static defaultdBValues() {
+    return { minDecibels: -50, maxDecibels: -20 }
+  }
+
+  /**
+   * Returns the buffer length and data array
+   * @returns {Object}
+   */
+  getBufferLengthAndDataArray() {
+    return {
+      bufferLength: this.frequencyBinCount,
+      dataArray: this.freqDataArray
+    }
+  }
+
+  /**
+   * Returns the object of Analyser Options
+   *
+   * @param {MediaStreamAudioSourceNode} audioSource - Custom audio source for the analyzer
+   * @param {number | string} fftSize - Window size of the Fast Fourier Transform, must be a power of 2 between 2^5 and 2^15
+   * @param {number | string} maxDecibels - Max decibels to respond to (-100 to 0)
+   * @param {number | string} minDecibels - Min decibels to respond to (-100 to 0)
+   * @param {number | string} smoothingTimeConstant - Smoothing Time Constant (0 to 1)
+   * @returns {Object}
+   */
+  getAnalyserOptions(opts = {}) {
+    let analyserOptions = {
+      audioSource: null,
+      fftSize: this.fftSize,
+      maxDecibels: this.maxDecibels,
+      minDecibels: this.minDecibels,
+      smoothing: this.smoothingTimeConstant
+    }
+
+    if (!opts) return analyserOptions
+    Object.keys(opts).forEach((option) => {
+      if (option in analyserOptions) {
+        analyserOptions[option] = opts[option]
+      }
+    })
+    return analyserOptions
+  }
+
+  /**
+   * Returns common canvas values. If no value is provided, the default value is returned.
+   *
+   * @param {string} [opts.backgroundColor=rgb(0,0,0)] - Hex, RGB(A) or HTML Named Color
+   * @param {number | string} [opts.height=150] - Pixel Height For Visualizer Canvas
+   * @param {number | string} [opts.offsetX=0] - Pixel value for animation offset X
+   * @param {number | string} [opts.offsetY=0] - Pixel value for animation offset Y
+   * @param {string} [opts.targetElementId=DEFAULT] - HTML id attribute of element to append canvas element to
+   * @param {HTMLElement} [opts.targetElement=null] - HTML element to append canvas element to
+   * @param {number | string} [opts.width=500] - Pixel Width For Visualizer Canvas
+   * @returns {Object}
+   */
+  getCanvasOptions(opts = {}) {
+    const DEFAULT = 'default'
+    let canvasOptions = {
+      backgroundColor: 'rgb(0,0,0)',
+      height: 150,
+      offsetX: 0,
+      offsetY: 0,
+      smoothing: 1,
+      targetElementId: DEFAULT,
+      targetElement: null,
+      width: 500
+    }
+
+    if (!opts) return canvasOptions
+    Object.keys(opts).forEach((option) => {
+      if (option in canvasOptions) {
+        canvasOptions[option] = opts[option]
+      }
+    })
+    return canvasOptions
+  }
+}
+
+module.exports = StreamAnalyserCanvas
+
+},{"./analyser":62}],64:[function(require,module,exports){
+const StreamAnalyser = require('./analyser')
+const Hypercore = require('hypercore')
+const b4a = require('b4a')
+const ram = require('random-access-memory')
+
+/**
+ * StreamAnalyserErrors for real-time error detection.
+ * @public
+ * @class
+ * @extends StreamAnalyser
+ */
+class StreamAnalyserErrors extends StreamAnalyser {
+  /**
+   * Create a new StreamAnalyserErrors.
+   * @param {AudioContext} ctx - The AudioContext to analyse.
+   * @param {Object} [opts={}] - Object to override default properties
+   * @param {Integer} [opts.fftSize=2048] - Set a different fftSize
+   * @param {Float} [opts.smoothingTimeConstant=0.8] - Set a different smoothingTimeConstant
+   * @param {Integer} [opts.minDecibels=-50] - Set a different minimum decibel value
+   * @param {Integer} [opts.maxDecibels=-20] - Set a different maximum decibel value
+   * @param {Float} [opts.referenceLevel=0.0] - Set a different reference level for the system
+   * @param {Float} [opts.threshold=0.0] - Set the dB threshold
+   * @param {Hypercore | Boolean} [opts.core=null] - The Hypercore instance to be used or flag true for generating a Hypercore instance
+   * @returns {StreamAnalyserErrors}
+   */
+  constructor(ctx, opts = {}) {
+    super(ctx, opts)
+
+    this.ctx = ctx
+    this.channelCount = 1
+
+    this.threshold = opts.threshold || 0.0
+    this.fftSize = opts.fftSize || StreamAnalyser.defaultFFTSize()
+    this.smoothingTimeConstant =
+      opts.smoothingTimeConstant ||
+      StreamAnalyser.defaultSmoothingTimeConstant()
+    this.maxDecibels =
+      opts.maxDecibels || StreamAnalyserErrors.defaultdBValues().maxDecibels
+    this.minDecibels =
+      opts.minDecibels || StreamAnalyserErrors.defaultdBValues().minDecibels
+    this.referenceLevel =
+      opts.referenceLevel || StreamAnalyserErrors.defaultReferenceLevel()
+
+    // Assign or initialize Hypercore instance
+    this.core =
+      opts.core instanceof Hypercore
+        ? opts.core
+        : opts.core === true
+        ? new Hypercore(ram)
+        : null
+    this.hasHypercore =
+      this.core && this.core instanceof Hypercore ? true : false
+
+    this.init()
+  }
+
+  /**
+   * Returns an object containing default `minDecibels` and `maxDecibels` for the class instance.
+   * @returns {Float}
+   */
+  static defaultdBValues() {
+    return { minDecibels: -50, maxDecibels: -20 }
+  }
+
+  /**
+   * Returns the default reverence level in dB.
+   * @returns {Float}
+   */
+  static defaultReferenceLevel() {
+    return 0.0
+  }
+
+  /**
+   * Called in constructor.
+   * Initializes the default events and sets additional default parameters.
+   */
+  init() {
+    // Define default event values
+    this.eventBeginSilence = new CustomEvent('beginsilence')
+    this.eventEndSilence = new CustomEvent('endsilence')
+    this.eventClipping = new CustomEvent('clippingdetected', {
+      detail: { clippedSamples: 0 }
+    })
+
+    // Initial peak dB
+    this.peakdB = -Infinity
+  }
+
+  /**
+   * Begins monitoring and error reporting for the provided audio source.
+   * Creates a requestID for process identification.
+   *
+   * @param {MediaStream} stream - The audio source stream. Expects type to be MediaStream by default.
+   * @param {Integer} delay  - The silence delay. Sets the amount of time between activity to determine silence.
+   * @param {Boolean} [opts.silence=true] - Opt in (true) for silence detection of the stream.
+   * @param {Boolean} [opts.clipping=true] - Opt in (true) for clipping detection of the stream.
+   */
+  metering(
+    stream,
+    delay = 1000,
+    opts = {
+      silence: true,
+      clipping: 'true'
+    }
+  ) {
+    const byteData = new Uint8Array(this.frequencyBinCount)
+    const floatData = new Float32Array(this.fftSize)
+    const streamNode = this.ctx.createMediaStreamSource(stream)
+
+    let activity = false
+    let silenceStart = performance.now()
+    let totalClipped = 0
+
+    // Connect StreamAnalyserErrors instance to stream source
+    streamNode.connect(this)
+
+    // Continuously poll the stream for events
+    const poll = (now) => {
+      this.requestID = requestAnimationFrame(poll)
+      // Silence detection
+      if (opts.silence) {
+        this.getByteFrequencyData(byteData)
+        // If the buffer is not all zeros (non-silence),
+        // emit the noise activity event.
+        if (byteData.some((dBValue) => dBValue)) {
+          if (activity) {
+            this.dispatchEvent(this.eventEndSilence)
+            this._appendData({
+              eventName: 'sound_activity',
+              epoch: Date.now()
+            })
+            activity = false
+          }
+          silenceStart = now
+        }
+        // If silence has been detected, emit the silence event.
+        if (!activity && now - silenceStart > delay) {
+          this.dispatchEvent(this.eventBeginSilence)
+          this._appendData({ eventName: 'silence', epoch: Date.now() })
+          activity = true
+        }
+      }
+      // Clipping detection
+      if (opts.clipping) {
+        let dBValues = []
+        this.getFloatTimeDomainData(floatData)
+
+        // Calculate instantaneous power over the sample buffer and
+        // convert to decibels.
+        floatData.map((sample) => {
+          const power = Math.pow(sample, 2)
+          dBValues.push(Math.log10(power) * 10 + this.referenceLevel)
+        })
+
+        // Get the peak decibel level for the buffer
+        this.peakdB = Math.max(...dBValues)
+        // Get the number of samples above the clipping threshold (0 dB)
+        const clipped = dBValues.filter((i) => Math.round(i) >= 0).length
+        const peakClipped_dB = Math.max(
+          ...dBValues.filter((i) => {
+            if (isFinite(Math.round(i) >= 0)) return Math.round(i) >= 0
+          })
+        )
+
+        // If there are clipped samples, add them to total clipped samples parameter.
+        if (clipped !== 0) {
+          totalClipped += clipped
+        } else if (totalClipped !== 0) {
+          // Emit the clipping event once clipping has ended,
+          // report the number of samples clipped.
+          this.eventClipping = new CustomEvent('clippingdetected', {
+            detail: {
+              clippedSamples: totalClipped
+            }
+          })
+          this.dispatchEvent(this.eventClipping)
+          this._appendData({
+            eventName: 'clipping',
+            epoch: Date.now(),
+            clippedSamples: totalClipped,
+            maxClipped_dB: peakClipped_dB
+          })
+          totalClipped = 0
+        }
+      }
+    }
+    poll()
+  }
+
+  /**
+   * Stops the polling process on the provided stream.
+   */
+  stopListening() {
+    if (this.requestID) {
+      window.cancelAnimationFrame(this.requestID)
+      this.requestID = undefined
+    }
+  }
+
+  /**
+   * Appends the provided JSON data object to Hypercore instance.
+   * 
+   * @param {Object} data 
+   * @returns Promise
+   */
+  async _appendData(data) {
+    if (this.hasHypercore)
+      return await this.core.append(b4a.from(JSON.stringify(data)))
+  }
+}
+
+module.exports = StreamAnalyserErrors
+
+},{"./analyser":62,"b4a":80,"hypercore":111,"random-access-memory":65}],65:[function(require,module,exports){
+(function (Buffer){(function (){
+const RandomAccess = require('random-access-storage')
+const isOptions = require('is-options')
+const b4a = require('b4a')
+
+const DEFAULT_PAGE_SIZE = 1024 * 1024
+
+module.exports = class RAM extends RandomAccess {
+  constructor (opts) {
+    super()
+
+    if (typeof opts === 'number') opts = { length: opts }
+    if (!opts) opts = {}
+
+    if (b4a.isBuffer(opts)) {
+      opts = { length: opts.length, buffer: opts }
+    }
+    if (!isOptions(opts)) opts = {}
+
+    this.length = opts.length || 0
+    this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
+    this.buffers = []
+
+    if (opts.buffer) this.buffers.push(opts.buffer)
+  }
+
+  _stat (req) {
+    req.callback(null, { size: this.length })
+  }
+
+  _write (req) {
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
+
+    const len = req.offset + req.size
+    if (len > this.length) this.length = len
+
+    while (start < req.size) {
+      const page = this._page(i++, true)
+      const free = this.pageSize - rel
+      const end = free < (req.size - start)
+        ? start + free
+        : req.size
+
+      b4a.copy(req.data, page, rel, start, end)
+      start = end
+      rel = 0
+    }
+
+    req.callback(null, null)
+  }
+
+  _read (req) {
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
+
+    if (req.offset + req.size > this.length) {
+      return req.callback(new Error('Could not satisfy length'), null)
+    }
+
+    const data = b4a.alloc(req.size)
+
+    while (start < req.size) {
+      const page = this._page(i++, false)
+      const avail = this.pageSize - rel
+      const wanted = req.size - start
+      const len = avail < wanted ? avail : wanted
+
+      if (page) b4a.copy(page, data, start, rel, rel + len)
+      start += len
+      rel = 0
+    }
+
+    req.callback(null, data)
+  }
+
+  _del (req) {
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
+
+    if (rel && req.offset + req.size >= this.length) {
+      const buf = this.buffers[i]
+      if (buf) buf.fill(0, rel)
+    }
+
+    if (req.offset + req.size > this.length) {
+      req.size = Math.max(0, this.length - req.offset)
+    }
+
+    while (start < req.size) {
+      if (rel === 0 && req.size - start >= this.pageSize) {
+        this.buffers[i] = undefined
+      }
+
+      rel = 0
+      i += 1
+      start += this.pageSize - rel
+    }
+
+    if (req.offset + req.size >= this.length) {
+      this.length = req.offset
+    }
+
+    req.callback(null, null)
+  }
+
+  _destroy (req) {
+    this._buffers = []
+    this.length = 0
+    req.callback(null, null)
+  }
+
+  _page (i, upsert) {
+    let page = this.buffers[i]
+    if (page || !upsert) return page
+    page = this.buffers[i] = b4a.alloc(this.pageSize)
+    return page
+  }
+
+  toBuffer () {
+    const buf = b4a.alloc(this.length)
+
+    for (let i = 0; i < this.buffers.length; i++) {
+      if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
+    }
+
+    return buf
+  }
+
+  clone () {
+    const ram = new RAM()
+    ram.length = this.length
+    ram.pageSize = this.pageSize
+    ram.buffers = this.buffers.map((buffer) => Buffer.from(buffer))
+    return ram
+  }
+}
+
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"b4a":80,"buffer":94,"is-options":134,"random-access-storage":66}],66:[function(require,module,exports){
+const EventEmitter = require('events')
+const queueTick = require('queue-tick')
+
+const NOT_READABLE = defaultImpl(new Error('Not readable'))
+const NOT_WRITABLE = defaultImpl(new Error('Not writable'))
+const NOT_DELETABLE = defaultImpl(new Error('Not deletable'))
+const NOT_STATABLE = defaultImpl(new Error('Not statable'))
+
+const DEFAULT_OPEN = defaultImpl(null)
+const DEFAULT_CLOSE = defaultImpl(null)
+const DEFAULT_DESTROY = defaultImpl(null)
+
+// NON_BLOCKING_OPS
+const READ_OP = 0
+const WRITE_OP = 1
+const DEL_OP = 2
+const TRUNCATE_OP = 3
+const STAT_OP = 4
+
+// BLOCKING_OPS
+const OPEN_OP = 5
+const SUSPEND_OP = 6
+const CLOSE_OP = 7
+const DESTROY_OP = 8
+
+module.exports = class RandomAccessStorage extends EventEmitter {
+  constructor (opts = {}) {
+    super()
+
+    this._queued = []
+    this._pending = 0
+    this._needsOpen = true
+    this._needsCreate = !!opts.createAlways
+
+    this.opened = false
+    this.suspended = false
+    this.closed = false
+    this.destroyed = false
+
+    if (opts.open) this._open = opts.open
+    if (opts.read) this._read = opts.read
+    if (opts.write) this._write = opts.write
+    if (opts.del) this._del = opts.del
+    if (opts.truncate) this._truncate = opts.truncate
+    if (opts.stat) this._stat = opts.stat
+    if (opts.suspend) this._suspend = opts.suspend
+    if (opts.close) this._close = opts.close
+    if (opts.destroy) this._destroy = opts.destroy
+
+    this.readable = this._read !== RandomAccessStorage.prototype._read
+    this.writable = this._write !== RandomAccessStorage.prototype._write
+    this.deletable = this._del !== RandomAccessStorage.prototype._del
+    this.truncatable = this._truncate !== RandomAccessStorage.prototype._truncate || this.deletable
+    this.statable = this._stat !== RandomAccessStorage.prototype._stat
+  }
+
+  read (offset, size, cb) {
+    this.run(new Request(this, READ_OP, offset, size, null, false, cb))
+  }
+
+  _read (req) {
+    return NOT_READABLE(req)
+  }
+
+  write (offset, data, cb) {
+    if (!cb) cb = noop
+    openWritable(this)
+    this.run(new Request(this, WRITE_OP, offset, data.length, data, false, cb))
+  }
+
+  _write (req) {
+    return NOT_WRITABLE(req)
+  }
+
+  del (offset, size, cb) {
+    if (!cb) cb = noop
+    openWritable(this)
+    this.run(new Request(this, DEL_OP, offset, size, null, false, cb))
+  }
+
+  _del (req) {
+    return NOT_DELETABLE(req)
+  }
+
+  truncate (offset, cb) {
+    if (!cb) cb = noop
+    openWritable(this)
+    this.run(new Request(this, TRUNCATE_OP, offset, 0, null, false, cb))
+  }
+
+  _truncate (req) {
+    req.size = Infinity
+    this._del(req)
+  }
+
+  stat (cb) {
+    this.run(new Request(this, STAT_OP, 0, 0, null, false, cb))
+  }
+
+  _stat (req) {
+    return NOT_STATABLE(req)
+  }
+
+  open (cb) {
+    if (!cb) cb = noop
+    if (this.opened && !this._needsOpen) return nextTickCallback(cb)
+    queueAndRun(this, new Request(this, OPEN_OP, 0, 0, null, this._needsCreate, cb))
+  }
+
+  _open (req) {
+    return DEFAULT_OPEN(req)
+  }
+
+  suspend (cb) {
+    if (!cb) cb = noop
+    if (this.closed || this.suspended) return nextTickCallback(cb)
+    this._needsOpen = true
+    queueAndRun(this, new Request(this, SUSPEND_OP, 0, 0, null, false, cb))
+  }
+
+  _suspend (req) {
+    this._close(req)
+  }
+
+  close (cb) {
+    if (!cb) cb = noop
+    if (this.closed) return nextTickCallback(cb)
+    queueAndRun(this, new Request(this, CLOSE_OP, 0, 0, null, false, cb))
+  }
+
+  _close (req) {
+    return DEFAULT_CLOSE(req)
+  }
+
+  destroy (cb) {
+    if (!cb) cb = noop
+    if (!this.closed) this.close(noop)
+    queueAndRun(this, new Request(this, DESTROY_OP, 0, 0, null, false, cb))
+  }
+
+  _destroy (req) {
+    return DEFAULT_DESTROY(req)
+  }
+
+  run (req) {
+    if (this._needsOpen) this.open(noop)
+    if (this._queued.length) this._queued.push(req)
+    else req._run()
+  }
+}
+
+function noop () {}
+
+class Request {
+  constructor (self, type, offset, size, data, create, cb) {
+    this.type = type
+    this.offset = offset
+    this.size = size
+    this.data = data
+    this.create = create
+    this.storage = self
+
+    this._sync = false
+    this._callback = cb
+    this._openError = null
+  }
+
+  _maybeOpenError (err) {
+    if (this.type !== OPEN_OP) return
+    const queued = this.storage._queued
+    for (let i = 0; i < queued.length; i++) queued[i]._openError = err
+  }
+
+  _unqueue (err) {
+    const ra = this.storage
+    const queued = ra._queued
+
+    if (!err) {
+      switch (this.type) {
+        case OPEN_OP:
+          if (ra.suspended) {
+            ra.suspended = false
+            ra.emit('unsuspend')
+          }
+          if (!ra.opened) {
+            ra.opened = true
+            ra.emit('open')
+          }
+          break
+
+        case SUSPEND_OP:
+          if (!ra.suspended) {
+            ra.suspended = true
+            ra.emit('suspend')
+          }
+          break
+
+        case CLOSE_OP:
+          if (!ra.closed) {
+            ra.closed = true
+            ra.emit('close')
+          }
+          break
+
+        case DESTROY_OP:
+          if (!ra.destroyed) {
+            ra.destroyed = true
+            ra.emit('destroy')
+          }
+          break
+      }
+    } else {
+      this._maybeOpenError(err)
+    }
+
+    if (queued.length && queued[0] === this) queued.shift()
+
+    if (!--ra._pending) drainQueue(ra)
+  }
+
+  callback (err, val) {
+    if (this._sync) return nextTick(this, err, val)
+    this._unqueue(err)
+    this._callback(err, val)
+  }
+
+  _openAndNotClosed () {
+    const ra = this.storage
+    if (ra.opened && !ra.closed) return true
+    if (!ra.opened) nextTick(this, this._openError || new Error('Not opened'))
+    else if (ra.closed) nextTick(this, new Error('Closed'))
+    return false
+  }
+
+  _open () {
+    const ra = this.storage
+
+    if (ra.opened && !ra._needsOpen) return nextTick(this, null)
+    if (ra.closed) return nextTick(this, new Error('Closed'))
+
+    ra._needsOpen = false
+    ra._open(this)
+  }
+
+  _run () {
+    const ra = this.storage
+    ra._pending++
+
+    this._sync = true
+
+    switch (this.type) {
+      case READ_OP:
+        if (this._openAndNotClosed()) ra._read(this)
+        break
+
+      case WRITE_OP:
+        if (this._openAndNotClosed()) ra._write(this)
+        break
+
+      case DEL_OP:
+        if (this._openAndNotClosed()) ra._del(this)
+        break
+
+      case TRUNCATE_OP:
+        if (this._openAndNotClosed()) ra._truncate(this)
+        break
+
+      case STAT_OP:
+        if (this._openAndNotClosed()) ra._stat(this)
+        break
+
+      case OPEN_OP:
+        this._open()
+        break
+
+      case SUSPEND_OP:
+        if (ra.closed || !ra.opened || ra.suspended) nextTick(this, null)
+        else ra._suspend(this)
+        break
+
+      case CLOSE_OP:
+        if (ra.closed || !ra.opened) nextTick(this, null)
+        else ra._close(this)
+        break
+
+      case DESTROY_OP:
+        if (ra.destroyed) nextTick(this, null)
+        else ra._destroy(this)
+        break
+    }
+
+    this._sync = false
+  }
+}
+
+function queueAndRun (self, req) {
+  self._queued.push(req)
+  if (!self._pending) req._run()
+}
+
+function drainQueue (self) {
+  const queued = self._queued
+
+  while (queued.length > 0) {
+    const blocking = queued[0].type > 3
+    if (!blocking || !self._pending) queued[0]._run()
+    if (blocking) return
+    queued.shift()
+  }
+}
+
+function openWritable (self) {
+  if (!self._needsCreate) {
+    self._needsOpen = true
+    self._needsCreate = true
+  }
+}
+
+function defaultImpl (err) {
+  return overridable
+
+  function overridable (req) {
+    nextTick(req, err)
+  }
+}
+
+function nextTick (req, err, val) {
+  queueTick(() => req.callback(err, val))
+}
+
+function nextTickCallback (cb) {
+  queueTick(() => cb(null))
+}
+
+},{"events":103,"queue-tick":183}],67:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -4122,7 +5071,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"object-assign":163,"util/":64}],62:[function(require,module,exports){
+},{"object-assign":175,"util/":70}],68:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -4147,14 +5096,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],63:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],64:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4744,12 +5693,12 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":63,"_process":169,"inherits":62}],65:[function(require,module,exports){
+},{"./support/isBuffer":69,"_process":181,"inherits":68}],71:[function(require,module,exports){
 module.exports = function _atob(str) {
   return atob(str)
 }
 
-},{}],66:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /**
  * @module  audio-dtype
  */
@@ -4900,7 +5849,7 @@ function getFormat (arg) {
 	return typeof arg === 'string' ? format.parse(arg) : format.detect(arg)
 }
 
-},{"audio-buffer":68,"audio-context":69,"audio-format":70,"is-audio-buffer":118,"is-plain-obj":123,"pcm-convert":166,"pick-by-alias":168,"string-to-arraybuffer":233}],67:[function(require,module,exports){
+},{"audio-buffer":74,"audio-context":75,"audio-format":76,"is-audio-buffer":130,"is-plain-obj":135,"pcm-convert":178,"pick-by-alias":180,"string-to-arraybuffer":244}],73:[function(require,module,exports){
 /**
  * @module  audio-buffer-utils
  */
@@ -5602,7 +6551,7 @@ function data (buffer, data) {
 	return data;
 }
 
-},{"audio-buffer":68,"audio-buffer-from":66,"audio-context":69,"clamp":89,"is-audio-buffer":118,"is-browser":120,"is-buffer":121}],68:[function(require,module,exports){
+},{"audio-buffer":74,"audio-buffer-from":72,"audio-context":75,"clamp":96,"is-audio-buffer":130,"is-browser":132,"is-buffer":133}],74:[function(require,module,exports){
 /**
  * AudioBuffer class
  *
@@ -5715,7 +6664,7 @@ AudioBuffer.prototype.copyToChannel = function (source, channelNumber, startInCh
 };
 
 
-},{"audio-context":69}],69:[function(require,module,exports){
+},{"audio-context":75}],75:[function(require,module,exports){
 'use strict'
 
 var cache = {}
@@ -5761,7 +6710,7 @@ module.exports = function getContext (options) {
 	return ctx
 }
 
-},{}],70:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 /**
  * @module audio-format
  */
@@ -5940,7 +6889,7 @@ function getType (arg) {
 	if (arg instanceof Uint32Array) return 'uint32'
 }
 
-},{"is-audio-buffer":118,"is-buffer":71,"is-plain-obj":123,"os":165,"pick-by-alias":168,"sample-rate":179}],71:[function(require,module,exports){
+},{"is-audio-buffer":130,"is-buffer":77,"is-plain-obj":135,"os":177,"pick-by-alias":180,"sample-rate":190}],77:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -5963,7 +6912,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],72:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module.exports = audioBufferToWav
 function audioBufferToWav (buffer, opt) {
   opt = opt || {}
@@ -6059,7 +7008,7 @@ function writeString (view, offset, string) {
   }
 }
 
-},{}],73:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/createClass')) :
     typeof define === 'function' && define.amd ? define(['exports', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/createClass'], factory) :
@@ -6422,12 +7371,14 @@ function writeString (view, offset, string) {
 
 }));
 
-},{"@babel/runtime/helpers/classCallCheck":8,"@babel/runtime/helpers/createClass":9,"@babel/runtime/helpers/slicedToArray":21}],74:[function(require,module,exports){
+},{"@babel/runtime/helpers/classCallCheck":8,"@babel/runtime/helpers/createClass":9,"@babel/runtime/helpers/slicedToArray":21}],80:[function(require,module,exports){
 const ascii = require('./lib/ascii')
 const base64 = require('./lib/base64')
 const hex = require('./lib/hex')
 const utf8 = require('./lib/utf8')
 const utf16le = require('./lib/utf16le')
+
+const LE = new Uint8Array(Uint16Array.of(0xff).buffer)[0] === 0xff
 
 function codecFor (encoding) {
   switch (encoding) {
@@ -6453,6 +7404,15 @@ function codecFor (encoding) {
 
 function isBuffer (value) {
   return value instanceof Uint8Array
+}
+
+function isEncoding (encoding) {
+  try {
+    codecFor(encoding)
+    return true
+  } catch {
+    return false
+  }
 }
 
 function alloc (size, fill, encoding) {
@@ -6484,10 +7444,9 @@ function compare (a, b) {
   let i = 0
 
   for (let n = len - (len % 4); i < n; i += 4) {
-    const x = a.getUint32(i)
-    const y = b.getUint32(i)
-    if (x < y) return -1
-    if (x > y) return 1
+    const x = a.getUint32(i, LE)
+    const y = b.getUint32(i, LE)
+    if (x !== y) break
   }
 
   for (; i < len; i++) {
@@ -6556,7 +7515,7 @@ function equals (a, b) {
   let i = 0
 
   for (let n = len - (len % 4); i < n; i += 4) {
-    if (a.getUint32(i) !== b.getUint32(i)) return false
+    if (a.getUint32(i, LE) !== b.getUint32(i, LE)) return false
   }
 
   for (; i < len; i++) {
@@ -6580,7 +7539,7 @@ function fill (buffer, value, offset, end, encoding) {
       end = buffer.byteLength
     }
   } else if (typeof val === 'number') {
-    value = value & 255
+    value = value & 0xff
   } else if (typeof val === 'boolean') {
     value = +value
   }
@@ -6648,6 +7607,86 @@ function fromBuffer (buffer) {
 
 function fromArrayBuffer (arrayBuffer, byteOffset, length) {
   return new Uint8Array(arrayBuffer, byteOffset, length)
+}
+
+function includes (buffer, value, byteOffset, encoding) {
+  return indexOf(buffer, value, byteOffset, encoding) !== -1
+}
+
+function bidirectionalIndexOf (buffer, value, byteOffset, encoding, first) {
+  if (buffer.byteLength === 0) return -1
+
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset === undefined) {
+    byteOffset = first ? 0 : (buffer.length - 1)
+  } else if (byteOffset < 0) {
+    byteOffset += buffer.byteLength
+  }
+
+  if (byteOffset >= buffer.byteLength) {
+    if (first) return -1
+    else byteOffset = buffer.byteLength - 1
+  } else if (byteOffset < 0) {
+    if (first) byteOffset = 0
+    else return -1
+  }
+
+  if (typeof value === 'string') {
+    value = from(value, encoding)
+  } else if (typeof value === 'number') {
+    value = value & 0xff
+
+    if (first) {
+      return buffer.indexOf(value, byteOffset)
+    } else {
+      return buffer.lastIndexOf(value, byteOffset)
+    }
+  }
+
+  if (value.byteLength === 0) return -1
+
+  if (first) {
+    let foundIndex = -1
+
+    for (let i = byteOffset; i < buffer.byteLength; i++) {
+      if (buffer[i] === value[foundIndex === -1 ? 0 : i - foundIndex]) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === value.byteLength) return foundIndex
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + value.byteLength > buffer.byteLength) {
+      byteOffset = buffer.byteLength - value.byteLength
+    }
+
+    for (let i = byteOffset; i >= 0; i--) {
+      let found = true
+
+      for (let j = 0; j < value.byteLength; j++) {
+        if (buffer[i + j] !== value[j]) {
+          found = false
+          break
+        }
+      }
+
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+function indexOf (buffer, value, byteOffset, encoding) {
+  return bidirectionalIndexOf(buffer, value, byteOffset, encoding, true /* first */)
+}
+
+function lastIndexOf (buffer, value, byteOffset, encoding) {
+  return bidirectionalIndexOf(buffer, value, byteOffset, encoding, false /* last */)
 }
 
 function swap (buffer, n, m) {
@@ -6730,8 +7769,77 @@ function write (buffer, string, offset, length, encoding) {
   return codecFor(encoding).write(buffer, string, offset, length)
 }
 
+function writeDoubleLE (buffer, value, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+  view.setFloat64(offset, value, true)
+
+  return offset + 8
+}
+
+function writeFloatLE (buffer, value, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+  view.setFloat32(offset, value, true)
+
+  return offset + 4
+}
+
+function writeUInt32LE (buffer, value, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+  view.setUint32(offset, value, true)
+
+  return offset + 4
+}
+
+function writeInt32LE (buffer, value, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+  view.setInt32(offset, value, true)
+
+  return offset + 4
+}
+
+function readDoubleLE (buffer, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+
+  return view.getFloat64(offset, true)
+}
+
+function readFloatLE (buffer, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+
+  return view.getFloat32(offset, true)
+}
+
+function readUInt32LE (buffer, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+
+  return view.getUint32(offset, true)
+}
+
+function readInt32LE (buffer, offset) {
+  if (offset === undefined) offset = 0
+
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+
+  return view.getInt32(offset, true)
+}
+
 module.exports = {
   isBuffer,
+  isEncoding,
   alloc,
   allocUnsafe,
   allocUnsafeSlow,
@@ -6742,15 +7850,26 @@ module.exports = {
   equals,
   fill,
   from,
+  includes,
+  indexOf,
+  lastIndexOf,
   swap16,
   swap32,
   swap64,
   toBuffer,
   toString,
-  write
+  write,
+  writeDoubleLE,
+  writeFloatLE,
+  writeUInt32LE,
+  writeInt32LE,
+  readDoubleLE,
+  readFloatLE,
+  readUInt32LE,
+  readInt32LE
 }
 
-},{"./lib/ascii":75,"./lib/base64":76,"./lib/hex":77,"./lib/utf16le":78,"./lib/utf8":79}],75:[function(require,module,exports){
+},{"./lib/ascii":81,"./lib/base64":82,"./lib/hex":83,"./lib/utf16le":84,"./lib/utf8":85}],81:[function(require,module,exports){
 function byteLength (string) {
   return string.length
 }
@@ -6783,7 +7902,7 @@ module.exports = {
   write
 }
 
-},{}],76:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 const codes = new Uint8Array(256)
@@ -6850,7 +7969,7 @@ module.exports = {
   write
 }
 
-},{}],77:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 function byteLength (string) {
   return string.length >>> 1
 }
@@ -6903,7 +8022,7 @@ function hexValue (char) {
   if (char >= 0x61 && char <= 0x66) return char - 0x61 + 10
 }
 
-},{}],78:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 function byteLength (string) {
   return string.length * 2
 }
@@ -6945,7 +8064,7 @@ module.exports = {
   write
 }
 
-},{}],79:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 function byteLength (string) {
   let length = 0
 
@@ -7092,7 +8211,7 @@ module.exports = {
   write
 }
 
-},{}],80:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -7244,7 +8363,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],81:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 const FACTOR = new Uint16Array(8)
 
 function factor4096 (i, n) {
@@ -7368,7 +8487,170 @@ class TinyArray {
   }
 }
 
-},{}],82:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
+const b4a = require('b4a')
+
+function byteLength (size) {
+  return Math.ceil(size / 8)
+}
+
+function get (buffer, bit) {
+  const n = buffer.BYTES_PER_ELEMENT * 8
+
+  const offset = bit & (n - 1)
+  const i = (bit - offset) / n
+
+  return (buffer[i] & (1 << offset)) !== 0
+}
+
+function set (buffer, bit, value = true) {
+  const n = buffer.BYTES_PER_ELEMENT * 8
+
+  const offset = bit & (n - 1)
+  const i = (bit - offset) / n
+  const mask = 1 << offset
+
+  if (value) {
+    if ((buffer[i] & mask) !== 0) return false
+  } else {
+    if ((buffer[i] & mask) === 0) return false
+  }
+
+  buffer[i] ^= mask
+  return true
+}
+
+function setRange (buffer, start, end, value = true) {
+  const n = buffer.BYTES_PER_ELEMENT * 8
+
+  let remaining = end - start
+  let offset = start & (n - 1)
+  let i = (start - offset) / n
+
+  let changed = false
+
+  while (remaining > 0) {
+    const mask = (2 ** Math.min(remaining, n - offset) - 1) << offset
+
+    if (value) {
+      if ((buffer[i] & mask) !== mask) {
+        buffer[i] |= mask
+        changed = true
+      }
+    } else {
+      if ((buffer[i] & mask) !== 0) {
+        buffer[i] &= ~mask
+        changed = true
+      }
+    }
+
+    remaining -= n - offset
+    offset = 0
+    i++
+  }
+
+  return changed
+}
+
+function fill (buffer, value, start = 0, end = buffer.byteLength * 8) {
+  const n = buffer.BYTES_PER_ELEMENT * 8
+  let i, j
+
+  {
+    const offset = start & (n - 1)
+    i = (start - offset) / n
+
+    if (offset !== 0) {
+      const mask = (2 ** Math.min(n - offset, end - start) - 1) << offset
+
+      if (value) buffer[i] |= mask
+      else buffer[i] &= ~mask
+
+      i++
+    }
+  }
+
+  {
+    const offset = end & (n - 1)
+    j = (end - offset) / n
+
+    if (offset !== 0 && j >= i) {
+      const mask = (2 ** offset) - 1
+
+      if (value) buffer[j] |= mask
+      else buffer[j] &= ~mask
+    }
+  }
+
+  return buffer.fill(value ? (2 ** n) - 1 : 0, i, j)
+}
+
+function toggle (buffer, bit) {
+  const n = buffer.BYTES_PER_ELEMENT * 8
+
+  const offset = bit & (n - 1)
+  const i = (bit - offset) / n
+  const mask = 1 << offset
+
+  buffer[i] ^= mask
+  return (buffer[i] & mask) !== 0
+}
+
+function remove (buffer, bit) {
+  return set(buffer, bit, false)
+}
+
+function removeRange (buffer, start, end) {
+  return setRange(buffer, start, end, false)
+}
+
+function indexOf (buffer, value, position = 0) {
+  for (let i = position, n = buffer.byteLength * 8; i < n; i++) {
+    if (get(buffer, i) === value) return i
+  }
+
+  return -1
+}
+
+function lastIndexOf (buffer, value, position = buffer.byteLength * 8 - 1) {
+  for (let i = position; i >= 0; i--) {
+    if (get(buffer, i) === value) return i
+  }
+
+  return -1
+}
+
+function of (...bits) {
+  return from(bits)
+}
+
+function from (bits) {
+  const buffer = b4a.alloc(byteLength(bits.length))
+  for (let i = 0; i < bits.length; i++) set(buffer, i, bits[i])
+  return buffer
+}
+
+function * iterator (buffer) {
+  for (let i = 0, n = buffer.byteLength * 8; i < n; i++) yield get(buffer, i)
+}
+
+module.exports = {
+  byteLength,
+  get,
+  set,
+  setRange,
+  fill,
+  toggle,
+  remove,
+  removeRange,
+  indexOf,
+  lastIndexOf,
+  of,
+  from,
+  iterator
+}
+
+},{"b4a":80}],89:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -7404,7 +8686,7 @@ module.exports = async (imports) => {
   return instance.exports;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var assert = require('nanoassert')
 var b4a = require('b4a')
 
@@ -7540,7 +8822,7 @@ Blake2b.prototype.setPartialHash = function (ph) {
 
 function noop () {}
 
-},{"./blake2b":82,"b4a":74,"nanoassert":156}],84:[function(require,module,exports){
+},{"./blake2b":89,"b4a":80,"nanoassert":168}],91:[function(require,module,exports){
 var assert = require('nanoassert')
 var b2wasm = require('blake2b-wasm')
 
@@ -7865,9 +9147,9 @@ b2wasm.ready(function (err) {
   }
 })
 
-},{"blake2b-wasm":83,"nanoassert":156}],85:[function(require,module,exports){
+},{"blake2b-wasm":90,"nanoassert":168}],92:[function(require,module,exports){
 
-},{}],86:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 (function (Buffer){(function (){
 /* eslint-disable node/no-deprecated-api */
 
@@ -7943,7 +9225,7 @@ function bufferFrom (value, encodingOrOffset, length) {
 module.exports = bufferFrom
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":87}],87:[function(require,module,exports){
+},{"buffer":94}],94:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -9724,7 +11006,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":80,"buffer":87,"ieee754":116}],88:[function(require,module,exports){
+},{"base64-js":86,"buffer":94,"ieee754":128}],95:[function(require,module,exports){
 const assert = require('nanoassert')
 
 module.exports = Chacha20
@@ -9861,7 +11143,7 @@ function QR (obj, a, b, c, d) {
   obj[b] = rotl(obj[b], 7)
 }
 
-},{"nanoassert":156}],89:[function(require,module,exports){
+},{"nanoassert":168}],96:[function(require,module,exports){
 module.exports = clamp
 
 function clamp(value, min, max) {
@@ -9870,91 +11152,21 @@ function clamp(value, min, max) {
     : (value < max ? max : value > min ? min : value)
 }
 
-},{}],90:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
+const LE = exports.LE = (new Uint8Array(new Uint16Array([0xff]).buffer))[0] === 0xff
+
+exports.BE = !LE
+
+},{}],98:[function(require,module,exports){
 const b4a = require('b4a')
 
-module.exports = codecs
+const { BE } = require('./endian')
 
-codecs.ascii = createString('ascii')
-codecs.utf8 = createString('utf-8')
-codecs.hex = createString('hex')
-codecs.base64 = createString('base64')
-codecs.ucs2 = createString('ucs2')
-codecs.utf16le = createString('utf16le')
-codecs.ndjson = createJSON(true)
-codecs.json = createJSON(false)
-codecs.binary = {
-  name: 'binary',
-  encode: function encodeBinary (obj) {
-    return typeof obj === 'string'
-      ? b4a.from(obj, 'utf-8')
-      : b4a.toBuffer(obj)
-  },
-  decode: function decodeBinary (buf) {
-    return b4a.toBuffer(buf)
-  }
+exports.state = function (start = 0, end = 0, buffer = null) {
+  return { start, end, buffer, cache: null }
 }
 
-function codecs (fmt, fallback) {
-  if (typeof fmt === 'object' && fmt && fmt.encode && fmt.decode) return fmt
-
-  switch (fmt) {
-    case 'ndjson': return codecs.ndjson
-    case 'json': return codecs.json
-    case 'ascii': return codecs.ascii
-    case 'utf-8':
-    case 'utf8': return codecs.utf8
-    case 'hex': return codecs.hex
-    case 'base64': return codecs.base64
-    case 'ucs-2':
-    case 'ucs2': return codecs.ucs2
-    case 'utf16-le':
-    case 'utf16le': return codecs.utf16le
-  }
-
-  return fallback !== undefined ? fallback : codecs.binary
-}
-
-function createJSON (newline) {
-  return {
-    name: newline ? 'ndjson' : 'json',
-    encode: newline ? encodeNDJSON : encodeJSON,
-    decode: function decodeJSON (buf) {
-      return JSON.parse(b4a.toString(buf))
-    }
-  }
-
-  function encodeJSON (val) {
-    return b4a.from(JSON.stringify(val))
-  }
-
-  function encodeNDJSON (val) {
-    return b4a.from(JSON.stringify(val) + '\n')
-  }
-}
-
-function createString (type) {
-  return {
-    name: type,
-    encode: function encodeString (val) {
-      if (typeof val !== 'string') val = val.toString()
-      return b4a.from(val, type)
-    },
-    decode: function decodeString (buf) {
-      return b4a.toString(buf, type)
-    }
-  }
-}
-
-},{"b4a":74}],91:[function(require,module,exports){
-const b4a = require('b4a')
-
-const LE = (new Uint8Array(new Uint16Array([255]).buffer))[0] === 0xff
-const BE = !LE
-
-exports.state = function () {
-  return { start: 0, end: 0, buffer: null }
-}
+const raw = exports.raw = require('./raw')
 
 const uint = exports.uint = {
   preencode (state, n) {
@@ -10007,7 +11219,7 @@ const uint16 = exports.uint16 = {
     if (state.end - state.start < 2) throw new Error('Out of bounds')
     return (
       state.buffer[state.start++] +
-      state.buffer[state.start++] * 256
+      state.buffer[state.start++] * 0x100
     )
   }
 }
@@ -10025,8 +11237,8 @@ const uint24 = exports.uint24 = {
     if (state.end - state.start < 3) throw new Error('Out of bounds')
     return (
       state.buffer[state.start++] +
-      state.buffer[state.start++] * 256 +
-      state.buffer[state.start++] * 65536
+      state.buffer[state.start++] * 0x100 +
+      state.buffer[state.start++] * 0x10000
     )
   }
 }
@@ -10045,10 +11257,55 @@ const uint32 = exports.uint32 = {
     if (state.end - state.start < 4) throw new Error('Out of bounds')
     return (
       state.buffer[state.start++] +
-      state.buffer[state.start++] * 256 +
-      state.buffer[state.start++] * 65536 +
-      state.buffer[state.start++] * 16777216
+      state.buffer[state.start++] * 0x100 +
+      state.buffer[state.start++] * 0x10000 +
+      state.buffer[state.start++] * 0x1000000
     )
+  }
+}
+
+const uint40 = exports.uint40 = {
+  preencode (state, n) {
+    state.end += 5
+  },
+  encode (state, n) {
+    const r = Math.floor(n / 0x100)
+    uint8.encode(state, n)
+    uint32.encode(state, r)
+  },
+  decode (state) {
+    if (state.end - state.start < 5) throw new Error('Out of bounds')
+    return uint8.decode(state) + 0x100 * uint32.decode(state)
+  }
+}
+
+const uint48 = exports.uint48 = {
+  preencode (state, n) {
+    state.end += 6
+  },
+  encode (state, n) {
+    const r = Math.floor(n / 0x10000)
+    uint16.encode(state, n)
+    uint32.encode(state, r)
+  },
+  decode (state) {
+    if (state.end - state.start < 6) throw new Error('Out of bounds')
+    return uint16.decode(state) + 0x10000 * uint32.decode(state)
+  }
+}
+
+const uint56 = exports.uint56 = {
+  preencode (state, n) {
+    state.end += 7
+  },
+  encode (state, n) {
+    const r = Math.floor(n / 0x1000000)
+    uint24.encode(state, n)
+    uint32.encode(state, r)
+  },
+  decode (state) {
+    if (state.end - state.start < 7) throw new Error('Out of bounds')
+    return uint24.decode(state) + 0x1000000 * uint32.decode(state)
   }
 }
 
@@ -10057,13 +11314,13 @@ const uint64 = exports.uint64 = {
     state.end += 8
   },
   encode (state, n) {
-    const r = Math.floor(n / 4294967296)
+    const r = Math.floor(n / 0x100000000)
     uint32.encode(state, n)
     uint32.encode(state, r)
   },
   decode (state) {
     if (state.end - state.start < 8) throw new Error('Out of bounds')
-    return uint32.decode(state) + 4294967296 * uint32.decode(state)
+    return uint32.decode(state) + 0x100000000 * uint32.decode(state)
   }
 }
 
@@ -10072,7 +11329,12 @@ exports.int8 = zigZag(uint8)
 exports.int16 = zigZag(uint16)
 exports.int24 = zigZag(uint24)
 exports.int32 = zigZag(uint32)
+exports.int40 = zigZag(uint40)
+exports.int48 = zigZag(uint48)
+exports.int56 = zigZag(uint56)
 exports.int64 = zigZag(uint64)
+
+exports.lexint = require('./lexint')
 
 exports.float32 = {
   preencode (state, n) {
@@ -10110,7 +11372,7 @@ exports.float64 = {
   }
 }
 
-exports.buffer = {
+const buffer = exports.buffer = {
   preencode (state, b) {
     if (b) uint8array.preencode(state, b)
     else state.end++
@@ -10127,18 +11389,15 @@ exports.buffer = {
   }
 }
 
-const raw = exports.raw = {
+exports.binary = {
+  ...buffer,
   preencode (state, b) {
-    state.end += b.byteLength
+    if (typeof b === 'string') utf8.preencode(state, b)
+    else buffer.preencode(state, b)
   },
   encode (state, b) {
-    state.buffer.set(b, state.start)
-    state.start += b.byteLength
-  },
-  decode (state) {
-    const b = state.buffer.subarray(state.start, state.end)
-    state.start = state.end
-    return b
+    if (typeof b === 'string') utf8.encode(state, b)
+    else buffer.encode(state, b)
   }
 }
 
@@ -10185,24 +11444,47 @@ exports.int32array = typedarray(Int32Array, b4a.swap32)
 exports.float32array = typedarray(Float32Array, b4a.swap32)
 exports.float64array = typedarray(Float64Array, b4a.swap64)
 
-exports.string = {
-  preencode (state, s) {
-    const len = b4a.byteLength(s)
-    uint.preencode(state, len)
-    state.end += len
-  },
-  encode (state, s) {
-    const len = b4a.byteLength(s)
-    uint.encode(state, len)
-    b4a.write(state.buffer, s, state.start)
-    state.start += len
-  },
-  decode (state) {
-    const len = uint.decode(state)
-    if (state.end - state.start < len) throw new Error('Out of bounds')
-    return b4a.toString(state.buffer, 'utf-8', state.start, (state.start += len))
+function string (encoding) {
+  return {
+    preencode (state, s) {
+      const len = b4a.byteLength(s, encoding)
+      uint.preencode(state, len)
+      state.end += len
+    },
+    encode (state, s) {
+      const len = b4a.byteLength(s, encoding)
+      uint.encode(state, len)
+      b4a.write(state.buffer, s, state.start, encoding)
+      state.start += len
+    },
+    decode (state) {
+      const len = uint.decode(state)
+      if (state.end - state.start < len) throw new Error('Out of bounds')
+      return b4a.toString(state.buffer, encoding, state.start, (state.start += len))
+    },
+    fixed (n) {
+      return {
+        preencode (state) {
+          state.end += n
+        },
+        encode (state, s) {
+          b4a.write(state.buffer, s, state.start, n, encoding)
+          state.start += n
+        },
+        decode (state) {
+          if (state.end - state.start < n) throw new Error('Out of bounds')
+          return b4a.toString(state.buffer, encoding, state.start, (state.start += n))
+        }
+      }
+    }
   }
 }
+
+const utf8 = exports.string = exports.utf8 = string('utf-8')
+exports.ascii = string('ascii')
+exports.hex = string('hex')
+exports.base64 = string('base64')
+exports.ucs2 = exports.utf16le = string('utf16le')
 
 exports.bool = {
   preencode (state, b) {
@@ -10260,7 +11542,7 @@ exports.array = function array (enc) {
     },
     decode (state) {
       const len = uint.decode(state)
-      if (len > 1048576) throw new Error('Array is too big')
+      if (len > 0x100000) throw new Error('Array is too big')
       const arr = new Array(len)
       for (let i = 0; i < len; i++) arr[i] = enc.decode(state)
       return arr
@@ -10268,10 +11550,53 @@ exports.array = function array (enc) {
   }
 }
 
+exports.json = {
+  preencode (state, v) {
+    utf8.preencode(state, JSON.stringify(v))
+  },
+  encode (state, v) {
+    utf8.encode(state, JSON.stringify(v))
+  },
+  decode (state) {
+    return JSON.parse(utf8.decode(state))
+  }
+}
+
+exports.ndjson = {
+  preencode (state, v) {
+    utf8.preencode(state, JSON.stringify(v) + '\n')
+  },
+  encode (state, v) {
+    utf8.encode(state, JSON.stringify(v) + '\n')
+  },
+  decode (state) {
+    return JSON.parse(utf8.decode(state))
+  }
+}
+
 exports.from = function from (enc) {
+  if (typeof enc === 'string') return fromNamed(enc)
   if (enc.preencode) return enc
   if (enc.encodingLength) return fromAbstractEncoder(enc)
   return fromCodec(enc)
+}
+
+function fromNamed (enc) {
+  switch (enc) {
+    case 'ascii': return raw.ascii
+    case 'utf-8':
+    case 'utf8': return raw.utf8
+    case 'hex': return raw.hex
+    case 'base64': return raw.base64
+    case 'utf16-le':
+    case 'utf16le':
+    case 'ucs-2':
+    case 'ucs2': return raw.ucs2
+    case 'ndjson': return raw.ndjson
+    case 'json': return raw.json
+    case 'binary':
+    default: return raw.binary
+  }
 }
 
 function fromCodec (enc) {
@@ -10312,7 +11637,7 @@ function fromAbstractEncoder (enc) {
 }
 
 exports.encode = function encode (enc, m) {
-  const state = { start: 0, end: 0, buffer: null }
+  const state = exports.state()
   enc.preencode(state, m)
   state.buffer = b4a.allocUnsafe(state.end)
   enc.encode(state, m)
@@ -10320,7 +11645,7 @@ exports.encode = function encode (enc, m) {
 }
 
 exports.decode = function decode (enc, buffer) {
-  return enc.decode({ start: 0, end: buffer.byteLength, buffer })
+  return enc.decode(exports.state(0, buffer.byteLength, buffer))
 }
 
 function zigZag (enc) {
@@ -10346,7 +11671,273 @@ function zigZagEncode (n) {
   return n < 0 ? (2 * -n) - 1 : n === 0 ? 0 : 2 * n
 }
 
-},{"b4a":74}],92:[function(require,module,exports){
+},{"./endian":97,"./lexint":99,"./raw":100,"b4a":80}],99:[function(require,module,exports){
+module.exports = {
+  preencode,
+  encode,
+  decode
+}
+
+function preencode (state, num) {
+  if (num < 251) {
+    state.end++
+  } else if (num < 256) {
+    state.end += 2
+  } else if (num < 0x10000) {
+    state.end += 3
+  } else if (num < 0x1000000) {
+    state.end += 4
+  } else if (num < 0x100000000) {
+    state.end += 5
+  } else {
+    state.end++
+    const exp = Math.floor(Math.log(num) / Math.log(2)) - 32
+    preencode(state, exp)
+    state.end += 6
+  }
+}
+
+function encode (state, num) {
+  const max = 251
+  const x = num - max
+
+  if (num < max) {
+    state.buffer[state.start++] = num
+  } else if (num < 256) {
+    state.buffer[state.start++] = max
+    state.buffer[state.start++] = x
+  } else if (num < 0x10000) {
+    state.buffer[state.start++] = max + 1
+    state.buffer[state.start++] = x >> 8 & 0xff
+    state.buffer[state.start++] = x & 0xff
+  } else if (num < 0x1000000) {
+    state.buffer[state.start++] = max + 2
+    state.buffer[state.start++] = x >> 16
+    state.buffer[state.start++] = x >> 8 & 0xff
+    state.buffer[state.start++] = x & 0xff
+  } else if (num < 0x100000000) {
+    state.buffer[state.start++] = max + 3
+    state.buffer[state.start++] = x >> 24
+    state.buffer[state.start++] = x >> 16 & 0xff
+    state.buffer[state.start++] = x >> 8 & 0xff
+    state.buffer[state.start++] = x & 0xff
+  } else {
+    // need to use Math here as bitwise ops are 32 bit
+    const exp = Math.floor(Math.log(x) / Math.log(2)) - 32
+    state.buffer[state.start++] = 0xff
+
+    encode(state, exp)
+    const rem = x / Math.pow(2, exp - 11)
+
+    for (let i = 5; i >= 0; i--) {
+      state.buffer[state.start++] = rem / Math.pow(2, 8 * i) & 0xff
+    }
+  }
+}
+
+function decode (state) {
+  const max = 251
+
+  if (state.end - state.start < 1) throw new Error('Out of bounds')
+
+  const flag = state.buffer[state.start++]
+
+  if (flag < max) return flag
+
+  if (state.end - state.start < flag - max + 1) {
+    throw new Error('Out of bounds.')
+  }
+
+  if (flag < 252) {
+    return state.buffer[state.start++] +
+      max
+  }
+
+  if (flag < 253) {
+    return (state.buffer[state.start++] << 8) +
+      state.buffer[state.start++] +
+      max
+  }
+
+  if (flag < 254) {
+    return (state.buffer[state.start++] << 16) +
+      (state.buffer[state.start++] << 8) +
+      state.buffer[state.start++] +
+      max
+  }
+
+  // << 24 result may be interpreted as negative
+  if (flag < 255) {
+    return (state.buffer[state.start++] * 0x1000000) +
+      (state.buffer[state.start++] << 16) +
+      (state.buffer[state.start++] << 8) +
+      state.buffer[state.start++] +
+      max
+  }
+
+  const exp = decode(state)
+
+  if (state.end - state.start < 6) throw new Error('Out of bounds')
+
+  let rem = 0
+  for (let i = 5; i >= 0; i--) {
+    rem += state.buffer[state.start++] * Math.pow(2, 8 * i)
+  }
+
+  return (rem * Math.pow(2, exp - 11)) + max
+}
+
+},{}],100:[function(require,module,exports){
+const b4a = require('b4a')
+
+const { BE } = require('./endian')
+
+exports = module.exports = {
+  preencode (state, b) {
+    state.end += b.byteLength
+  },
+  encode (state, b) {
+    state.buffer.set(b, state.start)
+    state.start += b.byteLength
+  },
+  decode (state) {
+    const b = state.buffer.subarray(state.start, state.end)
+    state.start = state.end
+    return b
+  }
+}
+
+const buffer = exports.buffer = {
+  preencode (state, b) {
+    if (b) uint8array.preencode(state, b)
+    else state.end++
+  },
+  encode (state, b) {
+    if (b) uint8array.encode(state, b)
+    else state.buffer[state.start++] = 0
+  },
+  decode (state) {
+    const b = state.buffer.subarray(state.start)
+    if (b.byteLength === 0) return null
+    state.start = state.end
+    return b
+  }
+}
+
+exports.binary = {
+  ...buffer,
+  preencode (state, b) {
+    if (typeof b === 'string') utf8.preencode(state, b)
+    else buffer.preencode(state, b)
+  },
+  encode (state, b) {
+    if (typeof b === 'string') utf8.encode(state, b)
+    else buffer.encode(state, b)
+  }
+}
+
+function typedarray (TypedArray, swap) {
+  const n = TypedArray.BYTES_PER_ELEMENT
+
+  return {
+    preencode (state, b) {
+      state.end += b.byteLength
+    },
+    encode (state, b) {
+      const view = new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+
+      if (BE && swap) swap(view)
+
+      state.buffer.set(view, state.start)
+      state.start += b.byteLength
+    },
+    decode (state) {
+      let b = state.buffer.subarray(state.start)
+      if ((b.byteOffset % n) !== 0) b = new Uint8Array(b)
+
+      if (BE && swap) swap(b)
+
+      state.start = state.end
+
+      return new TypedArray(b.buffer, b.byteOffset, b.byteLength / n)
+    }
+  }
+}
+
+const uint8array = exports.uint8array = typedarray(Uint8Array)
+exports.uint16array = typedarray(Uint16Array, b4a.swap16)
+exports.uint32array = typedarray(Uint32Array, b4a.swap32)
+
+exports.int8array = typedarray(Int8Array)
+exports.int16array = typedarray(Int16Array, b4a.swap16)
+exports.int32array = typedarray(Int32Array, b4a.swap32)
+
+exports.float32array = typedarray(Float32Array, b4a.swap32)
+exports.float64array = typedarray(Float64Array, b4a.swap64)
+
+function string (encoding) {
+  return {
+    preencode (state, s) {
+      state.end += b4a.byteLength(s, encoding)
+    },
+    encode (state, s) {
+      state.start += b4a.write(state.buffer, s, state.start, encoding)
+    },
+    decode (state) {
+      const s = b4a.toString(state.buffer, encoding, state.start)
+      state.start = state.end
+      return s
+    }
+  }
+}
+
+const utf8 = exports.string = exports.utf8 = string('utf-8')
+exports.ascii = string('ascii')
+exports.hex = string('hex')
+exports.base64 = string('base64')
+exports.ucs2 = exports.utf16le = string('utf16le')
+
+exports.array = function array (enc) {
+  return {
+    preencode (state, list) {
+      for (const value of list) enc.preencode(state, value)
+    },
+    encode (state, list) {
+      for (const value of list) enc.encode(state, value)
+    },
+    decode (state) {
+      const arr = []
+      while (state.start < state.end) arr.push(enc.decode(state))
+      return arr
+    }
+  }
+}
+
+exports.json = {
+  preencode (state, v) {
+    utf8.preencode(state, JSON.stringify(v))
+  },
+  encode (state, v) {
+    utf8.encode(state, JSON.stringify(v))
+  },
+  decode (state) {
+    return JSON.parse(utf8.decode(state))
+  }
+}
+
+exports.ndjson = {
+  preencode (state, v) {
+    utf8.preencode(state, JSON.stringify(v) + '\n')
+  },
+  encode (state, v) {
+    utf8.encode(state, JSON.stringify(v) + '\n')
+  },
+  decode (state) {
+    return JSON.parse(utf8.decode(state))
+  }
+}
+
+},{"./endian":97,"b4a":80}],101:[function(require,module,exports){
 /**!
  * Fast CRC32 in JavaScript
  * 101arrowz (https://github.com/101arrowz)
@@ -10406,7 +11997,7 @@ function crc32 (d) {
   return (~c) >>> 0
 }
 
-},{}],93:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 (function (process,global){(function (){
 'use strict';
 
@@ -11578,7 +13169,7 @@ function crc32 (d) {
 })();
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":169}],94:[function(require,module,exports){
+},{"_process":181}],103:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12077,7 +13668,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],95:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 module.exports = class FixedFIFO {
   constructor (hwm) {
     if (!(hwm > 0) || ((hwm - 1) & hwm) !== 0) throw new Error('Max size for a FixedFIFO should be a power of two')
@@ -12112,7 +13703,7 @@ module.exports = class FixedFIFO {
   }
 }
 
-},{}],96:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 const FixedFIFO = require('./fixed-size')
 
 module.exports = class FastFIFO {
@@ -12150,7 +13741,7 @@ module.exports = class FastFIFO {
   }
 }
 
-},{"./fixed-size":95}],97:[function(require,module,exports){
+},{"./fixed-size":104}],106:[function(require,module,exports){
 exports.fullRoots = function (index, result) {
   if (index & 1) throw new Error('You can only look up roots for depth(0) blocks')
   if (!result) result = []
@@ -12407,7 +13998,7 @@ Iterator.prototype.fullRoot = function (index) {
   return true
 }
 
-},{}],98:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 // loosely based on example code at https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 (function (root) {
   'use strict';
@@ -12518,7 +14109,7 @@ Iterator.prototype.fullRoot = function (index) {
   }
 }(this));
 
-},{}],99:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 /* eslint-disable camelcase */
 var { sodium_malloc, sodium_memzero } = require('sodium-universal/memory')
 var { crypto_generichash, crypto_generichash_batch } = require('sodium-universal/crypto_generichash')
@@ -12562,7 +14153,7 @@ module.exports = function hmac (out, data, key) {
 module.exports.BYTES = HASHLEN
 module.exports.KEYBYTES = BLOCKLEN
 
-},{"nanoassert":100,"sodium-universal/crypto_generichash":195,"sodium-universal/memory":214}],100:[function(require,module,exports){
+},{"nanoassert":109,"sodium-universal/crypto_generichash":206,"sodium-universal/memory":225}],109:[function(require,module,exports){
 assert.notEqual = notEqual
 assert.notOk = notOk
 assert.equal = equal
@@ -12586,7 +14177,7 @@ function assert (t, m) {
   if (!t) throw new Error(m || 'AssertionError')
 }
 
-},{}],101:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const c = require('compact-encoding')
 const b4a = require('b4a')
@@ -12697,24 +14288,31 @@ if (sodium.sodium_free) {
 }
 
 exports.namespace = function (name, count) {
-  const buf = b4a.allocUnsafe(32 * count)
-  const list = new Array(count)
+  const ids = typeof count === 'number' ? range(count) : count
+  const buf = b4a.allocUnsafe(32 * ids.length)
+  const list = new Array(ids.length)
 
   const ns = b4a.allocUnsafe(33)
   sodium.crypto_generichash(ns.subarray(0, 32), typeof name === 'string' ? b4a.from(name) : name)
 
   for (let i = 0; i < list.length; i++) {
     list[i] = buf.subarray(32 * i, 32 * i + 32)
-    ns[32] = i
+    ns[32] = ids[i]
     sodium.crypto_generichash(list[i], ns)
   }
 
   return list
 }
 
-},{"b4a":74,"compact-encoding":91,"sodium-universal":210}],102:[function(require,module,exports){
+function range (count) {
+  const arr = new Array(count)
+  for (let i = 0; i < count; i++) arr[i] = i
+  return arr
+}
+
+},{"b4a":80,"compact-encoding":98,"sodium-universal":221}],111:[function(require,module,exports){
 const { EventEmitter } = require('events')
-const raf = require('random-access-file')
+const RAF = require('random-access-file')
 const isOptions = require('is-options')
 const hypercoreCrypto = require('hypercore-crypto')
 const c = require('compact-encoding')
@@ -12722,13 +14320,13 @@ const b4a = require('b4a')
 const Xache = require('xache')
 const NoiseSecretStream = require('@hyperswarm/secret-stream')
 const Protomux = require('protomux')
-const codecs = require('codecs')
-
-const fsctl = requireMaybe('fsctl') || { lock: noop, sparse: noop }
+const z32 = require('z32')
 
 const Replicator = require('./lib/replicator')
 const Core = require('./lib/core')
 const BlockEncryption = require('./lib/block-encryption')
+const Info = require('./lib/info')
+const Download = require('./lib/download')
 const { ReadStream, WriteStream } = require('./lib/streams')
 const { BAD_ARGUMENT, SESSION_CLOSED, SESSION_NOT_WRITABLE, SNAPSHOT_NOT_AVAILABLE } = require('./lib/errors')
 
@@ -12774,6 +14372,7 @@ module.exports = class Hypercore extends EventEmitter {
     this.encodeBatch = null
     this.activeRequests = []
 
+    this.id = null
     this.key = key || null
     this.keyPair = null
     this.readable = true
@@ -12781,9 +14380,12 @@ module.exports = class Hypercore extends EventEmitter {
     this.opened = false
     this.closed = false
     this.snapshotted = !!opts.snapshot
+    this.sparse = opts.sparse !== false
     this.sessions = opts._sessions || [this]
     this.auth = opts.auth || null
     this.autoClose = !!opts.autoClose
+    this.onwait = opts.onwait || null
+    this.wait = opts.wait !== false
 
     this.closing = null
     this.opening = this._openSession(key, storage, opts)
@@ -12827,9 +14429,9 @@ module.exports = class Hypercore extends EventEmitter {
       indent + '  opened: ' + opts.stylize(this.opened, 'boolean') + '\n' +
       indent + '  closed: ' + opts.stylize(this.closed, 'boolean') + '\n' +
       indent + '  snapshotted: ' + opts.stylize(this.snapshotted, 'boolean') + '\n' +
+      indent + '  sparse: ' + opts.stylize(this.sparse, 'boolean') + '\n' +
       indent + '  writable: ' + opts.stylize(this.writable, 'boolean') + '\n' +
       indent + '  length: ' + opts.stylize(this.length, 'number') + '\n' +
-      indent + '  byteLength: ' + opts.stylize(this.byteLength, 'number') + '\n' +
       indent + '  fork: ' + opts.stylize(this.fork, 'number') + '\n' +
       indent + '  sessions: [ ' + opts.stylize(this.sessions.length, 'number') + ' ]\n' +
       indent + '  activeRequests: [ ' + opts.stylize(this.activeRequests.length, 'number') + ' ]\n' +
@@ -12859,14 +14461,13 @@ module.exports = class Hypercore extends EventEmitter {
     if (!noiseStream) throw BAD_ARGUMENT('Invalid stream')
 
     if (!noiseStream.userData) {
-      const protocol = new Protomux(noiseStream)
+      const protocol = Protomux.from(noiseStream)
 
       if (opts.ondiscoverykey) {
         protocol.pair({ protocol: 'hypercore/alpha' }, opts.ondiscoverykey)
       }
       if (opts.keepAlive !== false) {
         noiseStream.setKeepAlive(5000)
-        noiseStream.setTimeout(10000)
       }
       noiseStream.userData = protocol
     }
@@ -12875,14 +14476,26 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   static defaultStorage (storage, opts = {}) {
-    if (typeof storage !== 'string') return storage
+    if (typeof storage !== 'string') {
+      if (!isRandomAccessClass(storage)) return storage
+      const Cls = storage // just to satisfy standard...
+      return name => new Cls(name)
+    }
+
     const directory = storage
-    const toLock = opts.lock || 'oplog'
-    return function createFile (name) {
-      const locked = name === toLock || name.endsWith('/' + toLock)
-      const lock = locked ? fsctl.lock : null
-      const sparse = locked ? null : null // fsctl.sparse, disable sparse on windows - seems to fail for some people. TODO: investigate
-      return raf(name, { directory, lock, sparse })
+    const toLock = opts.unlocked ? null : (opts.lock || 'oplog')
+    const pool = opts.pool || (opts.poolSize ? RAF.createPool(opts.poolSize) : null)
+
+    return createFile
+
+    function createFile (name) {
+      const lock = toLock === null ? false : isFile(name, toLock)
+      const sparse = isFile(name, 'data') || isFile(name, 'bitfield') || isFile(name, 'tree')
+      return new RAF(name, { directory, lock, sparse, pool: lock ? null : pool })
+    }
+
+    function isFile (name, n) {
+      return name === n || name.endsWith('/' + n)
     }
   }
 
@@ -12897,14 +14510,28 @@ module.exports = class Hypercore extends EventEmitter {
       throw SESSION_CLOSED('Cannot make sessions on a closing core')
     }
 
+    const sparse = opts.sparse === false ? false : this.sparse
+    const wait = opts.wait === false ? false : this.wait
+    const onwait = opts.onwait === undefined ? this.onwait : opts.onwait
     const Clz = opts.class || Hypercore
     const s = new Clz(this.storage, this.key, {
       ...opts,
+      sparse,
+      wait,
+      onwait,
       _opening: this.opening,
       _sessions: this.sessions
     })
 
     s._passCapabilities(this)
+
+    // Configure the cache unless explicitly disabled.
+    if (opts.cache !== false) {
+      s.cache = opts.cache === true || !opts.cache ? this.cache : opts.cache
+    }
+
+    ensureEncryption(s, opts)
+
     this.sessions.push(s)
 
     return s
@@ -12914,6 +14541,7 @@ module.exports = class Hypercore extends EventEmitter {
     if (!this.auth) this.auth = o.auth
 
     this.crypto = o.crypto
+    this.id = o.id
     this.key = o.key
     this.core = o.core
     this.replicator = o.replicator
@@ -12927,12 +14555,19 @@ module.exports = class Hypercore extends EventEmitter {
   async _openFromExisting (from, opts) {
     await from.opening
 
-    this._passCapabilities(from)
-    this.sessions = from.sessions
+    // includes ourself as well, so the loop below also updates us
+    const sessions = this.sessions
+
+    for (const s of sessions) {
+      s.sessions = from.sessions
+      s.sessions.push(s)
+      s._passCapabilities(from)
+    }
+
     this.storage = from.storage
     this.replicator.findingPeers += this._findingPeers
 
-    this.sessions.push(this)
+    ensureEncryption(this, opts)
   }
 
   async _openSession (key, storage, opts) {
@@ -12972,11 +14607,14 @@ module.exports = class Hypercore extends EventEmitter {
     this.writable = !!this.auth.sign
 
     if (opts.valueEncoding) {
-      this.valueEncoding = c.from(codecs(opts.valueEncoding))
+      this.valueEncoding = c.from(opts.valueEncoding)
     }
     if (opts.encodeBatch) {
       this.encodeBatch = opts.encodeBatch
     }
+
+    // Start continous replication if not in sparse mode.
+    if (!this.sparse) this.download({ start: 0, end: -1 })
 
     // This is a hidden option that's only used by Corestore.
     // It's required so that corestore can load a name from userData before 'ready' is emitted.
@@ -13010,6 +14648,7 @@ module.exports = class Hypercore extends EventEmitter {
 
     this.key = this.core.header.signer.publicKey
     this.keyPair = this.core.header.signer
+    this.id = z32.encode(this.key)
 
     this.replicator = new Replicator(this.core, this.key, {
       eagerUpdate: true,
@@ -13025,14 +14664,27 @@ module.exports = class Hypercore extends EventEmitter {
     }
   }
 
+  _getSnapshot () {
+    if (this.sparse) {
+      return {
+        length: this.core.tree.length,
+        byteLength: this.core.tree.byteLength,
+        fork: this.core.tree.fork,
+        compatLength: this.core.tree.length
+      }
+    }
+
+    return {
+      length: this.core.header.contiguousLength,
+      byteLength: 0,
+      fork: this.core.tree.fork,
+      compatLength: this.core.header.contiguousLength
+    }
+  }
+
   _updateSnapshot () {
     const prev = this._snapshot
-    const next = this._snapshot = {
-      length: this.core.tree.length,
-      byteLength: this.core.tree.byteLength,
-      fork: this.core.tree.fork,
-      compatLength: this.core.tree.length
-    }
+    const next = this._snapshot = this._getSnapshot()
 
     if (!prev) return true
     return prev.length !== next.length || prev.fork !== next.fork
@@ -13083,24 +14735,34 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   replicate (isInitiator, opts = {}) {
+    // Only limitation here is that ondiscoverykey doesn't work atm when passing a muxer directly,
+    // because it doesn't really make a lot of sense.
+    if (Protomux.isProtomux(isInitiator)) return this._attachToMuxer(isInitiator, opts)
+
     const protocolStream = Hypercore.createProtocolStream(isInitiator, opts)
     const noiseStream = protocolStream.noiseStream
     const protocol = noiseStream.userData
 
+    this._attachToMuxer(protocol, opts)
+
+    return protocolStream
+  }
+
+  _attachToMuxer (mux, opts) {
     // If the user wants to, we can make this replication run in a session
     // that way the core wont close "under them" during replication
     if (opts.session) {
       const s = this.session()
-      protocolStream.on('close', () => s.close().catch(noop))
+      mux.stream.on('close', () => s.close().catch(noop))
     }
 
     if (this.opened) {
-      this.replicator.attachTo(protocol)
+      this.replicator.attachTo(mux)
     } else {
-      this.opening.then(() => this.replicator.attachTo(protocol), protocol.destroy.bind(protocol))
+      this.opening.then(() => this.replicator.attachTo(mux), mux.destroy.bind(mux))
     }
 
-    return protocolStream
+    return mux
   }
 
   get discoveryKey () {
@@ -13108,15 +14770,28 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   get length () {
-    return this._snapshot
-      ? this._snapshot.length
-      : (this.core === null ? 0 : this.core.tree.length)
+    if (this._snapshot) return this._snapshot.length
+    if (this.core === null) return 0
+    if (!this.sparse) return this.contiguousLength
+    return this.core.tree.length
   }
 
+  /**
+   * Deprecated. Use `const { byteLength } = await core.info()`.
+   */
   get byteLength () {
-    return this._snapshot
-      ? this._snapshot.byteLength
-      : (this.core === null ? 0 : this.core.tree.byteLength - (this.core.tree.length * this.padding))
+    if (this._snapshot) return this._snapshot.byteLength
+    if (this.core === null) return 0
+    if (!this.sparse) return this.contiguousByteLength
+    return this.core.tree.byteLength - (this.core.tree.length * this.padding)
+  }
+
+  get contiguousLength () {
+    return this.core === null ? 0 : this.core.header.contiguousLength
+  }
+
+  get contiguousByteLength () {
+    return 0
   }
 
   get fork () {
@@ -13149,11 +14824,17 @@ module.exports = class Hypercore extends EventEmitter {
 
   _oncoreupdate (status, bitfield, value, from) {
     if (status !== 0) {
-      const truncated = (status & 0b10) !== 0
-      const appended = (status & 0b01) !== 0
+      const truncatedNonSparse = (status & 0b1000) !== 0
+      const appendedNonSparse = (status & 0b0100) !== 0
+      const truncated = (status & 0b0010) !== 0
+      const appended = (status & 0b0001) !== 0
 
       if (truncated) {
         this.replicator.ontruncate(bitfield.start)
+      }
+
+      if ((status & 0b0011) !== 0) {
+        this.replicator.onupgrade()
       }
 
       for (let i = 0; i < this.sessions.length; i++) {
@@ -13161,17 +14842,32 @@ module.exports = class Hypercore extends EventEmitter {
 
         if (truncated) {
           if (s.cache) s.cache.clear()
-          s.emit('truncate', bitfield.start, this.core.tree.fork)
+
           // If snapshotted, make sure to update our compat so we can fail gets
           if (s._snapshot && bitfield.start < s._snapshot.compatLength) s._snapshot.compatLength = bitfield.start
         }
 
-        if (appended) {
+        if (s.sparse ? truncated : truncatedNonSparse) {
+          s.emit('truncate', bitfield.start, this.core.tree.fork)
+        }
+
+        // For sparse sessions, immediately emit appends. If non-sparse, emit if contig length has updated
+        if (s.sparse ? appended : appendedNonSparse) {
           s.emit('append')
         }
       }
 
-      this.replicator.onupgrade()
+      const contig = this.core.header.contiguousLength
+
+      // When the contig length catches up, broadcast the non-sparse length to peers
+      if (appendedNonSparse && contig === this.core.tree.length) {
+        for (const peer of this.peers) {
+          if (peer.broadcastedNonSparse) continue
+
+          peer.broadcastRange(0, contig)
+          peer.broadcastedNonSparse = true
+        }
+      }
     }
 
     if (bitfield) {
@@ -13230,12 +14926,17 @@ module.exports = class Hypercore extends EventEmitter {
     }
   }
 
+  async info () {
+    if (this.opened === false) await this.opening
+
+    return Info.from(this.core, this.padding, this._snapshot)
+  }
+
   async update (opts) {
     if (this.opened === false) await this.opening
     if (this.closing !== null) return false
 
-    // TODO: add an option where a writer can bootstrap it's state from the network also
-    if (this.writable) {
+    if (this.writable && (!opts || opts.force !== true)) {
       if (!this.snapshotted) return false
       return this._updateSnapshot()
     }
@@ -13243,10 +14944,22 @@ module.exports = class Hypercore extends EventEmitter {
     const activeRequests = (opts && opts.activeRequests) || this.activeRequests
     const req = this.replicator.addUpgrade(activeRequests)
 
-    if (!this.snapshotted) return req.promise
-    if (!(await req.promise)) return false
+    let upgraded = await req.promise
 
-    return this._updateSnapshot()
+    if (!this.sparse) {
+      // Download all available blocks in non-sparse mode
+      const start = this.length
+      const end = this.core.tree.length
+      const contig = this.contiguousLength
+
+      await this.download({ start, end, ifAvailable: true }).done()
+
+      if (!upgraded) upgraded = this.contiguousLength !== contig
+    }
+
+    if (!upgraded) return false
+    if (this.snapshotted) return this._updateSnapshot()
+    return true
   }
 
   async seek (bytes, opts) {
@@ -13276,33 +14989,69 @@ module.exports = class Hypercore extends EventEmitter {
     if (this.closing !== null) throw SESSION_CLOSED()
     if (this._snapshot !== null && index >= this._snapshot.compatLength) throw SNAPSHOT_NOT_AVAILABLE()
 
-    const c = this.cache && this.cache.get(index)
-    if (c) return c
-    const fork = this.core.tree.fork
-    const b = await this._get(index, opts)
-    if (this.cache && fork === this.core.tree.fork && b) this.cache.set(index, b)
-    return b
+    const encoding = (opts && opts.valueEncoding && c.from(opts.valueEncoding)) || this.valueEncoding
+
+    let req = this.cache && this.cache.get(index)
+    if (!req) req = this._get(index, opts)
+
+    let block = await req
+    if (!block) return null
+
+    if (this.encryption) {
+      // Copy the block as it might be shared with other sessions.
+      block = b4a.from(block)
+
+      this.encryption.decrypt(index, block)
+    }
+
+    return this._decode(encoding, block)
+  }
+
+  async clear (start, end = start + 1, opts) {
+    if (this.opened === false) await this.opening
+    if (this.closing !== null) throw SESSION_CLOSED()
+
+    if (typeof end === 'object') {
+      opts = end
+      end = start + 1
+    }
+
+    if (start >= end) return
+
+    await this.core.clear(start, end)
   }
 
   async _get (index, opts) {
-    const encoding = (opts && opts.valueEncoding && c.from(codecs(opts.valueEncoding))) || this.valueEncoding
-
     let block
 
     if (this.core.bitfield.get(index)) {
-      block = await this.core.blocks.get(index)
+      block = this.core.blocks.get(index)
+
+      if (this.cache) this.cache.set(index, block)
     } else {
       if (opts && opts.wait === false) return null
-      if (opts && opts.onwait) opts.onwait(index)
+      if (this.wait === false && (!opts || !opts.wait)) return null
+      if (opts && opts.onwait) opts.onwait(index, this)
+      if (this.onwait) this.onwait(index, this)
 
       const activeRequests = (opts && opts.activeRequests) || this.activeRequests
+
       const req = this.replicator.addBlock(activeRequests, index)
 
-      block = await req.promise
+      block = this._cacheOnResolve(index, req.promise, this.core.tree.fork)
     }
 
-    if (this.encryption) this.encryption.decrypt(index, block)
-    return this._decode(encoding, block)
+    return block
+  }
+
+  async _cacheOnResolve (index, req, fork) {
+    const block = await req
+
+    if (this.cache && fork === this.core.tree.fork) {
+      this.cache.set(index, Promise.resolve(block))
+    }
+
+    return block
   }
 
   createReadStream (opts) {
@@ -13314,26 +15063,19 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   download (range) {
-    const reqP = this._download(range)
+    const req = this._download(range)
 
     // do not crash in the background...
-    reqP.catch(noop)
+    req.catch(noop)
 
-    // TODO: turn this into an actual object...
-    return {
-      async downloaded () {
-        const req = await reqP
-        return req.promise
-      },
-      destroy () {
-        reqP.then(req => req.context && req.context.detach(req), noop)
-      }
-    }
+    return new Download(req)
   }
 
   async _download (range) {
     if (this.opened === false) await this.opening
+
     const activeRequests = (range && range.activeRequests) || this.activeRequests
+
     return this.replicator.addRange(activeRequests, range)
   }
 
@@ -13391,7 +15133,7 @@ module.exports = class Hypercore extends EventEmitter {
     if (this.extensions.has(name)) {
       const ext = this.extensions.get(name)
       ext.handlers = handlers
-      ext.encoding = c.from(codecs(handlers.encoding) || c.buffer)
+      ext.encoding = c.from(handlers.encoding || c.buffer)
       ext.session = this
       return ext
     }
@@ -13399,7 +15141,7 @@ module.exports = class Hypercore extends EventEmitter {
     const ext = {
       name,
       handlers,
-      encoding: c.from(codecs(handlers.encoding) || c.buffer),
+      encoding: c.from(handlers.encoding || c.buffer),
       session: this,
       send (message, peer) {
         const buffer = c.encode(this.encoding, message)
@@ -13454,7 +15196,7 @@ module.exports = class Hypercore extends EventEmitter {
   }
 
   _decode (enc, block) {
-    block = block.subarray(this.padding)
+    if (this.padding) block = block.subarray(this.padding)
     if (enc) return c.decode(enc, block)
     return block
   }
@@ -13466,12 +15208,8 @@ function isStream (s) {
   return typeof s === 'object' && s && typeof s.pipe === 'function'
 }
 
-function requireMaybe (name) {
-  try {
-    return require(name)
-  } catch (_) {
-    return null
-  }
+function isRandomAccessClass (fn) {
+  return !!(typeof fn === 'function' && fn.prototype && typeof fn.prototype.open === 'function')
 }
 
 function toHex (buf) {
@@ -13487,11 +15225,18 @@ function preappend (blocks) {
   }
 }
 
-},{"./lib/block-encryption":104,"./lib/core":107,"./lib/errors":108,"./lib/replicator":114,"./lib/streams":115,"@hyperswarm/secret-stream":26,"b4a":74,"codecs":90,"compact-encoding":91,"events":94,"hypercore-crypto":101,"is-options":122,"protomux":170,"random-access-file":172,"xache":238}],103:[function(require,module,exports){
-// TODO: needs massive improvements obvs
+function ensureEncryption (core, opts) {
+  if (!opts.encryptionKey) return
+  // Only override the block encryption if its either not already set or if
+  // the caller provided a different key.
+  if (core.encryption && b4a.equals(core.encryption.key, opts.encryptionKey)) return
+  core.encryption = new BlockEncryption(opts.encryptionKey, core.key)
+}
 
+},{"./lib/block-encryption":113,"./lib/core":116,"./lib/download":117,"./lib/errors":118,"./lib/info":119,"./lib/replicator":125,"./lib/streams":126,"@hyperswarm/secret-stream":26,"b4a":80,"compact-encoding":98,"events":103,"hypercore-crypto":110,"is-options":134,"protomux":182,"random-access-file":127,"xache":249,"z32":252}],112:[function(require,module,exports){
 const BigSparseArray = require('big-sparse-array')
 const b4a = require('b4a')
+const bits = require('bits-to-bytes')
 
 class FixedBitfield {
   constructor (index, bitfield) {
@@ -13501,27 +15246,26 @@ class FixedBitfield {
   }
 
   get (index) {
-    const j = index & 31
-    const i = (index - j) / 32
-
-    return i < this.bitfield.length && (this.bitfield[i] & (1 << j)) !== 0
+    return bits.get(this.bitfield, index)
   }
 
   set (index, val) {
-    const j = index & 31
-    const i = (index - j) / 32
-    const v = this.bitfield[i]
+    return bits.set(this.bitfield, index, val)
+  }
 
-    if (val === ((v & (1 << j)) !== 0)) return false
-
-    const u = val
-      ? v | (1 << j)
-      : v ^ (1 << j)
-
-    if (u === v) return false
-
-    this.bitfield[i] = u
+  setRange (start, length, val) {
+    // Using fill instead of setRange is ~2 orders of magnitude faster, but does
+    // have the downside of not being able to tell if any bits actually changed.
+    bits.fill(this.bitfield, val, start, start + length)
     return true
+  }
+
+  firstSet (position) {
+    return bits.indexOf(this.bitfield, true, position)
+  }
+
+  lastSet (position) {
+    return bits.lastIndexOf(this.bitfield, true, position)
   }
 }
 
@@ -13545,45 +15289,102 @@ module.exports = class Bitfield {
   }
 
   get (index) {
-    const j = index & 32767
-    const i = (index - j) / 32768
+    const j = index & (this.pageSize - 1)
+    const i = (index - j) / this.pageSize
+
     const p = this.pages.get(i)
 
     return p ? p.get(j) : false
   }
 
   set (index, val) {
-    const j = index & 32767
-    const i = (index - j) / 32768
+    const j = index & (this.pageSize - 1)
+    const i = (index - j) / this.pageSize
 
     let p = this.pages.get(i)
 
-    if (!p) {
-      if (!val) return
+    if (!p && val) {
       p = this.pages.set(i, new FixedBitfield(i, new Uint32Array(1024)))
     }
 
-    if (!p.set(j, val) || p.dirty) return
-
-    p.dirty = true
-    this.unflushed.push(p)
-  }
-
-  setRange (start, length, val) {
-    for (let i = 0; i < length; i++) {
-      this.set(start + i, val)
+    if (p && p.set(j, val) && !p.dirty) {
+      p.dirty = true
+      this.unflushed.push(p)
     }
   }
 
-  // Should prob be removed, when/if we re-add compression
-  page (i) {
-    const p = this.pages.get(i)
-    return p ? p.bitfield : new Uint32Array(1024)
+  setRange (start, length, val) {
+    let j = start & (this.pageSize - 1)
+    let i = (start - j) / this.pageSize
+
+    while (length > 0) {
+      let p = this.pages.get(i)
+
+      if (!p && val) {
+        p = this.pages.set(i, new FixedBitfield(i, new Uint32Array(1024)))
+      }
+
+      const end = Math.min(j + length, this.pageSize)
+      const range = end - j
+
+      if (p && p.setRange(j, range, val) && !p.dirty) {
+        p.dirty = true
+        this.unflushed.push(p)
+      }
+
+      j = 0
+      i++
+      length -= range
+    }
+  }
+
+  firstSet (position) {
+    let j = position & (this.pageSize - 1)
+    let i = (position - j) / this.pageSize
+
+    while (i < this.pages.factor) {
+      const p = this.pages.get(i)
+
+      if (p) {
+        const index = p.firstSet(j)
+
+        if (index !== -1) {
+          return i * this.pageSize + index
+        }
+      }
+
+      j = 0
+      i++
+    }
+
+    return -1
+  }
+
+  lastSet (position) {
+    let j = position & (this.pageSize - 1)
+    let i = (position - j) / this.pageSize
+
+    while (i >= 0) {
+      const p = this.pages.get(i)
+
+      if (p) {
+        const index = p.lastSet(j)
+
+        if (index !== -1) {
+          return i * this.pageSize + index
+        }
+      }
+
+      j = this.pageSize - 1
+      i--
+    }
+
+    return -1
   }
 
   clear () {
     return new Promise((resolve, reject) => {
-      this.storage.del(0, Infinity, (err) => {
+      this.storage.truncate(0, (err) => {
         if (err) return reject(err)
         this.pages = new BigSparseArray()
         this.unflushed = []
@@ -13610,7 +15411,12 @@ module.exports = class Bitfield {
       let error = null
 
       for (const page of this.unflushed) {
-        const buf = b4a.from(page.bitfield.buffer, page.bitfield.byteOffset, page.bitfield.byteLength)
+        const buf = b4a.from(
+          page.bitfield.buffer,
+          page.bitfield.byteOffset,
+          page.bitfield.byteLength
+        )
+
         page.dirty = false
         this.storage.write(page.index * 4096, buf, done)
       }
@@ -13641,13 +15447,13 @@ module.exports = class Bitfield {
 }
 
 function ensureSize (uint32, size) {
-  if (uint32.length === size) return uint32
+  if (uint32.byteLength === size) return uint32
   const a = new Uint32Array(1024)
   a.set(uint32, 0)
   return a
 }
 
-},{"b4a":74,"big-sparse-array":81}],104:[function(require,module,exports){
+},{"b4a":80,"big-sparse-array":87,"bits-to-bytes":88}],113:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const c = require('compact-encoding')
 const b4a = require('b4a')
@@ -13717,7 +15523,7 @@ module.exports = class BlockEncryption {
   }
 }
 
-},{"b4a":74,"compact-encoding":91,"sodium-universal":210}],105:[function(require,module,exports){
+},{"b4a":80,"compact-encoding":98,"sodium-universal":221}],114:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = class BlockStore {
@@ -13740,12 +15546,15 @@ module.exports = class BlockStore {
     return this.put(i, batch.length === 1 ? batch[0] : b4a.concat(batch), offset)
   }
 
-  clear () {
+  clear (offset = 0, length = -1) {
     return new Promise((resolve, reject) => {
-      this.storage.del(0, Infinity, (err) => {
+      if (length === -1) this.storage.truncate(offset, done)
+      else this.storage.del(offset, length, done)
+
+      function done (err) {
         if (err) reject(err)
         else resolve()
-      })
+      }
     })
   }
 
@@ -13771,22 +15580,20 @@ module.exports = class BlockStore {
     return new Promise((resolve, reject) => {
       this.storage.write(offset, data, (err) => {
         if (err) reject(err)
-        else resolve()
+        else resolve(offset + data.byteLength)
       })
     })
   }
 }
 
-},{"b4a":74}],106:[function(require,module,exports){
+},{"b4a":80}],115:[function(require,module,exports){
 const crypto = require('hypercore-crypto')
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 const c = require('compact-encoding')
 
 // TODO: rename this to "crypto" and move everything hashing related etc in here
-// Also lets move the tree stuff from hypercore-crypto here, and loose the types
-// from the hashes there - they are not needed since we lock the indexes in the tree
-// hash and just makes alignment etc harder in other languages
+// Also lets move the tree stuff from hypercore-crypto here
 
 const [TREE, REPLICATE_INITIATOR, REPLICATE_RESPONDER] = crypto.namespace('hypercore', 3)
 
@@ -13813,7 +15620,7 @@ exports.treeSignableLegacy = function (hash, length, fork) {
   return state.buffer
 }
 
-},{"b4a":74,"compact-encoding":91,"hypercore-crypto":101,"sodium-universal":210}],107:[function(require,module,exports){
+},{"b4a":80,"compact-encoding":98,"hypercore-crypto":110,"sodium-universal":221}],116:[function(require,module,exports){
 const hypercoreCrypto = require('hypercore-crypto')
 const b4a = require('b4a')
 const Oplog = require('./oplog')
@@ -13853,18 +15660,8 @@ module.exports = class Core {
     try {
       return await this.resume(oplogFile, treeFile, bitfieldFile, dataFile, opts)
     } catch (err) {
-      return new Promise((resolve, reject) => {
-        let missing = 4
-
-        oplogFile.close(done)
-        treeFile.close(done)
-        bitfieldFile.close(done)
-        dataFile.close(done)
-
-        function done () {
-          if (--missing === 0) reject(err)
-        }
-      })
+      await closeAll(oplogFile, treeFile, bitfieldFile, dataFile)
+      throw err
     }
   }
 
@@ -13922,7 +15719,8 @@ module.exports = class Core {
         signer: opts.keyPair || crypto.keyPair(),
         hints: {
           reorgs: []
-        }
+        },
+        contiguousLength: 0
       }
 
       await oplog.flush(header)
@@ -13946,6 +15744,11 @@ module.exports = class Core {
       await bitfield.clear()
     }
 
+    // compat from earlier version that do not store contig length
+    if (header.contiguousLength === 0) {
+      while (bitfield.get(header.contiguousLength)) header.contiguousLength++
+    }
+
     const auth = opts.auth || this.createAuth(crypto, header.signer)
 
     for (const e of entries) {
@@ -13961,6 +15764,7 @@ module.exports = class Core {
 
       if (e.bitfield) {
         bitfield.setRange(e.bitfield.start, e.bitfield.length, !e.bitfield.drop)
+        updateContig(header, e.bitfield, bitfield)
       }
 
       if (e.treeUpgrade) {
@@ -14056,13 +15860,57 @@ module.exports = class Core {
     }
   }
 
+  async clear (start, end) {
+    await this._mutex.lock()
+
+    const entry = {
+      userData: null,
+      treeNodes: null,
+      treeUpgrade: null,
+      bitfield: {
+        start,
+        length: end - start,
+        drop: true
+      }
+    }
+
+    await this.oplog.append([entry], false)
+
+    this.bitfield.setRange(start, end - start, false)
+
+    if (start < this.header.contiguousLength) {
+      this.header.contiguousLength = start
+    }
+
+    start = this.bitfield.lastSet(start) + 1
+    end = this.bitfield.firstSet(end)
+
+    if (end === -1) end = this.tree.length
+
+    try {
+      const offset = await this.tree.byteOffset(start * 2)
+      const [byteEnd, byteEndLength] = await this.tree.byteRange((end - 1) * 2)
+      const length = (byteEnd + byteEndLength) - offset
+
+      await this.blocks.clear(offset, length)
+
+      this.onupdate(0, entry.bitfield, null, null)
+
+      if (this._shouldFlush()) await this._flushOplog()
+    } finally {
+      this._mutex.unlock()
+    }
+  }
+
   async append (values, auth = this.defaultAuth, hooks = {}) {
     await this._mutex.lock()
 
     try {
       if (hooks.preappend) await hooks.preappend(values)
 
-      if (!values.length) return this.tree.length
+      if (!values.length) {
+        return { length: this.tree.length, byteLength: this.tree.byteLength }
+      }
 
       const batch = this.tree.batch()
       for (const val of values) batch.append(val)
@@ -14081,7 +15929,8 @@ module.exports = class Core {
         }
       }
 
-      await this._appendBlocks(values)
+      const byteLength = await this._appendBlocks(values)
+
       await this.oplog.append([entry], false)
 
       this.bitfield.setRange(batch.ancestors, batch.length - batch.ancestors, true)
@@ -14090,11 +15939,13 @@ module.exports = class Core {
       this.header.tree.length = batch.length
       this.header.tree.rootHash = hash
       this.header.tree.signature = batch.signature
-      this.onupdate(0b01, entry.bitfield, null, null)
+
+      const status = 0b0001 | updateContig(this.header, entry.bitfield, this.bitfield)
+      this.onupdate(status, entry.bitfield, null, null)
 
       if (this._shouldFlush()) await this._flushOplog()
 
-      return batch.ancestors
+      return { length: batch.length, byteLength }
     } finally {
       this._mutex.unlock()
     }
@@ -14128,14 +15979,21 @@ module.exports = class Core {
 
       await this.oplog.append([entry], false)
 
-      if (bitfield) this.bitfield.set(bitfield.start, true)
+      let status = 0b0001
+
+      if (bitfield) {
+        this.bitfield.set(bitfield.start, true)
+        status |= updateContig(this.header, bitfield, this.bitfield)
+      }
+
       batch.commit()
 
       this.header.tree.fork = batch.fork
       this.header.tree.length = batch.length
       this.header.tree.rootHash = batch.rootHash
       this.header.tree.signature = batch.signature
-      this.onupdate(0b01, bitfield, value, from)
+
+      this.onupdate(status, bitfield, value, from)
 
       if (this._shouldFlush()) await this._flushOplog()
     } finally {
@@ -14182,9 +16040,16 @@ module.exports = class Core {
           continue
         }
 
-        if (bitfield) this.bitfield.set(bitfield.start, true)
+        let status = 0
+
+        if (bitfield) {
+          this.bitfield.set(bitfield.start, true)
+          status = updateContig(this.header, bitfield, this.bitfield)
+        }
+
         batch.commit()
-        this.onupdate(0, bitfield, value, from)
+
+        this.onupdate(status, bitfield, value, from)
       }
 
       if (this._shouldFlush()) await this._flushOplog()
@@ -14209,7 +16074,7 @@ module.exports = class Core {
     const op = {
       batch,
       bitfield: value && { drop: false, start: proof.block.index, length: 1 },
-      value: value,
+      value,
       from
     }
 
@@ -14262,13 +16127,15 @@ module.exports = class Core {
     addReorgHint(this.header.hints.reorgs, this.tree, batch)
     batch.commit()
 
-    const appended = batch.length > batch.ancestors
+    const contigStatus = updateContig(this.header, entry.bitfield, this.bitfield)
+    const status = ((batch.length > batch.ancestors) ? 0b0011 : 0b0010) | contigStatus
 
     this.header.tree.fork = batch.fork
     this.header.tree.length = batch.length
     this.header.tree.rootHash = batch.hash()
     this.header.tree.signature = batch.signature
-    this.onupdate(appended ? 0b11 : 0b10, entry.bitfield, null, from)
+
+    this.onupdate(status, entry.bitfield, null, from)
 
     // TODO: there is a bug in the merkle tree atm where it cannot handle unflushed
     // truncates if we append or download anything after the truncation point later on
@@ -14287,6 +16154,36 @@ module.exports = class Core {
       this.blocks.close()
     ])
   }
+}
+
+function updateContig (header, upd, bitfield) {
+  const end = upd.start + upd.length
+
+  let c = header.contiguousLength
+
+  if (upd.drop) {
+    // If we dropped a block in the current contig range, "downgrade" it
+    if (c <= end && c > upd.start) {
+      c = upd.start
+    }
+  } else {
+    if (c <= end && c >= upd.start) {
+      c = end
+      while (bitfield.get(c)) c++
+    }
+  }
+
+  if (c === header.contiguousLength) {
+    return 0b0000
+  }
+
+  if (c > header.contiguousLength) {
+    header.contiguousLength = c
+    return 0b0100
+  }
+
+  header.contiguousLength = c
+  return 0b1000
 }
 
 function addReorgHint (list, tree, batch) {
@@ -14312,61 +16209,142 @@ function updateUserData (list, key, value) {
   if (value) list.push({ key, value })
 }
 
+function closeAll (...storages) {
+  let missing = 1
+  let error = null
+
+  return new Promise((resolve, reject) => {
+    for (const s of storages) {
+      missing++
+      s.close(done)
+    }
+
+    done(null)
+
+    function done (err) {
+      if (err) error = err
+      if (--missing) return
+      if (error) reject(error)
+      else resolve()
+    }
+  })
+}
+
 function noop () {}
 
-},{"./bitfield":103,"./block-store":105,"./errors":108,"./merkle-tree":109,"./messages":110,"./mutex":111,"./oplog":112,"b4a":74,"hypercore-crypto":101}],108:[function(require,module,exports){
-module.exports = class HypercoreError extends Error {
-  constructor (msg, code) {
-    super(msg)
-    this.code = code
+},{"./bitfield":112,"./block-store":114,"./errors":118,"./merkle-tree":120,"./messages":121,"./mutex":122,"./oplog":123,"b4a":80,"hypercore-crypto":110}],117:[function(require,module,exports){
+module.exports = class Download {
+  constructor (req) {
+    this.req = req
   }
 
-  static BAD_ARGUMENT (msg) {
-    return new HypercoreError(msg, 'BAD_ARGUMENT')
+  async done () {
+    return (await this.req).promise
   }
 
-  static STORAGE_EMPTY (msg) {
-    return new HypercoreError(msg, 'STORAGE_EMPTY')
+  /**
+   * Deprecated. Use `range.done()`.
+   */
+  downloaded () {
+    return this.done()
   }
 
-  static STORAGE_CONFLICT (msg) {
-    return new HypercoreError(msg, 'STORAGE_CONFLICT')
-  }
-
-  static INVALID_SIGNATURE (msg) {
-    return new HypercoreError(msg, 'INVALID_SIGNATURE')
-  }
-
-  static INVALID_CAPABILITY (msg) {
-    return new HypercoreError(msg, 'INVALID_CAPABILITY')
-  }
-
-  static SNAPSHOT_NOT_AVAILABLE (msg = 'Snapshot is not available') {
-    return new HypercoreError(msg, 'SNAPSHOT_NOT_AVAILABLE')
-  }
-
-  static REQUEST_CANCELLED (msg = 'Request was cancelled') {
-    return new HypercoreError(msg, 'REQUEST_CANCELLED')
-  }
-
-  static SESSION_NOT_WRITABLE (msg = 'Session is not writable') {
-    return new HypercoreError(msg, 'SESSION_NOT_WRITABLE')
-  }
-
-  static SESSION_CLOSED (msg = 'Session is closed') {
-    return new HypercoreError(msg, 'SESSION_CLOSED')
+  destroy () {
+    this.req.then(req => req.context && req.context.detach(req), noop)
   }
 }
 
-},{}],109:[function(require,module,exports){
+function noop () {}
+
+},{}],118:[function(require,module,exports){
+module.exports = class HypercoreError extends Error {
+  constructor (msg, code, fn = HypercoreError) {
+    super(`${code}: ${msg}`)
+    this.code = code
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, fn)
+    }
+  }
+
+  get name () {
+    return 'HypercoreError'
+  }
+
+  static BAD_ARGUMENT (msg) {
+    return new HypercoreError(msg, 'BAD_ARGUMENT', HypercoreError.BAD_ARGUMENT)
+  }
+
+  static STORAGE_EMPTY (msg) {
+    return new HypercoreError(msg, 'STORAGE_EMPTY', HypercoreError.STORAGE_EMPTY)
+  }
+
+  static STORAGE_CONFLICT (msg) {
+    return new HypercoreError(msg, 'STORAGE_CONFLICT', HypercoreError.STORAGE_CONFLICT)
+  }
+
+  static INVALID_SIGNATURE (msg) {
+    return new HypercoreError(msg, 'INVALID_SIGNATURE', HypercoreError.INVALID_SIGNATURE)
+  }
+
+  static INVALID_CAPABILITY (msg) {
+    return new HypercoreError(msg, 'INVALID_CAPABILITY', HypercoreError.INVALID_CAPABILITY)
+  }
+
+  static SNAPSHOT_NOT_AVAILABLE (msg = 'Snapshot is not available') {
+    return new HypercoreError(msg, 'SNAPSHOT_NOT_AVAILABLE', HypercoreError.SNAPSHOT_NOT_AVAILABLE)
+  }
+
+  static REQUEST_CANCELLED (msg = 'Request was cancelled') {
+    return new HypercoreError(msg, 'REQUEST_CANCELLED', HypercoreError.REQUEST_CANCELLED)
+  }
+
+  static SESSION_NOT_WRITABLE (msg = 'Session is not writable') {
+    return new HypercoreError(msg, 'SESSION_NOT_WRITABLE', HypercoreError.SESSION_NOT_WRITABLE)
+  }
+
+  static SESSION_CLOSED (msg = 'Session is closed') {
+    return new HypercoreError(msg, 'SESSION_CLOSED', HypercoreError.SESSION_CLOSED)
+  }
+}
+
+},{}],119:[function(require,module,exports){
+module.exports = class Info {
+  constructor (opts = {}) {
+    this.length = opts.length || 0
+    this.contiguousLength = opts.contiguousLength || 0
+    this.byteLength = opts.byteLength || 0
+    this.padding = opts.padding || 0
+  }
+
+  static async from (core, padding, snapshot) {
+    return new Info({
+      key: core.key,
+      discoveryKey: core.discoveryKey,
+      length: snapshot
+        ? snapshot.length
+        : core.tree.length,
+      contiguousLength: core.header.contiguousLength,
+      byteLength: snapshot
+        ? snapshot.byteLength
+        : (core.tree.byteLength - (core.tree.length * padding)),
+      fork: core.tree.fork,
+      padding
+    })
+  }
+}
+
+},{}],120:[function(require,module,exports){
 const flat = require('flat-tree')
 const crypto = require('hypercore-crypto')
 const c = require('compact-encoding')
+const Xache = require('xache')
 const b4a = require('b4a')
 const caps = require('./caps')
 
 const BLANK_HASH = b4a.alloc(32)
 const OLD_TREE = b4a.from([5, 2, 87, 2, 0, 0, 40, 7, 66, 76, 65, 75, 69, 50, 98])
+const TREE_CACHE = 128 // speeds up linear scans by A LOT
 
 class NodeQueue {
   constructor (nodes, extra = null) {
@@ -14501,6 +16479,7 @@ class MerkleTreeBatch {
         : this.ancestors
 
       this.tree.truncated = true
+      this.tree.cache = new Xache({ maxSize: this.tree.cache.maxSize })
       truncateMap(this.tree.unflushed, this.ancestors)
       if (this.tree.flushing !== null) truncateMap(this.tree.flushing, this.ancestors)
     }
@@ -14711,6 +16690,7 @@ module.exports = class MerkleTree {
 
     this.storage = storage
     this.unflushed = new Map()
+    this.cache = new Xache({ maxSize: TREE_CACHE })
     this.flushing = null
     this.truncated = false
     this.truncateTo = 0
@@ -14764,6 +16744,9 @@ module.exports = class MerkleTree {
   }
 
   get (index, error = true) {
+    const c = this.cache.get(index)
+    if (c) return c
+
     let node = this.unflushed.get(index)
 
     if (this.flushing !== null && node === undefined) {
@@ -14783,7 +16766,7 @@ module.exports = class MerkleTree {
       return Promise.resolve(node)
     }
 
-    return getStoredNode(this.storage, index, error)
+    return getStoredNode(this.storage, index, this.cache, error)
   }
 
   async flush () {
@@ -14808,7 +16791,7 @@ module.exports = class MerkleTree {
       const t = this.truncateTo
       const offset = t === 0 ? 0 : (t - 1) * 80 + 40
 
-      this.storage.del(offset, Infinity, (err) => {
+      this.storage.truncate(offset, (err) => {
         if (err) return reject(err)
 
         if (this.truncateTo === t) {
@@ -14856,6 +16839,7 @@ module.exports = class MerkleTree {
   }
 
   clear () {
+    this.cache = new Xache({ maxSize: this.cache.maxSize })
     this.truncated = true
     this.truncateTo = 0
     this.roots = []
@@ -15115,7 +17099,7 @@ module.exports = class MerkleTree {
 
     const roots = []
     for (const index of flat.fullRoots(2 * length)) {
-      roots.push(await getStoredNode(storage, index, true))
+      roots.push(await getStoredNode(storage, index, null, true))
     }
 
     return new MerkleTree(storage, roots, opts.fork || 0, opts.signature || null)
@@ -15446,7 +17430,7 @@ function blankNode (index) {
 
 // Storage methods
 
-function getStoredNode (storage, index, error) {
+function getStoredNode (storage, index, cache, error) {
   return new Promise((resolve, reject) => {
     storage.read(40 * index, 40, (err, data) => {
       if (err) {
@@ -15464,7 +17448,9 @@ function getStoredNode (storage, index, error) {
         return
       }
 
-      resolve({ index, size, hash })
+      const node = { index, size, hash }
+      if (cache !== null) cache.set(index, node)
+      resolve(node)
     })
   })
 }
@@ -15483,7 +17469,7 @@ async function autoLength (storage) {
   if (!nodes) return 0
   const ite = flat.iterator(nodes - 1)
   let index = nodes - 1
-  while (await getStoredNode(storage, ite.parent(), false)) index = ite.index
+  while (await getStoredNode(storage, ite.parent(), null, false)) index = ite.index
   return flat.rightSpan(index) / 2 + 1
 }
 
@@ -15529,7 +17515,7 @@ async function settleProof (p) {
   }
 }
 
-},{"./caps":106,"b4a":74,"compact-encoding":91,"flat-tree":97,"hypercore-crypto":101}],110:[function(require,module,exports){
+},{"./caps":115,"b4a":80,"compact-encoding":98,"flat-tree":106,"hypercore-crypto":110,"xache":249}],121:[function(require,module,exports){
 const c = require('compact-encoding')
 const b4a = require('b4a')
 
@@ -16154,6 +18140,7 @@ oplog.header = {
     treeHeader.preencode(state, h.tree)
     keyPair.preencode(state, h.signer)
     hints.preencode(state, h.hints)
+    c.uint.preencode(state, h.contiguousLength)
   },
   encode (state, h) {
     state.buffer[state.start++] = 0 // version
@@ -16162,6 +18149,7 @@ oplog.header = {
     treeHeader.encode(state, h.tree)
     keyPair.encode(state, h.signer)
     hints.encode(state, h.hints)
+    c.uint.encode(state, h.contiguousLength)
   },
   decode (state) {
     const version = c.uint.decode(state)
@@ -16175,12 +18163,13 @@ oplog.header = {
       userData: keyValueArray.decode(state),
       tree: treeHeader.decode(state),
       signer: keyPair.decode(state),
-      hints: hints.decode(state)
+      hints: hints.decode(state),
+      contiguousLength: state.end > state.start ? c.uint.decode(state) : 0
     }
   }
 }
 
-},{"b4a":74,"compact-encoding":91}],111:[function(require,module,exports){
+},{"b4a":80,"compact-encoding":98}],122:[function(require,module,exports){
 module.exports = class Mutex {
   constructor () {
     this.locked = false
@@ -16221,7 +18210,7 @@ module.exports = class Mutex {
   }
 }
 
-},{}],112:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const crc32 = require('crc32-universal')
@@ -16345,7 +18334,7 @@ module.exports = class Oplog {
     if (size === buffer.byteLength) return result
 
     await new Promise((resolve, reject) => {
-      this.storage.del(size, Infinity, err => {
+      this.storage.truncate(size, err => {
         if (err) return reject(err)
         resolve()
       })
@@ -16388,7 +18377,7 @@ module.exports = class Oplog {
       this.storage.write(i === 0 ? 0 : this._pageSize, buf, err => {
         if (err) return reject(err)
 
-        this.storage.del(this._entryOffset, Infinity, err => {
+        this.storage.truncate(this._entryOffset, err => {
           if (err) return reject(err)
 
           this._headers[i] = bit
@@ -16447,33 +18436,54 @@ module.exports = class Oplog {
   }
 }
 
-},{"b4a":74,"compact-encoding":91,"crc32-universal":92}],113:[function(require,module,exports){
+},{"b4a":80,"compact-encoding":98,"crc32-universal":101}],124:[function(require,module,exports){
 const BigSparseArray = require('big-sparse-array')
+const bits = require('bits-to-bytes')
 
 module.exports = class RemoteBitfield {
   constructor () {
+    this.pageSize = 32768
     this.pages = new BigSparseArray()
   }
 
   get (index) {
-    const r = index & 32767
-    const i = (index - r) / 32768
+    const j = index & (this.pageSize - 1)
+    const i = (index - j) / this.pageSize
+
     const p = this.pages.get(i)
 
-    return p ? (p[r >>> 5] & (1 << (r & 31))) !== 0 : false
+    return p ? bits.get(p, j) : false
   }
 
   set (index, val) {
-    const r = index & 32767
-    const i = (index - r) / 32768
+    const j = index & (this.pageSize - 1)
+    const i = (index - j) / this.pageSize
+
     const p = this.pages.get(i) || this.pages.set(i, new Uint32Array(1024))
 
-    if (val) p[r >>> 5] |= (1 << (r & 31))
-    else p[r >>> 5] &= ~(1 << (r & 31))
+    bits.set(p, j, val)
+  }
+
+  setRange (start, length, val) {
+    let j = start & (this.pageSize - 1)
+    let i = (start - j) / this.pageSize
+
+    while (length > 0) {
+      const p = this.pages.get(i) || this.pages.set(i, new Uint32Array(1024))
+
+      const end = Math.min(j + length, this.pageSize)
+      const range = end - j
+
+      bits.fill(p, val, j, end)
+
+      j = 0
+      i++
+      length -= range
+    }
   }
 }
 
-},{"big-sparse-array":81}],114:[function(require,module,exports){
+},{"big-sparse-array":87,"bits-to-bytes":88}],125:[function(require,module,exports){
 const b4a = require('b4a')
 const safetyCatch = require('safety-catch')
 const RandomIterator = require('random-array-iterator')
@@ -16483,6 +18493,7 @@ const m = require('./messages')
 const caps = require('./caps')
 
 const DEFAULT_MAX_INFLIGHT = 32
+const DEFAULT_SEGMENT_SIZE = 128 * 1024 // 128 KiB
 
 class Attachable {
   constructor () {
@@ -16578,12 +18589,13 @@ class BlockRequest extends Attachable {
 }
 
 class RangeRequest extends Attachable {
-  constructor (ranges, start, end, linear, blocks) {
+  constructor (ranges, start, end, linear, ifAvailable, blocks) {
     super()
 
     this.start = start
     this.end = end
     this.linear = linear
+    this.ifAvailable = ifAvailable
     this.blocks = blocks
     this.ranges = ranges
 
@@ -16646,6 +18658,10 @@ class InflightTracker {
   constructor () {
     this._requests = []
     this._free = []
+  }
+
+  get idle () {
+    return this._requests.length === this._free.length
   }
 
   * [Symbol.iterator] () {
@@ -16736,6 +18752,7 @@ class Peer {
 
     this.inflight = 0
     this.maxInflight = DEFAULT_MAX_INFLIGHT
+    this.dataProcessing = 0
 
     this.canUpgrade = true
 
@@ -16755,6 +18772,9 @@ class Peer {
     this.remoteUploading = true
     this.remoteDownloading = true
     this.remoteSynced = false
+
+    this.segmentsWanted = new Set()
+    this.broadcastedNonSparse = false
 
     this.lengthAcked = 0
 
@@ -16826,13 +18846,13 @@ class Peer {
 
     this.sendSync()
 
-    const p = pages(this.core)
+    const contig = this.core.header.contiguousLength
+    if (contig > 0) {
+      this.broadcastRange(0, contig, false)
 
-    for (let index = 0; index < p.length; index++) {
-      this.wireBitfield.send({
-        start: index * this.core.bitfield.pageSize,
-        bitfield: p[index]
-      })
+      if (contig === this.core.tree.length) {
+        this.broadcastedNonSparse = true
+      }
     }
 
     this.replicator._ifAvailable--
@@ -16935,8 +18955,13 @@ class Peer {
     const proof = await this.core.tree.proof(msg)
 
     if (proof.block) {
-      if (msg.fork !== this.core.tree.fork) return null
-      proof.block.value = await this.core.blocks.get(msg.block.index)
+      const index = msg.block.index
+
+      if (msg.fork !== this.core.tree.fork || !this.core.bitfield.get(index)) {
+        return null
+      }
+
+      proof.block.value = await this.core.blocks.get(index)
     }
 
     return proof
@@ -16991,6 +19016,8 @@ class Peer {
 
     if (reorg === true) return this.replicator._onreorgdata(this, req, data)
 
+    this.dataProcessing++
+
     try {
       if (!matchingRequest(req, data) || !(await this.core.verify(data, this))) {
         this.replicator._onnodata(this, req)
@@ -16999,6 +19026,8 @@ class Peer {
     } catch (err) {
       this.replicator._onnodata(this, req)
       throw err
+    } finally {
+      this.dataProcessing--
     }
 
     this.replicator._ondata(this, req, data)
@@ -17018,8 +19047,8 @@ class Peer {
     this.replicator._onnodata(this, req)
   }
 
-  onwant () {
-    // TODO
+  onwant ({ start, length }) {
+    this.replicator._onwant(this, start, length)
   }
 
   onunwant () {
@@ -17043,9 +19072,7 @@ class Peer {
   onrange ({ drop, start, length }) {
     const has = drop === false
 
-    for (const end = start + length; start < end; start++) {
-      this.remoteBitfield.set(start, has)
-    }
+    this.remoteBitfield.setRange(start, length, has)
 
     if (drop === false) this._update()
   }
@@ -17140,6 +19167,7 @@ class Peer {
       return true
     }
 
+    this._maybeWant(s.seeker.start, len)
     return false
   }
 
@@ -17151,7 +19179,10 @@ class Peer {
   _requestBlock (b) {
     const { length, fork } = this.core.tree
 
-    if (this.remoteBitfield.get(b.index) === false || fork !== this.remoteFork) return false
+    if (this.remoteBitfield.get(b.index) === false || fork !== this.remoteFork) {
+      this._maybeWant(b.index)
+      return false
+    }
 
     const req = this._makeRequest(b.index >= length)
     if (req === null) return false
@@ -17202,9 +19233,14 @@ class Peer {
       b.inflight.push(req)
       this._send(req)
 
+      // Don't think this will ever happen, as the pending queue is drained before the range queue
+      // but doesn't hurt to check this explicitly here also.
+      if (b.queued) b.queued = false
+
       return true
     }
 
+    this._maybeWant(r.start, len)
     return false
   }
 
@@ -17242,7 +19278,23 @@ class Peer {
       return true
     }
 
+    this._maybeWant(f.batch.want.start, len)
     return false
+  }
+
+  _maybeWant (start, length = 1) {
+    let i = Math.floor(start / DEFAULT_SEGMENT_SIZE)
+    const n = Math.ceil((start + length) / DEFAULT_SEGMENT_SIZE)
+
+    for (; i < n; i++) {
+      if (this.segmentsWanted.has(i)) continue
+      this.segmentsWanted.add(i)
+
+      this.wireWant.send({
+        start: i * DEFAULT_SEGMENT_SIZE,
+        length: DEFAULT_SEGMENT_SIZE
+      })
+    }
   }
 
   async _send (req) {
@@ -17381,13 +19433,21 @@ module.exports = class Replicator {
     return ref
   }
 
-  addRange (session, { start = 0, end = -1, length = toLength(start, end), blocks = null, linear = false } = {}) {
-    if (blocks !== null) {
-      if (start >= blocks.length) start = blocks.length
-      if (length === -1 || start + length > blocks.length) length = blocks.length - start
+  addRange (session, { start = 0, end = -1, length = toLength(start, end), blocks = null, linear = false, ifAvailable = false } = {}) {
+    if (blocks !== null) { // if using blocks, start, end just acts as frames around the blocks array
+      start = 0
+      end = length = blocks.length
     }
 
-    const r = new RangeRequest(this._ranges, start, length === -1 ? -1 : start + length, linear, blocks)
+    const r = new RangeRequest(
+      this._ranges,
+      start,
+      length === -1 ? -1 : start + length,
+      linear,
+      ifAvailable,
+      blocks
+    )
+
     const ref = r.attach(session)
 
     this._ranges.push(r)
@@ -17530,7 +19590,7 @@ module.exports = class Replicator {
   }
 
   _queueBlock (b) {
-    if (b.queued === true) return
+    if (b.inflight.length > 0 || b.queued === true) return
     b.queued = true
     this._queued.push(b)
   }
@@ -17587,6 +19647,14 @@ module.exports = class Replicator {
     return true
   }
 
+  _resolveRangeRequest (req, index) {
+    const head = this._ranges.pop()
+
+    if (index < this._ranges.length) this._ranges[index] = head
+
+    req.resolve(true)
+  }
+
   _clearInflightBlock (tracker, req) {
     const isBlock = tracker === this._blocks
     const index = isBlock === true ? req.block.index : req.hash.index / 2
@@ -17637,17 +19705,12 @@ module.exports = class Replicator {
       for (let i = 0; i < this._ranges.length; i++) {
         const r = this._ranges[i]
 
-        while (r.start < r.end && this.core.bitfield.get(mapIndex(r.blocks, r.start)) === true) r.start++
+        while ((r.end === -1 || r.start < r.end) && this.core.bitfield.get(mapIndex(r.blocks, r.start)) === true) r.start++
         while (r.start < r.end && this.core.bitfield.get(mapIndex(r.blocks, r.end - 1)) === true) r.end--
 
-        if (r.end === -1 || r.start < r.end) continue
-
-        if (i < this._ranges.length - 1) this._ranges[i] = this._ranges.pop()
-        else this._ranges.pop()
-
-        i--
-
-        r.resolve(true)
+        if (r.end !== -1 && r.start >= r.end) {
+          this._resolveRangeRequest(r, i--)
+        }
       }
 
       for (let i = 0; i < this._seeks.length; i++) {
@@ -17673,12 +19736,28 @@ module.exports = class Replicator {
         else s.resolve(res)
       }
 
-      this.updateAll()
+      if (this._inflight.idle) this.updateAll()
 
       // No additional updates scheduled - return
       if (--this._updatesPending === 0) return
       // Debounce the additional updates - continue
       this._updatesPending = 0
+    }
+  }
+
+  _maybeResolveIfAvailableRanges () {
+    if (this._ifAvailable > 0 || !this._inflight.idle || !this._ranges.length) return
+
+    for (let i = 0; i < this.peers.length; i++) {
+      if (this.peers[i].dataProcessing > 0) return
+    }
+
+    for (let i = 0; i < this._ranges.length; i++) {
+      const r = this._ranges[i]
+
+      if (r.ifAvailable) {
+        this._resolveRangeRequest(r, i--)
+      }
     }
   }
 
@@ -17732,6 +19811,28 @@ module.exports = class Replicator {
 
     if (this._seeks.length > 0 || this._ranges.length > 0) this._updateNonPrimary()
     else this.updatePeer(peer)
+  }
+
+  _onwant (peer, start, length) {
+    length = Math.min(length, this.core.tree.length - start)
+
+    peer.protomux.cork()
+
+    let i = Math.floor(start / this.core.bitfield.pageSize)
+    const n = Math.ceil((start + length) / this.core.bitfield.pageSize)
+
+    for (; i < n; i++) {
+      const p = this.core.bitfield.pages.get(i)
+
+      if (p) {
+        peer.wireBitfield.send({
+          start: i * this.core.bitfield.pageSize,
+          bitfield: p.bitfield
+        })
+      }
+    }
+
+    peer.protomux.uncork()
   }
 
   async _onreorgdata (peer, req, data) {
@@ -17879,6 +19980,7 @@ module.exports = class Replicator {
     while (this._updatePeerNonPrimary(peer) === true);
 
     this._checkUpgradeIfAvailable()
+    this._maybeResolveIfAvailableRanges()
   }
 
   updateAll () {
@@ -17906,6 +20008,7 @@ module.exports = class Replicator {
     }
 
     this._checkUpgradeIfAvailable()
+    this._maybeResolveIfAvailableRanges()
   }
 
   attachTo (protomux) {
@@ -17927,6 +20030,7 @@ module.exports = class Replicator {
     const channel = protomux.createChannel({
       userData: null,
       protocol: 'hypercore/alpha',
+      aliases: ['hypercore'],
       id: this.discoveryKey,
       handshake: m.wire.handshake,
       messages: [
@@ -17956,17 +20060,6 @@ module.exports = class Replicator {
 
     return true
   }
-}
-
-function pages (core) {
-  const res = []
-
-  for (let i = 0; i < core.tree.length; i += core.bitfield.pageSize) {
-    const p = core.bitfield.page(i / core.bitfield.pageSize)
-    res.push(p)
-  }
-
-  return res
 }
 
 function matchingRequest (req, data) {
@@ -18039,7 +20132,7 @@ function onwireextension (m, c) {
   return c.userData.onextension(m)
 }
 
-},{"./caps":106,"./errors":108,"./messages":110,"./remote-bitfield":113,"b4a":74,"random-array-iterator":175,"safety-catch":178}],115:[function(require,module,exports){
+},{"./caps":115,"./errors":118,"./messages":121,"./remote-bitfield":124,"b4a":80,"random-array-iterator":186,"safety-catch":189}],126:[function(require,module,exports){
 const { Writable, Readable } = require('streamx')
 
 class ReadStream extends Readable {
@@ -18097,7 +20190,12 @@ class WriteStream extends Writable {
 
 exports.WriteStream = WriteStream
 
-},{"streamx":232}],116:[function(require,module,exports){
+},{"streamx":243}],127:[function(require,module,exports){
+module.exports = function () {
+  throw new Error('random-access-file is not supported in the browser')
+}
+
+},{}],128:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -18184,7 +20282,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],117:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -18213,7 +20311,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],118:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 /**
  * @module  is-audio-buffer
  */
@@ -18230,7 +20328,7 @@ module.exports = function isAudioBuffer (buffer) {
 	&& typeof buffer.duration === 'number'
 };
 
-},{}],119:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 (function(root) {
   'use strict';
 
@@ -18272,9 +20370,9 @@ module.exports = function isAudioBuffer (buffer) {
   }
 })(this);
 
-},{}],120:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 module.exports = true;
-},{}],121:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -18287,14 +20385,14 @@ module.exports = function isBuffer (obj) {
     typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
 
-},{}],122:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 const b4a = require('b4a')
 
 module.exports = function isOptions (opts) {
   return typeof opts === 'object' && opts && !b4a.isBuffer(opts)
 }
 
-},{"b4a":74}],123:[function(require,module,exports){
+},{"b4a":80}],135:[function(require,module,exports){
 'use strict';
 var toString = Object.prototype.toString;
 
@@ -18303,7 +20401,7 @@ module.exports = function (x) {
 	return toString.call(x) === '[object Object]' && (prototype = Object.getPrototypeOf(x), prototype === null || prototype === Object.getPrototypeOf({}));
 };
 
-},{}],124:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -18485,7 +20583,7 @@ var MicrophoneStream = /** @class */ (function (_super) {
 }(readable_stream_1.Readable));
 exports.default = MicrophoneStream;
 
-},{"buffer-from":86,"readable-stream":139}],125:[function(require,module,exports){
+},{"buffer-from":93,"readable-stream":151}],137:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -18614,7 +20712,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],126:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -18756,7 +20854,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":128,"./_stream_writable":130,"_process":169,"inherits":117}],127:[function(require,module,exports){
+},{"./_stream_readable":140,"./_stream_writable":142,"_process":181,"inherits":129}],139:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18796,7 +20894,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":129,"inherits":117}],128:[function(require,module,exports){
+},{"./_stream_transform":141,"inherits":129}],140:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -19923,7 +22021,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":125,"./_stream_duplex":126,"./internal/streams/async_iterator":131,"./internal/streams/buffer_list":132,"./internal/streams/destroy":133,"./internal/streams/from":135,"./internal/streams/state":137,"./internal/streams/stream":138,"_process":169,"buffer":87,"events":94,"inherits":117,"string_decoder/":234,"util":85}],129:[function(require,module,exports){
+},{"../errors":137,"./_stream_duplex":138,"./internal/streams/async_iterator":143,"./internal/streams/buffer_list":144,"./internal/streams/destroy":145,"./internal/streams/from":147,"./internal/streams/state":149,"./internal/streams/stream":150,"_process":181,"buffer":94,"events":103,"inherits":129,"string_decoder/":245,"util":92}],141:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20125,7 +22223,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":125,"./_stream_duplex":126,"inherits":117}],130:[function(require,module,exports){
+},{"../errors":137,"./_stream_duplex":138,"inherits":129}],142:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20825,7 +22923,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":125,"./_stream_duplex":126,"./internal/streams/destroy":133,"./internal/streams/state":137,"./internal/streams/stream":138,"_process":169,"buffer":87,"inherits":117,"util-deprecate":236}],131:[function(require,module,exports){
+},{"../errors":137,"./_stream_duplex":138,"./internal/streams/destroy":145,"./internal/streams/state":149,"./internal/streams/stream":150,"_process":181,"buffer":94,"inherits":129,"util-deprecate":247}],143:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -21035,7 +23133,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":134,"_process":169}],132:[function(require,module,exports){
+},{"./end-of-stream":146,"_process":181}],144:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -21246,7 +23344,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":87,"util":85}],133:[function(require,module,exports){
+},{"buffer":94,"util":92}],145:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -21354,7 +23452,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":169}],134:[function(require,module,exports){
+},{"_process":181}],146:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -21459,12 +23557,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":125}],135:[function(require,module,exports){
+},{"../../../errors":137}],147:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],136:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -21562,7 +23660,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":125,"./end-of-stream":134}],137:[function(require,module,exports){
+},{"../../../errors":137,"./end-of-stream":146}],149:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -21590,10 +23688,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":125}],138:[function(require,module,exports){
+},{"../../../errors":137}],150:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":94}],139:[function(require,module,exports){
+},{"events":103}],151:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -21604,7 +23702,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":126,"./lib/_stream_passthrough.js":127,"./lib/_stream_readable.js":128,"./lib/_stream_transform.js":129,"./lib/_stream_writable.js":130,"./lib/internal/streams/end-of-stream.js":134,"./lib/internal/streams/pipeline.js":136}],140:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":138,"./lib/_stream_passthrough.js":139,"./lib/_stream_readable.js":140,"./lib/_stream_transform.js":141,"./lib/_stream_writable.js":142,"./lib/internal/streams/end-of-stream.js":146,"./lib/internal/streams/pipeline.js":148}],152:[function(require,module,exports){
 /*! multistream. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 const stream = require('readable-stream')
 const once = require('once')
@@ -21772,37 +23870,37 @@ function destroy (stream, err, cb) {
   }
 }
 
-},{"once":164,"readable-stream":155}],141:[function(require,module,exports){
-arguments[4][125][0].apply(exports,arguments)
-},{"dup":125}],142:[function(require,module,exports){
-arguments[4][126][0].apply(exports,arguments)
-},{"./_stream_readable":144,"./_stream_writable":146,"_process":169,"dup":126,"inherits":117}],143:[function(require,module,exports){
-arguments[4][127][0].apply(exports,arguments)
-},{"./_stream_transform":145,"dup":127,"inherits":117}],144:[function(require,module,exports){
-arguments[4][128][0].apply(exports,arguments)
-},{"../errors":141,"./_stream_duplex":142,"./internal/streams/async_iterator":147,"./internal/streams/buffer_list":148,"./internal/streams/destroy":149,"./internal/streams/from":151,"./internal/streams/state":153,"./internal/streams/stream":154,"_process":169,"buffer":87,"dup":128,"events":94,"inherits":117,"string_decoder/":234,"util":85}],145:[function(require,module,exports){
-arguments[4][129][0].apply(exports,arguments)
-},{"../errors":141,"./_stream_duplex":142,"dup":129,"inherits":117}],146:[function(require,module,exports){
-arguments[4][130][0].apply(exports,arguments)
-},{"../errors":141,"./_stream_duplex":142,"./internal/streams/destroy":149,"./internal/streams/state":153,"./internal/streams/stream":154,"_process":169,"buffer":87,"dup":130,"inherits":117,"util-deprecate":236}],147:[function(require,module,exports){
-arguments[4][131][0].apply(exports,arguments)
-},{"./end-of-stream":150,"_process":169,"dup":131}],148:[function(require,module,exports){
-arguments[4][132][0].apply(exports,arguments)
-},{"buffer":87,"dup":132,"util":85}],149:[function(require,module,exports){
-arguments[4][133][0].apply(exports,arguments)
-},{"_process":169,"dup":133}],150:[function(require,module,exports){
-arguments[4][134][0].apply(exports,arguments)
-},{"../../../errors":141,"dup":134}],151:[function(require,module,exports){
-arguments[4][135][0].apply(exports,arguments)
-},{"dup":135}],152:[function(require,module,exports){
-arguments[4][136][0].apply(exports,arguments)
-},{"../../../errors":141,"./end-of-stream":150,"dup":136}],153:[function(require,module,exports){
+},{"once":176,"readable-stream":167}],153:[function(require,module,exports){
 arguments[4][137][0].apply(exports,arguments)
-},{"../../../errors":141,"dup":137}],154:[function(require,module,exports){
+},{"dup":137}],154:[function(require,module,exports){
 arguments[4][138][0].apply(exports,arguments)
-},{"dup":138,"events":94}],155:[function(require,module,exports){
+},{"./_stream_readable":156,"./_stream_writable":158,"_process":181,"dup":138,"inherits":129}],155:[function(require,module,exports){
 arguments[4][139][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":142,"./lib/_stream_passthrough.js":143,"./lib/_stream_readable.js":144,"./lib/_stream_transform.js":145,"./lib/_stream_writable.js":146,"./lib/internal/streams/end-of-stream.js":150,"./lib/internal/streams/pipeline.js":152,"dup":139}],156:[function(require,module,exports){
+},{"./_stream_transform":157,"dup":139,"inherits":129}],156:[function(require,module,exports){
+arguments[4][140][0].apply(exports,arguments)
+},{"../errors":153,"./_stream_duplex":154,"./internal/streams/async_iterator":159,"./internal/streams/buffer_list":160,"./internal/streams/destroy":161,"./internal/streams/from":163,"./internal/streams/state":165,"./internal/streams/stream":166,"_process":181,"buffer":94,"dup":140,"events":103,"inherits":129,"string_decoder/":245,"util":92}],157:[function(require,module,exports){
+arguments[4][141][0].apply(exports,arguments)
+},{"../errors":153,"./_stream_duplex":154,"dup":141,"inherits":129}],158:[function(require,module,exports){
+arguments[4][142][0].apply(exports,arguments)
+},{"../errors":153,"./_stream_duplex":154,"./internal/streams/destroy":161,"./internal/streams/state":165,"./internal/streams/stream":166,"_process":181,"buffer":94,"dup":142,"inherits":129,"util-deprecate":247}],159:[function(require,module,exports){
+arguments[4][143][0].apply(exports,arguments)
+},{"./end-of-stream":162,"_process":181,"dup":143}],160:[function(require,module,exports){
+arguments[4][144][0].apply(exports,arguments)
+},{"buffer":94,"dup":144,"util":92}],161:[function(require,module,exports){
+arguments[4][145][0].apply(exports,arguments)
+},{"_process":181,"dup":145}],162:[function(require,module,exports){
+arguments[4][146][0].apply(exports,arguments)
+},{"../../../errors":153,"dup":146}],163:[function(require,module,exports){
+arguments[4][147][0].apply(exports,arguments)
+},{"dup":147}],164:[function(require,module,exports){
+arguments[4][148][0].apply(exports,arguments)
+},{"../../../errors":153,"./end-of-stream":162,"dup":148}],165:[function(require,module,exports){
+arguments[4][149][0].apply(exports,arguments)
+},{"../../../errors":153,"dup":149}],166:[function(require,module,exports){
+arguments[4][150][0].apply(exports,arguments)
+},{"dup":150,"events":103}],167:[function(require,module,exports){
+arguments[4][151][0].apply(exports,arguments)
+},{"./lib/_stream_duplex.js":154,"./lib/_stream_passthrough.js":155,"./lib/_stream_readable.js":156,"./lib/_stream_transform.js":157,"./lib/_stream_writable.js":158,"./lib/internal/streams/end-of-stream.js":162,"./lib/internal/streams/pipeline.js":164,"dup":151}],168:[function(require,module,exports){
 module.exports = assert
 
 class AssertionError extends Error {}
@@ -21822,7 +23920,7 @@ function assert (t, m) {
   }
 }
 
-},{}],157:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
@@ -21885,7 +23983,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":74,"nanoassert":156,"sodium-universal":210}],158:[function(require,module,exports){
+},{"b4a":80,"nanoassert":168,"sodium-universal":221}],170:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -21978,7 +24076,7 @@ function decryptWithAD (key, counter, additionalData, ciphertext) {
   return plaintext
 }
 
-},{"b4a":74,"sodium-universal":210}],159:[function(require,module,exports){
+},{"b4a":80,"sodium-universal":221}],171:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_kx_SEEDBYTES, crypto_kx_keypair, crypto_kx_seed_keypair } = require('sodium-universal/crypto_kx')
 const { crypto_scalarmult_BYTES, crypto_scalarmult_SCALARBYTES, crypto_scalarmult, crypto_scalarmult_base } = require('sodium-universal/crypto_scalarmult')
@@ -22044,7 +24142,7 @@ function dh (pk, lsk) {
   return output
 }
 
-},{"b4a":74,"nanoassert":156,"sodium-universal/crypto_kx":199,"sodium-universal/crypto_scalarmult":201}],160:[function(require,module,exports){
+},{"b4a":80,"nanoassert":168,"sodium-universal/crypto_kx":210,"sodium-universal/crypto_scalarmult":212}],172:[function(require,module,exports){
 const assert = require('nanoassert')
 const hmacBlake2b = require('hmac-blake2b')
 const b4a = require('b4a')
@@ -22093,7 +24191,7 @@ function hmacDigest (key, input) {
   return hmac
 }
 
-},{"b4a":74,"hmac-blake2b":99,"nanoassert":156}],161:[function(require,module,exports){
+},{"b4a":80,"hmac-blake2b":108,"nanoassert":168}],173:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -22354,7 +24452,7 @@ function keyPattern (pattern, initiator) {
   }
 }
 
-},{"./hkdf":160,"./symmetric-state":162,"b4a":74,"nanoassert":156}],162:[function(require,module,exports){
+},{"./hkdf":172,"./symmetric-state":174,"b4a":80,"nanoassert":168}],174:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const assert = require('nanoassert')
 const b4a = require('b4a')
@@ -22433,7 +24531,7 @@ function accumulateDigest (digest, input) {
   sodium.crypto_generichash(digest, toHash)
 }
 
-},{"./cipher":158,"./dh":159,"./hkdf":160,"b4a":74,"nanoassert":156,"sodium-universal":210}],163:[function(require,module,exports){
+},{"./cipher":170,"./dh":171,"./hkdf":172,"b4a":80,"nanoassert":168,"sodium-universal":221}],175:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -22525,7 +24623,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],164:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 var wrappy = require('wrappy')
 module.exports = wrappy(once)
 module.exports.strict = wrappy(onceStrict)
@@ -22569,7 +24667,7 @@ function onceStrict (fn) {
   return f
 }
 
-},{"wrappy":237}],165:[function(require,module,exports){
+},{"wrappy":248}],177:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -22620,7 +24718,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],166:[function(require,module,exports){
+},{}],178:[function(require,module,exports){
 /**
  * @module pcm-convert
  */
@@ -22907,9 +25005,9 @@ function normalize (obj) {
 	return obj
 }
 
-},{"assert":61,"audio-format":70,"is-audio-buffer":118,"is-buffer":167,"object-assign":163}],167:[function(require,module,exports){
-arguments[4][71][0].apply(exports,arguments)
-},{"dup":71}],168:[function(require,module,exports){
+},{"assert":67,"audio-format":76,"is-audio-buffer":130,"is-buffer":179,"object-assign":175}],179:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"dup":77}],180:[function(require,module,exports){
 'use strict'
 
 
@@ -22988,7 +25086,7 @@ function toList(arg) {
 	return arg
 }
 
-},{}],169:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -23174,7 +25272,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],170:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 const b4a = require('b4a')
 const c = require('compact-encoding')
 const queueTick = require('queue-tick')
@@ -23182,11 +25280,13 @@ const safetyCatch = require('safety-catch')
 
 const MAX_BUFFERED = 32768
 const MAX_BACKLOG = Infinity // TODO: impl "open" backpressure
+const MAX_BATCH = 8 * 1024 * 1024
 
 class Channel {
-  constructor (mux, info, userData, protocol, id, handshake, messages, onopen, onclose, ondestroy) {
+  constructor (mux, info, userData, protocol, aliases, id, handshake, messages, onopen, onclose, ondestroy) {
     this.userData = userData
     this.protocol = protocol
+    this.aliases = aliases
     this.id = id
     this.handshake = null
     this.messages = []
@@ -23420,6 +25520,8 @@ class Channel {
 
 module.exports = class Protomux {
   constructor (stream, { alloc } = {}) {
+    if (stream.userData === null) stream.userData = this
+
     this.isProtomux = true
     this.stream = stream
     this.corked = 0
@@ -23440,11 +25542,13 @@ module.exports = class Protomux {
     this._notify = new Map()
 
     this.stream.on('data', this._ondata.bind(this))
+    this.stream.on('end', this._onend.bind(this))
     this.stream.on('error', noop) // we handle this in "close"
     this.stream.on('close', this._shutdown.bind(this))
   }
 
   static from (stream, opts) {
+    if (stream.userData && stream.userData.isProtomux) return stream.userData
     if (stream.isProtomux) return stream
     return new this(stream, opts)
   }
@@ -23488,14 +25592,14 @@ module.exports = class Protomux {
     return info ? info.opened > 0 : false
   }
 
-  createChannel ({ userData = null, protocol, id = null, unique = true, handshake = null, messages = [], onopen = noop, onclose = noop, ondestroy = noop }) {
+  createChannel ({ userData = null, protocol, aliases = [], id = null, unique = true, handshake = null, messages = [], onopen = noop, onclose = noop, ondestroy = noop }) {
     if (this.stream.destroyed) return null
 
-    const info = this._get(protocol, id)
+    const info = this._get(protocol, id, aliases)
     if (unique && info.opened > 0) return null
 
     if (info.incoming.length === 0) {
-      return new Channel(this, info, userData, protocol, id, handshake, messages, onopen, onclose, ondestroy)
+      return new Channel(this, info, userData, protocol, aliases, id, handshake, messages, onopen, onclose, ondestroy)
     }
 
     this._remoteBacklog--
@@ -23504,7 +25608,7 @@ module.exports = class Protomux {
     const r = this._remote[remoteId - 1]
     if (r === null) return null
 
-    const session = new Channel(this, info, userData, protocol, id, handshake, messages, onopen, onclose, ondestroy)
+    const session = new Channel(this, info, userData, protocol, aliases, id, handshake, messages, onopen, onclose, ondestroy)
 
     session._remoteId = remoteId
     session._fullyOpenSoon()
@@ -23513,6 +25617,12 @@ module.exports = class Protomux {
   }
 
   _pushBatch (localId, buffer) {
+    if (this._batchState.end >= MAX_BATCH) {
+      this._sendBatch(this._batch, this._batchState)
+      this._batch = []
+      this._batchState = { buffer: null, start: 0, end: 1 }
+    }
+
     if (this._batch.length === 0 || this._batch[this._batch.length - 1].localId !== localId) {
       this._batchState.end++
       c.uint.preencode(this._batchState, localId)
@@ -23544,20 +25654,30 @@ module.exports = class Protomux {
     this.stream.write(state.buffer)
   }
 
-  _get (protocol, id) {
+  _get (protocol, id, aliases = []) {
     const key = toKey(protocol, id)
 
     let info = this._infos.get(key)
     if (info) return info
 
-    info = { key, protocol, id, pairing: 0, opened: 0, incoming: [], outgoing: [] }
+    info = { key, protocol, aliases: [], id, pairing: 0, opened: 0, incoming: [], outgoing: [] }
     this._infos.set(key, info)
+
+    for (const alias of aliases) {
+      const key = toKey(alias, id)
+      info.aliases.push(key)
+
+      this._infos.set(key, info)
+    }
+
     return info
   }
 
   _gc (info) {
     if (info.opened === 0 && info.outgoing.length === 0 && info.incoming.length === 0) {
       this._infos.delete(info.key)
+
+      for (const alias of info.aliases) this._infos.delete(alias)
     }
   }
 
@@ -23568,6 +25688,10 @@ module.exports = class Protomux {
     } catch (err) {
       this._safeDestroy(err)
     }
+  }
+
+  _onend () { // TODO: support half open mode for the users who wants that here
+    this.stream.end()
   }
 
   _decode (remoteId, state) {
@@ -23819,385 +25943,451 @@ function encodingLength (enc, val) {
   return state.end
 }
 
-},{"b4a":74,"compact-encoding":91,"queue-tick":171,"safety-catch":178}],171:[function(require,module,exports){
+},{"b4a":80,"compact-encoding":98,"queue-tick":183,"safety-catch":189}],183:[function(require,module,exports){
 module.exports = typeof queueMicrotask === 'function' ? queueMicrotask : (fn) => Promise.resolve().then(fn)
 
-},{}],172:[function(require,module,exports){
-module.exports = function () {
-  throw new Error('random-access-file is not supported in the browser')
-}
-
-},{}],173:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
+(function (Buffer){(function (){
 const RandomAccess = require('random-access-storage')
 const isOptions = require('is-options')
-const inherits = require('inherits')
 const b4a = require('b4a')
 
 const DEFAULT_PAGE_SIZE = 1024 * 1024
 
-module.exports = RAM
+module.exports = class RAM extends RandomAccess {
+  constructor (opts) {
+    super()
 
-function RAM (opts) {
-  if (!(this instanceof RAM)) return new RAM(opts)
-  if (typeof opts === 'number') opts = {length: opts}
-  if (!opts) opts = {}
+    if (typeof opts === 'number') opts = { length: opts }
+    if (!opts) opts = {}
 
-  RandomAccess.call(this)
+    if (b4a.isBuffer(opts)) {
+      opts = { length: opts.length, buffer: opts }
+    }
+    if (!isOptions(opts)) opts = {}
 
-  if (b4a.isBuffer(opts)) {
-    opts = {length: opts.length, buffer: opts}
-  }
-  if (!isOptions(opts)) opts = {}
+    this.length = opts.length || 0
+    this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
+    this.buffers = []
 
-  this.length = opts.length || 0
-  this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
-  this.buffers = []
-
-  if (opts.buffer) this.buffers.push(opts.buffer)
-}
-
-inherits(RAM, RandomAccess)
-
-RAM.prototype._stat = function (req) {
-  req.callback(null, {size: this.length})
-}
-
-RAM.prototype._write = function (req) {
-  var i = Math.floor(req.offset / this.pageSize)
-  var rel = req.offset - i * this.pageSize
-  var start = 0
-
-  const len = req.offset + req.size
-  if (len > this.length) this.length = len
-
-  while (start < req.size) {
-    const page = this._page(i++, true)
-    const free = this.pageSize - rel
-    const end = free < (req.size - start)
-      ? start + free
-      : req.size
-
-    b4a.copy(req.data, page, rel, start, end)
-    start = end
-    rel = 0
+    if (opts.buffer) this.buffers.push(opts.buffer)
   }
 
-  req.callback(null, null)
-}
-
-RAM.prototype._read = function (req) {
-  var i = Math.floor(req.offset / this.pageSize)
-  var rel = req.offset - i * this.pageSize
-  var start = 0
-
-  if (req.offset + req.size > this.length) {
-    return req.callback(new Error('Could not satisfy length'), null)
+  _stat (req) {
+    req.callback(null, { size: this.length })
   }
 
-  const data = b4a.alloc(req.size)
+  _write (req) {
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
 
-  while (start < req.size) {
-    const page = this._page(i++, false)
-    const avail = this.pageSize - rel
-    const wanted = req.size - start
-    const len = avail < wanted ? avail : wanted
+    const len = req.offset + req.size
+    if (len > this.length) this.length = len
 
-    if (page) b4a.copy(page, data, start, rel, rel + len)
-    start += len
-    rel = 0
-  }
+    while (start < req.size) {
+      const page = this._page(i++, true)
+      const free = this.pageSize - rel
+      const end = free < (req.size - start)
+        ? start + free
+        : req.size
 
-  req.callback(null, data)
-}
-
-RAM.prototype._del = function (req) {
-  var i = Math.floor(req.offset / this.pageSize)
-  var rel = req.offset - i * this.pageSize
-  var start = 0
-
-  if (rel && req.offset + req.size >= this.length) {
-    var buf = this.buffers[i]
-    if (buf) buf.fill(0, rel)
-  }
-
-  if (req.offset + req.size > this.length) {
-    req.size = Math.max(0, this.length - req.offset)
-  }
-
-  while (start < req.size) {
-    if (rel === 0 && req.size - start >= this.pageSize) {
-      this.buffers[i++] = undefined
+      b4a.copy(req.data, page, rel, start, end)
+      start = end
+      rel = 0
     }
 
-    rel = 0
-    start += this.pageSize - rel
+    req.callback(null, null)
   }
 
-  if (req.offset + req.size >= this.length) {
-    this.length = req.offset
+  _read (req) {
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
+
+    if (req.offset + req.size > this.length) {
+      return req.callback(new Error('Could not satisfy length'), null)
+    }
+
+    const data = b4a.alloc(req.size)
+
+    while (start < req.size) {
+      const page = this._page(i++, false)
+      const avail = this.pageSize - rel
+      const wanted = req.size - start
+      const len = avail < wanted ? avail : wanted
+
+      if (page) b4a.copy(page, data, start, rel, rel + len)
+      start += len
+      rel = 0
+    }
+
+    req.callback(null, data)
   }
 
-  req.callback(null, null)
-}
+  _del (req) {
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
 
-RAM.prototype._destroy = function (req) {
-  this._buffers = []
-  this.length = 0
-  req.callback(null, null)
-}
+    if (rel && req.offset + req.size >= this.length) {
+      const buf = this.buffers[i]
+      if (buf) buf.fill(0, rel)
+    }
 
-RAM.prototype._page = function (i, upsert) {
-  var page = this.buffers[i]
-  if (page || !upsert) return page
-  page = this.buffers[i] = b4a.alloc(this.pageSize)
-  return page
-}
+    if (req.offset + req.size > this.length) {
+      req.size = Math.max(0, this.length - req.offset)
+    }
 
-RAM.prototype.toBuffer = function () {
-  const buf = b4a.alloc(this.length)
+    while (start < req.size) {
+      if (rel === 0 && req.size - start >= this.pageSize) {
+        this.buffers[i] = undefined
+      }
 
-  for (var i = 0; i < this.buffers.length; i++) {
-    if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
+      rel = 0
+      i += 1
+      start += this.pageSize - rel
+    }
+
+    if (req.offset + req.size >= this.length) {
+      this.length = req.offset
+    }
+
+    req.callback(null, null)
   }
 
-  return buf
+  _unlink (req) {
+    this._buffers = []
+    this.length = 0
+    req.callback(null, null)
+  }
+
+  _page (i, upsert) {
+    let page = this.buffers[i]
+    if (page || !upsert) return page
+    page = this.buffers[i] = b4a.alloc(this.pageSize)
+    return page
+  }
+
+  toBuffer () {
+    const buf = b4a.alloc(this.length)
+
+    for (let i = 0; i < this.buffers.length; i++) {
+      if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
+    }
+
+    return buf
+  }
+
+  clone () {
+    const ram = new RAM()
+    ram.length = this.length
+    ram.pageSize = this.pageSize
+    ram.buffers = this.buffers.map((buffer) => Buffer.from(buffer))
+    return ram
+  }
 }
 
-},{"b4a":74,"inherits":117,"is-options":122,"random-access-storage":174}],174:[function(require,module,exports){
-var events = require('events')
-var inherits = require('inherits')
-var queueTick = require('queue-tick')
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"b4a":80,"buffer":94,"is-options":134,"random-access-storage":185}],185:[function(require,module,exports){
+const EventEmitter = require('events')
+const queueTick = require('queue-tick')
 
-var NOT_READABLE = defaultImpl(new Error('Not readable'))
-var NOT_WRITABLE = defaultImpl(new Error('Not writable'))
-var NOT_DELETABLE = defaultImpl(new Error('Not deletable'))
-var NOT_STATABLE = defaultImpl(new Error('Not statable'))
-var NO_OPEN_READABLE = defaultImpl(new Error('No readonly open'))
+const NOT_READABLE = defaultImpl(new Error('Not readable'))
+const NOT_WRITABLE = defaultImpl(new Error('Not writable'))
+const NOT_DELETABLE = defaultImpl(new Error('Not deletable'))
+const NOT_STATABLE = defaultImpl(new Error('Not statable'))
+
+const DEFAULT_OPEN = defaultImpl(null)
+const DEFAULT_CLOSE = defaultImpl(null)
+const DEFAULT_UNLINK = defaultImpl(null)
 
 // NON_BLOCKING_OPS
-var READ_OP = 0
-var WRITE_OP = 1
-var DEL_OP = 2
-var STAT_OP = 3
+const READ_OP = 0
+const WRITE_OP = 1
+const DEL_OP = 2
+const TRUNCATE_OP = 3
+const STAT_OP = 4
 
 // BLOCKING_OPS
-var OPEN_OP = 4
-var CLOSE_OP = 5
-var DESTROY_OP = 6
+const OPEN_OP = 5
+const SUSPEND_OP = 6
+const CLOSE_OP = 7
+const UNLINK_OP = 8
 
-module.exports = RandomAccess
+module.exports = class RandomAccessStorage extends EventEmitter {
+  constructor (opts) {
+    super()
 
-function RandomAccess (opts) {
-  if (!(this instanceof RandomAccess)) return new RandomAccess(opts)
-  events.EventEmitter.call(this)
+    this._queued = []
+    this._pending = 0
+    this._needsOpen = true
 
-  this._queued = []
-  this._pending = 0
-  this._needsOpen = true
+    this.opened = false
+    this.suspended = false
+    this.closed = false
+    this.unlinked = false
+    this.writing = false
 
-  this.opened = false
-  this.closed = false
-  this.destroyed = false
+    if (opts) {
+      if (opts.open) this._open = opts.open
+      if (opts.read) this._read = opts.read
+      if (opts.write) this._write = opts.write
+      if (opts.del) this._del = opts.del
+      if (opts.truncate) this._truncate = opts.truncate
+      if (opts.stat) this._stat = opts.stat
+      if (opts.suspend) this._suspend = opts.suspend
+      if (opts.close) this._close = opts.close
+      if (opts.unlink) this._unlink = opts.unlink
+    }
 
-  if (opts) {
-    if (opts.openReadonly) this._openReadonly = opts.openReadonly
-    if (opts.open) this._open = opts.open
-    if (opts.read) this._read = opts.read
-    if (opts.write) this._write = opts.write
-    if (opts.del) this._del = opts.del
-    if (opts.stat) this._stat = opts.stat
-    if (opts.close) this._close = opts.close
-    if (opts.destroy) this._destroy = opts.destroy
+    this.readable = this._read !== RandomAccessStorage.prototype._read
+    this.writable = this._write !== RandomAccessStorage.prototype._write
+    this.deletable = this._del !== RandomAccessStorage.prototype._del
+    this.truncatable = this._truncate !== RandomAccessStorage.prototype._truncate || this.deletable
+    this.statable = this._stat !== RandomAccessStorage.prototype._stat
   }
 
-  this.preferReadonly = this._openReadonly !== NO_OPEN_READABLE
-  this.readable = this._read !== NOT_READABLE
-  this.writable = this._write !== NOT_WRITABLE
-  this.deletable = this._del !== NOT_DELETABLE
-  this.statable = this._stat !== NOT_STATABLE
+  read (offset, size, cb) {
+    this.run(new Request(this, READ_OP, offset, size, null, cb), false)
+  }
+
+  _read (req) {
+    return NOT_READABLE(req)
+  }
+
+  write (offset, data, cb) {
+    if (!cb) cb = noop
+    this.run(new Request(this, WRITE_OP, offset, data.length, data, cb), true)
+  }
+
+  _write (req) {
+    return NOT_WRITABLE(req)
+  }
+
+  del (offset, size, cb) {
+    if (!cb) cb = noop
+    this.run(new Request(this, DEL_OP, offset, size, null, cb), true)
+  }
+
+  _del (req) {
+    return NOT_DELETABLE(req)
+  }
+
+  truncate (offset, cb) {
+    if (!cb) cb = noop
+    this.run(new Request(this, TRUNCATE_OP, offset, 0, null, cb), true)
+  }
+
+  _truncate (req) {
+    req.size = Infinity
+    this._del(req)
+  }
+
+  stat (cb) {
+    this.run(new Request(this, STAT_OP, 0, 0, null, cb), false)
+  }
+
+  _stat (req) {
+    return NOT_STATABLE(req)
+  }
+
+  open (cb) {
+    if (!cb) cb = noop
+    if (this.opened && !this._needsOpen) return nextTickCallback(cb)
+    this._needsOpen = false
+    queueAndRun(this, new Request(this, OPEN_OP, 0, 0, null, cb))
+  }
+
+  _open (req) {
+    return DEFAULT_OPEN(req)
+  }
+
+  suspend (cb) {
+    if (!cb) cb = noop
+    if (this.closed || this.suspended) return nextTickCallback(cb)
+    this._needsOpen = true
+    queueAndRun(this, new Request(this, SUSPEND_OP, 0, 0, null, cb))
+  }
+
+  _suspend (req) {
+    this._close(req)
+  }
+
+  close (cb) {
+    if (!cb) cb = noop
+    if (this.closed) return nextTickCallback(cb)
+    queueAndRun(this, new Request(this, CLOSE_OP, 0, 0, null, cb))
+  }
+
+  _close (req) {
+    return DEFAULT_CLOSE(req)
+  }
+
+  unlink (cb) {
+    if (!cb) cb = noop
+    if (!this.closed) this.close(noop)
+    queueAndRun(this, new Request(this, UNLINK_OP, 0, 0, null, cb))
+  }
+
+  _unlink (req) {
+    return DEFAULT_UNLINK(req)
+  }
+
+  run (req, writing) {
+    if (writing && !this.writing) {
+      this.writing = true
+      this._needsOpen = true
+    }
+
+    if (this._needsOpen) this.open(noop)
+    if (this._queued.length) this._queued.push(req)
+    else req._run()
+  }
 }
 
-inherits(RandomAccess, events.EventEmitter)
+class Request {
+  constructor (self, type, offset, size, data, cb) {
+    this.type = type
+    this.offset = offset
+    this.size = size
+    this.data = data
+    this.storage = self
 
-RandomAccess.prototype.read = function (offset, size, cb) {
-  this.run(new Request(this, READ_OP, offset, size, null, cb))
-}
+    this._sync = false
+    this._callback = cb
+    this._openError = null
+  }
 
-RandomAccess.prototype._read = NOT_READABLE
+  _maybeOpenError (err) {
+    if (this.type !== OPEN_OP) return
+    const queued = this.storage._queued
+    for (let i = 1; i < queued.length; i++) {
+      const q = queued[i]
+      if (q.type === OPEN_OP) break
+      q._openError = err
+    }
+  }
 
-RandomAccess.prototype.write = function (offset, data, cb) {
-  if (!cb) cb = noop
-  openWritable(this)
-  this.run(new Request(this, WRITE_OP, offset, data.length, data, cb))
-}
+  _unqueue (err) {
+    const ra = this.storage
+    const queued = ra._queued
 
-RandomAccess.prototype._write = NOT_WRITABLE
+    if (err) {
+      this._maybeOpenError(err)
+    } else if (this.type > 4) {
+      switch (this.type) {
+        case OPEN_OP:
+          if (ra.suspended) {
+            ra.suspended = false
+            ra.emit('unsuspend')
+          }
+          if (!ra.opened) {
+            ra.opened = true
+            ra.emit('open')
+          }
+          break
 
-RandomAccess.prototype.del = function (offset, size, cb) {
-  if (!cb) cb = noop
-  openWritable(this)
-  this.run(new Request(this, DEL_OP, offset, size, null, cb))
-}
+        case SUSPEND_OP:
+          if (!ra.suspended) {
+            ra.suspended = true
+            ra.emit('suspend')
+          }
+          break
 
-RandomAccess.prototype._del = NOT_DELETABLE
+        case CLOSE_OP:
+          if (!ra.closed) {
+            ra.closed = true
+            ra.emit('close')
+          }
+          break
 
-RandomAccess.prototype.stat = function (cb) {
-  this.run(new Request(this, STAT_OP, 0, 0, null, cb))
-}
+        case UNLINK_OP:
+          if (!ra.unlinked) {
+            ra.unlinked = true
+            ra.emit('unlink')
+          }
+          break
+      }
+    }
 
-RandomAccess.prototype._stat = NOT_STATABLE
+    if (queued.length && queued[0] === this) queued.shift()
 
-RandomAccess.prototype.open = function (cb) {
-  if (!cb) cb = noop
-  if (this.opened && !this._needsOpen) return queueTick(() => cb(null))
-  queueAndRun(this, new Request(this, OPEN_OP, 0, 0, null, cb))
-}
+    if (!--ra._pending) drainQueue(ra)
+  }
 
-RandomAccess.prototype._open = defaultImpl(null)
-RandomAccess.prototype._openReadonly = NO_OPEN_READABLE
+  callback (err, val) {
+    if (this._sync) return nextTick(this, err, val)
+    this._unqueue(err)
+    this._callback(err, val)
+  }
 
-RandomAccess.prototype.close = function (cb) {
-  if (!cb) cb = noop
-  if (this.closed) return queueTick(() => cb(null))
-  queueAndRun(this, new Request(this, CLOSE_OP, 0, 0, null, cb))
-}
+  _openAndNotClosed () {
+    const ra = this.storage
+    if (ra.opened && !ra.closed) return true
+    if (!ra.opened) nextTick(this, this._openError || new Error('Not opened'))
+    else if (ra.closed) nextTick(this, new Error('Closed'))
+    return false
+  }
 
-RandomAccess.prototype._close = defaultImpl(null)
+  _open () {
+    const ra = this.storage
 
-RandomAccess.prototype.destroy = function (cb) {
-  if (!cb) cb = noop
-  if (!this.closed) this.close(noop)
-  queueAndRun(this, new Request(this, DESTROY_OP, 0, 0, null, cb))
-}
+    if (ra.opened && !ra.suspended) return nextTick(this, null)
+    if (ra.closed) return nextTick(this, new Error('Closed'))
 
-RandomAccess.prototype._destroy = defaultImpl(null)
+    ra._open(this)
+  }
 
-RandomAccess.prototype.run = function (req) {
-  if (this._needsOpen) this.open(noop)
-  if (this._queued.length) this._queued.push(req)
-  else req._run()
-}
+  _run () {
+    const ra = this.storage
+    ra._pending++
 
-function noop () {}
+    this._sync = true
 
-function Request (self, type, offset, size, data, cb) {
-  this.type = type
-  this.offset = offset
-  this.data = data
-  this.size = size
-  this.storage = self
-
-  this._sync = false
-  this._callback = cb
-  this._openError = null
-}
-
-Request.prototype._maybeOpenError = function (err) {
-  if (this.type !== OPEN_OP) return
-  var queued = this.storage._queued
-  for (var i = 0; i < queued.length; i++) queued[i]._openError = err
-}
-
-Request.prototype._unqueue = function (err) {
-  var ra = this.storage
-  var queued = ra._queued
-
-  if (!err) {
     switch (this.type) {
+      case READ_OP:
+        if (this._openAndNotClosed()) ra._read(this)
+        break
+
+      case WRITE_OP:
+        if (this._openAndNotClosed()) ra._write(this)
+        break
+
+      case DEL_OP:
+        if (this._openAndNotClosed()) ra._del(this)
+        break
+
+      case TRUNCATE_OP:
+        if (this._openAndNotClosed()) ra._truncate(this)
+        break
+
+      case STAT_OP:
+        if (this._openAndNotClosed()) ra._stat(this)
+        break
+
       case OPEN_OP:
-        if (!ra.opened) {
-          ra.opened = true
-          ra.emit('open')
-        }
+        this._open()
+        break
+
+      case SUSPEND_OP:
+        if (ra.closed || !ra.opened || ra.suspended) nextTick(this, null)
+        else ra._suspend(this)
         break
 
       case CLOSE_OP:
-        if (!ra.closed) {
-          ra.closed = true
-          ra.emit('close')
-        }
+        if (ra.closed || !ra.opened || ra.suspended) nextTick(this, null)
+        else ra._close(this)
         break
 
-      case DESTROY_OP:
-        if (!ra.destroyed) {
-          ra.destroyed = true
-          ra.emit('destroy')
-        }
+      case UNLINK_OP:
+        if (ra.unlinked) nextTick(this, null)
+        else ra._unlink(this)
         break
     }
-  } else {
-    this._maybeOpenError(err)
+
+    this._sync = false
   }
-
-  if (queued.length && queued[0] === this) queued.shift()
-
-  if (!--ra._pending) drainQueue(ra)
-}
-
-Request.prototype.callback = function (err, val) {
-  if (this._sync) return nextTick(this, err, val)
-  this._unqueue(err)
-  this._callback(err, val)
-}
-
-Request.prototype._openAndNotClosed = function () {
-  var ra = this.storage
-  if (ra.opened && !ra.closed) return true
-  if (!ra.opened) nextTick(this, this._openError || new Error('Not opened'))
-  else if (ra.closed) nextTick(this, new Error('Closed'))
-  return false
-}
-
-Request.prototype._open = function () {
-  var ra = this.storage
-
-  if (ra.opened && !ra._needsOpen) return nextTick(this, null)
-  if (ra.closed) return nextTick(this, new Error('Closed'))
-
-  ra._needsOpen = false
-  if (ra.preferReadonly) ra._openReadonly(this)
-  else ra._open(this)
-}
-
-Request.prototype._run = function () {
-  var ra = this.storage
-  ra._pending++
-
-  this._sync = true
-
-  switch (this.type) {
-    case READ_OP:
-      if (this._openAndNotClosed()) ra._read(this)
-      break
-
-    case WRITE_OP:
-      if (this._openAndNotClosed()) ra._write(this)
-      break
-
-    case DEL_OP:
-      if (this._openAndNotClosed()) ra._del(this)
-      break
-
-    case STAT_OP:
-      if (this._openAndNotClosed()) ra._stat(this)
-      break
-
-    case OPEN_OP:
-      this._open()
-      break
-
-    case CLOSE_OP:
-      if (ra.closed || !ra.opened) nextTick(this, null)
-      else ra._close(this)
-      break
-
-    case DESTROY_OP:
-      if (ra.destroyed) nextTick(this, null)
-      else ra._destroy(this)
-      break
-  }
-
-  this._sync = false
 }
 
 function queueAndRun (self, req) {
@@ -24206,20 +26396,13 @@ function queueAndRun (self, req) {
 }
 
 function drainQueue (self) {
-  var queued = self._queued
+  const queued = self._queued
 
   while (queued.length > 0) {
-    var blocking = queued[0].type > 3
+    const blocking = queued[0].type > 4
     if (!blocking || !self._pending) queued[0]._run()
     if (blocking) return
     queued.shift()
-  }
-}
-
-function openWritable (self) {
-  if (self.preferReadonly) {
-    self._needsOpen = true
-    self.preferReadonly = false
   }
 }
 
@@ -24235,7 +26418,13 @@ function nextTick (req, err, val) {
   queueTick(() => req.callback(err, val))
 }
 
-},{"events":94,"inherits":117,"queue-tick":171}],175:[function(require,module,exports){
+function nextTickCallback (cb) {
+  queueTick(() => cb(null))
+}
+
+function noop () {}
+
+},{"events":103,"queue-tick":183}],186:[function(require,module,exports){
 module.exports = class RandomArrayIterator {
   constructor (values) {
     this.values = values
@@ -24283,7 +26472,7 @@ module.exports = class RandomArrayIterator {
   }
 }
 
-},{}],176:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -25039,7 +27228,7 @@ try {
   }
 }
 
-},{}],177:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -25106,10 +27295,11 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":87}],178:[function(require,module,exports){
+},{"buffer":94}],189:[function(require,module,exports){
 module.exports = safetyCatch
 
 function isActuallyUncaught (err) {
+  if (!err) return false
   return err instanceof TypeError ||
     err instanceof SyntaxError ||
     err instanceof ReferenceError ||
@@ -25130,7 +27320,7 @@ function safetyCatch (err) {
   }
 }
 
-},{}],179:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 module.exports={
 "8000": 8000,
 "11025": 11025,
@@ -25146,7 +27336,7 @@ module.exports={
 "384000": 384000
 }
 
-},{}],180:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 const js = require('./sha256.js')
 const wasm = require('sha256-wasm')
 
@@ -25174,7 +27364,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha256.js":181,"sha256-wasm":182}],181:[function(require,module,exports){
+},{"./sha256.js":192,"sha256-wasm":193}],192:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -25411,7 +27601,7 @@ function bswap (a) {
   return r | l
 }
 
-},{"b4a":74,"nanoassert":156}],182:[function(require,module,exports){
+},{"b4a":80,"nanoassert":168}],193:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -25582,7 +27772,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha256.js":183,"b4a":74,"nanoassert":156}],183:[function(require,module,exports){
+},{"./sha256.js":194,"b4a":80,"nanoassert":168}],194:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -25618,7 +27808,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],184:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 const js = require('./sha512.js')
 const wasm = require('sha512-wasm')
 
@@ -25646,7 +27836,7 @@ wasm.ready(function (err) {
   }
 })
 
-},{"./sha512.js":185,"sha512-wasm":186}],185:[function(require,module,exports){
+},{"./sha512.js":196,"sha512-wasm":197}],196:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -26206,7 +28396,7 @@ HMAC.prototype.digest = function (enc, offset = 0) {
 
 Sha512.HMAC = HMAC
 
-},{"b4a":74,"nanoassert":156}],186:[function(require,module,exports){
+},{"b4a":80,"nanoassert":168}],197:[function(require,module,exports){
 const assert = require('nanoassert')
 const b4a = require('b4a')
 
@@ -26379,7 +28569,7 @@ function roundUp (n, base) {
   return (n + base - 1) & -base
 }
 
-},{"./sha512.js":187,"b4a":74,"nanoassert":156}],187:[function(require,module,exports){
+},{"./sha512.js":198,"b4a":80,"nanoassert":168}],198:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -26415,7 +28605,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],188:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 module.exports = fallback
 
 function _add (a, b) {
@@ -26537,7 +28727,7 @@ function fallback (out, m, key) { // modified from https://github.com/jedisct1/s
   out[7] = (h.h >> 24) & 0xff
 }
 
-},{}],189:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 var assert = require('nanoassert')
 var wasm = typeof WebAssembly !== 'undefined' && require('./siphash24')()
 var fallback = require('./fallback')
@@ -26578,7 +28768,7 @@ function realloc (size) {
   memory = new Uint8Array(wasm.memory.buffer)
 }
 
-},{"./fallback":188,"./siphash24":190,"nanoassert":156}],190:[function(require,module,exports){
+},{"./fallback":199,"./siphash24":201,"nanoassert":168}],201:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -26614,7 +28804,7 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}],191:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 const sodium = require('sodium-universal')
 const b4a = require('b4a')
 
@@ -26685,7 +28875,7 @@ module.exports = {
   Pull
 }
 
-},{"b4a":74,"sodium-universal":210}],192:[function(require,module,exports){
+},{"b4a":80,"sodium-universal":221}],203:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_stream_chacha20_ietf, crypto_stream_chacha20_ietf_xor_ic } = require('./crypto_stream_chacha20')
 const { crypto_verify_16 } = require('./crypto_verify')
@@ -26847,7 +29037,7 @@ module.exports = {
   crypto_aead_chacha20poly1305_ietf_MESSAGEBYTES_MAX
 }
 
-},{"./crypto_stream_chacha20":207,"./crypto_verify":208,"./internal/poly1305":213,"nanoassert":156}],193:[function(require,module,exports){
+},{"./crypto_stream_chacha20":218,"./crypto_verify":219,"./internal/poly1305":224,"nanoassert":168}],204:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_verify_32 } = require('./crypto_verify')
 const Sha512 = require('sha512-universal')
@@ -26884,7 +29074,7 @@ module.exports = {
   crypto_auth_verify
 }
 
-},{"./crypto_verify":208,"nanoassert":156,"sha512-universal":184}],194:[function(require,module,exports){
+},{"./crypto_verify":219,"nanoassert":168,"sha512-universal":195}],205:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_hash_sha512 } = require('./crypto_hash')
 const { crypto_scalarmult, crypto_scalarmult_base } = require('./crypto_scalarmult')
@@ -27086,7 +29276,7 @@ function cleanup (arr) {
   for (let i = 0; i < arr.length; i++) arr[i] = 0
 }
 
-},{"./crypto_generichash":195,"./crypto_hash":196,"./crypto_scalarmult":201,"./crypto_secretbox":202,"./crypto_stream":206,"./randombytes":215,"nanoassert":156,"xsalsa20":239}],195:[function(require,module,exports){
+},{"./crypto_generichash":206,"./crypto_hash":207,"./crypto_scalarmult":212,"./crypto_secretbox":213,"./crypto_stream":217,"./randombytes":226,"nanoassert":168,"xsalsa20":250}],206:[function(require,module,exports){
 var blake2b = require('blake2b')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -27124,7 +29314,7 @@ blake2b.ready(function (_) {
   module.exports.crypto_generichash_WASM_LOADED = blake2b.WASM_LOADED
 })
 
-},{"blake2b":84}],196:[function(require,module,exports){
+},{"blake2b":91}],207:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha512 = require('sha512-universal')
 const assert = require('nanoassert')
@@ -27152,7 +29342,7 @@ module.exports = {
   crypto_hash_BYTES
 }
 
-},{"nanoassert":156,"sha512-universal":184}],197:[function(require,module,exports){
+},{"nanoassert":168,"sha512-universal":195}],208:[function(require,module,exports){
 /* eslint-disable camelcase */
 const sha256 = require('sha256-universal')
 const assert = require('nanoassert')
@@ -27173,7 +29363,7 @@ module.exports = {
   crypto_hash_sha256_BYTES
 }
 
-},{"nanoassert":156,"sha256-universal":180}],198:[function(require,module,exports){
+},{"nanoassert":168,"sha256-universal":191}],209:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const randombytes_buf = require('./randombytes').randombytes_buf
@@ -27215,7 +29405,7 @@ module.exports.crypto_kdf_keygen = function crypto_kdf_keygen (out) {
   randombytes_buf(out.subarray(0, module.exports.crypto_kdf_KEYBYTES))
 }
 
-},{"./randombytes":215,"blake2b":84,"nanoassert":156}],199:[function(require,module,exports){
+},{"./randombytes":226,"blake2b":91,"nanoassert":168}],210:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { crypto_scalarmult_base } = require('./crypto_scalarmult')
 const { crypto_generichash } = require('./crypto_generichash')
@@ -27251,7 +29441,7 @@ module.exports = {
   crypto_kx_PUBLICKEYBYTES
 }
 
-},{"./crypto_generichash":195,"./crypto_scalarmult":201,"./randombytes":215,"nanoassert":156}],200:[function(require,module,exports){
+},{"./crypto_generichash":206,"./crypto_scalarmult":212,"./randombytes":226,"nanoassert":168}],211:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const Poly1305 = require('./internal/poly1305')
@@ -27289,7 +29479,7 @@ function crypto_onetimeauth_verify (mac, msg, key) {
   return crypto_verify_16(mac, 0, tmp, 0)
 }
 
-},{"./crypto_verify":208,"./internal/poly1305":213,"nanoassert":156}],201:[function(require,module,exports){
+},{"./crypto_verify":219,"./internal/poly1305":224,"nanoassert":168}],212:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { _9, _121665, gf, inv25519, pack25519, unpack25519, sel25519, A, M, Z, S } = require('./internal/ed25519')
 
@@ -27367,7 +29557,7 @@ function check (buf, len) {
   if (!buf || (len && buf.length < len)) throw new Error('Argument must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./internal/ed25519":211}],202:[function(require,module,exports){
+},{"./internal/ed25519":222}],213:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { crypto_stream, crypto_stream_xor } = require('./crypto_stream')
@@ -27480,7 +29670,7 @@ function crypto_secretbox_open_easy (msg, box, n, k) {
   return true
 }
 
-},{"./crypto_onetimeauth":200,"./crypto_stream":206,"nanoassert":156}],203:[function(require,module,exports){
+},{"./crypto_onetimeauth":211,"./crypto_stream":217,"nanoassert":168}],214:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { randombytes_buf } = require('./randombytes')
@@ -27753,7 +29943,7 @@ module.exports = {
   crypto_secretstream_xchacha20poly1305_TAG_FINAL
 }
 
-},{"./crypto_stream_chacha20":207,"./helpers":209,"./internal/hchacha20":212,"./internal/poly1305":213,"./randombytes":215,"nanoassert":156}],204:[function(require,module,exports){
+},{"./crypto_stream_chacha20":218,"./helpers":220,"./internal/hchacha20":223,"./internal/poly1305":224,"./randombytes":226,"nanoassert":168}],215:[function(require,module,exports){
 var siphash = require('siphash24')
 
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
@@ -27769,7 +29959,7 @@ function shorthash (out, data, key, noAssert) {
   siphash(data, key, out, noAssert)
 }
 
-},{"siphash24":189}],205:[function(require,module,exports){
+},{"siphash24":200}],216:[function(require,module,exports){
 /* eslint-disable camelcase, one-var */
 const { crypto_verify_32 } = require('./crypto_verify')
 const { crypto_hash } = require('./crypto_hash')
@@ -28240,7 +30430,7 @@ function check (buf, len, arg = 'Argument') {
   if (!buf || (len && buf.length < len)) throw new Error(arg + ' must be a buffer' + (len ? ' of length ' + len : ''))
 }
 
-},{"./crypto_hash":196,"./crypto_hash.js":196,"./crypto_scalarmult.js":201,"./crypto_verify":208,"./internal/ed25519":211,"./randombytes":215,"nanoassert":156}],206:[function(require,module,exports){
+},{"./crypto_hash":207,"./crypto_hash.js":207,"./crypto_scalarmult.js":212,"./crypto_verify":219,"./internal/ed25519":222,"./randombytes":226,"nanoassert":168}],217:[function(require,module,exports){
 /* eslint-disable camelcase */
 const xsalsa20 = require('xsalsa20')
 
@@ -28280,7 +30470,7 @@ XOR.prototype.final = function () {
   this._instance = null
 }
 
-},{"xsalsa20":239}],207:[function(require,module,exports){
+},{"xsalsa20":250}],218:[function(require,module,exports){
 const assert = require('nanoassert')
 const Chacha20 = require('chacha20-universal')
 
@@ -28366,7 +30556,7 @@ exports.crypto_stream_chacha20_ietf_xor_instance = function (n, k) {
   return new Chacha20(n, k)
 }
 
-},{"chacha20-universal":88,"nanoassert":156}],208:[function(require,module,exports){
+},{"chacha20-universal":95,"nanoassert":168}],219:[function(require,module,exports){
 /* eslint-disable camelcase */
 module.exports = {
   crypto_verify_16,
@@ -28397,7 +30587,7 @@ function crypto_verify_64 (x, xi, y, yi) {
   return vn(x, xi, y, yi, 64) === 0
 }
 
-},{}],209:[function(require,module,exports){
+},{}],220:[function(require,module,exports){
 /* eslint-disable camelcase */
 const assert = require('nanoassert')
 const { vn } = require('./crypto_verify')
@@ -28430,7 +30620,7 @@ module.exports = {
   sodium_is_zero
 }
 
-},{"./crypto_verify":208,"nanoassert":156}],210:[function(require,module,exports){
+},{"./crypto_verify":219,"nanoassert":168}],221:[function(require,module,exports){
 'use strict'
 
 // Based on https://github.com/dchest/tweetnacl-js/blob/6dcbcaf5f5cbfd313f2dcfe763db35c828c8ff5b/nacl-fast.js.
@@ -28468,7 +30658,7 @@ function forward (submodule) {
   })
 }
 
-},{"./crypto_aead":192,"./crypto_auth":193,"./crypto_box":194,"./crypto_generichash":195,"./crypto_hash":196,"./crypto_hash_sha256":197,"./crypto_kdf":198,"./crypto_kx":199,"./crypto_onetimeauth":200,"./crypto_scalarmult":201,"./crypto_secretbox":202,"./crypto_secretstream":203,"./crypto_shorthash":204,"./crypto_sign":205,"./crypto_stream":206,"./crypto_stream_chacha20":207,"./crypto_verify":208,"./helpers":209,"./memory":214,"./randombytes":215}],211:[function(require,module,exports){
+},{"./crypto_aead":203,"./crypto_auth":204,"./crypto_box":205,"./crypto_generichash":206,"./crypto_hash":207,"./crypto_hash_sha256":208,"./crypto_kdf":209,"./crypto_kx":210,"./crypto_onetimeauth":211,"./crypto_scalarmult":212,"./crypto_secretbox":213,"./crypto_secretstream":214,"./crypto_shorthash":215,"./crypto_sign":216,"./crypto_stream":217,"./crypto_stream_chacha20":218,"./crypto_verify":219,"./helpers":220,"./memory":225,"./randombytes":226}],222:[function(require,module,exports){
 if (new Uint16Array([1])[0] !== 1) throw new Error('Big endian architecture is not supported.')
 
 var gf = function(init) {
@@ -28953,7 +31143,7 @@ module.exports = {
   I
 }
 
-},{}],212:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 /* eslint-disable camelcase */
 const { sodium_malloc } = require('../memory')
 const assert = require('nanoassert')
@@ -29083,7 +31273,7 @@ module.exports = {
   crypto_core_hchacha20_constbytes
 }
 
-},{"../memory":214,"nanoassert":156}],213:[function(require,module,exports){
+},{"../memory":225,"nanoassert":168}],224:[function(require,module,exports){
 /*
 * Port of Andrew Moon's Poly1305-donna-16. Public domain.
 * https://github.com/floodyberry/poly1305-donna
@@ -29445,7 +31635,7 @@ poly1305.prototype.update = function(m, mpos, bytes) {
 
 module.exports = poly1305
 
-},{}],214:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 /* eslint-disable camelcase */
 
 function sodium_malloc (n) {
@@ -29477,7 +31667,7 @@ module.exports = {
   sodium_memzero
 }
 
-},{}],215:[function(require,module,exports){
+},{}],226:[function(require,module,exports){
 var assert = require('nanoassert')
 
 var randombytes = (function () {
@@ -29519,7 +31709,7 @@ module.exports.randombytes_buf = function (out) {
   randombytes(out, out.byteLength)
 }
 
-},{"nanoassert":156}],216:[function(require,module,exports){
+},{"nanoassert":168}],227:[function(require,module,exports){
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('automation-events'), require('@babel/runtime/helpers/slicedToArray'), require('@babel/runtime/helpers/createClass'), require('@babel/runtime/helpers/classCallCheck'), require('@babel/runtime/helpers/typeof'), require('@babel/runtime/helpers/defineProperty'), require('@babel/runtime/helpers/inherits'), require('@babel/runtime/helpers/possibleConstructorReturn'), require('@babel/runtime/helpers/getPrototypeOf'), require('@babel/runtime/helpers/asyncToGenerator'), require('@babel/runtime/regenerator'), require('@babel/runtime/helpers/assertThisInitialized'), require('@babel/runtime/helpers/toConsumableArray'), require('@babel/runtime/helpers/objectWithoutProperties')) :
     typeof define === 'function' && define.amd ? define(['exports', 'automation-events', '@babel/runtime/helpers/slicedToArray', '@babel/runtime/helpers/createClass', '@babel/runtime/helpers/classCallCheck', '@babel/runtime/helpers/typeof', '@babel/runtime/helpers/defineProperty', '@babel/runtime/helpers/inherits', '@babel/runtime/helpers/possibleConstructorReturn', '@babel/runtime/helpers/getPrototypeOf', '@babel/runtime/helpers/asyncToGenerator', '@babel/runtime/regenerator', '@babel/runtime/helpers/assertThisInitialized', '@babel/runtime/helpers/toConsumableArray', '@babel/runtime/helpers/objectWithoutProperties'], factory) :
@@ -41613,7 +43803,7 @@ module.exports.randombytes_buf = function (out) {
 
 }));
 
-},{"@babel/runtime/helpers/assertThisInitialized":6,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/classCallCheck":8,"@babel/runtime/helpers/createClass":9,"@babel/runtime/helpers/defineProperty":10,"@babel/runtime/helpers/getPrototypeOf":11,"@babel/runtime/helpers/inherits":12,"@babel/runtime/helpers/objectWithoutProperties":17,"@babel/runtime/helpers/possibleConstructorReturn":19,"@babel/runtime/helpers/slicedToArray":21,"@babel/runtime/helpers/toConsumableArray":22,"@babel/runtime/helpers/typeof":23,"@babel/runtime/regenerator":25,"automation-events":73}],217:[function(require,module,exports){
+},{"@babel/runtime/helpers/assertThisInitialized":6,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/classCallCheck":8,"@babel/runtime/helpers/createClass":9,"@babel/runtime/helpers/defineProperty":10,"@babel/runtime/helpers/getPrototypeOf":11,"@babel/runtime/helpers/inherits":12,"@babel/runtime/helpers/objectWithoutProperties":17,"@babel/runtime/helpers/possibleConstructorReturn":19,"@babel/runtime/helpers/slicedToArray":21,"@babel/runtime/helpers/toConsumableArray":22,"@babel/runtime/helpers/typeof":23,"@babel/runtime/regenerator":25,"automation-events":79}],228:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -41744,35 +43934,35 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":94,"inherits":117,"readable-stream/lib/_stream_duplex.js":219,"readable-stream/lib/_stream_passthrough.js":220,"readable-stream/lib/_stream_readable.js":221,"readable-stream/lib/_stream_transform.js":222,"readable-stream/lib/_stream_writable.js":223,"readable-stream/lib/internal/streams/end-of-stream.js":227,"readable-stream/lib/internal/streams/pipeline.js":229}],218:[function(require,module,exports){
-arguments[4][125][0].apply(exports,arguments)
-},{"dup":125}],219:[function(require,module,exports){
-arguments[4][126][0].apply(exports,arguments)
-},{"./_stream_readable":221,"./_stream_writable":223,"_process":169,"dup":126,"inherits":117}],220:[function(require,module,exports){
-arguments[4][127][0].apply(exports,arguments)
-},{"./_stream_transform":222,"dup":127,"inherits":117}],221:[function(require,module,exports){
-arguments[4][128][0].apply(exports,arguments)
-},{"../errors":218,"./_stream_duplex":219,"./internal/streams/async_iterator":224,"./internal/streams/buffer_list":225,"./internal/streams/destroy":226,"./internal/streams/from":228,"./internal/streams/state":230,"./internal/streams/stream":231,"_process":169,"buffer":87,"dup":128,"events":94,"inherits":117,"string_decoder/":234,"util":85}],222:[function(require,module,exports){
-arguments[4][129][0].apply(exports,arguments)
-},{"../errors":218,"./_stream_duplex":219,"dup":129,"inherits":117}],223:[function(require,module,exports){
-arguments[4][130][0].apply(exports,arguments)
-},{"../errors":218,"./_stream_duplex":219,"./internal/streams/destroy":226,"./internal/streams/state":230,"./internal/streams/stream":231,"_process":169,"buffer":87,"dup":130,"inherits":117,"util-deprecate":236}],224:[function(require,module,exports){
-arguments[4][131][0].apply(exports,arguments)
-},{"./end-of-stream":227,"_process":169,"dup":131}],225:[function(require,module,exports){
-arguments[4][132][0].apply(exports,arguments)
-},{"buffer":87,"dup":132,"util":85}],226:[function(require,module,exports){
-arguments[4][133][0].apply(exports,arguments)
-},{"_process":169,"dup":133}],227:[function(require,module,exports){
-arguments[4][134][0].apply(exports,arguments)
-},{"../../../errors":218,"dup":134}],228:[function(require,module,exports){
-arguments[4][135][0].apply(exports,arguments)
-},{"dup":135}],229:[function(require,module,exports){
-arguments[4][136][0].apply(exports,arguments)
-},{"../../../errors":218,"./end-of-stream":227,"dup":136}],230:[function(require,module,exports){
+},{"events":103,"inherits":129,"readable-stream/lib/_stream_duplex.js":230,"readable-stream/lib/_stream_passthrough.js":231,"readable-stream/lib/_stream_readable.js":232,"readable-stream/lib/_stream_transform.js":233,"readable-stream/lib/_stream_writable.js":234,"readable-stream/lib/internal/streams/end-of-stream.js":238,"readable-stream/lib/internal/streams/pipeline.js":240}],229:[function(require,module,exports){
 arguments[4][137][0].apply(exports,arguments)
-},{"../../../errors":218,"dup":137}],231:[function(require,module,exports){
+},{"dup":137}],230:[function(require,module,exports){
 arguments[4][138][0].apply(exports,arguments)
-},{"dup":138,"events":94}],232:[function(require,module,exports){
+},{"./_stream_readable":232,"./_stream_writable":234,"_process":181,"dup":138,"inherits":129}],231:[function(require,module,exports){
+arguments[4][139][0].apply(exports,arguments)
+},{"./_stream_transform":233,"dup":139,"inherits":129}],232:[function(require,module,exports){
+arguments[4][140][0].apply(exports,arguments)
+},{"../errors":229,"./_stream_duplex":230,"./internal/streams/async_iterator":235,"./internal/streams/buffer_list":236,"./internal/streams/destroy":237,"./internal/streams/from":239,"./internal/streams/state":241,"./internal/streams/stream":242,"_process":181,"buffer":94,"dup":140,"events":103,"inherits":129,"string_decoder/":245,"util":92}],233:[function(require,module,exports){
+arguments[4][141][0].apply(exports,arguments)
+},{"../errors":229,"./_stream_duplex":230,"dup":141,"inherits":129}],234:[function(require,module,exports){
+arguments[4][142][0].apply(exports,arguments)
+},{"../errors":229,"./_stream_duplex":230,"./internal/streams/destroy":237,"./internal/streams/state":241,"./internal/streams/stream":242,"_process":181,"buffer":94,"dup":142,"inherits":129,"util-deprecate":247}],235:[function(require,module,exports){
+arguments[4][143][0].apply(exports,arguments)
+},{"./end-of-stream":238,"_process":181,"dup":143}],236:[function(require,module,exports){
+arguments[4][144][0].apply(exports,arguments)
+},{"buffer":94,"dup":144,"util":92}],237:[function(require,module,exports){
+arguments[4][145][0].apply(exports,arguments)
+},{"_process":181,"dup":145}],238:[function(require,module,exports){
+arguments[4][146][0].apply(exports,arguments)
+},{"../../../errors":229,"dup":146}],239:[function(require,module,exports){
+arguments[4][147][0].apply(exports,arguments)
+},{"dup":147}],240:[function(require,module,exports){
+arguments[4][148][0].apply(exports,arguments)
+},{"../../../errors":229,"./end-of-stream":238,"dup":148}],241:[function(require,module,exports){
+arguments[4][149][0].apply(exports,arguments)
+},{"../../../errors":229,"dup":149}],242:[function(require,module,exports){
+arguments[4][150][0].apply(exports,arguments)
+},{"dup":150,"events":103}],243:[function(require,module,exports){
 const { EventEmitter } = require('events')
 const STREAM_DESTROYED = new Error('Stream was destroyed')
 const PREMATURE_CLOSE = new Error('Premature close')
@@ -42765,7 +44955,7 @@ module.exports = {
   PassThrough
 }
 
-},{"events":94,"fast-fifo":96,"queue-tick":171}],233:[function(require,module,exports){
+},{"events":103,"fast-fifo":105,"queue-tick":183}],244:[function(require,module,exports){
 /**
  * @module  string-to-arraybuffer
  */
@@ -42829,7 +45019,7 @@ function decode(uri) {
 	return abuf
 }
 
-},{"atob-lite":65,"is-base64":119}],234:[function(require,module,exports){
+},{"atob-lite":71,"is-base64":131}],245:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43126,7 +45316,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":177}],235:[function(require,module,exports){
+},{"safe-buffer":188}],246:[function(require,module,exports){
 module.exports = class TimerBrowser {
   constructor (ms, fn, ctx = null, interval = false) {
     this.ms = ms
@@ -43140,13 +45330,9 @@ module.exports = class TimerBrowser {
       : setTimeout(callTimeout, ms, this)
   }
 
-  unref () {
-    this._timer.unref()
-  }
+  unref () {}
 
-  ref () {
-    this._timer.ref()
-  }
+  ref () {}
 
   refresh () {
     if (this.done) return
@@ -43186,7 +45372,7 @@ function callInterval (self) {
   self.ontimeout.call(self.context)
 }
 
-},{}],236:[function(require,module,exports){
+},{}],247:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -43257,7 +45443,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],237:[function(require,module,exports){
+},{}],248:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
@@ -43292,14 +45478,16 @@ function wrappy (fn, cb) {
   }
 }
 
-},{}],238:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 module.exports = class MaxCache {
-  constructor ({ maxSize, maxAge }) {
+  constructor ({ maxSize, maxAge, createMap }) {
     this.maxSize = maxSize
     this.maxAge = maxAge
 
-    this._latest = new Map()
-    this._oldest = new Map()
+    this._createMap = createMap || defaultCreateMap
+    this._latest = this._createMap()
+    this._oldest = this._createMap()
+    this._retained = this._createMap()
     this._gced = false
     this._interval = null
 
@@ -43310,16 +45498,22 @@ module.exports = class MaxCache {
     }
   }
 
-  [Symbol.iterator] () {
-    return new Iterator(this._latest[Symbol.iterator](), this._oldest[Symbol.iterator]())
+  * [Symbol.iterator] () {
+    for (const it of [this._latest, this._oldest, this._retained]) {
+      yield * it
+    }
   }
 
-  keys () {
-    return new Iterator(this._latest.keys(), this._oldest.keys())
+  * keys () {
+    for (const it of [this._latest, this._oldest, this._retained]) {
+      yield * it.keys()
+    }
   }
 
-  values () {
-    return new Iterator(this._latest.values(), this._oldest.values())
+  * values () {
+    for (const it of [this._latest, this._oldest, this._retained]) {
+      yield * it.values()
+    }
   }
 
   destroy () {
@@ -43329,36 +45523,51 @@ module.exports = class MaxCache {
   }
 
   clear () {
-    this._gc()
-    this._gc()
+    this._gced = true
+    this._latest.clear()
+    this._oldest.clear()
+    this._retained.clear()
   }
 
   set (k, v) {
+    if (this._retained.has(k)) return this
     this._latest.set(k, v)
-    this._oldest.delete(k)
+    this._oldest.delete(k) || this._retained.delete(k)
     if (this._latest.size >= this.maxSize) this._gc()
+    return this
+  }
+
+  retain (k, v) {
+    this._retained.set(k, v)
+    this._latest.delete(k) || this._oldest.delete(k)
+    return this
   }
 
   delete (k) {
-    return this._latest.delete(k) || this._oldest.delete(k)
+    return this._latest.delete(k) || this._oldest.delete(k) || this._retained.delete(k)
+  }
+
+  has (k) {
+    return this._latest.has(k) || this._oldest.has(k) || this._retained.has(k)
   }
 
   get (k) {
-    let bump = false
-    let v = this._latest.get(k)
-
-    if (!v) {
-      v = this._oldest.get(k)
-      if (!v) return null
-      bump = true
+    if (this._latest.has(k)) {
+      return this._latest.get(k)
     }
 
-    if (bump) {
+    if (this._oldest.has(k)) {
+      const v = this._oldest.get(k)
       this._latest.set(k, v)
       this._oldest.delete(k)
+      return v
     }
 
-    return v
+    if (this._retained.has(k)) {
+      return this._retained.get(k)
+    }
+
+    return null
   }
 
   _gcAuto () {
@@ -43369,31 +45578,15 @@ module.exports = class MaxCache {
   _gc () {
     this._gced = true
     this._oldest = this._latest
-    this._latest = new Map()
+    this._latest = this._createMap()
   }
 }
 
-class Iterator {
-  constructor (a, b) {
-    this.a = a
-    this.b = b
-  }
-
-  [Symbol.iterator] () {
-    return this
-  }
-
-  next () {
-    if (this.a !== null) {
-      const n = this.a.next()
-      if (!n.done) return n
-      this.a = null
-    }
-    return this.b.next()
-  }
+function defaultCreateMap () {
+  return new Map()
 }
 
-},{}],239:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 var xsalsa20 = typeof WebAssembly !== "undefined" && require('./xsalsa20')()
 
 var SIGMA = new Uint8Array([101, 120, 112, 97, 110, 100, 32, 51, 50, 45, 98, 121, 116, 101, 32, 107])
@@ -43850,7 +46043,7 @@ function core_hsalsa20(o,p,k,c) {
   o[31] = x9 >>> 24 & 0xff
 }
 
-},{"./xsalsa20":240}],240:[function(require,module,exports){
+},{"./xsalsa20":251}],251:[function(require,module,exports){
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -43886,4 +46079,131 @@ module.exports = (imports) => {
   return instance.exports;
 };
 
-},{}]},{},[1]);
+},{}],252:[function(require,module,exports){
+const b4a = require('b4a')
+
+const ALPHABET = 'ybndrfg8ejkmcpqxot1uwisza345h769'.split('')
+const MIN = 49 // 0
+const MAX = 122 // z
+const REVERSE = new Int8Array(1 + MAX - MIN)
+
+REVERSE.fill(-1)
+
+for (let i = 0; i < ALPHABET.length; i++) {
+  const v = ALPHABET[i].charCodeAt(0) - MIN
+  REVERSE[v] = i
+}
+
+exports.encode = encode
+exports.decode = decode
+
+function decode (s, out) {
+  let pb = 0
+  let ps = 0
+
+  const r = s.length & 7
+  const q = (s.length - r) / 8
+
+  if (!out) out = b4a.allocUnsafe(Math.ceil(s.length * 5 / 8))
+
+  // 0 5 2 7 4 1 6 3 (+5 mod 8)
+  for (let i = 0; i < q; i++) {
+    const a = quintet(s, ps++)
+    const b = quintet(s, ps++)
+    const c = quintet(s, ps++)
+    const d = quintet(s, ps++)
+    const e = quintet(s, ps++)
+    const f = quintet(s, ps++)
+    const g = quintet(s, ps++)
+    const h = quintet(s, ps++)
+
+    out[pb++] = (a << 3) | (b >> 2)
+    out[pb++] = ((b & 0b11) << 6) | (c << 1) | (d >> 4)
+    out[pb++] = ((d & 0b1111) << 4) | (e >> 1)
+    out[pb++] = ((e & 0b1) << 7) | (f << 2) | (g >> 3)
+    out[pb++] = ((g & 0b111) << 5) | h
+  }
+
+  if (r === 0) return out.subarray(0, pb)
+
+  const a = quintet(s, ps++)
+  const b = quintet(s, ps++)
+
+  out[pb++] = (a << 3) | (b >> 2)
+
+  if (r <= 2) return out.subarray(0, pb)
+
+  const c = quintet(s, ps++)
+  const d = quintet(s, ps++)
+
+  out[pb++] = ((b & 0b11) << 6) | (c << 1) | (d >> 4)
+
+  if (r <= 4) return out.subarray(0, pb)
+
+  const e = quintet(s, ps++)
+
+  out[pb++] = ((d & 0b1111) << 4) | (e >> 1)
+
+  if (r <= 5) return out.subarray(0, pb)
+
+  const f = quintet(s, ps++)
+  const g = quintet(s, ps++)
+
+  out[pb++] = ((e & 0b1) << 7) | (f << 2) | (g >> 3)
+
+  if (r <= 7) return out.subarray(0, pb)
+
+  const h = quintet(s, ps++)
+
+  out[pb++] = ((g & 0b111) << 5) | h
+
+  return out.subarray(0, pb)
+}
+
+function encode (buf) {
+  if (typeof buf === 'string') buf = b4a.from(buf)
+
+  const max = buf.byteLength * 8
+
+  let s = ''
+
+  for (let p = 0; p < max; p += 5) {
+    const i = p >> 3
+    const j = p & 7
+
+    if (j <= 3) {
+      s += ALPHABET[(buf[i] >> (3 - j)) & 0b11111]
+      continue
+    }
+
+    const of = j - 3
+    const h = (buf[i] << of) & 0b11111
+    const l = (i >= buf.length ? 0 : buf[i + 1]) >> (8 - of)
+
+    s += ALPHABET[h | l]
+  }
+
+  return s
+}
+
+function quintet (s, i) {
+  if (i > s.length) {
+    return 0
+  }
+
+  const v = s.charCodeAt(i)
+
+  if (v < MIN || v > MAX) {
+    throw Error('Invalid character in base32 input: "' + s[i] + '" at position ' + i)
+  }
+
+  const bits = REVERSE[v - MIN]
+
+  if (bits === -1) {
+    throw Error('Invalid character in base32 input: "' + s[i] + '" at position ' + i)
+  }
+
+  return bits
+}
+
+},{"b4a":80}]},{},[1]);
