@@ -561,7 +561,7 @@ class Wavecore extends Hypercore {
       let blocks = []
       for (let i = 0; i < splitValue.length; i++)
         blocks.push(await splitValue.get(i, { valueEncoding: 'json' }))
-      
+
       let lastEnd, start
       let end = 0
       let diff = 0
@@ -569,19 +569,19 @@ class Wavecore extends Hypercore {
         const core = new Wavecore(ram)
         const pt = new PassThrough()
         let block = blocks[i]
-        let nextBlock = blocks[parseInt(i)+1]
+        let nextBlock = blocks[parseInt(i) + 1]
 
         pt.on('error', (err) => reject(err))
         pt.on('data', (d) => core.append(d))
         pt.on('end', () => pt.destroy())
 
-        start = lastEnd ? lastEnd : 0 
+        start = lastEnd ? lastEnd : 0
         if (nextBlock) {
           diff = nextBlock.epoch - block.epoch
-          console.log('diff' , nextBlock.epoch - block.epoch)
+          console.log('diff', nextBlock.epoch - block.epoch)
           let diff_seconds = (nextBlock.epoch - block.epoch) / 1000
           // let diff_bytes = (diff_seconds * WAVE_FORMAT.rate).toFixed()
-          let diff_bytes = (diff_seconds * 100).toFixed()
+          let diff_bytes = ((diff_seconds * 100) + 10).toFixed()
           let byteOffset = await this._nextZero(diff_bytes)
           end += parseInt(byteOffset.at(-1)) + 1
           lastEnd = end
@@ -589,7 +589,7 @@ class Wavecore extends Hypercore {
           end = this.length
           lastEnd = end + 1
         }
-        
+
         console.log('start', start)
         console.log('end', end)
 
@@ -600,9 +600,9 @@ class Wavecore extends Hypercore {
         splitStream.pipe(pt)
         diff += parseInt(diff)
         await core.tag([
-          ['TCOD', ],
+          ['TCOD'],
           ['test', block.eventName],
-          ['TCDO', ],
+          ['TCDO'],
           ['PRT1', parseInt(i) + 1],
           ['PRT2', splitValue.length],
           ['STAT', block.eventName === 'clipping' ? 0 : 1],
