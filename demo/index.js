@@ -46,7 +46,8 @@ function createSplitPlayback(ctx, cores) {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
     button.onclick = async () => {
-      playBuf(ctx, await core.audioBuffer())
+      buffer = await core.audioBuffer()
+      playBuf(ctx, buffer)
       return false
     }
     document.getElementById('playback').appendChild(button);
@@ -152,7 +153,6 @@ async function main() {
       const trunLength = concatCore.length - 1
       console.log(concatCore.length, trunLength)
       await concatCore.truncate(trunLength)
-      console.log(concatCore)
       setInfo(concatCore)
     } else {
       const trunLength = wave.length - 1
@@ -167,7 +167,7 @@ async function main() {
     document.getElementById('split').disabled = true
     if (concatCore) {
       let cores = await concatCore.split(analyser.core)
-      console.log(typeof cores)
+      console.log(cores)
       createSplitPlayback(audioCtx, cores)
 
     } else {

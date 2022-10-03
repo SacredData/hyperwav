@@ -47,7 +47,8 @@ function createSplitPlayback(ctx, cores) {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
     button.onclick = async () => {
-      playBuf(ctx, await core.audioBuffer())
+      buffer = await core.audioBuffer()
+      playBuf(ctx, buffer)
       return false
     }
     document.getElementById('playback').appendChild(button);
@@ -153,7 +154,6 @@ async function main() {
       const trunLength = concatCore.length - 1
       console.log(concatCore.length, trunLength)
       await concatCore.truncate(trunLength)
-      console.log(concatCore)
       setInfo(concatCore)
     } else {
       const trunLength = wave.length - 1
@@ -168,7 +168,7 @@ async function main() {
     document.getElementById('split').disabled = true
     if (concatCore) {
       let cores = await concatCore.split(analyser.core)
-      console.log(typeof cores)
+      console.log(cores)
       createSplitPlayback(audioCtx, cores)
 
     } else {
@@ -235,6 +235,7 @@ class Wavecore extends Hypercore {
     w.recStream(st)
     return w
   }
+
   /**
    * The `Wavecore` class constructor.
    * @arg {Object} [opts={}] - Options for the class constructor.
@@ -289,6 +290,7 @@ class Wavecore extends Hypercore {
     this.indexSize = indexSize ? indexSize : INDEX_SIZE
     this.tags = new Map()
   }
+
   /**
    * Returns a Promise which resolves the `AudioBuffer` of the PCM data in the
    * Wavecore's hypercore instance.
@@ -361,6 +363,7 @@ class Wavecore extends Hypercore {
     })
     return await Promise.resolve(prom)
   }
+
   /**
    * Returns the byte length of the last index in the hypercore. This is useful
    * when it is known that the last index does not contain a buffer that matches
@@ -377,6 +380,7 @@ class Wavecore extends Hypercore {
   get liveStream() {
     return this.createReadStream({ live: true, snapshot: false })
   }
+
   /**
    * Returns the index number and relative byte offset of the next zero-crossing
    * audio sample after the specified byte length. Useful to find the correct
@@ -396,6 +400,7 @@ class Wavecore extends Hypercore {
     const nextZ = idArr.indexOf(0, rel)
     return [i, nextZ]
   }
+
   /**
    * Returns a `ReadStream` of the source audio file via its Hypercore v10 data
    * structure. Can indicate a custom range to only grab a portion of the file
@@ -410,6 +415,7 @@ class Wavecore extends Hypercore {
       { highWaterMark: this.indexSize }
     )
   }
+
   /**
    * Append blank data to the tail of the wavecore. If no index count is
    * specified the function will add one index of blank data.
@@ -428,6 +434,7 @@ class Wavecore extends Hypercore {
       throw err
     }
   }
+
   /**
    * Join one or more wavecores to the end of this wavecore. Creates and returns
    * a new Wavecore instance with the concatenated results.
@@ -482,6 +489,7 @@ class Wavecore extends Hypercore {
       throw err
     }
   }
+
   /**
    * Record a stream of data into the Wavecore's hypercore.
    * @arg {Stream} st - The stream to record into the Wavecore.
@@ -497,6 +505,7 @@ class Wavecore extends Hypercore {
     if (this.source === null) this.source = st
     return
   }
+
   /**
    * Returns index and byte position of a byte offset.
    * @async
@@ -519,6 +528,7 @@ class Wavecore extends Hypercore {
       return
     }
   }
+
   /**
    * Returns a Promise which resolve a Wavecore that begins at the provided
    * index number. Use this to trim the Wavecore from the beginning of the file.
@@ -538,52 +548,69 @@ class Wavecore extends Hypercore {
       shiftedRs.pipe(writer)
     })
   }
+
   /**
    * Splits the Wavecore at the provided index number, returning an array of two
    * new `Wavecore` instances.
    * @arg {Number | Hypercore} splitValue - Index number or Hypercore data from which to split the Wavecore audio.
    * @returns {Wavecore[]} cores - Array of the new head and tail hypercores
    */
-  split(splitValue) {
+  async split(splitValue) {
     if (splitValue instanceof Hypercore) {
-      return new Promise((resolve, reject) => {
-        try {
-          let eventCores = []
-          for (let i = 0; i < splitValue.length; i++) {
-            console.log(i)
-            splitValue
-              .get(i, {valueEncoding: 'json'})
-              .then(async (block) => {
-                let start, end
-                // let splitBlock = await this.split(offset) // calling recursively is too time intensive
-                console.log('start', start, 'end', end)
-                const core = new Wavecore(ram)
-                const pt = new PassThrough()
-                pt.on('error', (err) => reject(err))
-                pt.on('data', (d) => core.append(d))
-                pt.on('end', () => {
-                  resolve(core)
-                  pt.destroy()
-                })
-                const splitStream = this.createReadStream({ start: start, end: end })
-                splitStream.pipe(pt)
+      let eventCores = []
+      let blocks = []
+      for (let i = 0; i < splitValue.length; i++)
+        blocks.push(await splitValue.get(i, { valueEncoding: 'json' }))
+      
+      let lastEnd, start
+      let end = 0
+      let diff = 0
+      for (const i in blocks) {
+        const core = new Wavecore(ram)
+        const pt = new PassThrough()
+        let block = blocks[i]
+        let nextBlock = blocks[parseInt(i)+1]
 
-                await core.tag([
-                  ['TCOD', 'begin'],
-                  ['test', block.eventName],
-                  ['TCDO', 'end'],
-                  ['PRT1', i + 1],
-                  ['PRT2', splitValue.length],
-                  ['STAT', block.eventName === 'clipping' ? 0 : 1]
-                 ])
-                 eventCores.push(core)
-              })
-              .then(() => resolve(eventCores))
-          }
-        } catch (err) {
-          reject(err)
+        pt.on('error', (err) => reject(err))
+        pt.on('data', (d) => core.append(d))
+        pt.on('end', () => pt.destroy())
+
+        start = lastEnd ? lastEnd : 0 
+        if (nextBlock) {
+          diff = nextBlock.epoch - block.epoch
+          console.log('diff' , nextBlock.epoch - block.epoch)
+          let diff_seconds = (nextBlock.epoch - block.epoch) / 1000
+          // let diff_bytes = (diff_seconds * WAVE_FORMAT.rate).toFixed()
+          let diff_bytes = (diff_seconds * 100).toFixed()
+          let byteOffset = await this._nextZero(diff_bytes)
+          end += parseInt(byteOffset.at(-1)) + 1
+          lastEnd = end
+        } else {
+          end = this.length
+          lastEnd = end + 1
         }
-      })
+        
+        console.log('start', start)
+        console.log('end', end)
+
+        const splitStream = this.createReadStream({
+          start: start,
+          end: end,
+        })
+        splitStream.pipe(pt)
+        diff += parseInt(diff)
+        await core.tag([
+          ['TCOD', ],
+          ['test', block.eventName],
+          ['TCDO', ],
+          ['PRT1', parseInt(i) + 1],
+          ['PRT2', splitValue.length],
+          ['STAT', block.eventName === 'clipping' ? 0 : 1],
+        ])
+
+        eventCores.push(core)
+      }
+      return eventCores
     } else {
       return new Promise((resolve, reject) => {
         if (Number(splitValue) > this.length)
@@ -616,6 +643,7 @@ class Wavecore extends Hypercore {
       })
     }
   }
+
   /**
    * Set the Wavecore's RIFF tags, written to the wave file once it's closed.
    * @arg {String|Array[]} id - The four-character RIFF tag ID. If an array is
