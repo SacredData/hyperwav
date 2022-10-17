@@ -22,8 +22,8 @@ async function getMedia(constraints) {
 
 function playBuf(ctx, buf) {
   const s2 = ctx.createBufferSource()
-  s2.playbackRate.value = 4.5
   s2.buffer = buf
+  console.log('actual  length', buf.length / ctx.sampleRate)
   s2.connect(ctx.destination)
   s2.start()
 }
@@ -47,7 +47,7 @@ function createSplitPlayback(ctx, cores) {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
     button.onclick = async () => {
-      buffer = await core.audioBuffer()
+      buffer = await core.audioBuffer({rate: ctx.sampleRate})
       playBuf(ctx, buffer)
       return false
     }
@@ -82,6 +82,15 @@ async function main() {
 
       wave.recStream(s)
       recording = true
+      // Test 5 seconds 
+      // setTimeout(async () => {
+      //   s.stop()
+      //   analyser.stopListening()
+      //   recording = false
+      //   setInfo(wave)
+      //   abOrig = await wave.audioBuffer({dcOffset:false})
+      //   document.getElementById("rec").style.display = "none"
+      // }, 5000)
     } else {
       s.stop()
       analyser.stopListening()
@@ -135,17 +144,17 @@ async function main() {
 
   document.getElementById("norm").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer({normalize:true}))
+      playBuf(audioCtx, await concatCore.audioBuffer({rate: audioCtx.sampleRate, normalize: true}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer({normalize:true}))
+      playBuf(audioCtx, await wave.audioBuffer({rate: audioCtx.sampleRate, normalize: true}))
     }
   }
 
   document.getElementById("play").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer())
+      playBuf(audioCtx, await concatCore.audioBuffer({rate: audioCtx.sampleRate}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer())
+      playBuf(audioCtx, await wave.audioBuffer({rate: audioCtx.sampleRate}))
     }
   }
 
@@ -558,31 +567,32 @@ class Wavecore extends Hypercore {
   async split(splitValue) {
     if (splitValue instanceof Hypercore) {
       let eventCores = []
-      let blocks = []
+      let onsetBlocks = []
       for (let i = 0; i < splitValue.length; i++)
-        blocks.push(await splitValue.get(i, { valueEncoding: 'json' }))
+        onsetBlocks.push(await splitValue.get(i, { valueEncoding: 'json' }))
 
       let lastEnd, start
       let end = 0
       let diff = 0
-      for (const i in blocks) {
+      for (const i in onsetBlocks) {
         const core = new Wavecore(ram)
         const pt = new PassThrough()
-        let block = blocks[i]
-        let nextBlock = blocks[parseInt(i) + 1]
+        let currentBlock = onsetBlocks[i]
+        let nextBlock = onsetBlocks[parseInt(i) + 1]
 
         pt.on('error', (err) => reject(err))
-        pt.on('data', (d) => core.append(d))
+        pt.on('data', (d) =>  core.append(d))
         pt.on('end', () => pt.destroy())
 
         start = lastEnd ? lastEnd : 0
+        console.log()
         if (nextBlock) {
-          diff = nextBlock.epoch - block.epoch
-          console.log('diff', nextBlock.epoch - block.epoch)
-          let diff_seconds = (nextBlock.epoch - block.epoch) / 1000
-          // let diff_bytes = (diff_seconds * WAVE_FORMAT.rate).toFixed()
-          let diff_bytes = ((diff_seconds * 100) + 10).toFixed()
+          diff = nextBlock.epoch - currentBlock.epoch
+          console.log('diff', nextBlock.epoch - currentBlock.epoch)
+          let diff_seconds = (nextBlock.epoch - currentBlock.epoch) / 1000
+          let diff_bytes = (diff_seconds * 100).toFixed()
           let byteOffset = await this._nextZero(diff_bytes)
+          console.log(byteOffset)
           end += parseInt(byteOffset.at(-1)) + 1
           lastEnd = end
         } else {
@@ -594,18 +604,21 @@ class Wavecore extends Hypercore {
         console.log('end', end)
 
         const splitStream = this.createReadStream({
-          start: start,
+          start: start + 10,
           end: end,
         })
+
+        console.log(splitStream)
+
         splitStream.pipe(pt)
         diff += parseInt(diff)
         await core.tag([
           ['TCOD'],
-          ['test', block.eventName],
+          ['test', currentBlock.eventName],
           ['TCDO'],
           ['PRT1', parseInt(i) + 1],
           ['PRT2', splitValue.length],
-          ['STAT', block.eventName === 'clipping' ? 0 : 1],
+          ['STAT', currentBlock.eventName === 'clipping' ? 0 : 1],
         ])
 
         eventCores.push(core)

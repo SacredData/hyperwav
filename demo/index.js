@@ -21,7 +21,6 @@ async function getMedia(constraints) {
 
 function playBuf(ctx, buf) {
   const s2 = ctx.createBufferSource()
-  s2.playbackRate.value = 4.5
   s2.buffer = buf
   s2.connect(ctx.destination)
   s2.start()
@@ -46,7 +45,7 @@ function createSplitPlayback(ctx, cores) {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
     button.onclick = async () => {
-      buffer = await core.audioBuffer()
+      buffer = await core.audioBuffer({rate: ctx.sampleRate})
       playBuf(ctx, buffer)
       return false
     }
@@ -81,6 +80,15 @@ async function main() {
 
       wave.recStream(s)
       recording = true
+      // Test 5 seconds 
+      // setTimeout(async () => {
+      //   s.stop()
+      //   analyser.stopListening()
+      //   recording = false
+      //   setInfo(wave)
+      //   abOrig = await wave.audioBuffer({dcOffset:false})
+      //   document.getElementById("rec").style.display = "none"
+      // }, 5000)
     } else {
       s.stop()
       analyser.stopListening()
@@ -134,17 +142,17 @@ async function main() {
 
   document.getElementById("norm").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer({normalize:true}))
+      playBuf(audioCtx, await concatCore.audioBuffer({rate: audioCtx.sampleRate, normalize: true}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer({normalize:true}))
+      playBuf(audioCtx, await wave.audioBuffer({rate: audioCtx.sampleRate, normalize: true}))
     }
   }
 
   document.getElementById("play").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer())
+      playBuf(audioCtx, await concatCore.audioBuffer({rate: audioCtx.sampleRate}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer())
+      playBuf(audioCtx, await wave.audioBuffer({rate: audioCtx.sampleRate}))
     }
   }
 
