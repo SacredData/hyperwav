@@ -385,7 +385,7 @@ class Wavecore extends Hypercore {
         let nextBlock = onsetBlocks[parseInt(i) + 1]
 
         pt.on('error', (err) => reject(err))
-        pt.on('data', (d) =>  core.append(d))
+        pt.on('data', (d) => core.append(d))
         pt.on('end', () => pt.destroy())
 
         start = lastEnd ? lastEnd : 0
