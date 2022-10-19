@@ -365,7 +365,7 @@ class Wavecore extends Hypercore {
   /**
    * Splits the Wavecore at the provided index number, returning an array of
    * new `Wavecore` instances.
-   * @arg {Number | Hypercore} splitValue - Index number or Hypercore data from which to split the Wavecore audio | A hypercore containing meta onset information on the Wavecore instance. 
+   * @arg {Number | Hypercore} splitValue - Index number or Hypercore data from which to split the Wavecore audio | A hypercore containing meta onset information on the Wavecore instance.
    * @returns {Wavecore[]} cores - Array of the new hypercores
    */
   async split(splitValue) {
@@ -374,13 +374,15 @@ class Wavecore extends Hypercore {
       let eventCores = []
       let onsetBlocks = []
 
-      // Get all data and onset values stored in the hypercore 
+      // Get all data and onset values stored in the hypercore
       for (let i = 0; i < splitValue.length; i++)
         onsetBlocks.push(await splitValue.get(i, { valueEncoding: 'json' }))
 
-      let lastEnd, start
+      let lastEnd, start, endDuration
+      let firstBlock = onsetBlocks[0]
       let end = 0
       let diff = 0
+      let offset = 5
       for (const i in onsetBlocks) {
         const core = new Wavecore(ram)
         const pt = new PassThrough()
@@ -394,23 +396,23 @@ class Wavecore extends Hypercore {
         // If this is the first block, set start to 0
         start = lastEnd ? lastEnd : 0
 
-        // While there is a nextBlock, find the difference in milliseconds between the 
+        // While there is a nextBlock, find the difference in milliseconds between the
         // current and previous block to get the duration
         if (nextBlock) {
-          diff = nextBlock.epoch - currentBlock.epoch
-          let diff_seconds = (nextBlock.epoch - currentBlock.epoch) / 1000
-          let diff_bytes = (diff_seconds * 100).toFixed()
+          let diff_bytes = (
+            ((nextBlock.epoch - currentBlock.epoch) / 1000) *
+            100
+          ).toFixed()
+
           let byteOffset = await this._seek(diff_bytes, { zero: true })
           end += parseInt(byteOffset.at(-1))
-          lastEnd = end + 5 // adds 5 for an offset
+          lastEnd = end + offset
         } else {
           // For the last block, set the end value to the end of the wavecore
           end = this.length
         }
 
-        console.log('start', start)
-        console.log('end', end)
-
+        // Split the wavecore based on the calculated start and end for the current segment
         const splitStream = this.createReadStream({
           start: start,
           end: end,
@@ -418,14 +420,26 @@ class Wavecore extends Hypercore {
 
         splitStream.pipe(pt)
         diff += parseInt(diff)
+
+        // Calculate the end timestamp for the last block
+        if (!nextBlock) {
+          endDuration = ((end - start) * 1000) / 100
+        }
+
+        let startTimestamp = currentBlock.epoch - firstBlock.epoch
         await core.tag([
-          ['TCOD'],
-          ['test', currentBlock.eventName],
-          ['TCDO'],
+          ['TCOD', start == 0 ? startTimestamp : startTimestamp + 1],
+          [
+            'TCDO',
+            nextBlock
+              ? nextBlock.epoch - firstBlock.epoch
+              : startTimestamp + endDuration,
+          ],
           ['PRT1', parseInt(i) + 1],
           ['PRT2', splitValue.length],
           ['STAT', currentBlock.eventName === 'clipping' ? 0 : 1],
         ])
+
         // Push each split segment to the eventCores
         eventCores.push(core)
       }

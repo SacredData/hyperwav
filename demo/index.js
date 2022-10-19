@@ -170,6 +170,7 @@ async function main() {
 
     } else {
       let cores = await wave.split(analyser.core)
+      console.log(cores)
       createSplitPlayback(audioCtx, cores)
     }
   }
