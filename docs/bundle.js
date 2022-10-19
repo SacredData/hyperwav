@@ -23,7 +23,6 @@ async function getMedia(constraints) {
 function playBuf(ctx, buf) {
   const s2 = ctx.createBufferSource()
   s2.buffer = buf
-  s2.playbackRate.value = 4.5
   s2.connect(ctx.destination)
   s2.start()
 }
@@ -47,7 +46,7 @@ function createSplitPlayback(ctx, cores) {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
     button.onclick = async () => {
-      buffer = await core.audioBuffer()
+      buffer = await core.audioBuffer({channels: 1, rate: ctx.sampleRate})
       playBuf(ctx, buffer)
       return false
     }
@@ -86,14 +85,14 @@ async function main() {
       analyser.stopListening()
       recording = false
       setInfo(wave)
-      abOrig = await wave.audioBuffer({dcOffset:false})
       document.getElementById("rec").style.display = "none"
+      abOrig = await wave.audioBuffer({dcOffset:false, rate: audioCtx.sampleRate})
     }
     document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
   }
 
   document.getElementById("wav").onclick = async function () {
-    const wavAb = concatCore ? await concatCore.audioBuffer() : abOrig
+    const wavAb = concatCore ? await concatCore.audioBuffer({channels: 1, rate: ctx.sampleRate}) : abOrig
     const wav = toWav(wavAb || abOrig, { float32: true })
     console.log(wav, wavAb)
     const blob = new Blob([wav], {type:'audio/wav'})
@@ -142,9 +141,9 @@ async function main() {
 
   document.getElementById("play").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer())
+      playBuf(audioCtx, await concatCore.audioBuffer({channels: 1, rate: audioCtx.sampleRate}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer())
+      playBuf(audioCtx, await wave.audioBuffer({channels: 1, rate: audioCtx.sampleRate}))
     }
   }
 
@@ -337,6 +336,8 @@ class Wavecore extends Hypercore {
       end,
       store,
     } = opts
+
+    // console.log(opts)
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))

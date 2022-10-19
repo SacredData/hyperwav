@@ -154,6 +154,8 @@ class Wavecore extends Hypercore {
       end,
       store,
     } = opts
+
+    // console.log(opts)
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
