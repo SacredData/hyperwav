@@ -1,4 +1,5 @@
 const { AudioContext } = require('web-audio-api')
+const { detect } = require('audio-format')
 const expect = require('chai').expect
 const fs = require('fs')
 const Hypercore = require('hypercore')
@@ -190,13 +191,17 @@ describe('Wavecore', function () {
       const rateTest = new Wavecore({ source })
       await rateTest.open()
       const rateAudio = await rateTest.audioBuffer({ rate: 48000 })
-      expect(rateAudio.sampleRate).to.equal(48000)
+      const checkAudio = detect(rateAudio)
+      expect(rateAudio.sampleRate).to.equal(48000) &&
+        expect(checkAudio.sampleRate).to.equal(48000)
     })
     it('should use a custom channel count', async function () {
       const chanTest = new Wavecore({ source })
       await chanTest.open()
-      const chanAudio = await chanTest.audioBuffer({ rate: 48000, channels: 1 })
-      expect(chanAudio.numberOfChannels).to.equal(1)
+      const chanAudio = await chanTest.audioBuffer({ rate: 48000, channels: 2 })
+      const checkAudio = detect(chanAudio)
+      expect(chanAudio.numberOfChannels).to.equal(2) &&
+        expect(checkAudio.channels).to.equal(2)
     })
     it('should use a custom sampling format', async function () {
       const fmtTest = new Wavecore({ source })
