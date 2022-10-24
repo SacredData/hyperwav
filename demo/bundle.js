@@ -45,6 +45,11 @@ function createSplitPlayback(ctx, cores) {
   cores.map((core, idx) => {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
+    if (core.tags.has('STAT')) {
+      if (core.tags.get('STAT') !== "1") {
+        button.innerHTML += ' (CLIPPING!!!)'
+      }
+    }
     button.onclick = async () => {
       buffer = await core.audioBuffer({channels: 1, rate: ctx.sampleRate})
       playBuf(ctx, buffer)
@@ -180,6 +185,7 @@ document.getElementById("launch").onclick = async function () {
   main()
   document.getElementById("demo").style.display = "block"
 }
+
 },{"../index":2,"@storyboard-fm/soapbox":29,"@storyboard-fm/stream-analyser":61,"audiobuffer-to-wav":78,"hypercore":111,"microphone-stream":136}],2:[function(require,module,exports){
 (function (Buffer){(function (){
 const abf = require('audio-buffer-from')

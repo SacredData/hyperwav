@@ -44,6 +44,11 @@ function createSplitPlayback(ctx, cores) {
   cores.map((core, idx) => {
     let button = document.createElement('button')
     button.innerHTML = `Play Part ${idx + 1}`
+    if (core.tags.has('STAT')) {
+      if (core.tags.get('STAT') !== "1") {
+        button.innerHTML += ' (CLIPPING!!!)'
+      }
+    }
     button.onclick = async () => {
       buffer = await core.audioBuffer({channels: 1, rate: ctx.sampleRate})
       playBuf(ctx, buffer)
