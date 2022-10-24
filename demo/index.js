@@ -4,6 +4,10 @@ const toWav = require('audiobuffer-to-wav')
 const {
   AudioEnvironment
 } = require('@storyboard-fm/soapbox')
+const {
+  StreamAnalyserErrors
+} = require('@storyboard-fm/stream-analyser')
+const Hypercore = require('hypercore')
 
 async function getMedia(constraints) {
   const audioEnv = new AudioEnvironment()
@@ -36,6 +40,20 @@ function setInfo(core) {
   `
 }
 
+function createSplitPlayback(ctx, cores) {  
+  cores.map((core, idx) => {
+    let button = document.createElement('button')
+    button.innerHTML = `Play Part ${idx + 1}`
+    button.onclick = async () => {
+      buffer = await core.audioBuffer({channels: 1, rate: ctx.sampleRate})
+      playBuf(ctx, buffer)
+      return false
+    }
+    document.getElementById('playback').appendChild(button);
+  })
+  document.getElementById('split').disabled = false
+}
+
 async function main() {
   var abOrig = null
   var abNorm = null
@@ -46,27 +64,34 @@ async function main() {
   wave = new Wavecore({ ctx: audioCtx })
   console.log(wave)
 
+  const analyser = new StreamAnalyserErrors(audioCtx, {core: true})
+
   let recording = false
 
   document.getElementById("rec").onclick = async function() {
     if (!recording) {
       s = await getMedia({audio:true,video:false})
-      console.log(s)
+      
+      analyser.metering(s.stream)
+      analyser.addEventListener('beginsilence', () => console.log('silence'))
+      analyser.addEventListener('endsilence', () => console.log('speech'))
+      analyser.addEventListener('clippingdetected', () => console.log('clipping'))
+
       wave.recStream(s)
       recording = true
     } else {
       s.stop()
+      analyser.stopListening()
       recording = false
-      console.log(wave)
       setInfo(wave)
-      abOrig = await wave.audioBuffer({dcOffset:false})
       document.getElementById("rec").style.display = "none"
+      abOrig = await wave.audioBuffer({dcOffset:false, rate: audioCtx.sampleRate})
     }
     document.getElementById("rec").innerHTML = recording ? 'STOP' : 'REC'
   }
 
   document.getElementById("wav").onclick = async function () {
-    const wavAb = concatCore ? await concatCore.audioBuffer() : abOrig
+    const wavAb = concatCore ? await concatCore.audioBuffer({channels: 1, rate: ctx.sampleRate}) : abOrig
     const wav = toWav(wavAb || abOrig, { float32: true })
     console.log(wav, wavAb)
     const blob = new Blob([wav], {type:'audio/wav'})
@@ -97,6 +122,7 @@ async function main() {
     } else {
       appSt = await getMedia({audio:true,video:false})
       console.log(appSt)
+      analyser.metering(appSt.stream)
       appCore = new Wavecore({ ctx: audioCtx })
       appCore.recStream(appSt)
       appending = true
@@ -106,17 +132,17 @@ async function main() {
 
   document.getElementById("norm").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer({normalize:true}))
+      playBuf(audioCtx, await concatCore.audioBuffer({normalize: true}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer({normalize:true}))
+      playBuf(audioCtx, await wave.audioBuffer({normalize: true}))
     }
   }
 
   document.getElementById("play").onclick = async function () {
     if (concatCore) {
-      playBuf(audioCtx, await concatCore.audioBuffer())
+      playBuf(audioCtx, await concatCore.audioBuffer({channels: 1, rate: audioCtx.sampleRate}))
     } else {
-      playBuf(audioCtx, await wave.audioBuffer())
+      playBuf(audioCtx, await wave.audioBuffer({channels: 1, rate: audioCtx.sampleRate}))
     }
   }
 
@@ -125,7 +151,6 @@ async function main() {
       const trunLength = concatCore.length - 1
       console.log(concatCore.length, trunLength)
       await concatCore.truncate(trunLength)
-      console.log(concatCore)
       setInfo(concatCore)
     } else {
       const trunLength = wave.length - 1
@@ -133,6 +158,19 @@ async function main() {
       await wave.truncate(trunLength)
       console.log(wave)
       setInfo(wave)
+    }
+  }
+
+  document.getElementById("split").onclick = async function () {
+    document.getElementById('split').disabled = true
+    if (concatCore) {
+      let cores = await concatCore.split(analyser.core)
+      createSplitPlayback(audioCtx, cores)
+
+    } else {
+      let cores = await wave.split(analyser.core)
+      console.log(cores)
+      createSplitPlayback(audioCtx, cores)
     }
   }
 }
