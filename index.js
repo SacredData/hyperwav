@@ -4,6 +4,7 @@ const Hypercore = require('hypercore')
 const MultiStream = require('multistream')
 const { PassThrough, Readable } = require('stream')
 const ram = require('random-access-memory')
+const { stringify } = require('audio-format')
 
 const WAVE_FORMAT = {
   bitDepth: 32,
@@ -140,7 +141,7 @@ class Wavecore extends Hypercore {
       store: false,
     }
   ) {
-    const {
+    let {
       channels,
       dcOffset,
       endianness,
@@ -153,7 +154,17 @@ class Wavecore extends Hypercore {
       store,
     } = opts
 
-    // console.log(opts)
+    if (!channels) channels = 1
+    if (!rate) rate = 44100
+    if (!endianness) endianness = 'le'
+    if (!sampling) sampling = 'float32'
+
+    const audioFormat = stringify({
+      type: sampling,
+      sampleRate: rate || 44100,
+      channels,
+      endianness,
+    })
     const bufs = []
     const rs = this._rawStream(start || 0, end || -1)
     rs.on('data', (d) => bufs.push(d))
@@ -161,11 +172,7 @@ class Wavecore extends Hypercore {
     const prom = new Promise((resolve, reject) => {
       rs.on('end', () => {
         try {
-          let audioBuffer = abf(
-            Buffer.concat(bufs),
-            `${channels !== 1 ? 'stereo' : 'mono'} ${sampling || 'float32'}
-            ${endianness || 'le'} ${rate || 44100}`
-          )
+          let audioBuffer = abf(Buffer.concat(bufs), audioFormat)
           if (dcOffset) audioBuffer = abu.removeStatic(audioBuffer)
           if (normalize) audioBuffer = abu.normalize(audioBuffer)
           if (mix) audioBuffer = abu.mix(audioBuffer, mix)
