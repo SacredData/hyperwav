@@ -199,6 +199,20 @@ const snap = wave.snapshot() // save copy of original audio
 const slowerWave = await Promise.resolve(wave.tempo(0.8)) // 20% slower
 const fasterWave = await Promise.resolve(wave.tempo(1.1)) // 10% faster
 ```
+
+## Tags
+> Certain operations in Wavecore provide RIFF tags which, when converting from PCM
+> to WAV file format, will be written to the resultant WAV file. They are
+> detailed in the table below.
+
+| Tag String | Description |
+|------------|-------------|
+| `PRT1`     | Part number |
+| `PRT2`     | Total parts |
+| `TCOD`     | Start time (ms) |
+| `TCDO`     | End time (ms) |
+| `STAT`     | "0" = Clipping; "1" = Normal |
+
 ## Tests
 
 | Statements                  | Branches                | Functions                 | Lines             |
