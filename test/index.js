@@ -8,6 +8,7 @@ const ram = require('random-access-memory')
 const { Readable, PassThrough } = require('stream')
 const Wavecore = require('../')
 const WaveFile = require('wavefile').WaveFile
+const b4a = require('b4a')
 
 const source = fs.readFileSync(path.join(__dirname, 'test.wav.raw'))
 
@@ -248,6 +249,34 @@ describe('Wavecore', function () {
     it('should accept an array as first argument to do multiple tags', async function () {
       core33.tag([ ['ABCD', '4567'], ['HELO', 'WURLD'] ])
       expect(core33.tags.size).to.equal(3)
+    })
+  })
+  describe('#splitOnHypercore', function () {
+    let cores
+    before( async function () {
+      const coreSplitHypercore = new Wavecore({ source })
+      const core = new Hypercore(ram)
+      const events = [
+        { eventName: 'silence', epoch: 1666812763000 },
+        { eventName: 'sound_activity', epoch: 1666812764409 },
+        { eventName: 'silence', epoch: 1666812764709 },
+      ]
+      
+      await coreSplitHypercore.open()
+      for (const i in events) 
+        await core.append(b4a.from(JSON.stringify(events[i])))
+      cores = await coreSplitHypercore.split(core)
+    })
+    it('should return the correct number of Wavecore segments', function () {
+      expect(cores.length).to.equal(3)
+    })
+    it('should return Wavecore segments of expected lengths', async function () {
+      let expectedByteLengths = [3109050, 551250, 446112]
+      let expectedLengths = [141, 25, 21]
+      for (const i in cores) {
+        expect(expectedByteLengths[i] === cores[i].byteLength)
+        expect(expectedLengths[i] === cores[i].length)
+      }
     })
   })
 })
