@@ -43,10 +43,13 @@ applications, and web apps all from one codebase.
 - [x] [Playback][play]
 - [x] [Seeking][seek]
 - [x] [Zero-cross detection][zero]
+- [x] [DC offset][dco]
 #### DSP Operations
+- [x] [Bit depth conversion][bdc]
 - [x] [Gain][gain]
 - [x] [Normalization][norm]
 - [x] [Time Stretch][tempo]
+- [x] [Sample Rate Conversion][src]
 #### Helper Functions
 - [x] [Sessions][session]
 - [x] [Snapshots][snapshot]
@@ -224,7 +227,9 @@ We use `mocha`, with `nyc` for test coverage reporting.
 $ npm run test
 ```
 
+[bdc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#audioBuffer
 [concat]: https://storyboard-fm.github.io/wavecore/Wavecore.html#concat
+[dco]: https://storyboard-fm.github.io/wavecore/Wavecore.html#audioBuffer
 [gain]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#gain
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
@@ -239,6 +244,7 @@ $ npm run test
 [shift]: https://storyboard-fm.github.io/wavecore/Wavecore.html#shift
 [sox]: http://sox.sourceforge.net/
 [split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
+[src]: https://storyboard-fm.github.io/wavecore/Wavecore.html#audioBuffer
 [tag]: https://storyboard-fm.github.io/wavecore/Wavecore.html#tag
 [tempo]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#tempo
 [trunc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate
