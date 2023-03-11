@@ -14,5 +14,20 @@
     <div id="playback"></div>
     <p id="info"></p>
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
+    <div id="demo-info">
+        <h1>Welcome to the Wavecore demo</h1>
+        <p id="demo-p">
+        <b>Suggested testing procedure:</b><br>
+        1. Ensure your browser has permissions to your device's microphone.<br>
+        2. Click the "LAUNCH DEMO" button.<br>
+        3. When ready, begin recording by clicking the "REC" button.<br>
+        4. While recording, leave room at the beginning to demonstrate Wavecore's silence detection abilities.<br>
+        5. Once "silence" is logged to the console, begin speaking into the microphone. "speech" will get logged to the console.<br>
+        6. After a while, try talking LOUDLY into the mic or tapping it with your finger. This should cause a mic clip, and the console will log "clipping".<br>
+        7. When done, click "STOP" to save the audio and stop recording.<br>
+        8. Click the "SPLIT" button, to see Wavecore split itself into different segments based on the silence, speech, and clipping detection.<br>
+        9. Clicking on the individual split segment buttons allows you to hear just that portion of the overall recording.
+        </p>
+    </div>
   </body>
 </html>
