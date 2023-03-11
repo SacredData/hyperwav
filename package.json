@@ -48,8 +48,5 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  },
-  "git-pre-hooks": {
-    "pre-commit": "npm run lint"
   }
 }
