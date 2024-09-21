@@ -1,11 +1,11 @@
-# @storyboard-fm/wavecore
+# `hyperwav`
 A data structure for real-time reading, editing, seeking, and encoding of mono
 WAV audio files via hypercore v10. Version control, branches, and peering come
 for free thanks to the [`hypercore@next`][h] branch.
 ## Getting Started
 ### Installation
 ```sh
-$ npm install git+ssh://git@github.com:storyboard-fm/wavecore.git
+$ npm install git+ssh://git@github.com:sacreddata/hyperwav.git
 ```
 ### Status
 > WIP, expect breaking changes
@@ -22,18 +22,18 @@ applications, and web apps all from one codebase.
 > ***ANYTHING YOU CAN DO IN HYPERCORE, YOU CAN DO IN WAVECORE.***
 > [Start here!][h]
 #### Create Operations
-> A Wavecore can be created from a number of inputs and sources; with no
-> arguments provided at all, a new Wavecore with sane defaults is provided.
-- [x] Create new Wavecore with no inputs
-- [x] Create new Wavecore with [`Source`][lmbsrc] input
-- [x] Create new Wavecore with [hypercore][h] input
-- [x] Create new Wavecore from other Wavecore
-- [x] Create new Wavecore with [`random-access-storage`][ras] input
+> A Hyperwav can be created from a number of inputs and sources; with no
+> arguments provided at all, a new Hyperwav with sane defaults is provided.
+- [x] Create new Hyperwav with no inputs
+- [x] Create new Hyperwav with [`Source`][lmbsrc] input
+- [x] Create new Hyperwav with [hypercore][h] input
+- [x] Create new Hyperwav from other Wavecore
+- [x] Create new Hyperwav with [`random-access-storage`][ras] input
 #### Write Operations
 - [x] Append
 - [x] Pad tail (Add blank data to tail to extend duration)
 #### Editing Operations
-> Wavecore audio editing tasks mimic the methods offered by [JavaScript
+> Hyperwav audio editing tasks mimic the methods offered by [JavaScript
 > Arrays][mdnarray]
 - [x] Trim: [shift][shift]
 - [x] Trim: [truncate][trunc]
@@ -65,63 +65,63 @@ applications, and web apps all from one codebase.
 - [ ] BWF tags
 - [ ] Cue points (in progress)
 #### P2P
-- [ ] Replication between Wavecores
+- [ ] Replication between Hyperwavs
 ### Design
 #### Mono WAV Only
 There were several factors influencing the decision to support only mono WAV
 data. Most notably, the Web Audio API's `AudioBuffer.getChannelData()` method,
-as its name suggests, loads audio data one channel at a time. Wavecore audio
+as its name suggests, loads audio data one channel at a time. Hyperwav audio
 data can therefore be easily loaded inline with that method, querying it for
 specific data ranges before having to allocate buffer resources.
 
-By forcing all Wavecores to be mono-first, we also enable different processing to
+By forcing all Hyperwavs to be mono-first, we also enable different processing to
 occur on each channel of audio without worrying about data interleaving.
 ## Examples
-### Recording Into A Wavecore
+### Recording Into A Hyperwav
 #### [`MediaRecorder`][mr]
 ##### Stream-based
 ```js
 const mr = new MediaRecorder(stream)
-const wave = new Wavecore()
+const wave = new Hyperwav()
 wave.recStream(mr.stream)
 ```
 ##### Event-based
 ```js
 const core = new Hypercore(ram)
 mediaRecorder.onstop = function() {
-  const wave = new Wavecore({ core })
+  const wave = new Hyperwav({ core })
 }
 mediaRecorder.ondataavailable = function(d) {
   core.append(d.data)
 }
 ```
-### Playing A Wavecore
+### Playing A Hyperwav
 #### Play Indexed Audio Data (SoX)
 ```js
-const wavecore = new WavecoreSox({ source })
+const wavecore = new HyperwavSox({ source })
 await wavecore.open()
 wavecore.play({start: 5, end: 13}) // Play indeces 5 through 13
 ```
 #### Listen For Live Audio Updates
-> Listen to the audio being inserted in the Wavecore **in real-time!**
+> Listen to the audio being inserted in the Hyperwav **in real-time!**
 > ***Yes, you read that correctly: REAL-TIME!***
 ```js
-const wavecore = new Wavecore({ source })
+const wavecore = new Hyperwav({ source })
 await wavecore.open()
 const waveStream = wavecore._liveStream()
 // Consume this ReadableStream to listen to the audio as it gets recorded into
-// the Wavecore!
+// the Hyperwav!
 ```
 ### Editing Operations
 #### Editing Sessions & Snapshots
-Here we make a snapshot of our Wavecore so we can test out an edit to the WAV
-audio. By using our new session to test the edit we leave the original Wavecore
+Here we make a snapshot of our Hyperwav so we can test out an edit to the WAV
+audio. By using our new session to test the edit we leave the original Hyperwav
 audio in-tact, enabling non-destructive editing with no additional memory
 allocation necessary!
 ```js
-const Wavecore = require('@storyboard-fm/wavecore')
+const Hyperwav = require('@storyboard-fm/wavecore')
 
-const wave = new Wavecore({ source })
+const wave = new Hyperwav({ source })
 await wave.open()
 
 const snapshot = wave.snapshot()
@@ -132,10 +132,10 @@ console.log(snapshot.core.length) // 58
 ```
 #### Trimming Audio
 ##### Trim From Beginning
-The following trims a Wavecore to start on the 20th index.
+The following trims a Hyperwav to start on the 20th index.
 ```js
-const Wavecore = require('@storyboard-fm/wavecore')
-const wave = new Wavecore({ source })
+const Hyperwav = require('@storyboard-fm/wavecore')
+const wave = new Hyperwav({ source })
 
 await wave.open()
 console.log(wave.core.length) // 58
@@ -143,10 +143,10 @@ const shiftedCore = await Promise.resolve(wave.shift(20))
 console.log(shiftedCore.length) // 38
 ```
 ##### Trim From End
-The following truncates a Wavecore to the first 20 indeces.
+The following truncates a Hyperwav to the first 20 indeces.
 ```js
-const Wavecore = require('@storyboard-fm/wavecore')
-const wave = new Wavecore({ source })
+const Hyperwav = require('@storyboard-fm/wavecore')
+const wave = new Hyperwav({ source })
 
 await wave.open()
 console.log(wave.core.length) // 58
@@ -158,13 +158,13 @@ console.log(wave.core.length) // 20
 Execute this script at `example2.js`.
 
 ```js
-const Wavecore = require('.')
+const Hyperwav = require('.')
 
-const w = new Wavecore({ source })
+const w = new Hyperwav({ source })
 
 async function main() {
   await w.open()
-  console.log('splitting Wavecore at index 22....')
+  console.log('splitting Hyperwav at index 22....')
   const [head, tail] = await w.split(22)
   console.log('done!', head, tail)
 }
@@ -175,28 +175,28 @@ main()
 #### Gain (+ Limiting) via SoX
 > Increase gain by +6dBFS and add a limiter to prevent clipping
 ```js
-const wave = new WavecoreSox({ source })
+const wave = new HyperwavSox({ source })
 await wave.open()
 const gainUp = await wave.gain('+6', {limiter:true})
 ```
 #### Normalization
 ##### `AudioBuffer`
 ```js
-const wave = new Wavecore({ source })
+const wave = new Hyperwav({ source })
 await wave.open()
 const audioBufferNorm = await wave.audioBuffer({ normalize: true })
 ```
 ##### SoX
 > Increase gain so that the peak dBFS value = 0
 ```js
-const wave = new WavecoreSox({ source })
+const wave = new HyperwavSox({ source })
 await wave.open()
 const normCore = await wave.norm()
 ```
 #### Playback Rate (SoX)
 > Change the "tempo" of the audio without changing the pitch
 ```js
-const wave = new WavecoreSox({ source })
+const wave = new HyperwavSox({ source })
 await wave.open()
 const snap = wave.snapshot() // save copy of original audio
 const slowerWave = await Promise.resolve(wave.tempo(0.8)) // 20% slower
@@ -204,7 +204,7 @@ const fasterWave = await Promise.resolve(wave.tempo(1.1)) // 10% faster
 ```
 
 ## Tags
-> Certain operations in Wavecore provide RIFF tags which, when converting from PCM
+> Certain operations in Hyperwav provide RIFF tags which, when converting from PCM
 > to WAV file format, will be written to the resultant WAV file. They are
 > detailed in the table below.
 
@@ -227,25 +227,25 @@ We use `mocha`, with `nyc` for test coverage reporting.
 $ npm run test
 ```
 
-[bdc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#audioBuffer
-[concat]: https://storyboard-fm.github.io/wavecore/Wavecore.html#concat
-[dco]: https://storyboard-fm.github.io/wavecore/Wavecore.html#audioBuffer
-[gain]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#gain
+[bdc]: https://sacreddata.github.io/hyperwav/Hyperwav.html#audioBuffer
+[concat]: https://sacreddata.github.io/hyperwav/Hyperwav.html#concat
+[dco]: https://sacreddata.github.io/hyperwav/Hyperwav.html#audioBuffer
+[gain]: https://sacreddata.github.io/hyperwav/HyperwavSox.html#gain
 [h]: https://github.com/hypercore-protocol/hypercore-next
 [lmbsrc]: https://storyboard-fm.github.io/little-media-box/Source.html
 [mdnarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 [mr]: https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
-[norm]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#norm
-[play]:  https://storyboard-fm.github.io/wavecore/WavecoreSox.html#play
+[norm]: https://sacreddata.github.io/hyperwav/HyperwavSox.html#norm
+[play]:  https://sacreddata.github.io/hyperwav/HyperwavSox.html#play
 [ras]: https://github.com/random-access-storage
-[seek]: https://storyboard-fm.github.io/wavecore/Wavecore.html#seek
-[session]: https://storyboard-fm.github.io/wavecore/Wavecore.html#session
-[snapshot]: https://storyboard-fm.github.io/wavecore/Wavecore.html#snapshot
-[shift]: https://storyboard-fm.github.io/wavecore/Wavecore.html#shift
+[seek]: https://sacreddata.github.io/hyperwav/Hyperwav.html#seek
+[session]: https://sacreddata.github.io/hyperwav/Hyperwav.html#session
+[snapshot]: https://sacreddata.github.io/hyperwav/Hyperwav.html#snapshot
+[shift]: https://sacreddata.github.io/hyperwav/Hyperwav.html#shift
 [sox]: http://sox.sourceforge.net/
-[split]: https://storyboard-fm.github.io/wavecore/Wavecore.html#split
-[src]: https://storyboard-fm.github.io/wavecore/Wavecore.html#audioBuffer
-[tag]: https://storyboard-fm.github.io/wavecore/Wavecore.html#tag
-[tempo]: https://storyboard-fm.github.io/wavecore/WavecoreSox.html#tempo
-[trunc]: https://storyboard-fm.github.io/wavecore/Wavecore.html#truncate
-[zero]: https://storyboard-fm.github.io/wavecore/Wavecore.html#_nextZero
+[split]: https://sacreddata.github.io/hyperwav/Hyperwav.html#split
+[src]: https://sacreddata.github.io/hyperwav/Hyperwav.html#audioBuffer
+[tag]: https://sacreddata.github.io/hyperwav/Hyperwav.html#tag
+[tempo]: https://sacreddata.github.io/hyperwav/HyperwavSox.html#tempo
+[trunc]: https://sacreddata.github.io/hyperwav/Hyperwav.html#truncate
+[zero]: https://sacreddata.github.io/hyperwav/Hyperwav.html#_nextZero
