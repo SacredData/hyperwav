@@ -18,7 +18,7 @@
     "audio-buffer-from": "^1.1.1",
     "audio-buffer-utils": "^5.1.2",
     "audio-format": "github:audiojs/audio-format",
-    "hypercore": "^10.4.1",
+    "hypercore": "^10.37.23",
     "multistream": "^4.1.0",
     "nanoprocess": "^0.8.5",
     "random-access-memory": "^6.0.0",
