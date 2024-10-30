@@ -39,7 +39,7 @@
     "jsdoc": "^4.0.1",
     "jsdoc-template": "github:braintree/jsdoc-template",
     "microphone-stream": "^6.0.1",
-    "mocha": "^9.1.3",
+    "mocha": "^10.8.1",
     "nyc": "^15.1.0",
     "parcel": "^2.2.0",
     "prettier": "^2.7.1",
